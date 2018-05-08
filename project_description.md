@@ -40,6 +40,32 @@ Whipped up a few LTspice simulations, found I needed inductance on the input (na
 
 Tested out the chamber a few more times, still leaking at the feedthroughs. Need to re-design them.
 
+<lots of stuff happens off-camera>
+
+Oh jeez.
+
+This is going to have to be fast.
+
+Really fast.
+
+With a 100g/h deposition rate, a 10 mil dot size, and reasonable Z resolution of somewhere around 5 mil, the slew time of the deflection supplies will have to be under 50 us.
+
+With a 10 mil dot size over a 1 cm deflection (400 steps), the slide will have to move at around $$1 cm/ 20 milliseconds$$ - around 40,000 mm/min. This seems just barely achievable with stepper slides.
+
+With those same values and a requirement of 5 bytes per point , the software will have to stream points at nearly 100kbps. That seems achivable too. Proper curve fitting etc will also reduce that.
+
+Values I'll probably have to update live: 
+
+- Beam X Y position, focus, astigmatism.
+- Stepper X and Y position.
+- 
+
+RF power, beam current, diffusion pump power, etc will presumably be set before a print.
+
+I'm kind of coming to grips with how monumental the realtime requirements for this thing will be. I don't think I have any time to stream values to different processors - I think I'll have to abandon my original modular idea and make everything run on one STM32.
+
+Now, the deflection amplifier.
+
 
 
 
