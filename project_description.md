@@ -69,3 +69,50 @@ Now, the deflection amplifier.
 
 
 
+Someone on phys.se raised a good point: at low acceleration voltages, how will stray magnetic fields affect the beam?
+
+Since the magnetic force on a moving charge is F=qvB, the fuzzing due to magnetic fields should actually go down - but let's make sure.
+
+At 48 eV, Aluminum will travel at 18,528 m/s. qvB at 100 gauss = -3×10^-17 newtons. The particles will take 2.7×10^-5 seconds to travel 0.5m to the build plate. This means that the beam will be slewed 
+
+0.5 * 6.695846×10^8 meters per second squared * (2.7×10^-5s)^2 = 0.2 meters.
+
+Darn.
+
+At 1 gauss, about 2.5 mm.
+
+The deflection seems to be unrelated to V, but I know that this is impossible, since 30 kv CRTs aren't affected by the earth's magnetic field.
+
+I must have something wrong in my reasoning. Going again:
+
+(0.5*(((sqrt(2r)/sqrt(m))*b)/m)*(d/(sqrt(2r)/sqrt(m)))
+
+Where r is energy, in eV.
+
+R just falls out of the equation: 
+
+(0.5*b*d)/m
+
+And so I am correct in that voltage is unrelated to magnetic deflection.
+
+Wait, what?
+
+Okay, looking it up, I'm totally wrong. The actual equation is:
+
+X deflection = (0.5bd)*sqrt(q/(2(v)m))
+
+Where v is volts. This means:
+
+(0.5*(100 gauss* (0.5m)^2)) * sqrt(-(electron charge)/(2*48 volts *(27 amu in kg))) = 0.2 m.
+
+
+At earth's magnetic field and 1000v, we get 0.1 mm. 100v: 0.5 mm. 48v: 0.7mm.
+
+10 Gauss, 0.1m distance to build plate, and 48v: 1mm.
+
+Now that, I believe, is fine - that's an N52 magnet at 0.1 m. Steady state components can be calibrated out, too - I'm mainly just worried about oscillating magnetic fields due to the RF coil.
+
+There'll be a 
+
+
+
