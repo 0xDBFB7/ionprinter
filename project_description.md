@@ -112,7 +112,19 @@ At earth's magnetic field and 1000v, we get 0.1 mm. 100v: 0.5 mm. 48v: 0.7mm.
 
 Now that, I believe, is fine - that's an N52 magnet at 0.1 m. Steady state components can be calibrated out, too - I'm mainly just worried about oscillating magnetic fields due to the RF coil.
 
-There'll be a 
+With 150a going through the coil, there'll be a roughly 1.5 gauss field oscillating at 6 in away.
+
+I can put a bunch of hall effect sensors in different places in the chamber and try to compensate for fields measured.
+
+Aha! Existing induction heaters use inductors on the high side. When a piece of metal enters the coil, the frequency drops significantly - giving the inductor more time to allow more current through, increasing the power draw and dissipation. Cool!
+
+Huh, wait. Why can't I just ionize the aluminum with bare +48v? The ionization energy of the aluminum is only like 15eV. If I can strike the arc with a few kilovolts (like a fluorescent tube), I should be able to ionize everything that goes through...
+
+Hmm. Perhaps that "striking" effect relies on the gas already being ionized. That would make sense - but it'd also mean that I can't do that, since the gas is constantly being replenished.
+
+Had an enlightening discussion on The H Bar about this striking effect; apparently it has to do with the electron drift rate.
+
+When my milligram balance comes in, I'll try running a test with +48v and see what kind of ionization I can get - deposit onto a plate, measure the charge, weigh the plate, and divide by atomic mass of aluminum. 
 
 
 
