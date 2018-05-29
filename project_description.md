@@ -122,9 +122,16 @@ Huh, wait. Why can't I just ionize the aluminum with bare +48v? The ionization e
 
 Hmm. Perhaps that "striking" effect relies on the gas already being ionized. That would make sense - but it'd also mean that I can't do that, since the gas is constantly being replenished.
 
-Had an enlightening discussion on The H Bar about this striking effect; apparently it has to do with the electron drift rate.
+Had an enlightening discussion on The H Bar about this striking effect; apparently it is related to the electron drift rate, and is likely to work on a stream of gas. Also, in 20170210_100824.mp4
 
 When my milligram balance comes in, I'll try running a test with +48v and see what kind of ionization I can get - deposit onto a plate, measure the charge, weigh the plate, and divide by atomic mass of aluminum. 
+
+Going back to my graphite "bowtie" filament/crucibles; I can't find a reliable source on the resistivity of graphite, suprisingly enough; it seems to vary wildly between batches and processes. Measuring my block from McMaster, I get a value anywhere between 10 and 0.3 ohms with varying contact pressure. The block is 20.5 cm long by 2.5cm wide and 0.7cm thick. To get a slightly better reading, I connected up my Korad PSU to both ends and set it to 0.5a. This gave me a voltage of around 50-70mv and falling, for a resistance of around 1.5 ohms. Scaling that roughly to my previous bowtie's area, I get about 0.8 ohms. This explains why I didn't get good results with my previous bowtie tests at 20v; I'd only be drawing a few hundred watts. I'll have to try again with a smaller bowtie and with my new PSU.
+
+Ooh, I could SPTM the graphite crucible!
+
+Re: Speed: at 1Mbps, (about the peak for STM32 usb), transferring 1 point (6 floats; 4 bytes per float, no encoding) would take about 200 microseconds, plus response, which is longer than my target 50 us value. I guess I'll really have to fill up that buffer beforehand.
+
 
 
 
