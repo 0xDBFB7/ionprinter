@@ -132,6 +132,14 @@ Ooh, I could SPTM the graphite crucible!
 
 Re: Speed: at 1Mbps, (about the peak for STM32 usb), transferring 1 point (6 floats; 4 bytes per float, no encoding) would take about 200 microseconds, plus response, which is longer than my target 50 us value. I guess I'll really have to fill up that buffer beforehand.
 
+It seems like my ICP coil inductance value is incorrect: 
 
+
+
+
+Darnit. Another first-principles error; and I know why my many filament tests weren't working. With a surface area of 808 mm^2 (the v2 bowtie), and a temperature of 3070 K, 
+the bowtie will be radiating *nearly 4 kilowatts* as heat; the Stefan-Boltzmann law goes as the 4th power of temperature. If I can get the bowtie surface area to below 20 mm^2, I'll only have to
+contend with 100w of radiative losses, which seems manageable. Power budget is being eaten into a bit, but oh well.  I could also try using an aluminum reflector to increase efficiency; 
+aluminum is 87% reflective at infrared.
 
 
