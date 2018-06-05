@@ -128,18 +128,31 @@ When my milligram balance comes in, I'll try running a test with +48v and see wh
 
 Going back to my graphite "bowtie" filament/crucibles; I can't find a reliable source on the resistivity of graphite, suprisingly enough; it seems to vary wildly between batches and processes. Measuring my block from McMaster, I get a value anywhere between 10 and 0.3 ohms with varying contact pressure. The block is 20.5 cm long by 2.5cm wide and 0.7cm thick. To get a slightly better reading, I connected up my Korad PSU to both ends and set it to 0.5a. This gave me a voltage of around 50-70mv and falling, for a resistance of around 1.5 ohms. Scaling that roughly to my previous bowtie's area, I get about 0.8 ohms. This explains why I didn't get good results with my previous bowtie tests at 20v; I'd only be drawing a few hundred watts. I'll have to try again with a smaller bowtie and with my new PSU.
 
-Ooh, I could SPTM the graphite crucible!
+Ooh, I could SPTM the graphite crucible! Nah, I don't need to.
 
 Re: Speed: at 1Mbps, (about the peak for STM32 usb), transferring 1 point (6 floats; 4 bytes per float, no encoding) would take about 200 microseconds, plus response, which is longer than my target 50 us value. I guess I'll really have to fill up that buffer beforehand.
 
-It seems like my ICP coil inductance value is incorrect: 
+It seems like my ICP coil inductance value is incorrect: a more accurate value would be around 1 uh.
+jb weld
 
 
 
+Darnit. Another first-principles error; and I know why my many graphite/filament tests weren't working. With a surface area of 808 mm^2 (the v2 bowtie), and a temperature of 3070 K, 
+the bowtie will be radiating *nearly 4 kilowatts* as heat; the Stefan-Boltzmann law goes as the 4th power of temperature. The emissivity of tungsten is 0.04, which makes for a loss of 160w with the same area.
 
-Darnit. Another first-principles error; and I know why my many filament tests weren't working. With a surface area of 808 mm^2 (the v2 bowtie), and a temperature of 3070 K, 
-the bowtie will be radiating *nearly 4 kilowatts* as heat; the Stefan-Boltzmann law goes as the 4th power of temperature. If I can get the bowtie surface area to below 20 mm^2, I'll only have to
+If I can get the bowtie surface area to below 20 mm^2, I'll only have to
 contend with 100w of radiative losses, which seems manageable. Power budget is being eaten into a bit, but oh well.  I could also try using an aluminum reflector to increase efficiency; 
 aluminum is 87% reflective at infrared.
 
+
+
+
+GAH; another bloody problem. If an alloy is injected into the bowtie, the different molecular masses will cause a "mass spectrometer" effect in the deflection plates, blurring the deposition horrendously.
+Since we need to deposit all the materials in the alloy simultaneously, not sequentially, multiple bowties with multiple accleration voltages tuned to their respective masses would work.
+
+Wire feedthroughs: Buna-N has a TML of around 7; I don't even have to worry about a tiny bit of JB-weld, I don't think.
+
+
+The Bowtie; the graphite that I purchased from mcmaster has an exceptionally low resistivity; around 1.54×10^-5 ohm meters. This means that a 10mm long 4*4mm rod would have a resistance of 0.0385 ohms,
+drawiing 20a at 12v. When the injector holes are drilled, and some extra contact resistance is added, this is almost perfect...though this bowtie would also have an area of 80mm^2; a loss of 400w.
 
