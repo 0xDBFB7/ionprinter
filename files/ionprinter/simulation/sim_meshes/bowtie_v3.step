@@ -4,7 +4,7 @@ FILE_DESCRIPTION(('FreeCAD Model'),'2;1');
 FILE_NAME(
 '/home/arthurdent/NAS/primary_a/Projects/ion_
 printer/files/ionprinter/simulation/sim_meshes/bowtie_v3.step',
-  '2018-06-06T10:12:12',('Author'),(''),
+  '2018-06-07T01:01:11',('Author'),(''),
   'Open CASCADE STEP processor 7.1','FreeCAD','Unknown');
 FILE_SCHEMA(('AUTOMOTIVE_DESIGN { 1 0 10303 214 1 1 1 1 }'));
 ENDSEC;

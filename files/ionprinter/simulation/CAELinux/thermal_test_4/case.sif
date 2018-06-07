@@ -1,0 +1,166 @@
+Header
+CHECK KEYWORDS Warn
+Mesh DB "." "."
+Include Path ""
+Results Directory ""
+End
+
+Simulation
+Max Output Level = 5
+Coordinate System = Cartesian
+Coordinate Mapping(3) = 1 2 3
+Simulation Type = Transient
+Steady State Max Iterations = 20
+Output Intervals = 1
+Timestep intervals = 300
+Timestep Sizes = 2
+Timestepping Method = BDF
+BDF Order = 2
+Solver Input File = case.sif
+!Post File = case.ep
+End
+
+Constants
+Gravity(4) = 0 -1 0 9.82
+Stefan Boltzmann = 5.67e-08
+Permittivity of Vacuum = 8.8542e-12
+Boltzmann Constant = 1.3807e-23
+Unit Charge = 1.602e-19
+End
+
+Body 1
+Target Bodies(1) = 1
+Name = "Body 1"
+Equation = 1
+Material = 1
+Body Force = 1
+Initial condition = 1
+End
+
+Solver 1
+Equation = Result Output
+Save Geometry Ids = True
+Output Format = elmerpost
+Procedure = "ResultOutputSolve" "ResultOutputSolver"
+Output File Name = case
+Scalar Field 1 = Temperature
+Vector Field 1 = Velocity
+Single Precision = True
+Exec Solver = After Timestep
+End
+
+Solver 2
+Equation = Heat Equation
+Procedure = "HeatSolve" "HeatSolver"
+Calculate Loads = True
+Variable = Temperature
+Exec Solver = Before Timestep
+Stabilize = True
+Bubbles = False
+Lumped Mass Matrix = False
+Optimize Bandwidth = True
+Steady State Convergence Tolerance = 1.0e-5
+Nonlinear System Convergence Tolerance = 1.0e-7
+Nonlinear System Max Iterations = 1
+Nonlinear System Newton After Iterations = 1
+Nonlinear System Newton After Tolerance = 1.0e-3
+Nonlinear System Relaxation Factor = .25
+Linear System Solver = Iterative
+Linear System Iterative Method = BiCGStab
+Linear System Max Iterations = 500
+Linear System Convergence Tolerance = 1.0e-10
+Linear System Preconditioning = ILU0
+Linear System ILUT Tolerance = 1.0e-3
+Linear System Abort Not Converged = True
+Linear System Residual Output = 1
+Linear System Precondition Recompute = 1
+End
+
+Solver 3
+Equation = Navier-Stokes
+Variable = Flow Solution[Velocity:2 Pressure:1]
+Procedure = "FlowSolve" "FlowSolver"
+Calculate Loads = True
+Exec Solver = Before Timestep
+Stabilize = True
+Bubbles = False
+Lumped Mass Matrix = False
+Optimize Bandwidth = True
+Steady State Convergence Tolerance = 1.0e-5
+Nonlinear System Convergence Tolerance = 1.0e-7
+Nonlinear System Max Iterations = 1
+Nonlinear System Newton After Iterations = 1
+Nonlinear System Newton After Tolerance = 1.0e-3
+Nonlinear System Relaxation Factor = .25
+Linear System Solver = Iterative
+Linear System Iterative Method = BiCGStab
+Linear System Max Iterations = 500
+Linear System Convergence Tolerance = 1.0e-10
+Linear System Preconditioning = ILU0
+Linear System ILUT Tolerance = 1.0e-3
+Linear System Abort Not Converged = False
+Linear System Residual Output = 1
+Linear System Precondition Recompute = 1
+End
+
+Solver 4
+  Procedure = File "SaveData" "SaveScalars"
+  Filename = "Hochformat_Ergebnisse296.ep"
+  Output Directory = "Hochformat_Ergebnisse"
+  Variable 1 = Timestep
+  Variable 2 = Temperature
+  Variable 3 = Flow Solution
+  Exact Coordinate = Logical True
+  Moving Mesh = Logical False
+  Operator 3 = String max
+  Operator 2 = String max
+  Exec Solver = After Timestep
+End
+
+Equation 1
+Name = "Equation 1"
+Phase Change Model = Spatial 1
+Check Latent Heat Release = True
+Convection = Computed
+Active Solvers(4) =1 2 3 4
+End
+
+Material 1
+  Name = "Water_liquid"
+  Reference Temperature = 293
+  Viscosity = Variable Temperature; Real; 250 2000.0; 270 1900.0; 273 1874.423265; 273.1 1686.279428; 273.2 1498.837202; 273.3 1311.394976; 273.4 1123.952749; 273.5 936.5105225; 273.6 749.068296; 273.7 561.6260695; 273.8 374.183843; 273.9 186.7416165; 274 0.001; 350 0.001;
+  End
+  Heat expansion Coefficient = 0.207e-3
+  Enthalpy = Variable Temperature; Real; 0 0;20 41200;40 82400;60 123600;80 164800;100 206000;120 247200;140 288400;160 329600;180 370800;200 412000;220 453200;240 494400;260 535600;261 537660;262 539720;263 541780;264 543840;265 545900;266 547960;267 550020;268 552080;269 554140;270 556200;271 558260;272 560320;273 562380;274 895880;275 900063;276 904246;277 908429;278 912612;279 916795;280 920978;300 1004638;320 1088298;340 1171958;360 1255618;380 1339278;
+  End
+  Phase Change Intervals(2,1) = 273 274
+  Compressibility Model = Incompressible
+  Reference Pressure = 1003
+  Specific Heat Ratio = 1.330
+  Heat Conductivity = Variable Temperature; REAL; 230 2.0; 250 2.1; 273 2.22; 273.5 1.0; 274 0.596; 293 0.6; 300 0.609;
+  End
+  Heat Capacity = Variable Temperature; REAL; 333 4183; 293 4183; 270 2200; 240 2200;
+  End
+  Density = 998.3
+End
+
+Body Force 1
+Name = "Natural convection"
+Boussinesq = True
+End
+
+Initial Condition 1
+Name = "InitialCondition 1"
+Velocity 2 = 0
+Pressure = 0
+Velocity 1 = 0
+Temperature = 296
+End
+
+Boundary Condition 1
+  Name = "Kühlung"
+  Target Boundaries(1) = 1
+  Velocity 1 = 0.0
+  Velocity 2 = 0.0
+  Temperature = 260
+End
