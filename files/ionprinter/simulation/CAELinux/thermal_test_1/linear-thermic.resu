@@ -1,0 +1,72 @@
+######################################################################
+######################################################################
+######################################################################
+
+  <I> <INIAST> VOUS UTILISEZ UNE VIEILLE VERSION DE CODE_ASTER.
+
+  EN METTANT A JOUR VOTRE VERSION, VOUS BENEFICIEREZ DES
+  DERNIERES AMELIORATIONS APPORTEES AU CODE DEPUIS 15 MOIS.
+  SI VOUS AVEZ DES DEVELOPPEMENTS PRIVES, VOUS RISQUEZ
+  D'AVOIR UN TRAVAIL IMPORTANT DE REINGENIERIE SI VOUS NE
+  SUIVEZ PAS LES MISES A JOUR.
+
+######################################################################
+######################################################################
+######################################################################
+
+                                         -- CODE_ASTER -- VERSION D'EXPLOITATION 10.08    --
+
+                                                         VERSION SEQUENTIELLE
+
+                                                       PARALLELISME OPENMP ACTIF
+
+                                                    COPYRIGHT  EDF-R&D 1991 - 2012
+
+                                               EXECUTION DU : SA-02-JUIN-2018 23:28:35
+
+                                                    PLATE-FORME : ARTHURDENT-VIRTU
+
+                                                 NB MAX PROC OpenMP:   1             
+
+                                                      SYSTEME : LINUX           
+
+                                                        CPU : X86_64          
+
+
+   !-----------------------------------------------------------------------!
+   !   Liste des alarmes émises lors de l'exécution du calcul.             !
+   !                                                                       !
+   !   Les alarmes que vous avez choisies d'ignorer sont précédées de (*). !
+   !   Nombre d'occurrences pour chacune des alarmes :                     !
+   !          aucune alarme                                                !
+   !-----------------------------------------------------------------------!
+
+ <I> <FIN> FERMETURE DE LA BASE "GLOBALE" EFFECTUEE.
+ <I> <FIN> ARRET NORMAL DANS "FIN" PAR APPEL A "JEFINI".
+  
+ <I> <FIN> MEMOIRE JEVEUX MINIMALE REQUISE POUR L'EXECUTION :                      20.44 Mo
+ <I> <FIN> MAXIMUM DE MEMOIRE UTILISEE PAR LE PROCESSUS LORS DE L'EXECUTION :     211.37 Mo
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       1.32 :       0.08 :       1.40 :       1.41 *
+ *  . compile               :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . exec_compile          :       0.09 :       0.02 :       0.11 :       0.11 *
+ *  . report                :       0.01 :       0.00 :       0.01 :       0.01 *
+ *  . build                 :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEBUT                    :       0.01 :       0.02 :       0.03 :       0.06 *
+ * LIRE_MAILLAGE            :       0.02 :       0.01 :       0.03 :       0.04 *
+ * DEFI_MATERIAU            :       0.00 :       0.00 :       0.00 :       0.01 *
+ * AFFE_MODELE              :       0.01 :       0.01 :       0.02 :       0.04 *
+ * AFFE_MATERIAU            :       0.00 :       0.00 :       0.00 :       0.00 *
+ * AFFE_CHAR_THER           :       0.03 :       0.00 :       0.03 :       0.03 *
+ * THER_LINEAIRE            :       0.03 :       0.01 :       0.04 :       0.10 *
+ * IMPR_RESU                :       0.02 :       0.01 :       0.03 :       0.03 *
+ * FIN                      :       0.00 :       0.02 :       0.02 :       0.02 *
+ *  . part Superviseur      :       1.34 :       0.10 :       1.44 :       1.63 *
+ *  . part Fortran          :       0.10 :       0.06 :       0.16 :       0.27 *
+ ********************************************************************************
+ * TOTAL_JOB                :       1.44 :       0.16 :       1.60 :       1.90 *
+ ********************************************************************************
+

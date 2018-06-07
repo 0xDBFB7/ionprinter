@@ -1,0 +1,30 @@
+
+DEBUT();
+
+MESH=LIRE_MAILLAGE(UNITE=20,
+                   FORMAT='MED',);
+
+MATER=DEFI_MATERIAU(THER=_F(LAMBDA=100,),);
+
+MODEL=AFFE_MODELE(MAILLAGE=MESH,
+                  AFFE=_F(TOUT='OUI',
+                          PHENOMENE='THERMIQUE',
+                          MODELISATION='3D',),);
+
+MATFIELD=AFFE_MATERIAU(MAILLAGE=MESH,
+                       AFFE=_F(TOUT='OUI',
+                               MATER=MATER,),);
+
+LOADING=AFFE_CHAR_THER(MODELE=MODEL,
+                       TEMP_IMPO=_F(GROUP_MA='Solid_3',
+                                    TEMP=300.0,),);
+
+TEMP=THER_LINEAIRE(MODELE=MODEL,
+                   CHAM_MATER=MATFIELD,
+                   EXCIT=_F(CHARGE=LOADING,),);
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=TEMP,),);
+
+FIN();
+#CHECKSUM:f6398c3577dd629e69bc62b9c145c43e  -:FIN CHECKSUM

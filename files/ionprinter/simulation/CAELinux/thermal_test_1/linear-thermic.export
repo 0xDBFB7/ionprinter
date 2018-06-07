@@ -1,0 +1,30 @@
+P uclient arthurdent
+P mclient arthurdent-VirtualBox
+P follow_output yes
+P display arthurdent-VirtualBox:0.0
+P actions make_etude
+P version STA10
+P nomjob linear-thermic
+P debug nodebug
+P mode interactif
+P ncpus 1
+P memjob 262144.0
+A memjeveux 64.0
+P tpsjob 2
+A tpmax 120
+P username arthurdent
+P serveur localhost
+P aster_root /opt/SALOME-MECA-2013.1/SALOME-MECA-2013.1-LGPL/tools/Code_aster_standalone_20131_public
+P protocol_exec asrun.plugins.server.SSHServer
+P protocol_copyto asrun.plugins.server.SCPServer
+P protocol_copyfrom asrun.plugins.server.SCPServer
+P proxy_dir /tmp
+P consbtc oui
+P soumbtc oui
+P origine salomemeca_asrun 1.10.0
+F comm /media/sf_Documents/CAELinux/heat_transfer.comm D 1
+F mmed /media/sf_Documents/CAELinux/linear-thermic.mmed D 20
+F mess /media/sf_Documents/CAELinux/linear-thermic.mess R 6
+F resu /media/sf_Documents/CAELinux/linear-thermic.resu R 8
+F rmed /media/sf_Documents/CAELinux/linear-thermic.rmed R 80
+R base /media/sf_Documents/CAELinux/linear-thermic.base RC 0

@@ -1,0 +1,495 @@
+######################################################################
+######################################################################
+######################################################################
+
+  <I> <INIAST> VOUS UTILISEZ UNE VIEILLE VERSION DE CODE_ASTER.
+
+  EN METTANT A JOUR VOTRE VERSION, VOUS BENEFICIEREZ DES
+  DERNIERES AMELIORATIONS APPORTEES AU CODE DEPUIS 15 MOIS.
+  SI VOUS AVEZ DES DEVELOPPEMENTS PRIVES, VOUS RISQUEZ
+  D'AVOIR UN TRAVAIL IMPORTANT DE REINGENIERIE SI VOUS NE
+  SUIVEZ PAS LES MISES A JOUR.
+
+######################################################################
+######################################################################
+######################################################################
+
+
+ Version séquentielle de Code_aster 
+==========================================
+==========================================
+DEBUT();
+
+MESH=LIRE_MAILLAGE(UNITE=20,
+                   FORMAT='MED',);
+
+MATER=DEFI_MATERIAU(THER=_F(LAMBDA=237.0,),);
+
+MODEL=AFFE_MODELE(MAILLAGE=MESH,
+                  AFFE=_F(TOUT='OUI',
+                          PHENOMENE='THERMIQUE',
+                          MODELISATION='3D',),);
+
+MATFIELD=AFFE_MATERIAU(MAILLAGE=MESH,
+                       AFFE=_F(TOUT='OUI',
+                               MATER=MATER,),);
+
+LOADING=AFFE_CHAR_THER(MODELE=MODEL,
+                       TEMP_IMPO=(
+                           _F(GROUP_NO='FT002',
+                              TEMP=10.0,),
+                           ),
+                       );
+
+TEMP=THER_LINEAIRE(MODELE=MODEL,
+                   CHAM_MATER=MATFIELD,
+                   EXCIT=_F(CHARGE=LOADING,),);
+
+IMPR_RESU(FORMAT='MED',
+          RESU=_F(RESULTAT=TEMP,),);
+
+FIN();
+
+==========================================
+==========================================
+
+ PARAMETRES DE LA GESTION MEMOIRE JEVEUX  
+ =======================================
+ LIMITE MEMOIRE STATIQUE       :        1.000 Mo
+ MEMOIRE DISPONIBLE            :        1.000 Mo
+ MEMOIRE PRISE                 :        1.000 Mo
+ LIMITE MEMOIRE DYNAMIQUE      :      511.000 Mo
+
+ LIMITE TAILLE DES BASES       :        48.00   Go 
+ =======================================
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0001            CONCEPT DE TYPE : 
+    #  -------------                  ----------------- 
+   DEBUT(INFO=1,
+        PAR_LOT='OUI',
+        IMPR_MACRO='NON',
+        MEMOIRE=_F(GESTION='RAPIDE',
+                   TYPE_ALLOCATION=1,
+                   TAILLE_BLOC=800.0,
+                   DYNAMIQUE=1),
+        RESERVE_CPU=_F(BORNE=900),
+        MESURE_TEMPS=_F(NIVE_DETAIL=1),
+        );
+
+                                         -- CODE_ASTER -- VERSION D'EXPLOITATION 10.08    --
+
+                                                         VERSION SEQUENTIELLE
+
+                                                       PARALLELISME OPENMP ACTIF
+
+                                                    COPYRIGHT  EDF-R&D 1991 - 2012
+
+                                               EXECUTION DU : SA-02-JUIN-2018 23:28:35
+
+                                                    PLATE-FORME : ARTHURDENT-VIRTU
+
+                                                 NB MAX PROC OpenMP:   1             
+
+                                                      SYSTEME : LINUX           
+
+                                                        CPU : X86_64          
+
+
+
+
+
+  Valeur initiale du temps CPU maximum =   120 secondes
+  Valeur du temps CPU maximum passé aux commandes =   108 secondes
+  Réserve CPU prévue = 12 secondes
+
+ Debut de lecture
+
+
+     RE-OUVERTURE DE LA BASE
+
+     NOM DE LA BASE                          :  ELEMBASE
+     CREEE AVEC LA VERSION                   :  10.08.00
+     NOMBRE D'ENREGISTREMENTS UTILISES       :  22
+     NOMBRE D'ENREGISTREMENTS MAXIMUM        :  512
+     LONGUEUR D'ENREGISTREMENT (OCTETS)      :  819200
+     NOMBRE D'IDENTIFICATEURS UTILISES       :  119
+     TAILLE MAXIMUM DU REPERTOIRE            :  300
+     POURCENTAGE D'UTILISATION DU REPERTOIRE :  39 %
+
+
+     FERMETURE DE LA BASE
+
+     NOM DE LA BASE                          :  ELEMBASE
+     NOMBRE D'ENREGISTREMENTS UTILISES       :  22
+     NOMBRE D'ENREGISTREMENTS MAXIMUM        :  512
+     LONGUEUR D'ENREGISTREMENT (OCTETS)      :  819200
+     NOMBRE TOTAL D'ACCES EN LECTURE         :  39
+     VOLUME DES ACCES EN LECTURE             :  30.47 Mo.
+     NOMBRE TOTAL D'ACCES EN ECRITURE        :  3
+     VOLUME DES ACCES EN ECRITURE            :  2.34 Mo.
+     NOMBRE D'IDENTIFICATEURS UTILISES       :  119
+     TAILLE MAXIMUM DU REPERTOIRE            :  300
+     POURCENTAGE D'UTILISATION DU REPERTOIRE :  39 %
+
+ Relecture des catalogues dans ELEMBASE faite.
+
+ fin de lecture (durée  0.000000  s.) 
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        21.70 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.58 Mo (MAXIMUM ATTEINT :        14.55 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.36 Mo - VmData :        91.52 Mo - VmSize :       210.60 Mo 
+
+    #  FIN COMMANDE NO : 0001   USER+SYST:        0.03s (SYST:        0.02s, ELAPS:        0.06s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0002            CONCEPT DE TYPE : maillage_sdaster
+    #  -------------                  ----------------- 
+   MESH=LIRE_MAILLAGE(INFO=1,
+                     INFO_MED=1,
+                     VERI_MAIL=_F(APLAT=1.E-3,
+                                  VERIF='OUI'),
+                     UNITE=20,
+                     FORMAT='MED',
+                     );
+
+  ====== VERIFICATION DU MAILLAGE ======
+ 
+
+------------ MAILLAGE MESH     - IMPRESSIONS NIVEAU  1 ------------
+
+SA-02-JUIN-2018 23:28:35                                                        
+
+NOMBRE DE NOEUDS                         506
+
+NOMBRE DE MAILLES                       2613
+                              SEG2                  161
+                              TRIA3                 774
+                              TETRA4               1678
+
+NOMBRE DE GROUPES DE NOEUDS                1
+                              FT002              506
+
+NOMBRE DE GROUPES DE MAILLES               1
+                              FT002             1678
+
+--------------------------------------------------------------------------------
+
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        21.92 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        14.55 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.36 Mo - VmData :        91.52 Mo - VmSize :       210.60 Mo 
+
+    #  FIN COMMANDE NO : 0002   USER+SYST:        0.03s (SYST:        0.01s, ELAPS:        0.04s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0003            CONCEPT DE TYPE : mater_sdaster
+    #  -------------                  ----------------- 
+   MATER=DEFI_MATERIAU(INFO=1,
+                      THER=_F(LAMBDA=237.0),
+                      );
+
+
+ MATERIAU : MATER   
+ RELATION DE COMPORTEMENT: THER            
+
+
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        21.92 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        14.55 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.36 Mo - VmData :        91.52 Mo - VmSize :       210.60 Mo 
+
+    #  FIN COMMANDE NO : 0003   USER+SYST:        0.00s (SYST:        0.00s, ELAPS:        0.01s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0004            CONCEPT DE TYPE : modele_sdaster
+    #  -------------                  ----------------- 
+   MODEL=AFFE_MODELE(MAILLAGE=MESH,
+                    INFO=1,
+                    AFFE=_F(PHENOMENE='THERMIQUE',
+                            TOUT='OUI',
+                            MODELISATION='3D'),
+                    PARTITION=_F(PARALLELISME='GROUP_ELEM'),
+                    VERI_JACOBIEN='OUI',
+                    );
+
+
+ SUR LES         2613 MAILLES DU MAILLAGE MESH    
+    ON A DEMANDE L'AFFECTATION DE         2613
+    ON A PU EN AFFECTER                   2452
+
+    MODELISATION      ELEMENT FINI      TYPE MAILLE          NOMBRE
+    3D                THER_FACE3        TRIA3                   774
+    3D                THER_TETRA4       TETRA4                 1678
+
+#2 Calculs elementaires et assemblages            CPU (USER+SYST/SYST/ELAPS):      0.00      0.00      0.01
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        22.01 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        20.44 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.36 Mo - VmData :        91.52 Mo - VmSize :       211.36 Mo 
+
+    #  FIN COMMANDE NO : 0004   USER+SYST:        0.02s (SYST:        0.01s, ELAPS:        0.04s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0005            CONCEPT DE TYPE : cham_mater
+    #  -------------                  ----------------- 
+   MATFIELD=AFFE_MATERIAU(INFO=1,
+                         MAILLAGE=MESH,
+                         AFFE=_F(MATER=MATER,
+                                 TOUT='OUI'),
+                         );
+
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        22.01 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        20.44 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.36 Mo - VmData :        91.52 Mo - VmSize :       211.36 Mo 
+
+    #  FIN COMMANDE NO : 0005   USER+SYST:        0.00s (SYST:        0.00s, ELAPS:        0.00s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0006            CONCEPT DE TYPE : char_ther
+    #  -------------                  ----------------- 
+   LOADING=AFFE_CHAR_THER(INFO=1,
+                         TEMP_IMPO=_F(GROUP_NO='FT002',
+                                      TEMP=10.0),
+                         MODELE=MODEL,
+                         );
+
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        22.18 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        20.44 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.36 Mo - VmData :        91.52 Mo - VmSize :       211.36 Mo 
+
+    #  FIN COMMANDE NO : 0006   USER+SYST:        0.03s (SYST:        0.00s, ELAPS:        0.03s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0007            CONCEPT DE TYPE : evol_ther
+    #  -------------                  ----------------- 
+   TEMP=THER_LINEAIRE(EXCIT=_F(CHARGE=LOADING),
+                     PARM_THETA=0.56999999999999995,
+                     SOLVEUR=_F(RENUM='METIS',
+                                STOP_SINGULIER='OUI',
+                                METHODE='MULT_FRONT',
+                                NPREC=8),
+                     ARCHIVAGE=_F(CRITERE='RELATIF',
+                                  PRECISION=9.9999999999999995E-07),
+                     MODELE=MODEL,
+                     CHAM_MATER=MATFIELD,
+                     );
+
+ --- NOMBRE TOTAL DE NOEUDS :                   1518  DONT : 
+                  1012  NOEUDS "LAGRANGE"
+ --- NOMBRE TOTAL D'EQUATIONS :                   1518
+ --- TAILLE DU PROFIL MORSE DE LA TRIANGULAIRE SUPERIEURE (FORMAT SCR):         5606
+ --- DONC LA TAILLE DE LA MATRICE EST:
+ --- EN SYMETRIQUE     NNZ=         5606
+ --- EN NON SYMETRIQUE NNZ=         9694
+ 
+
+  Archivage des champs
+
+    Champ stocké <TEMP> à l'instant  0.000000000000e+00 pour le numéro d'ordre 0
+NUMERO D'ORDRE:      0 INSTANT:   0.000E+00 DUREE MOYENNE:   2.000E-02
+#1 Resolution des systemes lineaires              CPU (USER+SYST/SYST/ELAPS):      0.02      0.00      0.07
+#2 Calculs elementaires et assemblages            CPU (USER+SYST/SYST/ELAPS):      0.01      0.00      0.01
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        22.31 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        20.44 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.37 Mo - VmData :        91.52 Mo - VmSize :       211.36 Mo 
+
+    #  FIN COMMANDE NO : 0007   USER+SYST:        0.04s (SYST:        0.01s, ELAPS:        0.10s)
+    #  ------------------------------------------------------------------------------------------
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0008            CONCEPT DE TYPE : 
+    #  -------------                  ----------------- 
+   IMPR_RESU(INFO=1,
+            RESU=_F(INFO_MAILLAGE='NON',
+                    RESULTAT=TEMP),
+            UNITE=80,
+            FORMAT='MED',
+            );
+
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :        22.31 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         7.56 Mo (MAXIMUM ATTEINT :        20.44 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.37 Mo - VmData :        91.52 Mo - VmSize :       211.36 Mo 
+
+    #  FIN COMMANDE NO : 0008   USER+SYST:        0.03s (SYST:        0.01s, ELAPS:        0.03s)
+    #  ------------------------------------------------------------------------------------------
+
+   !-----------------------------------------------------------------------!
+   !   Liste des alarmes émises lors de l'exécution du calcul.             !
+   !                                                                       !
+   !   Les alarmes que vous avez choisies d'ignorer sont précédées de (*). !
+   !   Nombre d'occurrences pour chacune des alarmes :                     !
+   !          aucune alarme                                                !
+   !-----------------------------------------------------------------------!
+
+
+    #  ------------------------------------------------------------------------------------------ 
+    #  COMMANDE NO :  0009            CONCEPT DE TYPE : 
+    #  -------------                  ----------------- 
+   FIN(RETASSAGE='NON',
+      INFO_RESU='OUI',
+      FORMAT_HDF='NON',
+      UNITE=6,
+      );
+
+
+ ======>
+
+ STRUCTURE DU CONCEPT TEMP     CALCULE POUR 1 NUMERO D'ORDRE
+
+ LISTE DES NOMS SYMBOLIQUES:
+ ! ---------- !----------------!
+ ! NUME_ORDRE !      TEMP      !
+ ! ---------- !----------------!
+ !          0 !     TEMP_R     !
+ ! ---------- !----------------!
+
+ LISTE DES NOMS DE VARIABLES D'ACCES:
+                                      INST             DE TYPE  R
+
+ LISTE DES NOMS DE PARAMETRES:
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ! NUME_ORDRE !     MODELE     !    CHAMPMAT    !    CARAELEM    !     EXCIT      !   ITER_GLOB    !   ITER_LINE    !   PARM_THETA   !     DELTAT     !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ !          0 !       K8       !       K8       !       K8       !      K24       !       I        !       I        !       R        !       R        !
+ ! ---------- !----------------!----------------!----------------!----------------!----------------!----------------!----------------!----------------!
+ ---------------------------------------------------------------------------
+ Concepts de la base: G
+    Nom       Type                 Taille (Mo)         Nombre      Nombre de
+                                                     d'objets       segments
+    TOTAL                                14.74            134            255
+  
+    MESH       MAILLAGE_SDASTER           0.24             35             58
+    MATER      MATER_SDASTER              0.00              4              4
+    MODEL      MODELE_SDASTER             0.09              7             12
+    MATFIELD   CHAM_MATER                 0.00              5             10
+    LOADING    CHAR_THER                  0.16             19             39
+    TEMP       EVOL_THER                  0.13             20             29
+    &FOZERO                               0.00              2              2
+    &&_NUM_C                              0.00              1              1
+    &&SYS.KR                              0.04              1              1
+    &CATA.AC                              0.00              2              4
+    &CATA.CL                              0.27              1              3
+    &CATA.GD                              0.04              4             11
+    &CATA.ME                              0.10              2              4
+    &CATA.OP                              0.39              4             19
+    &CATA.PH                              0.00              1              1
+    &CATA.TE                             13.26             17             42
+    &CATA.TH                              0.00              2              4
+    &CATA.TM                              0.01              7             11
+ ---------------------------------------------------------------------------
+
+
+     FERMETURE DE LA BASE
+
+     NOM DE LA BASE                          :  GLOBALE
+     NOMBRE D'ENREGISTREMENTS UTILISES       :  26
+     NOMBRE D'ENREGISTREMENTS MAXIMUM        :  62914
+     LONGUEUR D'ENREGISTREMENT (OCTETS)      :  819200
+     NOMBRE TOTAL D'ACCES EN LECTURE         :  7
+     VOLUME DES ACCES EN LECTURE             :  5.47 Mo.
+     NOMBRE TOTAL D'ACCES EN ECRITURE        :  40
+     VOLUME DES ACCES EN ECRITURE            :  31.25 Mo.
+     NOMBRE D'IDENTIFICATEURS UTILISES       :  273
+     TAILLE MAXIMUM DU REPERTOIRE            :  2000
+     POURCENTAGE D'UTILISATION DU REPERTOIRE :  13 %
+
+
+     FERMETURE DE LA BASE
+
+     NOM DE LA BASE                          :  VOLATILE
+     NOMBRE D'ENREGISTREMENTS UTILISES       :  3
+     NOMBRE D'ENREGISTREMENTS MAXIMUM        :  62914
+     LONGUEUR D'ENREGISTREMENT (OCTETS)      :  819200
+     NOMBRE TOTAL D'ACCES EN LECTURE         :  0
+     VOLUME DES ACCES EN LECTURE             :  0.00 Mo.
+     NOMBRE TOTAL D'ACCES EN ECRITURE        :  4
+     VOLUME DES ACCES EN ECRITURE            :  3.12 Mo.
+     NOMBRE D'IDENTIFICATEURS UTILISES       :  530
+     TAILLE MAXIMUM DU REPERTOIRE            :  2000
+     POURCENTAGE D'UTILISATION DU REPERTOIRE :  26 %
+  
+ <I>       FERMETURE DES BASES EFFECTUEE
+  
+   STATISTIQUES CONCERNANT L'ALLOCATION DYNAMIQUE :
+     TAILLE CUMULEE MAXIMUM            :                    26  Mo.
+     TAILLE CUMULEE LIBEREE            :                    43  Mo.
+     NOMBRE TOTAL D'ALLOCATIONS        :                 14029
+     NOMBRE TOTAL DE LIBERATIONS       :                 14029
+     APPELS AU MECANISME DE LIBERATION :                     0
+     TAILLE MEMOIRE CUMULEE RECUPEREE  :                     0  Mo.
+     VOLUME DES LECTURES               :                     0  Mo.
+     VOLUME DES ECRITURES              :                     0  Mo.
+  
+   MAXIMUM DE MEMOIRE UTILISEE PAR
+   LE PROCESSUS LORS DE L'EXECUTION    :       211.37 Mo.
+  
+ <I>       FIN D'EXECUTION LE : SA-02-JUIN-2018 23:28:35
+  
+    #  USAGE DE LA MEMOIRE JEVEUX
+    #     - MEMOIRE DYNAMIQUE CONSOMMEE :         0.00 Mo (MAXIMUM ATTEINT :        25.87 Mo) 
+    #     - MEMOIRE UTILISEE            :         0.00 Mo (MAXIMUM ATTEINT :        20.44 Mo) 
+    #  USAGE DE LA MEMOIRE POUR LE PROCESSUS
+    #     - VmPeak :       211.37 Mo - VmData :        91.52 Mo - VmSize :       211.35 Mo 
+
+    #  FIN COMMANDE NO : 0009   USER+SYST:        0.02s (SYST:        0.02s, ELAPS:        0.02s)
+    #  ------------------------------------------------------------------------------------------
+
+
+  <I> <INFORMATION TEMPS D'EXECUTION> (EN SECONDE)
+      TEMPS CPU TOTAL ..............          1.60
+      TEMPS CPU USER TOTAL .........          1.44
+      TEMPS CPU SYSTEME TOTAL ......          0.16
+      TEMPS CPU RESTANT ............        118.40
+
+
+ ********************************************************************************
+ * COMMAND                  :       USER :     SYSTEM :   USER+SYS :    ELAPSED *
+ ********************************************************************************
+ * init (jdc)               :       1.32 :       0.08 :       1.40 :       1.41 *
+ *  . compile               :       0.00 :       0.00 :       0.00 :       0.00 *
+ *  . exec_compile          :       0.09 :       0.02 :       0.11 :       0.11 *
+ *  . report                :       0.01 :       0.00 :       0.01 :       0.01 *
+ *  . build                 :       0.00 :       0.00 :       0.00 :       0.00 *
+ * DEBUT                    :       0.01 :       0.02 :       0.03 :       0.06 *
+ * LIRE_MAILLAGE            :       0.02 :       0.01 :       0.03 :       0.04 *
+ * DEFI_MATERIAU            :       0.00 :       0.00 :       0.00 :       0.01 *
+ * AFFE_MODELE              :       0.01 :       0.01 :       0.02 :       0.04 *
+ * AFFE_MATERIAU            :       0.00 :       0.00 :       0.00 :       0.00 *
+ * AFFE_CHAR_THER           :       0.03 :       0.00 :       0.03 :       0.03 *
+ * THER_LINEAIRE            :       0.03 :       0.01 :       0.04 :       0.10 *
+ * IMPR_RESU                :       0.02 :       0.01 :       0.03 :       0.03 *
+ * FIN                      :       0.00 :       0.02 :       0.02 :       0.02 *
+ *  . part Superviseur      :       1.34 :       0.10 :       1.44 :       1.63 *
+ *  . part Fortran          :       0.10 :       0.06 :       0.16 :       0.27 *
+ ********************************************************************************
+ * TOTAL_JOB                :       1.44 :       0.16 :       1.60 :       1.90 *
+ ********************************************************************************
+
+EXECUTION_CODE_ASTER_EXIT_0001-2340-arthurdent-VirtualBox=0
