@@ -1,4 +1,3 @@
-Merge "test_simple.step";
+Merge "bowtie_v3.step";
 Mesh 3;
-Coherence Mesh;
 Save;
