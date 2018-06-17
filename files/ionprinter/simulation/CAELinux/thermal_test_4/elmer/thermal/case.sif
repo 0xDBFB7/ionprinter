@@ -32,7 +32,6 @@ Body 1
   Equation = 1
   Material = 1
   Body Force = 1
-  Initial condition = 1
 End
 
 Body 2
@@ -121,24 +120,40 @@ End
 
 Body Force 1
   Name = "BodyForce 1"
-  Heat Source = 1
-End
-
-Initial Condition 1
-  Name = "InitialCondition 1"
-  Temperature = 3000
+  Heat Source = 1000
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 40
+  Target Boundaries(1) = 2
   Name = "BoundaryCondition 1"
-  External Temperature = 10
-  Heat Flux = -1
+  Radiation = Idealized
+  Emissivity = 0.8
 End
 
 Boundary Condition 2
-  Target Boundaries(1) = 53
+  Target Boundaries(1) = 4
   Name = "BoundaryCondition 1"
-  External Temperature = 10
-  Heat Flux = -1
+  Radiation = Idealized
+  Emissivity = 0.8
+End
+
+Boundary Condition 3
+  Target Boundaries(1) = 7
+  Name = "BoundaryCondition 1"
+  Radiation = Idealized
+  Emissivity = 0.8
+End
+
+Boundary Condition 4
+  Target Boundaries(1) = 8
+  Name = "BoundaryCondition 1"
+  Radiation = Idealized
+  Emissivity = 0.8
+End
+
+Boundary Condition 5
+  Target Boundaries(1) = 18
+  Name = "BoundaryCondition 1"
+  Radiation = Idealized
+  Emissivity = 0.8
 End
