@@ -170,4 +170,6 @@ A small dot size is only required for fine details, where the print speed can be
 
 Some simple math: 40g/h of aluminum, which is 15 cubic centimeters (a cube 2.46cm to the side).
 
+Tested the micro stepper injector motor: good torque at raw 5v from an arduino even up to 240rpm. It has an unusual 8-10-9-11 pinout, strangely.
+
 

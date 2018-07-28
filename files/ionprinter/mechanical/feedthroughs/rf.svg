@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg
+	xmlns="http://www.w3.org/2000/svg" version="1.1"
+	xmlns:freecad="http://www.freecadweb.org/wiki/index.php?title=Svg_Namespace"
+	width="210mm"
+	height="297mm"
+	viewBox="0 0 210 297">
+	<!-- Working space 20 10 200 287 -->
+	<!-- Title block 20 227 200 287 -->
+	<g>
+		<rect
+			id="drawing-border"
+			style="fill:none;stroke:#000000;stroke-width:0.35;stroke-linecap:miter;stroke-miterlimit:4"
+			width="180"
+			height="277"
+			x="20"
+			y="10" />
+			<!-- width-30, height-20 -->
+		<g
+			transform="translate(0,0)">
+			<!-- A4 Portrait based for other formats width-210, height-297 -->
+			<!--        page       rect   translation
+			               w    h    rw   rh   tx   ty
+			        A4-P  210  297  180  277    0    0
+			        A3-L  420  297  390  277  210    0
+			        A2-L  594  420  564  400  384  123
+			        A1-L  841  594  811  574  631  297
+			        A0-L 1189  841 1159  821  979  544
+			-->
+			<g
+				id="titleblock-structure"
+				style="fill:none;stroke:#000000;stroke-width:0.35;stroke-linecap:miter;stroke-miterlimit:4">
+				<rect width="180" height="60" x="20" y="227" />
+				<path d="m 20,239 h 180" />
+				<path d="m 80,227 v 12" />
+				<path d="m 140,239 v 48" />
+				<path d="m 160,239 v 12" />
+				<path d="m 180,239 v 12" />
+				<path d="m 140,251 h 60" />
+				<path d="m 140,275 h 60" />
+				<path d="m 180,275 v 12" />
+			</g>
+			<g
+				id="titleblock-text-non-editable"
+				style="font-size:3px;text-anchor:start;fill:#000000;font-family:osifont"
+				xml:space="preserve">
+				<text x="21" y="230">Created by:</text>
+				<text x="81" y="230">Title:</text>
+				<text x="21" y="242">Supplementary information:</text>
+				<text x="141" y="242">Size:</text>
+				<text x="161" y="242">Sheet:</text>
+				<text x="181" y="242">Scale:</text>
+				<text x="141" y="254">Part number:</text>
+				<text x="141" y="266">Drawing number:</text>
+				<text x="141" y="278">Date:</text>
+				<text x="181" y="278">Revision:</text>
+			</g>
+			<g
+				id="titleblock-text-editable"
+				style="font-size:5px;text-anchor:middle;fill:#000000;font-family:osifont"
+				xml:space="preserve">
+				<text freecad:editable="AUTHOR NAME" x="50" y="236"><tspan>Daniel Correia</tspan></text>
+				<text freecad:editable="DRAWING TITLE" x="140" y="236"><tspan>Ion Printer RF Feedthroughs</tspan></text>
+				<text freecad:editable="SI-1" x="80" y="248"><tspan></tspan></text>
+				<text freecad:editable="SI-2" x="80" y="255"><tspan></tspan></text>
+				<text freecad:editable="FreeCAD DRAWING" x="80" y="262"><tspan></tspan></text>
+				<text freecad:editable="SI-4" x="80" y="269"><tspan></tspan></text>
+				<text freecad:editable="SI-5" x="80" y="276"><tspan></tspan></text>
+				<text freecad:editable="SI-6" x="80" y="283"><tspan></tspan></text>
+				<text freecad:editable="FC-SI" x="150" y="248"><tspan>A4</tspan></text>
+				<text freecad:editable="FC-SH" x="170" y="248"><tspan>X / Y</tspan></text>
+				<text freecad:editable="FC-SC" x="190" y="248"><tspan>1</tspan></text>
+				<text freecad:editable="PN" x="170" y="260"><tspan>PN</tspan></text>
+				<text freecad:editable="DN" x="170" y="272"><tspan>DN</tspan></text>
+				<text freecad:editable="FC-DATE" x="160" y="284"><tspan>DD/MM/YYYY</tspan></text>
+				<text freecad:editable="FC-REV" x="190" y="284"><tspan>REV A</tspan></text>
+			</g>
+			<!-- Set display:none to hide FreeCAD Logo -->
+			<g
+				style="display:inline"
+				id="freecad-logo"
+				transform="translate(128.5,276)"
+				fill-rule="evenodd"
+				stroke="#000"
+				stroke-width="0.35"
+				fill="none">
+					<path d="m0.1524 0.15254v8.8549h1.9744v-3.4652h1.396v-1.3661h-1.396v-1.4745h3.4391v-2.5441l-5.4135-0.005z"/>
+					<path d="m7.7927 3.4504-0.50715-0.176-0.48387-1.2366-0.76115 0.04-0.34718 1.2787-0.4859 0.23269-1.2119-0.53015-0.51188 0.56882 0.65892 1.1485-0.18006 0.50567-1.2366 0.48387 0.044064 0.76263 1.2787 0.34718 0.23269 0.4859-0.53421 1.2104 0.56882 0.51188 1.1485-0.65891 0.50973 0.18155 0.4798 1.2351 0.7667-0.04258 0.34311-1.2802 0.4859-0.23269 1.2145 0.5357 0.51188-0.56882-0.65891-1.1485 0.17748-0.51122 1.2351-0.4798-0.03851-0.76521-1.2802-0.34311-0.23269-0.4859 0.53163-1.216-0.56881-0.51184zm-0.5715 1.2244 0.23576 0.13679 0.20426 0.18519 0.16353 0.22101 0.11763 0.24572 0.06916 0.26489 0.01146 0.27146-0.03921 0.27139-0.08948 0.25764-0.14234 0.23834-0.17964 0.20167-0.22101 0.16353-0.24572 0.11763-0.26489 0.06916-0.27295 0.01553-0.2719-0.04-0.2576-0.089-0.2383-0.143-0.2002-0.183-0.165-0.217-0.1177-0.246-0.0676-0.269-0.0156-0.273 0.039206-0.2714 0.089484-0.25764 0.14085-0.23427 0.18113-0.20574 0.22101-0.16352 0.24572-0.11763 0.26895-0.06768 0.27147-0.01146 0.27139 0.03921 0.25764 0.08948z"/>
+			</g>
+		</g>
+	</g>
+<g id="View004"
+   transform="rotate(0,69,223) translate(69,223) scale(1,1)"
+  >
+<g   stroke="rgb(0, 0, 0)"
+   stroke-width="0.35"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   fill="none"
+   transform="scale(1,-1)"
+  >
+<circle cx ="86.69" cy ="175.69" r ="7" /><circle cx ="86.69" cy ="175.69" r ="5.5" /><path d="M91.589 170.69 A7 7 0 0 1 93.69 175.69" /><path d="M81.791 180.69 A7 7 0 0 1 81.791 170.69" /><path d="M93.69 175.69 A7 7 0 0 1 91.589 180.69" /><path d="M95.3503 170.69 A10 10 0 0 1 96.69 175.69" /><path id= "7" d=" M 91.589 170.69 L 95.3503 170.69 " />
+<path id= "8" d=" M 91.589 180.69 L 95.3503 180.69 " />
+<path d="M96.69 175.69 A10 10 0 0 1 95.3503 180.69" /><path d="M78.0297 170.69 A10 10 0 0 1 95.3503 170.69" /><path id= "11" d=" M 78.0297 170.69 L 81.791 170.69 " />
+<path id= "12" d=" M 78.0297 180.69 L 81.791 180.69 " />
+<path d="M78.0297 180.69 A10 10 0 0 1 78.0297 170.69" /><path d="M95.3503 180.69 A10 10 0 0 1 78.0297 180.69" /><path id= "15" d=" M 95.3503 180.69 L 102.69 180.69 " />
+<path id= "16" d=" M 102.69 170.69 L 102.69 180.69 " />
+<path id= "17" d=" M 95.3503 170.69 L 102.69 170.69 " />
+<circle cx ="99.69" cy ="175.69" r ="1.5" /><path id= "19" d=" M 70.69 180.69 L 78.0297 180.69 " />
+<path id= "20" d=" M 70.69 170.69 L 70.69 180.69 " />
+<path id= "21" d=" M 70.69 170.69 L 78.0297 170.69 " />
+<circle cx ="73.69" cy ="175.69" r ="1.5" /></g>
+</g>
+
+
+
+<g id="View005"
+   transform="rotate(0,64,134) translate(64,134) scale(1,1)"
+  >
+<g   stroke="rgb(0, 0, 0)"
+   stroke-width="0.35"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   fill="none"
+   transform="scale(1,-1)"
+  >
+<path id= "1" d=" M 0 79.69 L 28 79.69 " />
+</g>
+<g   stroke="rgb(0, 0, 0)"
+   stroke-width="0.35"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   fill="none"
+   transform="scale(1,-1)"
+  >
+<path d="M28,93.69 L28,93.5145  L28,92.9968  L28,92.1628  L28,91.0544  L28,89.7272  L28,88.2476  L28,86.69  L28,85.1324  L28,83.6528  L28,82.3256  L28,81.2172  L28,80.3832  L28,79.8655  L28,79.69 " /><path id= "2" d=" M 0 93.69 L 28 93.69 " />
+<path d="M0,95.3503 L0,94.5083  L0,93.4917  L0,92.3232  L0,91.0288  L0,89.6376  L0,88.1804  L0,86.69  L0,85.1996  L0,83.7424  L0,82.3512  L0,81.0568  L0,79.8883  L0,78.8717  L0,78.0297 " /><path id= "4" d=" M 0 95.3503 L 0 102.69 " />
+<path d="M0,101.19 L0,101.152  L0,101.041  L0,100.863  L0,100.625  L0,100.341  L0,100.024  L0,99.69  L0,99.3562  L0,99.0392  L0,98.7548  L0,98.5173  L0,98.3385  L0,98.2276  L0,98.19 " /><path id= "6" d=" M 0 70.69 L 0 78.0297 " />
+<path d="M0,75.19 L0,75.1524  L0,75.0415  L0,74.8627  L0,74.6252  L0,74.3408  L0,74.0238  L0,73.69  L0,73.3562  L0,73.0392  L0,72.7548  L0,72.5173  L0,72.3385  L0,72.2276  L0,72.19 " /><path id= "8" d=" M -5 78.0297 L 0 78.0297 " />
+<path d="M-5,95.3503 L-5,94.5083  L-5,93.4917  L-5,92.3232  L-5,91.0288  L-5,89.6376  L-5,88.1804  L-5,86.69  L-5,85.1996  L-5,83.7424  L-5,82.3512  L-5,81.0568  L-5,79.8883  L-5,78.8717  L-5,78.0297 " /><path id= "10" d=" M -5 95.3503 L 0 95.3503 " />
+<path id= "11" d=" M -5 95.3503 L -5 102.69 " />
+<path id= "12" d=" M -5 102.69 L 0 102.69 " />
+<path id= "13" d=" M -5 70.69 L -5 78.0297 " />
+<path id= "14" d=" M -5 70.69 L 0 70.69 " />
+</g>
+</g>
+
+
+
+<g id="View006"
+   transform="rotate(0,71,327) translate(71,327) scale(1,1)"
+  >
+<g   stroke="rgb(0, 0, 0)"
+   stroke-width="0.35"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   fill="none"
+   transform="scale(1,-1)"
+  >
+<circle cx ="86.69" cy ="175.69" r ="9.5" /><circle cx ="86.69" cy ="175.69" r ="5.5" /><circle cx ="86.69" cy ="175.69" r ="1.5" /></g>
+</g>
+
+
+
+<g id="View007"
+   transform="rotate(0,69,238) translate(69,238) scale(1,1)"
+  >
+<g   stroke="rgb(0, 0, 0)"
+   stroke-width="0.35"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   fill="none"
+   transform="scale(1,-1)"
+  >
+<path id= "1" d=" M -8 77.19 L -5 77.19 " />
+<path id= "2" d=" M -5 81.19 L 44 81.19 " />
+<path id= "3" d=" M -16 81.19 L -8 81.19 " />
+</g>
+<g   stroke="rgb(0, 0, 0)"
+   stroke-width="0.35"
+   stroke-linecap="butt"
+   stroke-linejoin="miter"
+   fill="none"
+   transform="scale(1,-1)"
+  >
+<path d="M-5,96.19 L-5,95.9518  L-5,95.2492  L-5,94.1174  L-5,92.6132  L-5,90.8119  L-5,88.8039  L-5,86.69  L-5,84.5761  L-5,82.5681  L-5,80.7668  L-5,79.2626  L-5,78.1308  L-5,77.4282  L-5,77.19 " /><path id= "2" d=" M -8 96.19 L -5 96.19 " />
+<path d="M-8,96.19 L-8,95.9518  L-8,95.2492  L-8,94.1174  L-8,92.6132  L-8,90.8119  L-8,88.8039  L-8,86.69  L-8,84.5761  L-8,82.5681  L-8,80.7668  L-8,79.2626  L-8,78.1308  L-8,77.4282  L-8,77.19 " /><path id= "4" d=" M -5 92.19 L 44 92.19 " />
+<path d="M44,92.19 L44,92.0521  L44,91.6453  L44,90.9901  L44,90.1192  L44,89.0764  L44,87.9139  L44,86.69  L44,85.4661  L44,84.3036  L44,83.2608  L44,82.3899  L44,81.7347  L44,81.3279  L44,81.19 " /><path id= "6" d=" M -16 92.19 L -8 92.19 " />
+<path d="M-16,92.19 L-16,92.0521  L-16,91.6453  L-16,90.9901  L-16,90.1192  L-16,89.0764  L-16,87.9139  L-16,86.69  L-16,85.4661  L-16,84.3036  L-16,83.2608  L-16,82.3899  L-16,81.7347  L-16,81.3279  L-16,81.19 " /></g>
+</g>
+
+
+
+<g> 
+  <line x1="59.000000" y1="65.310000" x2="59.000000" y2="72.028491" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="64.000000" y1="65.310000" x2="64.000000" y2="72.028491" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="59.000000" y1="71.028491" x2="64.000000" y2="71.028491" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="64.000000,71.028491 67.000000,72.028491 68.000000,71.028491 67.000000,70.028491" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="59.000000,71.028491 56.000000,70.028491 55.000000,71.028491 56.000000,72.028491" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="61.500000" y="69.028491" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 61.500000,69.028491)" >5</text> </g>
+
+
+<g> 
+  <line x1="64.000000" y1="65.310000" x2="64.000000" y2="66.420978" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="92.000000" y1="56.134500" x2="92.000000" y2="66.420978" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="64.000000" y1="65.420978" x2="92.000000" y2="65.420978" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="92.000000,65.420978 89.000000,64.420978 88.000000,65.420978 89.000000,66.420978" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="64.000000,65.420978 67.000000,66.420978 68.000000,65.420978 67.000000,64.420978" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="78.000000" y="63.420978" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 78.000000,63.420978)" >28</text> </g>
+
+
+<g> 
+  <line x1="139.690000" y1="54.310000" x2="139.690000" y2="68.290149" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="171.690000" y1="54.310000" x2="171.690000" y2="68.290149" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="139.690000" y1="67.290149" x2="171.690000" y2="67.290149" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="171.690000,67.290149 168.690000,66.290149 167.690000,67.290149 168.690000,68.290149" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="139.690000,67.290149 142.690000,68.290149 143.690000,67.290149 142.690000,66.290149" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="155.690000" y="65.290149" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 155.690000,65.290149)" >32</text> </g>
+
+
+<g> 
+  <line x1="150.190000" y1="45.310000" x2="150.190000" y2="28.045543" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="161.190000" y1="45.310000" x2="161.190000" y2="28.045543" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="150.190000" y1="29.045543" x2="161.190000" y2="29.045543" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="161.190000,29.045543 158.190000,28.045543 157.190000,29.045543 158.190000,30.045543" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="150.190000,29.045543 153.190000,30.045543 154.190000,29.045543 153.190000,28.045543" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="155.690000" y="27.045543" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 155.690000,27.045543)" >11</text> </g>
+
+
+<g> 
+  <line x1="142.690000" y1="45.310000" x2="142.690000" y2="20.032979" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="168.690000" y1="45.310000" x2="168.690000" y2="20.032979" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="142.690000" y1="21.032979" x2="168.690000" y2="21.032979" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="168.690000,21.032979 165.690000,20.032979 164.690000,21.032979 165.690000,22.032979" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="142.690000,21.032979 145.690000,22.032979 146.690000,21.032979 145.690000,20.032979" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="155.690000" y="19.032979" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 155.690000,19.032979)" >26</text> </g>
+
+
+<g> 
+  <line x1="94.000000" y1="40.310000" x2="107.866059" y2="40.310000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="94.000000" y1="54.310000" x2="107.866059" y2="54.310000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="106.866059" y1="40.310000" x2="106.866059" y2="54.310000" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="106.866059,54.310000 107.866059,51.310000 106.866059,50.310000 105.866059,51.310000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="106.866059,40.310000 105.866059,43.310000 106.866059,44.310000 107.866059,43.310000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="104.866059" y="47.310000" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(-90.000000 104.866059,47.310000)" >14</text> </g>
+
+
+<g> 
+  <line x1="59.000000" y1="29.310000" x2="59.000000" y2="20.387702" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="92.000000" y1="38.485500" x2="92.000000" y2="20.387702" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="59.000000" y1="21.387702" x2="92.000000" y2="21.387702" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="92.000000,21.387702 89.000000,20.387702 88.000000,21.387702 89.000000,22.387702" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="59.000000,21.387702 62.000000,22.387702 63.000000,21.387702 62.000000,20.387702" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="75.500000" y="19.387702" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 75.500000,19.387702)" >33</text> </g>
+
+
+<g> 
+  <line x1="53.000000" y1="143.810000" x2="53.000000" y2="134.311585" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="61.000000" y1="139.810000" x2="61.000000" y2="134.311585" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="53.000000" y1="135.311585" x2="61.000000" y2="135.311585" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="61.000000,135.311585 64.000000,136.311585 65.000000,135.311585 64.000000,134.311585" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="53.000000,135.311585 50.000000,134.311585 49.000000,135.311585 50.000000,136.311585" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="57.000000" y="133.311585" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 57.000000,133.311585)" >8</text> </g>
+
+
+<g> 
+  <line x1="64.000000" y1="139.810000" x2="64.000000" y2="137.201361" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="113.000000" y1="143.810000" x2="113.000000" y2="137.201361" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="64.000000" y1="138.201361" x2="113.000000" y2="138.201361" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="113.000000,138.201361 110.000000,137.201361 109.000000,138.201361 110.000000,139.201361" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="64.000000,138.201361 67.000000,139.201361 68.000000,138.201361 67.000000,137.201361" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="88.500000" y="136.201361" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 88.500000,136.201361)" >49</text> </g>
+
+
+<g> 
+  <line x1="61.000000" y1="162.571800" x2="61.000000" y2="169.193938" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="64.000000" y1="162.571800" x2="64.000000" y2="169.193938" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="61.000000" y1="168.193938" x2="64.000000" y2="168.193938" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="64.000000,168.193938 67.000000,169.193938 68.000000,168.193938 67.000000,167.193938" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="61.000000,168.193938 58.000000,167.193938 57.000000,168.193938 58.000000,169.193938" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="62.500000" y="166.193938" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 62.500000,166.193938)" >3</text> </g>
+
+
+<g> 
+  <line x1="53.000000" y1="158.672100" x2="53.000000" y2="179.930559" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="113.000000" y1="158.672100" x2="113.000000" y2="179.930559" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="53.000000" y1="178.930559" x2="113.000000" y2="178.930559" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="113.000000,178.930559 110.000000,177.930559 109.000000,178.930559 110.000000,179.930559" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="53.000000,178.930559 56.000000,179.930559 57.000000,178.930559 56.000000,177.930559" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="83.000000" y="176.930559" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 83.000000,176.930559)" >60</text> </g>
+
+
+<g> 
+  <line x1="115.000000" y1="145.810000" x2="122.718629" y2="145.810000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="115.000000" y1="156.810000" x2="122.718629" y2="156.810000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="121.718629" y1="145.810000" x2="121.718629" y2="156.810000" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="121.718629,156.810000 122.718629,153.810000 121.718629,152.810000 120.718629,153.810000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="121.718629,145.810000 120.718629,148.810000 121.718629,149.810000 122.718629,148.810000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="119.718629" y="151.310000" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(-90.000000 119.718629,151.310000)" >11</text> </g>
+
+
+<g> 
+  <line x1="57.000000" y1="31.310000" x2="47.315758" y2="31.310000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="57.000000" y1="63.310000" x2="47.315758" y2="63.310000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="48.315758" y1="31.310000" x2="48.315758" y2="63.310000" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="48.315758,63.310000 49.315758,60.310000 48.315758,59.310000 47.315758,60.310000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="48.315758,31.310000 47.315758,34.310000 48.315758,35.310000 49.315758,34.310000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="46.315758" y="47.310000" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(-90.000000 46.315758,47.310000)" >32</text> </g>
+
+
+<g> 
+  <line x1="59.000000" y1="160.810000" x2="43.653349" y2="160.810000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="59.000000" y1="141.810000" x2="43.653349" y2="141.810000" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="44.653349" y1="160.810000" x2="44.653349" y2="141.810000" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="44.653349,141.810000 43.653349,144.810000 44.653349,145.810000 45.653349,144.810000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="44.653349,160.810000 45.653349,157.810000 44.653349,156.810000 43.653349,157.810000" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="42.653349" y="151.310000" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(-90.000000 42.653349,151.310000)" >19</text> </g>
+
+
+<g> 
+  <line x1="156.190000" y1="153.310000" x2="156.190000" y2="173.968132" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="159.190000" y1="153.310000" x2="159.190000" y2="173.968132" style="stroke:rgb(0,0,255);stroke-width:0.50" />
+<line x1="156.190000" y1="172.968132" x2="159.190000" y2="172.968132" style="stroke:rgb(0,0,255);stroke-width:0.50" /> 
+  <polygon points="159.190000,172.968132 162.190000,173.968132 163.190000,172.968132 162.190000,171.968132" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /><polygon points="156.190000,172.968132 153.190000,171.968132 152.190000,172.968132 153.190000,173.968132" style="fill:rgb(0,0,255);stroke:rgb(0,0,255);stroke-width:0" /> 
+  <text x="157.690000" y="170.968132" font-family="inherit" font-size="3.6" fill="rgb(0,0,255)" text-anchor="middle" transform="rotate(0.000000 157.690000,170.968132)" >3</text> </g>
+
+
+</svg>
+
