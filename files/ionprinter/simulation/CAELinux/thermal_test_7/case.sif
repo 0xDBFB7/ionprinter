@@ -105,6 +105,7 @@ End
 Material 1
   Name = "Aluminium (generic)"
   Porosity Model = van Genuchten
+Emissivity = 0.2
   Poisson ratio = 0.35
   Heat expansion Coefficient = 23.1e-6
   Electric Conductivity = 37.73e6
@@ -124,24 +125,30 @@ Body Force 1
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 17
-  Name = "Anode"
-  Potential = 48
+  Target Boundaries(1) = 1
+  Name = "Radiation"
+  Radiation = Idealized
 End
 
 Boundary Condition 2
+  Target Boundaries(1) = 17
+  Name = "Anode"
+  Potential = 24
+End
+
+Boundary Condition 3
   Target Boundaries(1) = 23
   Name = "Cathode"
   Potential = 0
 End
 
-Boundary Condition 3
+Boundary Condition 4
   Target Boundaries(1) = 24
   Name = "FTTemp"
   Temperature = 350
 End
 
-Boundary Condition 4
+Boundary Condition 5
   Target Boundaries(1) = 25
   Name = "FTTemp"
   Temperature = 350
