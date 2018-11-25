@@ -2657,7 +2657,7 @@
          </widget>
          <widget type="Edit">
             <key>/Static Current Conduction/BoundaryCondition/Potential/1</key>
-            <value>5</value>
+            <value>24</value>
          </widget>
          <widget type="Edit">
             <key>/Reynolds Equation/BoundaryCondition/FilmPressure/1</key>
@@ -4013,7 +4013,7 @@
          </widget>
          <widget type="Combo">
             <key>/Heat Equation/BoundaryCondition/Radiation/3</key>
-            <value>Diffuse Gray</value>
+            <value>Idealized</value>
          </widget>
          <widget type="CheckBox">
             <key>/K-Epsilon/BoundaryCondition/Reichardts Wall Law/3</key>
