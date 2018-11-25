@@ -31,7 +31,6 @@ Body 1
   Name = "Body 1"
   Equation = 1
   Material = 1
-  Body Force = 1
   Initial condition = 1
 End
 
@@ -87,17 +86,6 @@ Solver 2
   Linear System Precondition Recompute = 1
 End
 
-Solver 3 ! Set the correct solver number here.
-              ! Usually you want to use the highest number so the results are saved at the end of a timestep.
-  Exec Solver = String "after timestep"
-  exec interval = 1
-  Equation = String "ResultOutput"
-  Procedure = File "ResultOutputSolve" "ResultOutputSolver"
-  Output File Name = String "paraver." !or any other output file name of your choice
-  Output Format = String "vtk"
-  Vtk Format = Logical True
-End
-
 Equation 1
   Name = "Equation 1"
   Active Solvers(2) = 1 2
@@ -130,14 +118,6 @@ Initial Condition 1
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 1
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 2
   Target Boundaries(1) = 2
   Name = "Radiation"
   Radiation = Idealized
@@ -145,15 +125,7 @@ External Temperature = 300
   Emissivity = 0.98
 End
 
-Boundary Condition 3
-  Target Boundaries(1) = 3
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 4
+Boundary Condition 2
   Target Boundaries(1) = 4
   Name = "Radiation"
   Radiation = Idealized
@@ -161,23 +133,7 @@ External Temperature = 300
   Emissivity = 0.98
 End
 
-Boundary Condition 5
-  Target Boundaries(1) = 5
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 6
-  Target Boundaries(1) = 6
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 7
+Boundary Condition 3
   Target Boundaries(1) = 7
   Name = "Radiation"
   Radiation = Idealized
@@ -185,7 +141,7 @@ External Temperature = 300
   Emissivity = 0.98
 End
 
-Boundary Condition 8
+Boundary Condition 4
   Target Boundaries(1) = 8
   Name = "Radiation"
   Radiation = Idealized
@@ -193,80 +149,14 @@ External Temperature = 300
   Emissivity = 0.98
 End
 
-Boundary Condition 9
-  Target Boundaries(1) = 9
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 10
-  Target Boundaries(1) = 10
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 11
-  Target Boundaries(1) = 11
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 12
-  Target Boundaries(1) = 12
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 13
-  Target Boundaries(1) = 13
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 14
-  Target Boundaries(1) = 14
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 15
-  Target Boundaries(1) = 15
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 16
-  Target Boundaries(1) = 16
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 17
+Boundary Condition 5
   Target Boundaries(1) = 17
   Name = "Anode"
-  Radiation = Idealized
 External Temperature = 300
-  Emissivity = 0.98
-  Potential = 12
+  Potential = 5
 End
 
-Boundary Condition 18
+Boundary Condition 6
   Target Boundaries(1) = 18
   Name = "Radiation"
   Radiation = Idealized
@@ -274,71 +164,21 @@ External Temperature = 300
   Emissivity = 0.98
 End
 
-Boundary Condition 19
-  Target Boundaries(1) = 19
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 20
-  Target Boundaries(1) = 20
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 21
-  Target Boundaries(1) = 21
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 22
-  Target Boundaries(1) = 22
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 23
+Boundary Condition 7
   Target Boundaries(1) = 23
   Name = "Cathode"
-  Radiation = Idealized
 External Temperature = 300
-  Emissivity = 0.98
   Potential = 0
 End
 
-Boundary Condition 24
+Boundary Condition 8
   Target Boundaries(1) = 24
   Name = "FTTemp"
   Temperature = 350
 End
 
-Boundary Condition 25
+Boundary Condition 9
   Target Boundaries(1) = 25
   Name = "FTTemp"
   Temperature = 350
-End
-
-Boundary Condition 26
-  Target Boundaries(1) = 26
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
-End
-
-Boundary Condition 27
-  Target Boundaries(1) = 27
-  Name = "Radiation"
-  Radiation = Idealized
-External Temperature = 300
-  Emissivity = 0.98
 End
