@@ -45,7 +45,7 @@ Solver 1
   Optimize Bandwidth = True
   Steady State Convergence Tolerance = 1.0e-5
   Nonlinear System Convergence Tolerance = 1.0e-8
-  Nonlinear System Max Iterations = 20
+  Nonlinear System Max Iterations = 50
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-3
   Nonlinear System Relaxation Factor = 1
@@ -71,10 +71,10 @@ Solver 2
   Optimize Bandwidth = True
   Steady State Convergence Tolerance = 1.0e-5
   Nonlinear System Convergence Tolerance = 1.0e-8
-  Nonlinear System Max Iterations = 20
+  Nonlinear System Max Iterations = 50
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-3
-  Nonlinear System Relaxation Factor = 1
+  Nonlinear System Relaxation Factor = 0.9
   Linear System Solver = Iterative
   Linear System Iterative Method = BiCGStab
   Linear System Max Iterations = 500
@@ -84,6 +84,17 @@ Solver 2
   Linear System Abort Not Converged = False
   Linear System Residual Output = 1
   Linear System Precondition Recompute = 1
+End
+
+Solver 3 ! Set the correct solver number here.
+              ! Usually you want to use the highest number so the results are saved at the end of a timestep.
+  Exec Solver = String "after timestep"
+  exec interval = 1
+  Equation = String "ResultOutput"
+  Procedure = File "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = String "paraver." !or any other output file name of your choice
+  Output Format = String "vtk"
+  Vtk Format = Logical True
 End
 
 Equation 1
@@ -113,34 +124,39 @@ Body Force 1
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 1
-  Name = ""
+  Target Boundaries(23) = 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 18 19 20 21 22 26 27
+  Name = "Radiation"
+  Radiation = Idealized
+  External Temperature = 300
+  Emissivity = 0.98
 End
+
 
 Boundary Condition 2
-  Target Boundaries(1) = 2
-  Name = ""
-End
-
-Boundary Condition 3
   Target Boundaries(1) = 17
   Name = "Anode"
   Potential = 12
+  Radiation = Idealized
+  External Temperature = 300
+  Emissivity = 0.98
 End
 
-Boundary Condition 4
+Boundary Condition 3
   Target Boundaries(1) = 23
   Name = "Cathode"
   Potential = 0
+  Radiation = Idealized
+  External Temperature = 300
+  Emissivity = 0.98
 End
 
-Boundary Condition 5
+Boundary Condition 4
   Target Boundaries(1) = 24
   Name = "FTTemp"
   Temperature = 300
 End
 
-Boundary Condition 6
+Boundary Condition 5
   Target Boundaries(1) = 25
   Name = "FTTemp"
   Temperature = 300
