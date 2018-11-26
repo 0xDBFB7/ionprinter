@@ -102,7 +102,27 @@ Equation 1
   Active Solvers(2) = 1 2
 End
 
+! Graphite value are a rough approximation to the data provided in
+! Lutcov, A. ., Volga, V. ., & Dymov, B. . (1970).
+! Thermal conductivity, electric resistivity and specific heat of dense graphites.
+
+! Specific heat data is from Thermal Properties of G-348 Graphite
+! Donald M. McEligot, W. David Swank, David L. Cottle, Francisco I. Valentin
+! Mr. Swank, you've got a cool name.
+
 Material 1
+  Name = "Graphite (generic)"
+  Porosity Model = van Genuchten
+  Electric Conductivity = 4e5 !Siemens per meter
+  Heat Conductivity = 80
+  Heat Capacity = 1500 !J/(kg*K)
+  Mesh Poisson ratio = 0.35
+  Density = 1700.0
+  Poisson ratio = 0.35
+  Youngs modulus = 70.0e9
+End
+
+Material 2
   Name = "Aluminium (generic)"
   Porosity Model = van Genuchten
   Poisson ratio = 0.35
@@ -135,7 +155,7 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 17
   Name = "Anode"
-  Potential = 12
+  Potential = 24
   Radiation = Idealized
   External Temperature = 300
   Emissivity = 0.98
