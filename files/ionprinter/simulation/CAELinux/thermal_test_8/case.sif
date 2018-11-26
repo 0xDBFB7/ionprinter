@@ -114,16 +114,12 @@ End
 
 Boundary Condition 1
   Target Boundaries(1) = 1
-  Name = "Radiation"
-  Radiation = Diffuse Gray
-  Emissivity = 0.98
+  Name = ""
 End
 
 Boundary Condition 2
   Target Boundaries(1) = 2
-  Name = "Radiation"
-  Radiation = Diffuse Gray
-  Emissivity = 0.98
+  Name = ""
 End
 
 Boundary Condition 3
