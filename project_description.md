@@ -52,13 +52,13 @@ With a 100g/h deposition rate, a 10 mil dot size, and reasonable Z resolution of
 
 With a 10 mil dot size over a 1 cm deflection (400 steps), the slide will have to move at around $$1 cm/ 20 milliseconds$$ - around 40,000 mm/min. This seems just barely achievable with stepper slides.
 
-With those same values and a requirement of 5 bytes per point , the software will have to stream points at nearly 100kbps. That seems achivable too. Proper curve fitting etc will also reduce that.
+With those same values and a requirement of 5 bytes per point, the software will have to stream points at nearly 100kbps. That seems achievable too. Proper curve fitting etc will also reduce that.
 
-Values I'll probably have to update live: 
+Values I'll probably have to update live:
 
 - Beam X Y position, focus, astigmatism.
 - Stepper X and Y position.
-- 
+-
 
 RF power, beam current, diffusion pump power, etc will presumably be set before a print.
 
@@ -73,7 +73,7 @@ Someone on phys.se raised a good point: at low acceleration voltages, how will s
 
 Since the magnetic force on a moving charge is F=qvB, the fuzzing due to magnetic fields should actually go down - but let's make sure.
 
-At 48 eV, Aluminum will travel at 18,528 m/s. qvB at 100 gauss = -3×10^-17 newtons. The particles will take 2.7×10^-5 seconds to travel 0.5m to the build plate. This means that the beam will be slewed 
+At 48 eV, Aluminum will travel at 18,528 m/s. qvB at 100 gauss = -3×10^-17 newtons. The particles will take 2.7×10^-5 seconds to travel 0.5m to the build plate. This means that the beam will be slewed
 
 0.5 * 6.695846×10^8 meters per second squared * (2.7×10^-5s)^2 = 0.2 meters.
 
@@ -89,7 +89,7 @@ I must have something wrong in my reasoning. Going again:
 
 Where r is energy, in eV.
 
-R just falls out of the equation: 
+R just falls out of the equation:
 
 (0.5*b*d)/m
 
@@ -124,7 +124,7 @@ Hmm. Perhaps that "striking" effect relies on the gas already being ionized. Tha
 
 Had an enlightening discussion on The H Bar about this striking effect; apparently it is related to the electron drift rate, and is likely to work on a stream of gas. Also, in 20170210_100824.mp4
 
-When my milligram balance comes in, I'll try running a test with +48v and see what kind of ionization I can get - deposit onto a plate, measure the charge, weigh the plate, and divide by atomic mass of aluminum. 
+When my milligram balance comes in, I'll try running a test with +48v and see what kind of ionization I can get - deposit onto a plate, measure the charge, weigh the plate, and divide by atomic mass of aluminum.
 
 Going back to my graphite "bowtie" filament/crucibles; I can't find a reliable source on the resistivity of graphite, suprisingly enough; it seems to vary wildly between batches and processes. Measuring my block from McMaster, I get a value anywhere between 10 and 0.3 ohms with varying contact pressure. The block is 20.5 cm long by 2.5cm wide and 0.7cm thick. To get a slightly better reading, I connected up my Korad PSU to both ends and set it to 0.5a. This gave me a voltage of around 50-70mv and falling, for a resistance of around 1.5 ohms. Scaling that roughly to my previous bowtie's area, I get about 0.8 ohms. This explains why I didn't get good results with my previous bowtie tests at 20v; I'd only be drawing a few hundred watts. I'll have to try again with a smaller bowtie and with my new PSU.
 
@@ -137,11 +137,11 @@ jb weld
 
 
 
-Darnit. Another first-principles error; and I know why my many graphite/filament tests weren't working. With a surface area of 808 mm^2 (the v2 bowtie), and a temperature of 3070 K, 
+Darnit. Another first-principles error; and I know why my many graphite/filament tests weren't working. With a surface area of 808 mm^2 (the v2 bowtie), and a temperature of 3070 K,
 the bowtie will be radiating *nearly 4 kilowatts* as heat; the Stefan-Boltzmann law goes as the 4th power of temperature. The emissivity of tungsten is 0.04, which makes for a loss of 160w with the same area.
 
 If I can get the bowtie surface area to below 20 mm^2, I'll only have to
-contend with 100w of radiative losses, which seems manageable. Power budget is being eaten into a bit, but oh well.  I could also try using an aluminum reflector to increase efficiency; 
+contend with 100w of radiative losses, which seems manageable. Power budget is being eaten into a bit, but oh well.  I could also try using an aluminum reflector to increase efficiency;
 aluminum is 87% reflective at infrared.
 
 
@@ -171,5 +171,3 @@ A small dot size is only required for fine details, where the print speed can be
 Some simple math: 40g/h of aluminum, which is 15 cubic centimeters (a cube 2.46cm to the side).
 
 Tested the micro stepper injector motor: good torque at raw 5v from an arduino even up to 240rpm. It has an unusual 8-10-9-11 pinout, strangely.
-
-

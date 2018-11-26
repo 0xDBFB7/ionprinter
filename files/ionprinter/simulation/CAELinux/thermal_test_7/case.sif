@@ -31,7 +31,8 @@ Body 1
   Name = "Body 1"
   Equation = 1
   Material = 1
-  Initial condition = 1
+  Body Force = 1
+  Initial Condition = 1
 End
 
 Solver 1
@@ -45,7 +46,7 @@ Solver 1
   Optimize Bandwidth = True
   Steady State Convergence Tolerance = 1.0e-5
   Nonlinear System Convergence Tolerance = 1.0e-8
-  Nonlinear System Max Iterations = 20
+  Nonlinear System Max Iterations = 40
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-3
   Nonlinear System Relaxation Factor = 1
@@ -71,7 +72,7 @@ Solver 2
   Optimize Bandwidth = True
   Steady State Convergence Tolerance = 1.0e-5
   Nonlinear System Convergence Tolerance = 1.0e-8
-  Nonlinear System Max Iterations = 20
+  Nonlinear System Max Iterations = 40
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-3
   Nonlinear System Relaxation Factor = 0.5
@@ -153,7 +154,7 @@ Boundary Condition 5
   Target Boundaries(1) = 17
   Name = "Anode"
 External Temperature = 300
-  Potential = 5
+  Potential = 48
 End
 
 Boundary Condition 6

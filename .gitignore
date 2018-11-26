@@ -1,3 +1,6 @@
 media/
 sources/
 *.msh
+*.dat
+*.vtk
+*.*.vtk

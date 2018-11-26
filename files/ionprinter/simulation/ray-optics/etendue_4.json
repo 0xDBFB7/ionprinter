@@ -1,0 +1,113 @@
+{
+	"version": 2,
+	"objs": [{
+		"type": "lens",
+		"p1": {
+			"type": 1,
+			"x": 10,
+			"y": 55,
+			"exist": true
+		},
+		"p2": {
+			"type": 1,
+			"x": 10,
+			"y": 45,
+			"exist": true
+		},
+		"p": -8
+	},{
+                "type": "lens",
+                "p1": {
+                        "type": 1,
+                        "x": 50,
+                        "y": 70,
+                        "exist": true
+                },
+                "p2": {
+                        "type": 1,
+                        "x": 50,
+                        "y": 30,
+                        "exist": true
+                },
+                "p": 25
+	},{
+		"type": "laser",
+		"p1": {
+			"type": 1,
+			"x": 0,
+			"y": 50.5,
+			"exist": true
+		},
+		"p2": {
+			"type": 1,
+			"x": 10,
+			"y": 55,
+			"exist": true
+		}
+	}, {
+		"type": "laser",
+		"p1": {
+			"type": 1,
+			"x": 0,
+			"y": 50.5,
+			"exist": true
+		},
+		"p2": {
+			"type": 1,
+			"x": 10,
+			"y": 45,
+			"exist": true
+		}
+	}, {
+		"type": "laser",
+		"p1": {
+			"type": 1,
+			"x": 0,
+			"y": 49.5,
+			"exist": true
+		},
+		"p2": {
+			"type": 1,
+			"x": 10,
+			"y": 55,
+			"exist": true
+		}
+	}, {
+		"type": "laser",
+		"p1": {
+			"type": 1,
+			"x": 0,
+			"y": 49.5,
+			"exist": true
+		},
+		"p2": {
+			"type": 1,
+			"x": 10,
+			"y": 45,
+			"exist": true
+		}
+	}, {
+		"type": "blackline",
+		"p1": {
+			"type": 1,
+			"x": 100,
+			"y": 70,
+			"exist": true
+		},
+		"p2": {
+			"type": 1,
+			"x": 100,
+			"y": 30,
+			"exist": true
+		}
+	}],
+	"mode": "light",
+	"rayDensity_light": 0.24701653531492773,
+	"rayDensity_images": 1,
+	"observer": null,
+	"origin": {
+		"x": -624.172360790059,
+		"y": -145.2057239825334
+	},
+	"scale": 10
+}

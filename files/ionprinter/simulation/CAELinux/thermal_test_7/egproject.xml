@@ -115,7 +115,7 @@
       </widget>
       <widget type="LineEdit">
          <objectName>qt_spinbox_lineedit</objectName>
-         <text>2</text>
+         <text>8</text>
       </widget>
       <widget type="LineEdit">
          <objectName>parallelExecLineEdit</objectName>
@@ -605,12 +605,16 @@
             <text>1</text>
          </widget>
          <widget type="LineEdit">
+            <objectName>steadyStateConvergenceToleranceEdit</objectName>
+            <text>1.0e-5</text>
+         </widget>
+         <widget type="LineEdit">
             <objectName>nonlinSystemConvergenceToleranceEdit</objectName>
             <text>1.0e-8</text>
          </widget>
          <widget type="LineEdit">
             <objectName>nonlinSystemMaxIterationEdit</objectName>
-            <text>20</text>
+            <text>40</text>
          </widget>
          <widget type="LineEdit">
             <objectName>nonlinSystemRelaxationFactorEdit</objectName>
@@ -623,10 +627,6 @@
          <widget type="LineEdit">
             <objectName>nonlinSystemNewtonAfterTolEdit</objectName>
             <text>1.0e-3</text>
-         </widget>
-         <widget type="LineEdit">
-            <objectName>steadyStateConvergenceToleranceEdit</objectName>
-            <text>1.0e-5</text>
          </widget>
          <widget type="ComboBox">
             <objectName>boomerCycle</objectName>
@@ -665,11 +665,11 @@
             <currentIndex>2</currentIndex>
          </widget>
          <widget type="ComboBox">
-            <objectName>nonlinSystemConvergenceMeasureCombo</objectName>
+            <objectName>steadyStateConvergenceMeasureCombo</objectName>
             <currentIndex>0</currentIndex>
          </widget>
          <widget type="ComboBox">
-            <objectName>steadyStateConvergenceMeasureCombo</objectName>
+            <objectName>nonlinSystemConvergenceMeasureCombo</objectName>
             <currentIndex>0</currentIndex>
          </widget>
       </item>
@@ -1355,12 +1355,16 @@
             <text>1</text>
          </widget>
          <widget type="LineEdit">
+            <objectName>steadyStateConvergenceToleranceEdit</objectName>
+            <text>1.0e-5</text>
+         </widget>
+         <widget type="LineEdit">
             <objectName>nonlinSystemConvergenceToleranceEdit</objectName>
             <text>1.0e-8</text>
          </widget>
          <widget type="LineEdit">
             <objectName>nonlinSystemMaxIterationEdit</objectName>
-            <text>20</text>
+            <text>40</text>
          </widget>
          <widget type="LineEdit">
             <objectName>nonlinSystemRelaxationFactorEdit</objectName>
@@ -1373,10 +1377,6 @@
          <widget type="LineEdit">
             <objectName>nonlinSystemNewtonAfterTolEdit</objectName>
             <text>1.0e-3</text>
-         </widget>
-         <widget type="LineEdit">
-            <objectName>steadyStateConvergenceToleranceEdit</objectName>
-            <text>1.0e-5</text>
          </widget>
          <widget type="ComboBox">
             <objectName>boomerCycle</objectName>
@@ -1415,11 +1415,11 @@
             <currentIndex>2</currentIndex>
          </widget>
          <widget type="ComboBox">
-            <objectName>nonlinSystemConvergenceMeasureCombo</objectName>
+            <objectName>steadyStateConvergenceMeasureCombo</objectName>
             <currentIndex>0</currentIndex>
          </widget>
          <widget type="ComboBox">
-            <objectName>steadyStateConvergenceMeasureCombo</objectName>
+            <objectName>nonlinSystemConvergenceMeasureCombo</objectName>
             <currentIndex>0</currentIndex>
          </widget>
       </item>
@@ -5346,7 +5346,7 @@
          </widget>
          <widget type="Edit">
             <key>/Static Current Conduction/BoundaryCondition/Potential/3</key>
-            <value>5</value>
+            <value>48</value>
          </widget>
          <widget type="Edit">
             <key>/Reynolds Equation/BoundaryCondition/FilmPressure/3</key>
@@ -10454,7 +10454,7 @@
          </widget>
          <widget type="ComboBox">
             <objectName>bodyForceCombo</objectName>
-            <currentIndex>0</currentIndex>
+            <currentIndex>1</currentIndex>
          </widget>
          <widget type="ComboBox">
             <objectName>initialConditionCombo</objectName>
