@@ -16,6 +16,7 @@ Simulation
   BDF Order = 1
   Solver Input File = case.sif
   Post File = case.ep
+  Coordinate Scaling = 0.001
 End
 
 Constants
@@ -43,6 +44,8 @@ Solver 1
   Bubbles = False
   Lumped Mass Matrix = False
   Optimize Bandwidth = True
+  Calculate Volume Current = True
+  Calculate Joule Heating = True
   Steady State Convergence Tolerance = 1.0e-5
   Nonlinear System Convergence Tolerance = 1.0e-8
   Nonlinear System Max Iterations = 50
