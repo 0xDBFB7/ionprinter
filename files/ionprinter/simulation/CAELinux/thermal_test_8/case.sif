@@ -165,7 +165,7 @@ Body Force 1
 End
 
 Boundary Condition 1
-  Target Boundaries(13) = 2 4 5 6 7 8 9 10 13 14 15 16 17
+  Target Boundaries(11) = 4 5 6 7 8 10 13 14 15 16 17
   Name = "Radiation"
   Radiation = Idealized
   External Temperature = 300
@@ -176,7 +176,7 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 18
   Name = "Anode"
-  Potential = 30
+  Potential = 48
   Radiation = Idealized
   External Temperature = 300
   Emissivity = 0.98
@@ -198,7 +198,7 @@ Boundary Condition 4
 End
 
 Boundary Condition 5
-  Target Boundaries(1) = 12
+  Target Boundaries(3) = 12 2 9
   Name = "FTTemp"
   Temperature = 300
 End
