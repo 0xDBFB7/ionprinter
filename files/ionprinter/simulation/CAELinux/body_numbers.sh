@@ -1,5 +1,5 @@
-for s in {1..18}
+for s in {1..28}
 do
-   [ "$s" -eq 3 ] || [ "$s" -eq 18 ] || [ "$s" -eq 1 ] || [ "$s" -eq 12 ]  && continue
+   [ "$s" -eq 15 ] || [ "$s" -eq 25 ] || [ "$s" -eq 26 ] || [ "$s" -eq 16 ] || [ "$s" -eq 28 ]  && continue
    echo -n "$s "
 done
