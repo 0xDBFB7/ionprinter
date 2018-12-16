@@ -15,7 +15,7 @@
 #endif
 
 #define BEAM_RADIUS 0.01 //m
-#define BEAM_CURRENT 35.75 //A
+#define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
 const double Te = 5.0;
@@ -37,42 +37,44 @@ bool solid2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    Geometry geom( MODE_CYL, Int3D(241,141,1), Vec3D(0,0,0), 0.00005 );
+    Geometry geom( MODE_CYL, Int3D(200,200,1), Vec3D(0,0,0), 0.005 );
     // Solid *s1 = new FuncSolid( solid1 );
     // geom.set_solid( 7, s1 );
     // Solid *s2 = new FuncSolid( solid2 );
     // geom.set_solid( 8, s2 );
     geom.set_boundary( 1, Bound(BOUND_NEUMANN,    0.0 ) );
-    // geom.set_boundary( 2, Bound(BOUND_DIRICHLET, -12.0e3) );
+    geom.set_boundary( 2, Bound(BOUND_DIRICHLET, -12.0e3) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,    0.0) );
-    geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
+    // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );
     geom.build_mesh();
 
     EpotBiCGSTABSolver solver( geom );
-    InitialPlasma initp( AXIS_X, 0.55e-3 );
-    solver.set_initial_plasma( 5.0, &initp );
 
     EpotField epot( geom );
     MeshScalarField scharge( geom );
-    MeshVectorField bfield;
     EpotEfield efield( epot );
     field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
 				     FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
 				     FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
     efield.set_extrapolation( efldextrpl );
 
+    bool fout[3] = { true, true, true };
+    MeshVectorField bfield( geom, fout);
+    for( int32_t i = 0; i < bfield.size(0); i++ ) {
+        for( int32_t j = 0; j < bfield.size(1); j++ ) {
+
+                bfield.set( i, j, 0, Vec3D( 1, 100, 100 ) );
+        }
+    }
+
+
     ParticleDataBaseCyl pdb( geom );
     bool pmirror[6] = { false, false, true, false, false, false };
     pdb.set_mirror( pmirror );
 
     for( size_t i = 0; i < 15; i++ ) {
-
-    	if( i == 1 ) {
-    	    double rhoe = pdb.get_rhosum();
-    	    solver.set_pexp_plasma( -rhoe, Te, Up );
-    	}
 
     	solver.solve( epot, scharge );
     	efield.recalculate();
@@ -81,7 +83,7 @@ void simu( int *argc, char ***argv )
       float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
 
     	pdb.add_2d_beam_with_energy(
-                                            10000, //number of particles
+                                            100, //number of particles
                                             BEAM_CURRENT/beam_area, //beam current density
                                             1.0, //charge per particle
                                             29.0, //amu
@@ -93,12 +95,14 @@ void simu( int *argc, char ***argv )
                                             );
 
     	pdb.iterate_trajectories( scharge, efield, bfield );
+
     }
 
 #ifdef GTK3
     GTKPlotter plotter( argc, argv );
     plotter.set_geometry( &geom );
     plotter.set_epot( &epot );
+    plotter.set_bfield( &bfield );
     plotter.set_scharge( &scharge );
     plotter.set_particledatabase( &pdb );
     plotter.new_geometry_plot_window();
