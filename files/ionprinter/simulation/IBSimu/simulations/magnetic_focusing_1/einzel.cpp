@@ -14,7 +14,7 @@
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.05 //m
+#define BEAM_RADIUS 0.01 //m
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
@@ -23,13 +23,13 @@ const double Up = 5.0;
 
 bool einzel_1( double x, double y, double z )
 {
-    return( y > 0.02 && x < 0.01);
+    return( y > 0.02 && x < 0.008);
 }
 
 
 bool einzel_2( double x, double y, double z )
 {
-    return( y > 0.02 && x > 0.02);
+    return( y > 0.02 && x > 0.03);
 }
 
 
@@ -42,12 +42,12 @@ void simu( int *argc, char ***argv )
     // Solid *s2 = new FuncSolid( einzel_2 );
     // geom.set_solid( 8, s2 );
 
-    geom.set_boundary( 1, Bound(BOUND_NEUMANN,    0.0 ) );
+    geom.set_boundary( 1, Bound(BOUND_DIRICHLET,  0.0 ) );
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 3, Bound(BOUND_NEUMANN,    0.0) );
-    geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0 ));
+    geom.set_boundary( 3, Bound(BOUND_DIRICHLET,  0.0) );
+    geom.set_boundary( 4, Bound(BOUND_DIRICHLET,  0.0 ));
     // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  10000.0) );
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );
@@ -67,7 +67,7 @@ void simu( int *argc, char ***argv )
     MeshVectorField bfield( geom, fout);
     for( int32_t x = 0; x < 200; x++ ) {
         for( int32_t y = 0; y < bfield.size(1); y++ ) {
-                bfield.set( x, y, 0, Vec3D( 0, 0, 1 ) );
+                bfield.set( x, y, 0, Vec3D( 0, 0, 0 ) );
         }
     }
 
@@ -92,8 +92,8 @@ void simu( int *argc, char ***argv )
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                                            0,0, //point 1
-                                            0,BEAM_RADIUS //point 2
+                                            0.005,0, //point 1
+                                            0.005,BEAM_RADIUS //point 2
                                             );
 
     	pdb.iterate_trajectories( scharge, efield, bfield );

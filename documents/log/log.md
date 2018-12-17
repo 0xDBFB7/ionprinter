@@ -69,6 +69,40 @@ $$
 Whew. That's a bunch. 
 
 <hr>
+$5.985eV$ will be emitted upon recombination - almost assuredly in the form of a photon with a wavelength of 207nm. That's intense. Probably can't put a window on this thing, though glass and polycarbonate both block almost all  far UV. Have to see if the OD is high enough for safety.
+
+<hr>
+
+Electrostatic focusing seems to be completely ineffective at these high current densities.
+
+![no_effect](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/no_effect.png)
+
+The LHC's beam current is only around 0.54A. Our beam current will be roughly 66.2 times higher!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

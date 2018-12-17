@@ -11,7 +11,7 @@
 #define EINZEL_EXTRA_R 0.01
 #define SIM_EXTRA_R 0.025
 #define BEAM_Y_TOP 0.055
-#define BEAM_Y_BOTTOM 0.045 
+#define BEAM_Y_BOTTOM 0.045
 
 bool einzel_1( double x, double y, double z )
 {
@@ -42,11 +42,11 @@ void simu( void )
     geom.set_solid( 8, s2 );
     Solid *s3 = new FuncSolid( einzel_3 );
     geom.set_solid( 9, s3 );
-    
-    geom.set_boundary( 1, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0  ) );
-    geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0  ) );
+
+    geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
+    geom.set_boundary( 2, Bound(BOUND_DIRICHLET,   0.0) );
+    geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
+    geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  -100.0) );
     geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
@@ -55,7 +55,7 @@ void simu( void )
     EpotField epot( geom );
     MeshScalarField scharge( geom );
     EpotEfield efield( epot );
-    field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE, 
+    field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
 				     FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
 				     FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
     efield.set_extrapolation( efldextrpl );
@@ -68,7 +68,7 @@ void simu( void )
             //double y = extbfield.origo(1)+j*bfield.h();
             for ( uint32_t k = 0; k < extbfield.size(2); k++ ) {
                 //double z = extbfield.origo(2)+k*bfield.h();
-		
+
 
 		if(i < 50){
 	                Bz = 0.0; //0.5 T
@@ -93,16 +93,16 @@ void simu( void )
 	solver.solve( epot, scharge );
 	efield.recalculate();
 	pdb.clear();
-	pdb.add_2d_beam_with_energy( 1000, //beam traces 
+	pdb.add_2d_beam_with_energy( 1000, //beam traces
 					 5000000, //beam current, A/m^2
 					 1.0, //particle charge, q
-					 29.0, //mass in AMU of the particles 
-					 50, //Energy of the particles, EV 
+					 29.0, //mass in AMU of the particles
+					 50, //Energy of the particles, EV
 					 0.0,
-					 0.0, 
 					 0.0,
-					 BEAM_Y_BOTTOM, 
-					 0.0, 
+					 0.0,
+					 BEAM_Y_BOTTOM,
+					 0.0,
 					 BEAM_Y_TOP );
 	pdb.set_max_steps(15);
 	pdb.iterate_trajectories( scharge, efield, extbfield );
