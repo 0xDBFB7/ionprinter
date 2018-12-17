@@ -79,22 +79,34 @@ Electrostatic focusing seems to be completely ineffective at these high current 
 
 The LHC's beam current is only around 0.54A. Our beam current will be roughly 66.2 times higher!
 
+<hr>
+
+Oh, if your cylindrical BC is wrong you'll get bad data. Doesn't affect the above.
+
+<hr>
+We've got around 7 cm of chamber radius as our maximum focus constraint.
+
+![gradient](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/gradient.png)
+
+A 5T gradient just about does it.
 
 
 
+Remembered that accelerators use quadrupole and sextupole magnets for focusing. Researching why. 
 
+![gradient_extreme](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/gradient_extreme.png)
 
+Man, that is killer. A ~3t field for 0.2+ m. That's going to be tricky to pull off without superconductors. How's the focusing after that?
 
+![partial_gradient](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/partial_gradient.png)
 
+![full_gradient](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/full_gradient.png)
 
+Yup, that all makes sense, looks good. Pretty stable at 35.75a of beam current and 15eV. Good stuff.
 
+![gradient_30eV](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/gradient_30eV.png)
 
-
-
-
-
-
-
+The exact same test at 30eV accel. produces an identical plot.
 
 
 
@@ -117,7 +129,7 @@ diffusion pump cooling loop on oil?
 
 Nail polish barium carbonate coating
 
-plasma de-ionizes due to *black body radiation*!
+plasma de-ionizes due to *black body radiation*? Wait, what? How does that work? That can't be. Perhaps it cools to below the ionization temperature, but it can't possibly spontaneously form an electron.
 
 Pyrolytic graphite as mu-metal alternative
 

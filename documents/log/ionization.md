@@ -1,6 +1,6 @@
 This is where the magic happens.
 
-You're probably going to want to read [Fundamentals of Electric Propulsion](https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf) by Goebel and Katz et al. This ion printer shares many concepts with ion drives.
+You're probably going to want to read [^1]by Goebel and Katz et al. This ion printer shares many concepts with ion drives.
 
 The ion printer requires the input vapor to be charged; this way, the path of the particles can be directed with electrostatic (and, to a lesser degree, magnetic) fields.
 
@@ -62,3 +62,7 @@ From a back-of-the envelope calculation, assuming 150a coil current and 48v acce
 
 
 #### DC Discharge Plasma
+
+
+
+[^1]: Fundamentals of Electric Propulsion [Internal](../../references/03409552.pdf) [External](https://descanso.jpl.nasa.gov/SciTechBook/series1/Goebel__cmprsd_opt.pdf)
