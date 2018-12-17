@@ -14,37 +14,40 @@
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.01 //m
+#define BEAM_RADIUS 0.05 //m
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
 const double Te = 5.0;
 const double Up = 5.0;
 
-
-bool solid1( double x, double y, double z )
+bool einzel_1( double x, double y, double z )
 {
-    return( x <= 0.00187 && y >= 0.00054 && y >= 2.28*x - 0.0010 &&
-            (x >= 0.00054 || y >= 0.0015) );
+    return( y > 0.02 && x < 0.01);
 }
 
 
-bool solid2( double x, double y, double z )
+bool einzel_2( double x, double y, double z )
 {
-    return( x >= 0.0095 && y >= 0.0023333 && y >= 0.01283 - x );
+    return( y > 0.02 && x > 0.02);
 }
 
 
 void simu( int *argc, char ***argv )
 {
     Geometry geom( MODE_CYL, Int3D(200,200,1), Vec3D(0,0,0), 0.001 );
-    // Solid *s1 = new FuncSolid( solid1 );
+
+    // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
-    // Solid *s2 = new FuncSolid( solid2 );
+    // Solid *s2 = new FuncSolid( einzel_2 );
     // geom.set_solid( 8, s2 );
+
     geom.set_boundary( 1, Bound(BOUND_NEUMANN,    0.0 ) );
-    geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0e3) );
+    geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,    0.0) );
+    geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0 ));
+    // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  10000.0) );
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );
@@ -62,16 +65,9 @@ void simu( int *argc, char ***argv )
 
     bool fout[3] = { true, true, true };
     MeshVectorField bfield( geom, fout);
-    for( int32_t i = 0; i < bfield.size(0); i++ ) {
-        for( int32_t j = 0; j < bfield.size(1); j++ ) {
-                const double z_ave = 2.0e-3;
-                const double s = 2.5e-3;
-                double t = z-z_ave;
-                double By0 = -100.0e-3;
-                double By = By0*exp(-t*t/(2.0*s*s));
-
-                bfield.set( i, j, k, Vec3D( 0, By, 0 ) );
-                // bfield.set( i, j, 0, Vec3D( 0, 0, 1 ) );
+    for( int32_t x = 0; x < 200; x++ ) {
+        for( int32_t y = 0; y < bfield.size(1); y++ ) {
+                bfield.set( x, y, 0, Vec3D( 0, 0, 1 ) );
         }
     }
 
@@ -89,11 +85,11 @@ void simu( int *argc, char ***argv )
       float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
 
     	pdb.add_2d_beam_with_energy(
-                                            100, //number of particles
+                                            1000, //number of particles
                                             BEAM_CURRENT/beam_area, //beam current density
                                             1.0, //charge per particle
                                             29.0, //amu
-                                            15, //eV
+                                            BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
                                             0,0, //point 1
@@ -107,7 +103,7 @@ void simu( int *argc, char ***argv )
 #ifdef GTK3
     GTKPlotter plotter( argc, argv );
     plotter.set_geometry( &geom );
-    //plotter.set_epot( &epot );
+    plotter.set_epot( &epot );
     plotter.set_bfield( &bfield );
     plotter.set_scharge( &scharge );
     plotter.set_particledatabase( &pdb );
@@ -117,7 +113,7 @@ void simu( int *argc, char ***argv )
 
   GeomPlotter geomplotter( geom );
   geomplotter.set_size( 1500, 300 );
-  // geomplotter.set_epot( &epot );
+  geomplotter.set_epot( &epot );
   geomplotter.set_bfield( &bfield );
   geomplotter.set_particle_database( &pdb );
   geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
