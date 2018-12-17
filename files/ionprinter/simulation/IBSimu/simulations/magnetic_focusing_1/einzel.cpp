@@ -37,13 +37,13 @@ bool solid2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    Geometry geom( MODE_CYL, Int3D(200,200,1), Vec3D(0,0,0), 0.005 );
+    Geometry geom( MODE_CYL, Int3D(200,200,1), Vec3D(0,0,0), 0.001 );
     // Solid *s1 = new FuncSolid( solid1 );
     // geom.set_solid( 7, s1 );
     // Solid *s2 = new FuncSolid( solid2 );
     // geom.set_solid( 8, s2 );
     geom.set_boundary( 1, Bound(BOUND_NEUMANN,    0.0 ) );
-    geom.set_boundary( 2, Bound(BOUND_DIRICHLET, -12.0e3) );
+    geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0e3) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,    0.0) );
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
@@ -64,8 +64,14 @@ void simu( int *argc, char ***argv )
     MeshVectorField bfield( geom, fout);
     for( int32_t i = 0; i < bfield.size(0); i++ ) {
         for( int32_t j = 0; j < bfield.size(1); j++ ) {
+                const double z_ave = 2.0e-3;
+                const double s = 2.5e-3;
+                double t = z-z_ave;
+                double By0 = -100.0e-3;
+                double By = By0*exp(-t*t/(2.0*s*s));
 
-                bfield.set( i, j, 0, Vec3D( 1, 100, 100 ) );
+                bfield.set( i, j, k, Vec3D( 0, By, 0 ) );
+                // bfield.set( i, j, 0, Vec3D( 0, 0, 1 ) );
         }
     }
 
@@ -101,13 +107,21 @@ void simu( int *argc, char ***argv )
 #ifdef GTK3
     GTKPlotter plotter( argc, argv );
     plotter.set_geometry( &geom );
-    plotter.set_epot( &epot );
+    //plotter.set_epot( &epot );
     plotter.set_bfield( &bfield );
     plotter.set_scharge( &scharge );
     plotter.set_particledatabase( &pdb );
     plotter.new_geometry_plot_window();
     plotter.run();
 #endif
+
+  GeomPlotter geomplotter( geom );
+  geomplotter.set_size( 1500, 300 );
+  // geomplotter.set_epot( &epot );
+  geomplotter.set_bfield( &bfield );
+  geomplotter.set_particle_database( &pdb );
+  geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
+  geomplotter.plot_svg( "plot1.svg" );
 }
 
 

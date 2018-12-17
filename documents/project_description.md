@@ -1,24 +1,7 @@
-Project:
-===
-Status:
--------
 
-#### Date started: 2016-??-??
-#### Date finished: 2017-??-??
-#### Date written: 2017-08-14
-
-
-Background:
----
-
-
-Description:
----
-
-
----
-
-Thread milled the two holes for the 3/4 NPT feedthroughs - used an end mill to taper, a ball mill to finish and a 60 degree HSS tool in a boring bar to thread mill. I milled the thread in 6 passes, at 34% of 600 mm/m - 12k rpm. Coolant definitely required.
+Thread milled the two holes for the 3/4 NPT feedthroughs - used an end mill to taper,
+a ball mill to finish and a 60 degree HSS tool in a boring bar to thread mill.
+I milled the thread in 6 passes, at 34% of 600 mm/m - 12k rpm. Coolant definitely required.
 
 Leak.
 
