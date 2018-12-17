@@ -2,7 +2,22 @@
 
 
 
-<hr> 
+#### 1545020962 >
+
+<hr>
+
+Based on last night's progress on the ion beam focus theory, I'm doing some beam simulations with IBSimu to see exactly what kind of magnetic field I'm going to need. 
+
+http://ibsimu.sourceforge.net/examples/analytic_bfield.html
+
+![jackson](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/jackson.png)
+
+If you do things just wrong, you get this lovely output. Friggin' Jackson Pollock #4, that's what that is.
+
+
+
+
+
 
 ### Quick notes
 
@@ -22,3 +37,6 @@ dumet glass-to-wire seal
 Fresnel zone plate
 
 ion curtain can use a grid
+
+
+

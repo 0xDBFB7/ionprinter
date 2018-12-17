@@ -1,5 +1,5 @@
 media/
-sources/
+references/
 *.msh
 *.dat
 *.vtk
