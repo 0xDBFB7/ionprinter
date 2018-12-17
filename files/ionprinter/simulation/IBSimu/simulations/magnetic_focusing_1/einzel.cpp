@@ -42,10 +42,10 @@ void simu( int *argc, char ***argv )
     // Solid *s2 = new FuncSolid( einzel_2 );
     // geom.set_solid( 8, s2 );
 
-    geom.set_boundary( 1, Bound(BOUND_DIRICHLET,  0.0 ) );
+    geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 3, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 4, Bound(BOUND_DIRICHLET,  0.0 ));
+    geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
+    geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
     // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
