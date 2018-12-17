@@ -20,7 +20,7 @@ $$
 
  much too high for our purpose. 
 
-Oh, and it doesn't seem like you can buy either coated wire or paste off the she
+Oh, and it doesn't seem like you can buy either coated wire or paste off the shelf, so we'll have to do this ourselves.
 
 ### The ionizer cathode
 
@@ -30,7 +30,9 @@ There's a whole bunch of nuance to be added here regarding electron drift veloci
 
 I don't yet know how many electrons we'll need for this section.
 
-### The ion curtain cathode![20170209_184332](../../media/20170209_184332.jpg)
+<hr>
+
+### The ion curtain cathode
 
 Our target print speed is 2.232×10^20 atoms/s.
 
@@ -125,7 +127,7 @@ Again, readily available, and again a really abysmal efficiency. Good enough for
 
 Oxide cathodes are apparently a little tricky to make.
 
-[5]: 
+.[^5]: 
 
 > One drawback of oxide-coated nickel is that it is one use only. Once the system is let up to air, the cathode must be replaced. This is a problem in demountable systems where test elements within the system must be changed occasionally.
 
@@ -148,5 +150,7 @@ Contrary to the above, however, oxide cathodes are, in fact, demountable, if ope
  * [9]: http://www.imajeenyus.com/vacuum/20060813_thermionic_emission/index.shtml
  * [10]: Jenkins, R. O. "A review of thermionic cathodes." Vacuum 19.8 (1969): 353-359.
 
-[^1]: [Internal](sources/filament_coatings.pdf) [External](http://www.imajeenyus.com/vacuum/20060813_thermionic_emission/index.shtml)
+[^5]: ebeam Inc. - Thermionic Cathodes [Internal]() [External](http://ebeaminc.com/thermionic-cathodes.htm)
+
+
 
