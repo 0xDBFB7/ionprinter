@@ -106,11 +106,31 @@ Yup, that all makes sense, looks good. Pretty stable at 35.75a of beam current a
 
 ![gradient_30eV](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/gradient_30eV.png)
 
-The exact same test at 30eV accel. produces an identical plot.
+The exact same test at 30eV or 5eV accel. produces identical plots - as expected via analytical methods.
 
+Nulling out the space charge effects doesn't seem to have a large impact on the trajectories. Very strange.
 
+Same for the epot.  
 
+Same even for the bfield. Huh.
 
+Without:
+
+![no_scharge_epot](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/no_scharge_epot.png)
+
+With:
+
+![with_scharge](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/with_scharge.png)
+
+Okay, so there is a slight difference. I guess the scharge effects just aren't big enough yet.
+
+![narrow_input](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/narrow_input.png)
+
+Narrowing the input makes the output wider? Le what? Hmm, might be an artifact of the different magnetic field.
+
+![narrow_long](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/narrow_long.png)
+
+Looks roughly the same. Let's try a lower field and a longer distance to convergence.
 
 
 
