@@ -136,6 +136,18 @@ Looks roughly the same. Let's try a lower field with a longer distance to conver
 
 Yeah, our paths are definitely straight now.
 
+![gaussian_2](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/gaussian_2.png)
+
+Using a crude gaussian/gaussian distribution for the magnetic field now. Strange "crossover" effect which remains even if the magnet is moved further away.
+
+![loopy](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/loopy.png)
+
+20T may be slightly too strong.
+
+![crossover_10t](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/crossover_10t.png)
+
+Yeah, still happening. I'm sure future readers have written me off as an idiot, but I'm still in the dark.
+
 
 
 
