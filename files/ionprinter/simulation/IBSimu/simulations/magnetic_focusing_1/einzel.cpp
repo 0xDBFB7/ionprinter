@@ -21,6 +21,8 @@
 #define GRID_SIZE 0.001 //m
 #define RECOMBINATION_POINT 0.2 //m
 
+#define BFIELD_PEAK 7
+
 const double Te = 5.0;
 const double Up = 5.0;
 
@@ -38,7 +40,7 @@ bool einzel_2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    Geometry geom( MODE_CYL, Int3D(1500,200,1), Vec3D(0,0,0), GRID_SIZE );
+    Geometry geom( MODE_CYL, Int3D(400,200,1), Vec3D(0,0,0), GRID_SIZE );
 
     // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
@@ -68,10 +70,13 @@ void simu( int *argc, char ***argv )
 
     bool fout[3] = { true, true, true };
     MeshVectorField bfield( geom, fout);
-    for( int32_t x = 0; x < 250; x++ ) {
+    for( int32_t x = 0; x < 400; x++ ) {
         for( int32_t y = 0; y < bfield.size(1); y++ ) {
-                //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
-                
+            //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
+            double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-100.0,2.0)/20000.0)));
+            double gaussian_y = (pow(2.71828,-1.0*(pow(200.0-y,2.0)/20000.0)));
+            bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
+
         }
     }
 
