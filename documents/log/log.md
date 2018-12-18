@@ -146,7 +146,39 @@ Using a crude gaussian/gaussian distribution for the magnetic field now. Strange
 
 ![crossover_10t](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/crossover_10t.png)
 
-Yeah, still happening. I'm sure future readers have written me off as an idiot, but I'm still in the dark.
+Yeah, still happening. I'm sure future readers have written me off as an idiot. Oh hey, is the magnetic field being mirrored across the x axis? I'm not sure. 
+
+Let's first get a slightly more accurate magnetic field curtesy FEMM.
+
+Ooh, https://www.particleincell.com/starfish/ looks really nice. Later.
+
+
+
+<hr>
+
+### 1545147474 >
+
+<hr>
+
+Some ideas for ease of servicing:
+
+Each control board can have an analog mux that takes ~16 voltages and pipes them into the main controller for self-test functionality.
+
+There could be a little multimeter probe going to an ADC so that the user doesn't need an oscilloscope to troubleshoot the system.
+
+A hall probe can be attached to the X/Y/Z? gantry and used to compensate for the magnetic field.
+
+What kind of build platform are we going to use?
+
+ Rulon or Delrin AF could be used for the linear motor slides.
+
+<hr>
+
+
+
+> The use of *FIELD_MIRROR* in case of symmetric cases, where beam is traversing next to the geometry boundary, is necessary to get physical results.
+
+Ah.
 
 
 

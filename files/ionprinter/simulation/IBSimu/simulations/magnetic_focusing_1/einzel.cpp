@@ -40,7 +40,7 @@ bool einzel_2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    Geometry geom( MODE_CYL, Int3D(700,200,1), Vec3D(0,0,0), GRID_SIZE );
+    Geometry geom( MODE_3D, Int3D(200,200,100), Vec3D(0,0,0), GRID_SIZE );
 
     // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
@@ -63,10 +63,10 @@ void simu( int *argc, char ***argv )
     EpotField epot( geom );
     MeshScalarField scharge( geom );
     EpotEfield efield( epot );
-    field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
-				     FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
-				     FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
-    efield.set_extrapolation( efldextrpl );
+    // field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
+		// 		     FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
+		// 		     FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
+    // efield.set_extrapolation( efldextrpl );
 
     bool fout[3] = { true, true, true };
     MeshVectorField bfield( geom, fout);
@@ -79,13 +79,18 @@ void simu( int *argc, char ***argv )
 
         }
       }
-    field_extrpl_e bfldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
-             FIELD_MIRROR, FIELD_EXTRAPOLATE,
-             FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
-    bfield.set_extrapolation( bfldextrpl );
+    field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
+       FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
+       FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
+       efield.set_extrapolation( efldextrpl );
+    // field_extrpl_e bfldextrpl[6] = {  FIELD_MIRROR,  FIELD_MIRROR,
+    //          FIELD_MIRROR,   FIELD_MIRROR,
+    //           FIELD_MIRROR,  FIELD_MIRROR};
+    // bfield.set_extrapolation( bfldextrpl );
 
 
-    ParticleDataBaseCyl pdb( geom );
+    ParticleDataBase3D pdb( geom );
+    pdb.set_thread_count(10);
     bool pmirror[6] = { false, false, true, false, false, false };
     pdb.set_mirror( pmirror );
 
@@ -98,19 +103,29 @@ void simu( int *argc, char ***argv )
     	pdb.clear();
       float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
 
-    	pdb.add_2d_beam_with_energy(
-                                            1000, //number of particles
+    	// pdb.add_2d_beam_with_energy(
+      //                                       1000, //number of particles
+      //                                       BEAM_CURRENT/beam_area, //beam current density
+      //                                       1.0, //charge per particle
+      //                                       29.0, //amu
+      //                                       BEAM_ENERGY, //eV
+      //                                       1,//Normal temperature
+      //                                       1,
+      //                                       0.005,0, //point 1
+      //                                       0.005,BEAM_RADIUS //point 2
+      //                                       );
+
+      pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
                                             BEAM_CURRENT/beam_area, //beam current density
                                             1.0, //charge per particle
                                             29.0, //amu
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                                            0.005,0, //point 1
-                                            0.005,BEAM_RADIUS //point 2
-                                            );
-
-
+                            					      Vec3D(0,0,0),
+                            					      Vec3D(0,1,0),
+                            					      Vec3D(0,0,1),
+                            					      BEAM_RADIUS );
 
     	pdb.iterate_trajectories( scharge, efield, bfield );
 
@@ -157,7 +172,7 @@ void simu( int *argc, char ***argv )
     plotter.set_bfield( &bfield );
     plotter.set_scharge( &scharge );
     plotter.set_particledatabase( &pdb );
-    plotter.new_geometry_plot_window();
+    plotter.new_geometry_3d_plot_window();
     plotter.run();
 #endif
 
@@ -175,7 +190,7 @@ int main( int argc, char **argv )
 {
     try {
         ibsimu.set_message_threshold( MSG_VERBOSE, 1 );
-	ibsimu.set_thread_count( 10 );
+	ibsimu.set_thread_count( 5 );
         simu( &argc, &argv );
     } catch ( Error e ) {
 	e.print_error_message( ibsimu.message( 0 ) );
