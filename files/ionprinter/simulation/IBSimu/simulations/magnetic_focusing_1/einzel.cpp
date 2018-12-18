@@ -21,7 +21,7 @@
 #define GRID_SIZE 0.001 //m
 #define RECOMBINATION_POINT 0.2 //m
 
-#define BFIELD_PEAK 7
+#define BFIELD_PEAK 3
 
 const double Te = 5.0;
 const double Up = 5.0;
@@ -74,11 +74,11 @@ void simu( int *argc, char ***argv )
         for( int32_t y = 0; y < bfield.size(1); y++ ) {
             //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
             double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-100.0,2.0)/20000.0)));
-            double gaussian_y = (pow(2.71828,-1.0*(pow(200.0-y,2.0)/20000.0)));
+            double gaussian_y = (pow(2.71828,-1.0*(pow(100.0-y,2.0)/20000.0)));
             bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
 
         }
-    }
+    
 
 
     ParticleDataBaseCyl pdb( geom );
