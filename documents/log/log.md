@@ -130,11 +130,11 @@ Narrowing the input makes the output wider? Le what? Hmm, might be an artifact o
 
 ![narrow_long](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/narrow_long.png)
 
-Looks roughly the same. Let's try a lower field and a longer distance to convergence.
+Looks roughly the same. Let's try a lower field with a longer distance to convergence.
 
+![no_scharge_long](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/no_scharge_long.png)
 
-
-
+Yeah, our paths are definitely straight now.
 
 
 

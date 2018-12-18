@@ -71,7 +71,7 @@ void simu( int *argc, char ***argv )
     for( int32_t x = 0; x < 250; x++ ) {
         for( int32_t y = 0; y < bfield.size(1); y++ ) {
                 //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
-
+                
         }
     }
 
