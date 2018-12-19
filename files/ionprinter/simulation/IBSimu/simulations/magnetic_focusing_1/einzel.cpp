@@ -190,7 +190,7 @@ int main( int argc, char **argv )
 {
     try {
         ibsimu.set_message_threshold( MSG_VERBOSE, 1 );
-	ibsimu.set_thread_count( 5 );
+	ibsimu.set_thread_count( 10 );
         simu( &argc, &argv );
     } catch ( Error e ) {
 	e.print_error_message( ibsimu.message( 0 ) );

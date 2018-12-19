@@ -180,6 +180,8 @@ What kind of build platform are we going to use?
 
 Ah.
 
+Tried out 3d: A little bit too slow. 
+
 
 
 
