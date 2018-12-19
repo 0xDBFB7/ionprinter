@@ -11,6 +11,7 @@
 #include "geomplotter.hpp"
 #include "config.h"
 
+
 #ifdef GTK3
 #include "gtkplotter.hpp"
 #endif
@@ -22,12 +23,20 @@
 #define BEAM_OFFSET_Y 0.1
 
 #define GRID_SIZE 0.001 //m
-#define RECOMBINATION_POINT 0.2 //m
+#define RECOMBINATION_POINT 0.25 //m
 
-#define BFIELD_PEAK 10
+#define BFIELD_X 0.3
+#define BFIELD_PEAK 20
+
+#define MESH_LENGTH 0.7
+#define MESH_WIDTH 0.2
+
+#define INTERACTIVE_PLOT 0
 
 const double Te = 5.0;
 const double Up = 5.0;
+
+float iteration = 0;
 
 bool einzel_1( double x, double y, double z )
 {
@@ -43,7 +52,8 @@ bool einzel_2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    Geometry geom( MODE_2D, Int3D(400,200,1), Vec3D(0,0,0), GRID_SIZE );
+    while(iteration < 10){
+    Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
     // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
@@ -66,33 +76,36 @@ void simu( int *argc, char ***argv )
     EpotField epot( geom );
     MeshScalarField scharge( geom );
     EpotEfield efield( epot );
-    // field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
-		// 		     FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
-		// 		     FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
-    // efield.set_extrapolation( efldextrpl );
 
-    bool fout[3] = { true, true, true };
-    MeshVectorField bfield( geom, fout);
-    for( int32_t x = 0; x < 400; x++ ) {
-        for( int32_t y = 0; y < bfield.size(1); y++ ) {
-            //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
-            double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-100.0,2.0)/20000.0)));
-            double gaussian_y = (pow(2.71828,-1.0*(pow(400.0-y,2.0)/20000.0)));
-            bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
-
-        }
-      }
     field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
-       FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
-       FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
-       efield.set_extrapolation( efldextrpl );
-
+      FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
+      FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
+    efield.set_extrapolation( efldextrpl );
 
 
     ParticleDataBase2D pdb( geom );
     pdb.set_thread_count(10);
-    bool pmirror[6] = { false, false, true, false, false, false };
+    bool pmirror[6] = { false, false, false, false, false, false };
     pdb.set_mirror( pmirror );
+
+    bool fout[3] = { true, true, true };
+    MeshVectorField bfield( geom, fout);
+
+
+    for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
+      for( int32_t y = 0; y < bfield.size(1); y++ ) {
+          //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
+          double gaussian_x = (iteration*pow(2.71828,-1.0*(pow(x-(BFIELD_X/GRID_SIZE),2.0)/20000.0)));
+          double gaussian_y = 0;
+          if(y < bfield.size(1)/2){
+            gaussian_y = -(pow(2.71828,-1.0*(pow(y+100,2.0)/20000.0)));
+          }
+          else{
+            gaussian_y = (pow(2.71828,-1.0*(pow(300-y,2.0)/20000.0)));
+          }
+          bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
+      }
+    }
 
     for( size_t i = 0; i < 15; i++ ) {
 
@@ -101,8 +114,11 @@ void simu( int *argc, char ***argv )
     	efield.recalculate();
 
     	pdb.clear();
-      float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
       //float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
+
+      float beam_area = BEAM_RADIUS*2; //m
+      //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
+
 
     	pdb.add_2d_beam_with_energy(
                                             1000, //number of particles
@@ -112,8 +128,8 @@ void simu( int *argc, char ***argv )
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                                            0.005,BEAM_OFFSET_Y, //point 1
-                                            0.005,BEAM_RADIUS+BEAM_OFFSET_Y //point 2
+                                            0.005,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
+                                            0.005,BEAM_OFFSET_Y+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
@@ -135,7 +151,7 @@ void simu( int *argc, char ***argv )
         for( int jj = 0; jj < epot.size(1); jj++ ) {
           for( int kk = 0; kk < epot.size(2); kk++ ) {
             // double z = scharge.h()*kk+scharge.origo(2);
-             if(ii > 200) {
+             if(ii > RECOMBINATION_POINT/GRID_SIZE) {
                epot(ii,jj,kk) = 0;
              }
           }
@@ -146,27 +162,19 @@ void simu( int *argc, char ***argv )
       //I'm nulling out the space charge field.
       //'s easier, ya see.
       //code block taken from the IBSimu mailing list.
-      double min = 0.0;
-      double max = 0.0;
-      scharge.get_minmax(min,max);
-      printf("%f,%f",min,max);
       for( int ii = 0; ii < scharge.size(0); ii++ ) {
         for( int jj = 0; jj < scharge.size(1); jj++ ) {
           for( int kk = 0; kk < scharge.size(2); kk++ ) {
             // double z = scharge.h()*kk+scharge.origo(2);
-             if(ii > 200) {
+             if(ii > RECOMBINATION_POINT/GRID_SIZE) {
               scharge(ii,jj,kk) = 0;
              }
           }
         }
       }
-
-
-      scharge.get_minmax(min,max);
-      printf("%f,%f",min,max);
     }
 
-#ifdef GTK3
+  if(INTERACTIVE_PLOT){
     GTKPlotter plotter( argc, argv );
     plotter.set_geometry( &geom );
     plotter.set_epot( &epot );
@@ -175,15 +183,19 @@ void simu( int *argc, char ***argv )
     plotter.set_particledatabase( &pdb );
     plotter.new_geometry_plot_window();
     plotter.run();
-#endif
-
+  }
   GeomPlotter geomplotter( geom );
-  geomplotter.set_size( 1500, 300 );
+  geomplotter.set_size( MESH_LENGTH/GRID_SIZE, MESH_WIDTH/GRID_SIZE );
   geomplotter.set_epot( &epot );
   geomplotter.set_bfield( &bfield );
   geomplotter.set_particle_database( &pdb );
   geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
-  geomplotter.plot_svg( "plot1.svg" );
+  std::stringstream fmt;
+  fmt << "images/" << iteration*100 << ".svg";
+  geomplotter.plot_svg(fmt.str());
+
+  iteration+=0.01;
+  }
 }
 
 

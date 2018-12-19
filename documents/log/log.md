@@ -210,9 +210,23 @@ Anyway, cylindrical geometry is now unreasonably fast - 5 or 10 seconds.
 
 Scratch that! Had the same solver enabled. The importance of controls and an impartial observer! That was some reprehensible science.
 
-
+Okay, no, *that* was unreasonably fast. Reconfigured and reinstalled everything and now UMFPACK is definitely up and running.
 
 <hr>
+
+![no_collision](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/no_collision.png)
+
+This crude 2D sim shows clearly where those spurious trajectories were coming from -  there's no collision at the boundaries.
+
+Ah, and that's due to the PDB mirror values. Cool!
+
+![now_talking](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/now_talking.png)
+
+Here we go! A double-gaussian field with recombination.
+
+![more_polish](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/more_polish.png)
+
+Gradually tightening focus.
 
 
 
