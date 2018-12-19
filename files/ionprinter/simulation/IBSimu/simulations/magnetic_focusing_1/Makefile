@@ -1,6 +1,6 @@
 CC = g++
-LDFLAGS = `pkg-config --libs ibsimu-1.0.6`
-CXXFLAGS = -Wall -g `pkg-config --cflags ibsimu-1.0.6`
+LDFLAGS = `pkg-config --libs ibsimu-1.0.6 umfpack`
+CXXFLAGS = -Wall -g `pkg-config --cflags ibsimu-1.0.6 umfpack`
 
 plasmacyl: einzel.o
 	$(CC) -o einzel einzel.o $(LDFLAGS)

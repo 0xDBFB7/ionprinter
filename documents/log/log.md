@@ -174,13 +174,45 @@ What kind of build platform are we going to use?
 
 <hr>
 
-
-
 > The use of *FIELD_MIRROR* in case of symmetric cases, where beam is traversing next to the geometry boundary, is necessary to get physical results.
 
 Ah.
 
-Tried out 3d: A little bit too slow. 
+Tried out 3d: A little bit too slow. IBSimu is only using one thread for some reason.
+
+How about 2d?
+
+I remembered that the UMFPACK lib wasn't installed when I configured this install of IBSimu. Installing and reconfiguring now - perhaps that'll speed things up a bit.
+
+I love this processor. -j16 is so ungodly fast.
+
+Had to compile SuiteSparse with 
+
+`export CXXFLAGS="$CXXFLAGS -fPIC"` 
+
+Nope, actually it's 
+
+`SET(CMAKE_POSITION_INDEPENDENT_CODE ON)`
+
+in some SuiteSparse cmake file. But that file doesn't exist anymore.
+
+<hr>
+
+Several hours later...
+
+I'd already installed umfpack5 via apt, but it apparently missed the pkg-config .pc file. 
+
+Ended up having to run `sudo dpkg -L libumfpack5`then write my own package description in a .pc and append it to the `PKG_CONFIG_PATH`.
+
+Good stuff.
+
+Anyway, cylindrical geometry is now unreasonably fast - 5 or 10 seconds.
+
+Scratch that! Had the same solver enabled. The importance of controls and an impartial observer! That was some reprehensible science.
+
+
+
+<hr>
 
 
 

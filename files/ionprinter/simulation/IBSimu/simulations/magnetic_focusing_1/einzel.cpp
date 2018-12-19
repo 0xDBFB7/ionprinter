@@ -1,4 +1,5 @@
 #include "epot_bicgstabsolver.hpp"
+#include "epot_umfpacksolver.hpp"
 #include "particledatabase.hpp"
 #include "geometry.hpp"
 #include "func_solid.hpp"
@@ -17,6 +18,8 @@
 #define BEAM_RADIUS 0.01 //m
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
+
+#define BEAM_OFFSET_Y 0.1
 
 #define GRID_SIZE 0.001 //m
 #define RECOMBINATION_POINT 0.2 //m
@@ -40,7 +43,7 @@ bool einzel_2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    Geometry geom( MODE_3D, Int3D(200,200,100), Vec3D(0,0,0), GRID_SIZE );
+    Geometry geom( MODE_2D, Int3D(400,200,1), Vec3D(0,0,0), GRID_SIZE );
 
     // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
@@ -58,7 +61,7 @@ void simu( int *argc, char ***argv )
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );
     geom.build_mesh();
 
-    EpotBiCGSTABSolver solver( geom );
+    EpotUMFPACKSolver solver( geom );
 
     EpotField epot( geom );
     MeshScalarField scharge( geom );
@@ -74,7 +77,7 @@ void simu( int *argc, char ***argv )
         for( int32_t y = 0; y < bfield.size(1); y++ ) {
             //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
             double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-100.0,2.0)/20000.0)));
-            double gaussian_y = (pow(2.71828,-1.0*(pow(200.0-y,2.0)/20000.0)));
+            double gaussian_y = (pow(2.71828,-1.0*(pow(400.0-y,2.0)/20000.0)));
             bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
 
         }
@@ -83,13 +86,10 @@ void simu( int *argc, char ***argv )
        FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
        FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
        efield.set_extrapolation( efldextrpl );
-    // field_extrpl_e bfldextrpl[6] = {  FIELD_MIRROR,  FIELD_MIRROR,
-    //          FIELD_MIRROR,   FIELD_MIRROR,
-    //           FIELD_MIRROR,  FIELD_MIRROR};
-    // bfield.set_extrapolation( bfldextrpl );
 
 
-    ParticleDataBase3D pdb( geom );
+
+    ParticleDataBase2D pdb( geom );
     pdb.set_thread_count(10);
     bool pmirror[6] = { false, false, true, false, false, false };
     pdb.set_mirror( pmirror );
@@ -102,30 +102,31 @@ void simu( int *argc, char ***argv )
 
     	pdb.clear();
       float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
+      //float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
 
-    	// pdb.add_2d_beam_with_energy(
-      //                                       1000, //number of particles
-      //                                       BEAM_CURRENT/beam_area, //beam current density
-      //                                       1.0, //charge per particle
-      //                                       29.0, //amu
-      //                                       BEAM_ENERGY, //eV
-      //                                       1,//Normal temperature
-      //                                       1,
-      //                                       0.005,0, //point 1
-      //                                       0.005,BEAM_RADIUS //point 2
-      //                                       );
-
-      pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
+    	pdb.add_2d_beam_with_energy(
+                                            1000, //number of particles
                                             BEAM_CURRENT/beam_area, //beam current density
                                             1.0, //charge per particle
                                             29.0, //amu
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                            					      Vec3D(0,0,0),
-                            					      Vec3D(0,1,0),
-                            					      Vec3D(0,0,1),
-                            					      BEAM_RADIUS );
+                                            0.005,BEAM_OFFSET_Y, //point 1
+                                            0.005,BEAM_RADIUS+BEAM_OFFSET_Y //point 2
+                                            );
+
+      // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
+      //                                       BEAM_CURRENT/beam_area, //beam current density
+      //                                       1.0, //charge per particle
+      //                                       29.0, //amu
+      //                                       BEAM_ENERGY, //eV
+      //                                       1,//Normal temperature
+      //                                       1,
+      //                       					      Vec3D(0,0,0),
+      //                       					      Vec3D(0,1,0),
+      //                       					      Vec3D(0,0,1),
+      //                       					      BEAM_RADIUS );
 
     	pdb.iterate_trajectories( scharge, efield, bfield );
 
@@ -172,7 +173,7 @@ void simu( int *argc, char ***argv )
     plotter.set_bfield( &bfield );
     plotter.set_scharge( &scharge );
     plotter.set_particledatabase( &pdb );
-    plotter.new_geometry_3d_plot_window();
+    plotter.new_geometry_plot_window();
     plotter.run();
 #endif
 
