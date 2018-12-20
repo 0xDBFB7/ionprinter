@@ -226,7 +226,15 @@ Here we go! A double-gaussian field with recombination.
 
 ![more_polish](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/more_polish.png)
 
-Gradually tightening focus.
+Gradually tightening focus. I'm going to automate this process now.
+
+I'm a little rusty in C++, apparently. Tried using fmt:: to procedurally generate filenames. 
+
+I thought there was an easy way to batch-convert svgs to PNGs with linux, but apparently not - all suggestions require inkscape, which'll surely be quite slow. Switching to PNG export.
+
+<video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/out.mp4"></video>
+
+BEAUTIFUL
 
 
 

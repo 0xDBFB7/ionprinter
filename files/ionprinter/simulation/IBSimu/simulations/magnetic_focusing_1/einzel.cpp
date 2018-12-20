@@ -36,7 +36,7 @@
 const double Te = 5.0;
 const double Up = 5.0;
 
-float iteration = 0;
+int iteration = 0;
 
 bool einzel_1( double x, double y, double z )
 {
@@ -191,10 +191,10 @@ void simu( int *argc, char ***argv )
   geomplotter.set_particle_database( &pdb );
   geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
   std::stringstream fmt;
-  fmt << "images/" << iteration*100 << ".svg";
-  geomplotter.plot_svg(fmt.str());
+  fmt << "images/" << iteration << ".png";
+  geomplotter.plot_png(fmt.str());
 
-  iteration+=0.01;
+  iteration+=1;
   }
 }
 
