@@ -17,7 +17,7 @@ for j=0,nj-1,1 do
   x=x1+i*dx
   y=y1+j*dy
   A,B1,B2=mo_getpointvalues(x,y)
-  write(handle,x," ",y," ",B1," ",B2," 0\n")
+  write(handle,x," ",y," ",0," ",0," ",B2,"\n")
  end
 end
 

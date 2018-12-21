@@ -276,19 +276,19 @@ Ah, just messed up the scaling.
 
 Gorgeous!
 
-Now adding recombination...
+Now adding recombination...done.
 
+Oh, hang on. We're mainly interested in the Z-axis magnetic field.
 
+![transposed](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/transposed.png)
 
+I've temporarily transposed X for Z for some rough calculations - I'll probably have to spin up an Elmer 3D field calculation to really do this properly.
 
+FEMM uses positive and negative turn numbers to denote solenoid polarity.
 
+![aha](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/aha.png)
 
-
-
-
-
-
-
+All right! Transposed Y for Z, some hundred amps going through two triangular coils...
 
 
 
