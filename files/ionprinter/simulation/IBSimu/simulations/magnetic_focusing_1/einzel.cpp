@@ -23,7 +23,7 @@
 #define BEAM_OFFSET_Y 0.1
 
 #define GRID_SIZE 0.001 //m
-#define RECOMBINATION_POINT 0.23 //m
+#define RECOMBINATION_POINT 0.7 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10

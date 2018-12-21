@@ -290,6 +290,24 @@ FEMM uses positive and negative turn numbers to denote solenoid polarity.
 
 All right! Transposed Y for Z, some hundred amps going through two triangular coils...
 
+![further_recombination](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/further_recombination.png)
+
+Looks like there's a bit of beam distortion, presumably due to the strange coil shape:
+
+![triangular_coil](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/triangular_coil.png)
+
+Let me fix that.
+
+![oh_my](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/oh_my.png)
+
+Oh my! I may have set the coil current slightly too high. On the plus side, though, the beam is extremely tightly focused!
+
+![slightly_more_sensible](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/slightly_more_sensible.png)
+
+Oookay. Lots going on here.
+
+
+
 
 
 
