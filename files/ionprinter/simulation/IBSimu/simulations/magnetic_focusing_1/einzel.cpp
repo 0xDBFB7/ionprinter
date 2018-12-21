@@ -93,6 +93,12 @@ void simu( int *argc, char ***argv )
     MeshVectorField bfield(MODE_2D, fout, 1.0, 1.0, "B.dat");
 
 
+    for( int32_t x = RECOMBINATION_POINT/GRID_SIZE; x < bfield.size(0); x++ ) {
+      for( int32_t y = 0; y < bfield.size(1); y++ ) {
+          bfield.set( x, y, 0, Vec3D( 0, 0, 0));
+      }
+    }
+
     //
     // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
     //   for( int32_t y = 0; y < bfield.size(1); y++ ) {

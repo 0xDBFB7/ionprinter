@@ -264,6 +264,8 @@ Exported magnetic field from FEMM using export.lua from https://www.particleince
 
 Oh, right, I wanted to fix the vtu file export for Elmer. Next time.
 
+
+
 Import's working, looks a little broken though.
 
 Ah, just messed up the scaling.
@@ -273,6 +275,24 @@ Ah, just messed up the scaling.
 ![import_femm1](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/import_femm1.png)
 
 Gorgeous!
+
+Now adding recombination...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### Quick notes
 
