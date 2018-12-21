@@ -232,9 +232,39 @@ I'm a little rusty in C++, apparently. Tried using fmt:: to procedurally generat
 
 I thought there was an easy way to batch-convert svgs to PNGs with linux, but apparently not - all suggestions require inkscape, which'll surely be quite slow. Switching to PNG export.
 
-<video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/out.mp4"></video>
+<video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/bscan.mp4"></video>
 
-BEAUTIFUL
+BEAUTIFUL - a scan from 0 to 10T by .1T. Took somewhere around 2000 seconds.
+
+<video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/xbscan.mp4"></video>
+
+![accidental](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/accidental.png)
+
+Trying some piecewise functions.
+
+What effect does the transverse temperature have on the beam?
+
+Quick 20T test (no transverse or normal eV):
+
+![20t](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/20t.png)
+
+And 10T, for comparison:
+
+![10t](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/10t.png)
+
+Field strength doesn't seem to have a huge impact on the dot size beyond a certain point.
+
+Let's get some better magnetic fields.
+
+<hr>
+
+Exported magnetic field from FEMM using export.lua from https://www.particleincell.com/2012/femm-export/
+
+
+
+
+
+
 
 
 

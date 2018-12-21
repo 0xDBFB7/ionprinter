@@ -10,11 +10,402 @@
 [PrevSoln]    =  ""
 [Comment]     =  "Add comments here."
 [PointProps]   = 0
-[BdryProps]   = 0
-[BlockProps]  = 0
+[BdryProps]   = 2
+  <BeginBdry>
+    <BdryName> = "A=0"
+    <BdryType> = 0
+    <A_0> = 0
+    <A_1> = 0
+    <A_2> = 0
+    <Phi> = 0
+    <c0> = 0
+    <c0i> = 0
+    <c1> = 0
+    <c1i> = 0
+    <Mu_ssd> = 0
+    <Sigma_ssd> = 0
+  <EndBdry>
+  <BeginBdry>
+    <BdryName> = "A=0"
+    <BdryType> = 0
+    <A_0> = 0
+    <A_1> = 0
+    <A_2> = 0
+    <Phi> = 0
+    <c0> = 0
+    <c0i> = 0
+    <c1> = 0
+    <c1i> = 0
+    <Mu_ssd> = 0
+    <Sigma_ssd> = 0
+  <EndBdry>
+[BlockProps]  = 16
+  <BeginBlock>
+    <BlockName> = "u1"
+    <Mu_x> = 2.6498996896116669
+    <Mu_y> = 2.6498996896116669
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u2"
+    <Mu_x> = 0.12953316809300527
+    <Mu_y> = 0.12953316809300527
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u3"
+    <Mu_x> = 14.398967120915913
+    <Mu_y> = 14.398967120915913
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u4"
+    <Mu_x> = 0.042882574356338271
+    <Mu_y> = 0.042882574356338271
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u5"
+    <Mu_x> = 37.197476986533054
+    <Mu_y> = 37.197476986533054
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u6"
+    <Mu_x> = 0.015664246064106369
+    <Mu_y> = 0.015664246064106369
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u7"
+    <Mu_x> = 142.03015659052124
+    <Mu_y> = 142.03015659052124
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u1"
+    <Mu_x> = 2.6498996896116669
+    <Mu_y> = 2.6498996896116669
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u2"
+    <Mu_x> = 0.12953316809300527
+    <Mu_y> = 0.12953316809300527
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u3"
+    <Mu_x> = 14.398967120915913
+    <Mu_y> = 14.398967120915913
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "Air"
+    <Mu_x> = 1
+    <Mu_y> = 1
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "NdFeB 52 MGOe"
+    <Mu_x> = 1.05
+    <Mu_y> = 1.05
+    <H_c> = 891300
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0.66700000000000004
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 6
+      0	0
+      0.42799999999999999	95490
+      0.53300000000000003	175100
+      0.63800000000000001	254600
+      0.84799999999999998	413800
+      1.478	891300
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u4"
+    <Mu_x> = 0.042882574356338271
+    <Mu_y> = 0.042882574356338271
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u5"
+    <Mu_x> = 37.197476986533054
+    <Mu_y> = 37.197476986533054
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u6"
+    <Mu_x> = 0.015664246064106369
+    <Mu_y> = 0.015664246064106369
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
+  <BeginBlock>
+    <BlockName> = "u7"
+    <Mu_x> = 142.03015659052124
+    <Mu_y> = 142.03015659052124
+    <H_c> = 0
+    <H_cAngle> = 0
+    <J_re> = 0
+    <J_im> = 0
+    <Sigma> = 0
+    <d_lam> = 0
+    <Phi_h> = 0
+    <Phi_hx> = 0
+    <Phi_hy> = 0
+    <LamType> = 0
+    <LamFill> = 1
+    <NStrands> = 0
+    <WireD> = 0
+    <BHPoints> = 0
+  <EndBlock>
 [CircuitProps]  = 0
-[NumPoints] = 0
-[NumSegments] = 0
-[NumArcSegments] = 0
+[NumPoints] = 24
+0	0	0	0
+0	0.20000000000000001	0	0
+0.69999999999999996	0.20000000000000001	0	0
+0.69999999999999996	0	0	0
+0.34999999999999998	0.64600800000000003	0	0
+0.34999999999999998	-0.44600800000000007	0	0
+0.34999999999999998	-0.45380811428571433	0	0
+0.34999999999999998	0.65380811428571428	0	0
+0.34999999999999998	-0.46160822857142858	0	0
+0.34999999999999998	0.66160822857142854	0	0
+0.34999999999999998	-0.46940834285714295	0	0
+0.34999999999999998	0.6694083428571429	0	0
+0.34999999999999998	-0.4772084571428572	0	0
+0.34999999999999998	0.67720845714285716	0	0
+0.34999999999999998	-0.48500857142857146	0	0
+0.34999999999999998	0.68500857142857141	0	0
+0.34999999999999998	-0.49280868571428571	0	0
+0.34999999999999998	0.69280868571428567	0	0
+0.34999999999999998	-0.50060880000000008	0	0
+0.34999999999999998	0.70060880000000003	0	0
+0.10000000000000001	0.025000000000000001	0	0
+0.097000000000000003	0.012	0	0
+0.11600000000000001	0.010999999999999999	0	0
+0.126	0.027	0	0
+[NumSegments] = 4
+21	20	-1	0	0	0
+21	22	-1	0	0	0
+23	22	-1	0	0	0
+20	23	-1	0	0	0
+[NumArcSegments] = 16
+4	5	180	1	0	0	0
+5	4	180	1	0	0	0
+6	7	180	1	0	0	0
+7	6	180	1	0	0	0
+8	9	180	1	0	0	0
+9	8	180	1	0	0	0
+10	11	180	1	0	0	0
+11	10	180	1	0	0	0
+12	13	180	1	0	0	0
+13	12	180	1	0	0	0
+14	15	180	1	0	0	0
+15	14	180	1	0	0	0
+16	17	180	1	0	0	0
+17	16	180	1	0	0	0
+18	19	180	1	2	0	0
+19	18	180	1	2	0	0
 [NumHoles] = 0
-[NumBlockLabels] = 0
+[NumBlockLabels] = 9
+0.88934172802085276	0.20728173994726345	8	-1	0	0	0	1	0
+0.86525516469715313	0.31342567730034365	9	-1	0	0	0	1	0
+0.82020295507673424	0.41417957006880157	10	-1	0	0	0	1	0
+0.75539025735120968	0.50539025735120968	13	-1	0	0	0	1	0
+0.67284659269138913	0.583174071078851	14	-1	0	0	0	1	0
+0.57536557533113208	0.64408062845643443	15	-1	0	0	0	1	0
+0.46641210079383899	0.68524315168220207	16	-1	0	0	0	1	0
+0.11	0.019	12	-1	0	0	0	1	0
+0.40200000000000002	-0.27100000000000002	11	-1	0	0	0	1	0

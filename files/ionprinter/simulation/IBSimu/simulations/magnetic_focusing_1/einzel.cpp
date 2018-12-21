@@ -23,15 +23,15 @@
 #define BEAM_OFFSET_Y 0.1
 
 #define GRID_SIZE 0.001 //m
-#define RECOMBINATION_POINT 0.25 //m
+#define RECOMBINATION_POINT 0.23 //m
 
 #define BFIELD_X 0.3
-#define BFIELD_PEAK 20
+#define BFIELD_PEAK 10
 
 #define MESH_LENGTH 0.7
 #define MESH_WIDTH 0.2
 
-#define INTERACTIVE_PLOT 0
+#define INTERACTIVE_PLOT 1
 
 const double Te = 5.0;
 const double Up = 5.0;
@@ -52,7 +52,7 @@ bool einzel_2( double x, double y, double z )
 
 void simu( int *argc, char ***argv )
 {
-    while(iteration < 10){
+    while(iteration < 1){
     Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
     // Solid *s1 = new FuncSolid( einzel_1 );
@@ -92,10 +92,12 @@ void simu( int *argc, char ***argv )
     MeshVectorField bfield( geom, fout);
 
 
+
+
     for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
       for( int32_t y = 0; y < bfield.size(1); y++ ) {
           //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
-          double gaussian_x = (iteration*pow(2.71828,-1.0*(pow(x-(BFIELD_X/GRID_SIZE),2.0)/20000.0)));
+          double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-200,2.0)/20000.0)));
           double gaussian_y = 0;
           if(y < bfield.size(1)/2){
             gaussian_y = -(pow(2.71828,-1.0*(pow(y+100,2.0)/20000.0)));
@@ -106,6 +108,21 @@ void simu( int *argc, char ***argv )
           bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
       }
     }
+
+    // for( int32_t x = 200; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
+    //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
+    //       //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
+    //       double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-100,2.0)/20000.0)));
+    //       double gaussian_y = 0;
+    //       if(y < bfield.size(1)/2){
+    //         gaussian_y = -(pow(2.71828,-1.0*(pow(y+100,2.0)/20000.0)));
+    //       }
+    //       else{
+    //         gaussian_y = (pow(2.71828,-1.0*(pow(300-y,2.0)/20000.0)));
+    //       }
+    //       bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
+    //   }
+    // }
 
     for( size_t i = 0; i < 15; i++ ) {
 
@@ -185,7 +202,7 @@ void simu( int *argc, char ***argv )
     plotter.run();
   }
   GeomPlotter geomplotter( geom );
-  geomplotter.set_size( MESH_LENGTH/GRID_SIZE, MESH_WIDTH/GRID_SIZE );
+  geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
   geomplotter.set_epot( &epot );
   geomplotter.set_bfield( &bfield );
   geomplotter.set_particle_database( &pdb );
