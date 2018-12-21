@@ -89,25 +89,25 @@ void simu( int *argc, char ***argv )
     pdb.set_mirror( pmirror );
 
     bool fout[3] = { true, true, true };
-    MeshVectorField bfield( geom, fout);
+    //MeshVectorField bfield( geom, fout);
+    MeshVectorField bfield(MODE_2D, fout, 1.0, 1.0, "B.dat");
 
 
-
-
-    for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
-      for( int32_t y = 0; y < bfield.size(1); y++ ) {
-          //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
-          double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-200,2.0)/20000.0)));
-          double gaussian_y = 0;
-          if(y < bfield.size(1)/2){
-            gaussian_y = -(pow(2.71828,-1.0*(pow(y+100,2.0)/20000.0)));
-          }
-          else{
-            gaussian_y = (pow(2.71828,-1.0*(pow(300-y,2.0)/20000.0)));
-          }
-          bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
-      }
-    }
+    //
+    // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
+    //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
+    //       //bfield.set( x, y, 0, Vec3D( 0, 0, (y/200.0)*5 ) );
+    //       double gaussian_x = (BFIELD_PEAK*pow(2.71828,-1.0*(pow(x-200,2.0)/20000.0)));
+    //       double gaussian_y = 0;
+    //       if(y < bfield.size(1)/2){
+    //         gaussian_y = -(pow(2.71828,-1.0*(pow(y+100,2.0)/20000.0)));
+    //       }
+    //       else{
+    //         gaussian_y = (pow(2.71828,-1.0*(pow(300-y,2.0)/20000.0)));
+    //       }
+    //       bfield.set( x, y, 0, Vec3D( 0, 0,  gaussian_x*gaussian_y));
+    //   }
+    // }
 
     // for( int32_t x = 200; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
     //   for( int32_t y = 0; y < bfield.size(1); y++ ) {

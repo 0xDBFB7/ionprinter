@@ -256,19 +256,23 @@ Field strength doesn't seem to have a huge impact on the dot size beyond a certa
 
 Let's get some better magnetic fields.
 
+### 1545366135 >
+
 <hr>
 
 Exported magnetic field from FEMM using export.lua from https://www.particleincell.com/2012/femm-export/
 
+Oh, right, I wanted to fix the vtu file export for Elmer. Next time.
 
+Import's working, looks a little broken though.
 
+Ah, just messed up the scaling.
 
+![bfield_import](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/bfield_import.png)
 
+![import_femm1](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/import_femm1.png)
 
-
-
-
-
+Gorgeous!
 
 ### Quick notes
 
