@@ -304,7 +304,23 @@ Oh my! I may have set the coil current slightly too high. On the plus side, thou
 
 ![slightly_more_sensible](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/slightly_more_sensible.png)
 
-Oookay. Lots going on here.
+Oookay. Lots going on here. First, that's a friggin' 16 T field - surely I can whittle that down a bit. Secondly, it looks like the bulk of the beam focuses really nicely, but there's a few stragglers that are causing issues. And third, how the *heck* do you make a "Z axis" magnetic field? I still have to wrap my noodle around that one. Presumably CRTs are able to do it, but I haven't yet found a good description of CRT focus coils.
+
+Ah, the 16T is only at the very periphery of the sim - other areas are ~8T.
+
+Space charge effects are getting serious here - $0.004 \text{ C/m}^3$ peak. 
+
+![magnets_relocated](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/magnets_relocated.png)
+
+Spurious streams subsequently shifted. I moved the coil slightly further from the beam area. 
+
+http://www.virginia.edu/ep/SurfaceScience/class2.html - neat resource on some vacuum theory.
+
+((0.001 millipascals / ((ideal gas constant) * 270 Kelvin ))/10) * 6.022*10^23 = 2.6x10^13 molecules
+
+![widened_magnets](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/widened_magnets.png)
+
+Even less distortion. Lowish Bfield.
 
 
 
