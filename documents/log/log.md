@@ -322,9 +322,26 @@ http://www.virginia.edu/ep/SurfaceScience/class2.html - neat resource on some va
 
 Even less distortion. Lowish Bfield.
 
+### 1545432643 >
+
+<hr>
+
+[Here](http://www.labguysworld.com/5FPn_CRT_Tester.htm) is some good discussion of CRT magnetic focus setups.
+
+![FocusCoils_000](../../references/labguy/LabGuy's World_ 5FPn CRT TESTING_files/FocusCoils_000.jpg)
 
 
 
+
+
+Running a quick axisymmetric FEMM sim to see what kind of field strengths would be acheivable with a copper coil. 
+$$
+Turns: 0.02m * 0.05m * 0.33mm^2 (22AWG wire cross sectional area) * 0.025m^2\approx3000
+$$
+
+$$
+\pi*0.1*2=376m = 19.55 ohms
+$$
 
 
 
