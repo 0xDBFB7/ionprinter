@@ -23,12 +23,12 @@
 #define BEAM_OFFSET_Y 0.1
 
 #define GRID_SIZE 0.001 //m
-#define RECOMBINATION_POINT 0.7 //m
+#define RECOMBINATION_POINT 1 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.7
+#define MESH_LENGTH 0.5
 #define MESH_WIDTH 0.2
 
 #define INTERACTIVE_PLOT 1
@@ -38,15 +38,22 @@ const double Up = 5.0;
 
 int iteration = 0;
 
+#define EINZEL_R 0.02
+
 bool einzel_1( double x, double y, double z )
 {
-    return( y > 0.02 && x < 0.008);
+  return( x < 0.01 && (y < 0.1-EINZEL_R || y > 0.1+EINZEL_R));
 }
 
 
 bool einzel_2( double x, double y, double z )
 {
-    return( y > 0.02 && x > 0.03);
+    return( (x > 0.02 && x < 0.03 ) && (y < 0.1-EINZEL_R || y > 0.1+EINZEL_R));
+}
+
+bool einzel_3( double x, double y, double z )
+{
+    return( (x > 0.04 && x < 0.06 ) && (y < 0.1-EINZEL_R || y > 0.1+EINZEL_R));
 }
 
 
@@ -55,17 +62,21 @@ void simu( int *argc, char ***argv )
     while(iteration < 1){
     Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
-    // Solid *s1 = new FuncSolid( einzel_1 );
-    // geom.set_solid( 7, s1 );
+    Solid *s1 = new FuncSolid( einzel_1 );
+    geom.set_solid( 7, s1 );
     // Solid *s2 = new FuncSolid( einzel_2 );
     // geom.set_solid( 8, s2 );
+    // Solid *s3 = new FuncSolid( einzel_3 );
+    // geom.set_solid( 9, s3 );
 
     geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  -1000.0) );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+    // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  1000.0) );
+
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );

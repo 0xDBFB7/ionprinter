@@ -340,8 +340,148 @@ Turns: 0.02m * 0.05m * 0.33mm^2 (22AWG wire cross sectional area) * 0.025m^2\app
 $$
 
 $$
-\pi*0.1*2=376m = 19.55 ohms
+\pi*0.1*2=376m = 100 ohms
 $$
+
+All that for a measly half-tesla:
+
+![measly](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/measly.png)
+
+
+
+### 1545976211 > 
+
+<hr>
+
+Building up some intuition from the simple solenoid equation:
+$$
+\text{(magnetic constant) * (1000 turns / meter) * 100 amps = 0.1257T}
+$$
+17 Ga wire (cross section of 1mm^2) 
+
+Dammit, I really don't want to use superconductors. Ferrous core?
+
+What happens if I extend the coil the entire length of the chamber?
+
+Would liquid-cooled brass tubing work? We can use the magnet coil as part of a high current transformer.
+
+<hr>
+
+Oh! The main limitation to using this device as a plasma beam cutter would probably be the tendency for the ablated material to foul the vacuum chamber in short order. We can apply the same ionization principles to the cutter region - perhaps a high voltage could be applied to the build plate to draw the waste to a sacrificial plate of some sort? This would, of course, require quite a drastic re-design of the build platform. 
+
+<hr>
+
+Naming:
+
+`Neutralized / Recombinant Directed Deposition of Ions`
+
+`Ne/RDDI`
+
+`N/RDDI`
+
+<hr>
+
+There don't seem to be any non-conductive  elements that are solid at room temperature. It'd be really great
+
+<hr>
+
+Can we spray other elements at the beam after recombination in order to create compounds? Better yet, can we have multiple beams? 
+
+<hr>
+
+100eV, wide coil:
+
+![beam](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/beam.png)
+
+15eV, same coil:
+
+![15eV](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/15eV.png)
+
+1000eV, same coil:
+
+![1000ev](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/1000ev.png)
+
+<hr>
+
+
+
+![narrow](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/narrow.png)
+
+![narrow2](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/narrow2.png)
+
+
+
+<hr>
+
+Could I sinter copper powder and solder to make the solenoid? Possibly. McMaster-Carr 
+
+Solenoid could also be made out of magnetic iron?
+
+<hr>
+
+My current chamber only allows us about 0.3m in which to focus. I might have to upgrade that later.
+
+<hr>
+
+[Mark H on Physics StackExchange:](https://physics.stackexchange.com/a/249212/101785)
+
+> Solenoid magnets can focus in both the X and Y planes, unlike quadrupoles. They are also simpler devices that don't require the precise alignment that a FODO array would require. The limitation on solenoid magnets is that they are only effective at focusing low-energy beams, like the positrons from your spallation source or primary electrons after being emitted from a cathode.
+
+As expected. Cool.
+
+<hr>
+
+Use 3d printer to get cool macro pan shots
+
+Taking advantage of vacuum for cooling; evaporative cooling? Small amount of liquid is injected into the foreline and evaporates, chilling the port. The water would probably wreak havoc on the roughing pump - some sort of trap could be added, but that would also have to be cooled. A separate refrigerant pump might be simpler.
+
+
+
+<hr>
+
+Now that I think about it, our IBSimu starting beam is really quite unphysical, in that it's almost perfectly collimated; there's no non-parallel components. Our beam won't be nearly as clean, and therefore won't focus quite as well as in the simulation.
+
+<hr>
+
+Trying Einzel lenses again. 
+
+![einzel_test](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/einzel_test.png)
+
+Interesting. Aperture-style lens, 1000v:
+
+![iiinteresting](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/iiinteresting.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
