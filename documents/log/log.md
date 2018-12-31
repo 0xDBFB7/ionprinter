@@ -1,8 +1,8 @@
 # Log introduction
 
-
-
 #### 1545020962 >
+
+I got out of university today. Let's see if we can get this functional before the next semester starts.
 
 <hr>
 
@@ -50,7 +50,7 @@ Here's what we get with no magnetic field, 15eV, 1eV normal and transverse.
 
 ![1T](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/1T.png)
 
-1T field in +Z.
+ 1T field in +Z.
 
 Putting a field in +Y crashes IBSimu.
 
@@ -381,7 +381,7 @@ Naming:
 
 <hr>
 
-There don't seem to be any non-conductive  elements that are solid at room temperature. It'd be really great
+There don't seem to be any non-conductive elements that are solid at room temperature. It'd be really great
 
 <hr>
 
@@ -422,7 +422,6 @@ Solenoid could also be made out of magnetic iron?
 My current chamber only allows us about 0.3m in which to focus. I might have to upgrade that later.
 
 <hr>
-
 [Mark H on Physics StackExchange:](https://physics.stackexchange.com/a/249212/101785)
 
 > Solenoid magnets can focus in both the X and Y planes, unlike quadrupoles. They are also simpler devices that don't require the precise alignment that a FODO array would require. The limitation on solenoid magnets is that they are only effective at focusing low-energy beams, like the positrons from your spallation source or primary electrons after being emitted from a cathode.
@@ -451,27 +450,116 @@ Interesting. Aperture-style lens, 1000v:
 
 ![iiinteresting](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/iiinteresting.png)
 
+Neodymium ring magnet:
+
+![neodymium](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/neodymium.png)
+
+It looks like something's wrong with the field here. Very strange.
+
+![better](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/better.png)
+
+Ah, much better. Changed the magnetization axis. That will be a seriously huge magnet, though, which'll cause a lot of hassle during shipping etc. Let's try some more electrostatics.
+
+<hr>
+
+I had decreased the beam radius to 0.005m for the last few tests. I've brought it back up now.
+
+<hr>
+
+http://www.massspecpro.com/technology/ion-optics/einzel-lens-0 has some good discussion on einzel lenses. It mentions a process called "thermalization" in an "ion guide" to narrow the distribution of stuff. 
+
+http://www.binep.ac.ru/Publics/Pdf/1997_p013_e.pdf
+
+Interesting - this seems to largely concern mass spectrometers with very high input pressures.
+
+<hr>
+
+1 mil is 25.4 microns, for reference. 
+
+<hr>
+
+At 0.05A of beam current, an einzel lens with 1000v on the center cylinder looks like this:
+
+![lowcurrent](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/lowcurrent.png)
+
+At the full 35.75A, 
+
+![fullcurrent](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/fullcurrent.png)
+
+It looks like the beam is just too *wide* for the electrostatic field to have any significant effect. Dropping the grid size to 0.005 and reducing the beam and einzel radii yields:
+
+![narrow_einzel](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/narrow_einzel.png)
+
+Voltage is too high - it just repels everything. 
+
+<hr>
+
+What kind of energies will we have upon exiting the bowtie?
+$$
+V_{rms}=\sqrt{\frac{3kt}{29amu}}=\sqrt{\frac{3 * \text{boltzmann constant} * 2800K}{29 amu}}=1551.88 \text{m/s}
+$$
+
+$$
+E_{rms}=0.5mv^2=0.361\text{eV}
+$$
+
+$$
+\frac{0.361eV}{15eV} \approx 0.024\%
+$$
+
+Almost definitely completely negligible! Probably. Maybe. We'll see.
+
+<hr>
+
+### 1546128786 >
+
+<hr>
+
+https://cloudfront.escholarship.org/dist/prd/content/qt7652n8md/qt7652n8md.pdf
+
+<hr>
+
+Many ion beam systems have requirements that differ considerably from this project. Electron microscopes, for instance, generally operate with very low charge densities. Klystrons, however, happen to have electron guns quite similar in principle to our system.
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19650023758.pdf
+
+Jackpot! This reference describes some analytical methods for electrostatic focusing. They're optimizing for a 0.2A beam current, but what's an order of magnitude or two between friends?
+$$
+
+$$
 
 
 
 
+https://inis.iaea.org/collection/NCLCollectionStore/_Public/27/019/27019494.pdf
+
+holy DARN 350A of beam current - $12.8A/cm^2$ on the cathode!
+
+https://dspace.mit.edu/bitstream/handle/1721.1/93971/01ja008_full.pdf%3Bjsessionid%3D562FEC11C8604EE9488C26217EBAADF2?sequence%3D1
+
+Some terminology: `perveance`is the coefficient between the space charge current`I` and the acceleration voltage $U_a$. Confusingly, `microperveance` is `perveance` * $10^6$. That's a little silly, isn't it?
+
+.[^6] is really cool:
+
+> [snip] In principle, beam confinement may be achieved with either magnetic fields or electrostatic fields. In practice, however, almost all klystrons utilize magnetic focusing [snip] The minimum amount of magnetic field required to maintain a "pencil" electron beam at a constant diameter is the Brillouin field. The Brillouin field in gauss is 
+
+I am unsure as to whether this also applies to heavy ions, such as aluminium; however, let's give it a try and see whether we get reasonable results.
+
+$$
+
+$$
+
+[^5]: Garrione, Maurizio, and Manuel Zamora. "Periodic solutions of the Brillouin electron beam focusing equation." *Commun. Pure Appl. Anal* 13.2 (2014): 961-975, [Internal](../../references/garzam_preprint.pdf) [External](https://www.researchgate.net/profile/Manuel_Zamora3/publication/258237448_Periodic_solutions_of_the_Brillouin_electron_beam_focusing_equation/links/00b7d52865c3eeac4a000000/Periodic-solutions-of-the-Brillouin-electron-beam-focusing-equation.pdf?origin=publication_detail)
 
 
 
+Klystrons also encounter the "target heating" effect that we will have to contend with - the collector is generally a liquid-cooled copper cup. ==Very interestingly, the target can sometimes have a negative voltage applied - a "depressed collector"== - which reduces the power dissipation. Very interesting! It may be possible to do something similar in our application.
 
+[^6]: Handbook of Microwave Technology: Volume 2, T. Koryu Ishii
 
+Cathode life seems to be associated with something called a "miram curve". 
 
-
-
-
-
-
-
-
-
-
-
-
+[^7]: CATHODE LIFE PREDICTION, ARC Professional Services Group,  https://apps.dtic.mil/dtic/tr/fulltext/u2/a245697.pdf
 
 
 
@@ -506,3 +594,12 @@ ion curtain can use a grid
 
 
 
+https://www.nasa.gov/sites/default/files/atoms/files/cryogenic_selective_surfaces_final_report_niac_phase_i.pdf
+
+Very cool: cryogenic selective surfaces.
+
+Also cool:
+
+https://www.thevespiary.org/library/Files_Uploaded_by_Users/no1uno/pdf/Instrumentation/NMR/McDowell.Adolphi.Operating.Nanoliter.Scale.NMR.MicroCoils.in.a.1.Tesla.Field.pdf
+
+[^100]: [Internal]() [External]()

@@ -16,14 +16,14 @@
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.01 //m
+#define BEAM_RADIUS 0.005 //m
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
 #define BEAM_OFFSET_Y 0.1
 
-#define GRID_SIZE 0.001 //m
-#define RECOMBINATION_POINT 1 //m
+#define GRID_SIZE 0.0005 //m
+#define RECOMBINATION_POINT 0.3 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
@@ -38,23 +38,42 @@ const double Up = 5.0;
 
 int iteration = 0;
 
-#define EINZEL_R 0.02
+#define EINZEL_R 0.03
+#define EINZEL_X 0.005
+#define EINZEL_GAP 0.0005
+#define EINZEL_1_WIDTH 0.002
+#define EINZEL_2_WIDTH 0.003
+#define EINZEL_3_WIDTH 0.002
+
+// bool einzel_1( double x, double y, double z )
+// {
+//   return( (x >= EINZEL_X && x <= EINZEL_X+EINZEL_1_WIDTH) && (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+// }
+//
+//
+// bool einzel_2( double x, double y, double z )
+// {
+//     return( (x >= EINZEL_X+EINZEL_1_WIDTH+EINZEL_GAP && x <= EINZEL_X+EINZEL_1_WIDTH+EINZEL_GAP+EINZEL_2_WIDTH ) && (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+// }
+//
+// bool einzel_3( double x, double y, double z )
+// {
+//   return( (x >= EINZEL_X+EINZEL_1_WIDTH+(EINZEL_GAP*2)+EINZEL_2_WIDTH
+//         && x <= EINZEL_X+EINZEL_1_WIDTH+(EINZEL_GAP*2)+(EINZEL_2_WIDTH+EINZEL_3_WIDTH) )
+//         && (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+// }
 
 bool einzel_1( double x, double y, double z )
 {
-  return( x < 0.01 && (y < 0.1-EINZEL_R || y > 0.1+EINZEL_R));
+  return( (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
 }
 
 
 bool einzel_2( double x, double y, double z )
 {
-    return( (x > 0.02 && x < 0.03 ) && (y < 0.1-EINZEL_R || y > 0.1+EINZEL_R));
+    return( (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
 }
 
-bool einzel_3( double x, double y, double z )
-{
-    return( (x > 0.04 && x < 0.06 ) && (y < 0.1-EINZEL_R || y > 0.1+EINZEL_R));
-}
 
 
 void simu( int *argc, char ***argv )
@@ -64,8 +83,8 @@ void simu( int *argc, char ***argv )
 
     Solid *s1 = new FuncSolid( einzel_1 );
     geom.set_solid( 7, s1 );
-    // Solid *s2 = new FuncSolid( einzel_2 );
-    // geom.set_solid( 8, s2 );
+    Solid *s2 = new FuncSolid( einzel_2 );
+    geom.set_solid( 8, s2 );
     // Solid *s3 = new FuncSolid( einzel_3 );
     // geom.set_solid( 9, s3 );
 
@@ -73,9 +92,9 @@ void simu( int *argc, char ***argv )
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  -1000.0) );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
-    // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  1000.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
+    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  100.0) );
+    //geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );

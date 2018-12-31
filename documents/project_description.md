@@ -129,9 +129,8 @@ aluminum is 87% reflective at infrared.
 
 
 
-
 GAH; another bloody problem. If an alloy is injected into the bowtie, the different molecular masses will cause a "mass spectrometer" effect in the deflection plates, blurring the deposition horrendously.
-Since we need to deposit all the materials in the alloy simultaneously, not sequentially, multiple bowties with multiple accleration voltages tuned to their respective masses would work.
+Since we need to deposit all the materials in the alloy simultaneously, not sequentially, multiple bowties with multiple acceleration voltages tuned to their respective masses would work.
 
 Wire feedthroughs: Buna-N has a TML of around 7; I don't even have to worry about a tiny bit of JB-weld, I don't think.
 

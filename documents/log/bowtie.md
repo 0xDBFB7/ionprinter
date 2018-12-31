@@ -70,7 +70,7 @@ Aluminium:
 | Fusion       | 398 kJ/kg                               |
 | Vaporization | 10.5 MJ / kg                            |
 | Total        | 13.15 MJ/kg                             |
-| 40g/h        | 144.7 W                                 |
+| @40g/h       | 144.7 W                                 |
 
 A print speed of 40g/h will require at least 144.7 watts to be input to the bowtie. Values for copper are similar.
 
@@ -145,7 +145,7 @@ It would be nice to be able to determine the temperature of the bowtie.
 
 #### Thermocouples
 
-Thermocouple wire can't be used, as it'll be vaporized.
+Standard K thermocouple wire can't be used, as it'll melt. Some esoteric W/Rh junctions can handle the heat.
 
 #### Bowtie resistance measurement
 
