@@ -473,7 +473,6 @@ http://www.binep.ac.ru/Publics/Pdf/1997_p013_e.pdf
 Interesting - this seems to largely concern mass spectrometers with very high input pressures.
 
 <hr>
-
 1 mil is 25.4 microns, for reference. 
 
 <hr>
@@ -524,36 +523,57 @@ Many ion beam systems have requirements that differ considerably from this proje
 https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19650023758.pdf
 
 Jackpot! This reference describes some analytical methods for electrostatic focusing. They're optimizing for a 0.2A beam current, but what's an order of magnitude or two between friends?
-$$
-
-$$
 
 
 
+> There were a number of aspects of the demountable nature of these experiments
+> which caused some difficulty. Since the system was not bakeable, cathode activation
+> took considerable time, and the repeated letting down and reactivation of the tube took
+> more time than it would have in a bakeable system. A number of precautions were
+> taken to minimize this difficulty, and as a result vacuum during operation was always
+> held below 10 -7 -8 torr, and in fact typical operating vacuum was closer to 3 x 10 torr. 
+
+
+
+<hr>
 
 https://inis.iaea.org/collection/NCLCollectionStore/_Public/27/019/27019494.pdf
 
 holy DARN 350A of beam current - $12.8A/cm^2$ on the cathode!
 
+<hr>
+
 https://dspace.mit.edu/bitstream/handle/1721.1/93971/01ja008_full.pdf%3Bjsessionid%3D562FEC11C8604EE9488C26217EBAADF2?sequence%3D1
 
+<hr>
+
 Some terminology: `perveance`is the coefficient between the space charge current`I` and the acceleration voltage $U_a$. Confusingly, `microperveance` is `perveance` * $10^6$. That's a little silly, isn't it?
+
+<hr>
 
 .[^6] is really cool:
 
 > [snip] In principle, beam confinement may be achieved with either magnetic fields or electrostatic fields. In practice, however, almost all klystrons utilize magnetic focusing [snip] The minimum amount of magnetic field required to maintain a "pencil" electron beam at a constant diameter is the Brillouin field. The Brillouin field in gauss is 
 
-I am unsure as to whether this also applies to heavy ions, such as aluminium; however, let's give it a try and see whether we get reasonable results.
-
+$$
+B_b = \frac{8.3\times10^{-4}I^{1/2}}{\text{V}^{1/4}r_\text{(inches)}}
 $$
 
+I am unsure as to whether this also applies to heavy ions, such as aluminum; however, let's give it a try and see whether we get reasonable results - the particle mass may well drop out of the equation during derivation.
 $$
+\frac{8.3\times10^{-4}35.75^{0.5}}{15^{0.25}\times0.196}=0.0128 \text{ Gauss}
+$$
+I guess not. That's absurdly low.
+
+
 
 [^5]: Garrione, Maurizio, and Manuel Zamora. "Periodic solutions of the Brillouin electron beam focusing equation." *Commun. Pure Appl. Anal* 13.2 (2014): 961-975, [Internal](../../references/garzam_preprint.pdf) [External](https://www.researchgate.net/profile/Manuel_Zamora3/publication/258237448_Periodic_solutions_of_the_Brillouin_electron_beam_focusing_equation/links/00b7d52865c3eeac4a000000/Periodic-solutions-of-the-Brillouin-electron-beam-focusing-equation.pdf?origin=publication_detail)
 
-
+<hr>
 
 Klystrons also encounter the "target heating" effect that we will have to contend with - the collector is generally a liquid-cooled copper cup. ==Very interestingly, the target can sometimes have a negative voltage applied - a "depressed collector"== - which reduces the power dissipation. Very interesting! It may be possible to do something similar in our application.
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19710007110.pdf
 
 [^6]: Handbook of Microwave Technology: Volume 2, T. Koryu Ishii
 
@@ -561,15 +581,104 @@ Cathode life seems to be associated with something called a "miram curve".
 
 [^7]: CATHODE LIFE PREDICTION, ARC Professional Services Group,  https://apps.dtic.mil/dtic/tr/fulltext/u2/a245697.pdf
 
+<hr>
+
+[^8]: [External](https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19810021815.pdf)
+
+> more generously radiused electrodes
+
+How titillating!
+
+<hr>
+
+![1500ev](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/1500ev.png)
+
+1500eV test with a very small beam. 640v on the einzel electrode.
+
+![15eV_smallbeam](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/15eV_smallbeam.png)
+
+Same situation with 15eV.
+
+*weird*.
+
+<hr>
+
+Oh, since einzel lens descriptions generally assume a negatively charged beam, we need to swap the voltages.
+
+Dropping the beam current enormously and swapping the element polarity as above produces the following:
+
+![low_current](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/low_current.png)
+
+But this lens is ineffective at high beam currents.
+
+Hmm, I have a feeling that the grid/mesh size is affecting the charge density equation near the beam entry.
+
+0.001m grid, 0.01m beam radius, 15eV, 35.75A:
+
+![001m](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/001m.png)
+
+0.0001m:
+
+![0001m](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/0001m.png)
+
+Yup! Definitely a significant difference.
 
 
 
+https://link.springer.com/chapter/10.1007/978-1-349-00447-8_6
 
+Solver crashed at 0.00001m grid size - OOM.
 
+Decreasing the beam radius to 1mm seems to take away some of that - ahem - "generous radius".
 
+![1mm_beam_5e-5grid](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/1mm_beam_5e-5grid.png)
 
+I'm not sure if that's due to the mesh size interaction with the space charge simulation. 
 
+This simulation (with a 0.00005m mesh) has a beam entry space charge of $1.1 C/m^3$, and an entry epot of 200kv.
 
+At 0.0005m, epot=40kv, and scharge=0.3C/m^3.
+
+I mean, it makes perfect sense that we're not having any effect - a few hundred volts on a hundred-kilovolt space charge is essentially negligible. 
+
+![null_wide_finegrid](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/null_wide_finegrid.png)
+
+> Well let me bring you back to the subject / Pep's on set / increase your RMS kinetic energy and provoke evaporative cooling
+
+<hr>
+
+The epot remains at around 200kv even with a 0.01m beam radius. That doesn't seem correct.
+
+> If space charge is now included, a uniform beam of density p generates a field 
+
+$$
+E_p=\frac{p}{2\epsilon_0}y
+$$
+
+What the hell is `y`? Label ya variables, son! Surely it's not translational position?
+
+<hr>
+
+Ooh, this is a great source:
+
+[^9]: Applications of Electrons, Ions and Atomic Beams, Dr. T J Reddish [External](http://web2.uwindsor.ca/courses/physics/reddish/teaching/587/Space-Charge-I.pdf)
+
+Electric field at the surface of a cylinder of charge is given by:
+$$
+v=\sqrt{\frac{2eV}{m}}=\sqrt{\frac{2e\times15\text{v}}{29 \text{amu}}}=9990.616 \text{ m/s}
+$$
+
+$$
+D_c=\frac{I}{v}=\frac{35.75A}{9990.616 m/s}= 0.0035784 coulombs per meter
+$$
+
+$$
+E_r = \frac{D_c}{2\pi\epsilon_0r} = 6.43 GV/m
+$$
+
+$$
+\beta=30329.5\frac{I}{V^{3/2}}=V=15=0.615
+$$
 
 
 
@@ -592,8 +701,6 @@ Fresnel zone plate
 
 ion curtain can use a grid
 
-
-
 https://www.nasa.gov/sites/default/files/atoms/files/cryogenic_selective_surfaces_final_report_niac_phase_i.pdf
 
 Very cool: cryogenic selective surfaces.
@@ -603,3 +710,11 @@ Also cool:
 https://www.thevespiary.org/library/Files_Uploaded_by_Users/no1uno/pdf/Instrumentation/NMR/McDowell.Adolphi.Operating.Nanoliter.Scale.NMR.MicroCoils.in.a.1.Tesla.Field.pdf
 
 [^100]: [Internal]() [External]()
+
+The cost of production should be lower than the cost of customer support would be - if any problem arises, we automatically ship out a replacement, no human involved. I'd rather spend money on R&D and in-field testing than a call center.
+
+Brazing to ceramic is totally possible:
+
+> Where ceramics were to be brazed
+> to metal, monel or even copper would be considered as a buffer material to permit
+> the high temperature brazes without cracking the ceramics. 

@@ -16,20 +16,20 @@
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.005 //m
+#define BEAM_RADIUS 0.01 //m
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
-#define BEAM_OFFSET_Y 0.1
+#define BEAM_OFFSET_Y 0.05
 
-#define GRID_SIZE 0.0005 //m
+#define GRID_SIZE 0.00005 //m
 #define RECOMBINATION_POINT 0.3 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.5
-#define MESH_WIDTH 0.2
+#define MESH_LENGTH 0.05
+#define MESH_WIDTH 0.1
 
 #define INTERACTIVE_PLOT 1
 
@@ -38,40 +38,40 @@ const double Up = 5.0;
 
 int iteration = 0;
 
-#define EINZEL_R 0.03
-#define EINZEL_X 0.005
-#define EINZEL_GAP 0.0005
-#define EINZEL_1_WIDTH 0.002
-#define EINZEL_2_WIDTH 0.003
-#define EINZEL_3_WIDTH 0.002
-
+#define EINZEL_R 0.01
+#define EINZEL_X 0.00
+#define EINZEL_GAP 0.0001
+#define EINZEL_1_WIDTH 0.001
+#define EINZEL_2_WIDTH 0.001
+#define EINZEL_3_WIDTH 0.001
+#define EINZEL_Y 0.05
 // bool einzel_1( double x, double y, double z )
 // {
-//   return( (x >= EINZEL_X && x <= EINZEL_X+EINZEL_1_WIDTH) && (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+//   return( (x >= EINZEL_X && x <= EINZEL_X+EINZEL_1_WIDTH) && (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
 // }
 //
 //
 // bool einzel_2( double x, double y, double z )
 // {
-//     return( (x >= EINZEL_X+EINZEL_1_WIDTH+EINZEL_GAP && x <= EINZEL_X+EINZEL_1_WIDTH+EINZEL_GAP+EINZEL_2_WIDTH ) && (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+//     return( (x >= EINZEL_X+EINZEL_1_WIDTH+EINZEL_GAP && x <= EINZEL_X+EINZEL_1_WIDTH+EINZEL_GAP+EINZEL_2_WIDTH ) && (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
 // }
 //
 // bool einzel_3( double x, double y, double z )
 // {
 //   return( (x >= EINZEL_X+EINZEL_1_WIDTH+(EINZEL_GAP*2)+EINZEL_2_WIDTH
 //         && x <= EINZEL_X+EINZEL_1_WIDTH+(EINZEL_GAP*2)+(EINZEL_2_WIDTH+EINZEL_3_WIDTH) )
-//         && (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+//         && (y <= 0.05-EINZEL_R || y >= 0.05+EINZEL_R));
 // }
 
 bool einzel_1( double x, double y, double z )
 {
-  return( (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+  return( (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
 }
 
 
 bool einzel_2( double x, double y, double z )
 {
-    return( (y <= 0.1-EINZEL_R || y >= 0.1+EINZEL_R));
+    return( (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
 }
 
 
@@ -92,9 +92,9 @@ void simu( int *argc, char ***argv )
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  100.0) );
-    //geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  1000.0) );
+    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  -1000.0) );
+    //geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  100.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
@@ -181,8 +181,8 @@ void simu( int *argc, char ***argv )
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                                            0.005,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
-                                            0.005,BEAM_OFFSET_Y+BEAM_RADIUS //point 2
+                                            0.00,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
+                                            0.00,BEAM_OFFSET_Y+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
