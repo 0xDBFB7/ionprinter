@@ -676,9 +676,113 @@ $$
 E_r = \frac{D_c}{2\pi\epsilon_0r} = 6.43 GV/m
 $$
 
+Not quite what I wanted.
 $$
-\beta=30329.5\frac{I}{V^{3/2}}=V=15=0.615
+\beta=30329.5\frac{I}{V^{3/2}}=0.615\\
 $$
+Where $$\alpha$$ is the initial convergence angle - 0 for a parallel beam, which ours isn't quite going to be.
+
+<hr>
+
+[^10]: http://www-eng.lbl.gov/~dleitner/USPAS_2016_Fundamental_Of_Ion_Sources/4_Thursday_AM_SpaceCharge.pdf
+
+I've heard tell of "rf focusing". 
+
+<hr>
+
+Let's try making this thing *way bigger*.
+
+http://accelconf.web.cern.ch/accelconf/l02/AUTINDEX/..%5CPAPERS%5CTU465.PDF
+
+Describes a "gun coil" around the electron gun. This device runs at 115-380A of beam current. How the hell do they focus the thing? Their simulations look so pretty and tight.
+
+https://arxiv.org/pdf/physics/0503145.pdf
+
+https://arxiv.org/pdf/1401.3951.pdf
+
+Maaaan this is so close:
+
+https://patentimages.storage.googleapis.com/83/c5/bf/e627ab33fda8e4/US6768265.pdf
+
+Describes electrostatic "lobes" that guide the beam away from the cathode.
+
+BUT HOW
+
+https://www.researchgate.net/profile/Sergey_Kazakov/publication/265074526_THE_TOSHIBA_E3736_MULTI-BEAM_KLYSTRON/links/5437cdca0cf2590375c55628.pdf
+
+
+
+https://arxiv.org/pdf/1510.06065.pdf
+
+Nice breakdown of the coil currents in a high power klystron. We don't need the main or lens coils, more than likely; the gun-coil is all we're going to need, which drew a reasonable 42 amps. I'm assuming the "gun current" is ~50a based on one of the charts.
+
+http://accelconf.web.cern.ch/accelconf/ipac2016/papers/mopmy015.pdf
+
+Many references can be found to a software known as "DGUN". I can find "EGUN", a FORTRAN program written in 1979.
+
+http://www.slac.stanford.edu/cgi-wrap/getdoc/slac-r-226.pdf
+
+I can only assume that DGUN is a more modern version.
+
+<hr>
+
+### 1546365491 >
+
+There's something wrong with my FEMM sim. An N52 ring magnet:
+
+![huh](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/huh.png)
+
+But here's the depiction on KJ Magnetics' website:
+
+![noope](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/noope.png)
+
+This magnet has a peak field of 15T. What's up with that? 
+
+I can cheat by raising the coercivity to an unrealistic value - the focusing works really well in this case, but there's obviously something wrong here.
+
+
+
+1 T = 10,000 gauss. Now everything makes sense.
+
+God*damn.* What an idiot.
+
+<hr>
+
+So, how can I get around this problem?
+
+- I could split the beam into 10 parts, each focused separately.
+
+- I could just make one enormously powerful solenoid
+
+- I could make a hollow beam, and then focus after recombination. Let's try that out.
+
+I'm not sure how the acceleration "grid" will work during fanout. 
+
+First I have to fan the beam out - let's use a backwards ring magnet for that:
+
+![did_just_work](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/did_just_work.png)
+
+Not enough to fan out yet... but the focusing is significantly better, strangely. What's up with that? This sim had a very fine mesh of 0.0001m, so it's not an incomplete scharge effect as previously observed...
+
+![whaaaat](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/whaaaat.png)
+
+Now that's particularly interesting.
+
+Varying the beam start position changes the beam focusing power significantly. Here's what the field looks like.
+
+![huuuuh](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/huuuuh.png)
+
+Recall that the Xb/Zb coordinate axis and field vectors are swapped in FEMM vs IBSimu. 
+
+I think it's time for some **iterative testing.**
+
+> wicked wicked, had to ask for the digits
+>
+>  ffmpeg -framerate 3 -pattern_type glob -i '*.png' xposscan.mp4
+
+<video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/xposscan.mp4"></video>
+
+Not sure why the video is out of order - some issue with ffmpeg glob ordering? Anyhow, it serves to illustrate my point. 
 
 
 
@@ -718,3 +822,18 @@ Brazing to ceramic is totally possible:
 > Where ceramics were to be brazed
 > to metal, monel or even copper would be considered as a buffer material to permit
 > the high temperature brazes without cracking the ceramics. 
+
+`depositron` already taken
+
+`ionitron`also
+
+`beamotron` and variations taken
+
+`nrdditron`? A bit clunky, but not yet taken...
+
+`ionolith`
+
+`nrddilith`
+
+oh ha I'm going to be smiling in the video so one could say I'm "beaming" haha
+
