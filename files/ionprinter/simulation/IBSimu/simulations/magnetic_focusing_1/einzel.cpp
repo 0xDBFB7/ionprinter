@@ -28,10 +28,10 @@
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.1
+#define MESH_LENGTH 0.3
 #define MESH_WIDTH 0.2
 
-#define INTERACTIVE_PLOT 0
+#define INTERACTIVE_PLOT 1
 
 const double Te = 5.0;
 const double Up = 5.0;
@@ -81,7 +81,7 @@ int iteration = 0;
 
 void simu( int *argc, char ***argv )
 {
-    while(iteration < 40){
+    while(iteration < 1){
     Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
     // Solid *s1 = new FuncSolid( einzel_1 );
@@ -125,6 +125,19 @@ void simu( int *argc, char ***argv )
     //MeshVectorField bfield( geom, fout);
     MeshVectorField bfield(MODE_2D, fout, 1.0, 1.0, "B.dat");
 
+
+
+    for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
+      for( int32_t y = 0; y < bfield.size(1); y++ ) {
+          if(y < bfield.size(1)/2){
+            bfield.set( x, y, 0, -10.0*bfield(x,y,0));
+          }
+          else{
+            bfield.set( x, y, 0, 10.0*bfield(x,y,0));
+
+          }
+      }
+    }
 
 
     // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
@@ -206,8 +219,8 @@ void simu( int *argc, char ***argv )
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                                            0.00025*iteration,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
-                                            0.00025*iteration,BEAM_OFFSET_Y+BEAM_RADIUS //point 2
+                                            0.005,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
+                                            0.005,BEAM_OFFSET_Y+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles

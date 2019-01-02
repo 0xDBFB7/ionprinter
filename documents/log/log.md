@@ -1,3 +1,7 @@
+
+
+
+
 # Log introduction
 
 #### 1545020962 >
@@ -93,8 +97,6 @@ A 5T gradient just about does it.
 
 
 Remembered that accelerators use quadrupole and sextupole magnets for focusing. Researching why. 
-
-![gradient_extreme](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/gradient_extreme.png)
 
 Man, that is killer. A ~3t field for 0.2+ m. That's going to be tricky to pull off without superconductors. How's the focusing after that?
 
@@ -782,7 +784,56 @@ I think it's time for some **iterative testing.**
 
 <video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/xposscan.mp4"></video>
 
-Not sure why the video is out of order - some issue with ffmpeg glob ordering? Anyhow, it serves to illustrate my point. 
+Not sure why some frames in the video are out of order - some issue with ffmpeg glob parsing? Anyhow, it serves to illustrate my point. 
+
+![mistake](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/mistake.png)
+
+Oh, here's what a zero-field test looks like. That explains everything.
+
+Beam radius of 5 mm, for reference.
+
+![zero_field_2](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/zero_field_2.png)
+
+Test with scalar B rather than B1 or B2 in export script:
+
+![bent](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/bent.png)
+
+Curious.
+
+ ![another_null](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/another_null.png)
+
+
+
+https://ilc.kek.jp/Conf/LAM27/8P-13.pdf
+
+clearly shows the first cathode coil as being significantly behind the cathode. 
+
+> The cathode coils produce a uniform magnetic
+> field on the whole cathodes. 
+
+![accidental](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/accidental.png)
+
+I was trying to fanout, but this is pretty neat. Mirrored across midpoint - the two downstream magnets have a 180 deg magnetization direction (counter-beam).
+
+![backshell](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/backshell.png)
+
+Trying an iron backshell, but that doesn't quite work.
+
+![fanout_succesful](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/fanout_succesful.png)
+
+Haha, looks like I've got fanout working! This is with three pieces of iron on the top, bottom and middle gaps respectively.
+
+
+
+Oh man, I just realized something. We're going to encounter the exact same problem during recombination; the electrons are going to go *everywhere*. Oh well. We can use this to our advantage, I guess - direct the electrons to a thin slice of the beam.
+
+
+
+Higher beam energy lets us bring the field strength up before the beam goes all screwy.
+
+![we_have_focusing](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/we_have_focusing.png)
+
+Hooray! Full current focusing! Lots of tweaking to do, but this'll work fine! Very simple linear focus structure with KJ RY0X04 magnets - though this sim was done with N52 grade material. These cost 16 bucks apiece in low volume, a total of $64 - totally reasonable!
 
 
 
