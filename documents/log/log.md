@@ -847,6 +847,32 @@ Hang on a min. Since this is a 2d simulation, what happens when the beam spreads
 
 Let's get cylindrical.
 
+<hr>
+
+![no_effect](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/no_effect.png)
+
+No effect.
+
+<hr>
+
+Increasing magnetic field by 10x has a far more significant effect than reducing beam current by 10x.
+
+<hr>
+
+Hmm. 
+
+try halbach and extremely low voltage
+
+<hr>
+
+Why did I have 2pir^2 as the area formula? What an idiot.
+
+<hr>
+
+An annulus with an IR of 0.05 and an OR of 0.005 has an area of $0.00165m^2$. Compare with a simple circle, which has an area of $7.85\times10^{-5}$. A hollow beam with these proportions will have a 21x lower current density.
+
+
+
 ### Quick notes
 
 Brass water jacket on diffusion pump - inside and outside soldered

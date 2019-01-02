@@ -17,6 +17,7 @@
 #endif
 
 #define BEAM_RADIUS 0.005 //m
+#define BEAM_IR 0.05
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
@@ -82,7 +83,7 @@ int iteration = 0;
 void simu( int *argc, char ***argv )
 {
     while(iteration < 1){
-    Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+    Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
     // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
@@ -116,29 +117,29 @@ void simu( int *argc, char ***argv )
     efield.set_extrapolation( efldextrpl );
 
 
-    ParticleDataBase2D pdb( geom );
+    ParticleDataBaseCyl pdb( geom );
     pdb.set_thread_count(10);
     bool pmirror[6] = { false, false, false, false, false, false };
     pdb.set_mirror( pmirror );
 
     bool fout[3] = { true, true, true };
     //MeshVectorField bfield( geom, fout);
-    MeshVectorField bfield(MODE_2D, fout, 1.0, 1.0, "B.dat");
+    MeshVectorField bfield(MODE_CYL, fout, 1.0, 1.0, "B.dat");
+    bfield*=1;
 
 
-
-    for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
-      for( int32_t y = 0; y < bfield.size(1); y++ ) {
-          if(y < bfield.size(1)/2){
-            bfield.set( x, y, 0, 1.0*bfield(x,y,0));
-          }
-          else{
-            bfield.set( x, y, 0, -1.0*bfield(x,y,0));
-
-          }
-      }
-    }
-
+    // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
+    //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
+    //       if(y < bfield.size(1)/2){
+    //         bfield.set( x, y, 0, 1.0*bfield(x,y,0));
+    //       }
+    //       else{
+    //         bfield.set( x, y, 0, -1.0*bfield(x,y,0));
+    //
+    //       }
+    //   }
+    // }
+    //
 
     // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
     //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
@@ -207,9 +208,10 @@ void simu( int *argc, char ***argv )
     	pdb.clear();
       //float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
 
-      float beam_area = BEAM_RADIUS*2; //m
+      //float beam_area = BEAM_RADIUS*2; //m
       //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
 
+      float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
 
     	pdb.add_2d_beam_with_energy(
                                             1000, //number of particles
@@ -219,8 +221,8 @@ void simu( int *argc, char ***argv )
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,
-                                            0.005,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
-                                            0.005,BEAM_OFFSET_Y+BEAM_RADIUS //point 2
+                                            0.005,BEAM_IR, //point 1
+                                            0.005,BEAM_IR+BEAM_OFFSET_Y+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
