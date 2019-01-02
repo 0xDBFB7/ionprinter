@@ -20,10 +20,10 @@
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 15 //eV
 
-#define BEAM_OFFSET_Y 0.1
+#define BEAM_OFFSET_Y 0
 
 #define GRID_SIZE 0.0005 //m
-#define RECOMBINATION_POINT 0.1 //m
+#define RECOMBINATION_POINT 0.5 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
@@ -130,10 +130,10 @@ void simu( int *argc, char ***argv )
     for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
       for( int32_t y = 0; y < bfield.size(1); y++ ) {
           if(y < bfield.size(1)/2){
-            bfield.set( x, y, 0, -10.0*bfield(x,y,0));
+            bfield.set( x, y, 0, 1.0*bfield(x,y,0));
           }
           else{
-            bfield.set( x, y, 0, 10.0*bfield(x,y,0));
+            bfield.set( x, y, 0, -1.0*bfield(x,y,0));
 
           }
       }

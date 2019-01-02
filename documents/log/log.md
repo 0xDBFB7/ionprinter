@@ -835,7 +835,17 @@ Higher beam energy lets us bring the field strength up before the beam goes all 
 
 Hooray! Full current focusing! Lots of tweaking to do, but this'll work fine! Very simple linear focus structure with KJ RY0X04 magnets - though this sim was done with N52 grade material. These cost 16 bucks apiece in low volume, a total of $64 - totally reasonable!
 
+Objects that produce a field greater than 0.00525 gauss at 15 feet away cannot be shipped via air, which would make international orders a bit of a hassle.
 
+<hr>
+
+I forgot to remove a x10 multiplier. All is lost.
+
+<hr>
+
+Hang on a min. Since this is a 2d simulation, what happens when the beam spreads out? Rather than going like $$r^2$$ , won't it just go like $r$? 
+
+Let's get cylindrical.
 
 ### Quick notes
 
