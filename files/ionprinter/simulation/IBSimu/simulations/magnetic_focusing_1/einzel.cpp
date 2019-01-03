@@ -125,7 +125,7 @@ void simu( int *argc, char ***argv )
     bool fout[3] = { true, true, true };
     //MeshVectorField bfield( geom, fout);
     MeshVectorField bfield(MODE_CYL, fout, 1.0, 1.0, "B.dat");
-    bfield*=1;
+    //bfield*=20;
 
 
     // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
@@ -212,12 +212,12 @@ void simu( int *argc, char ***argv )
       //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
 
       float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
-
+      printf("Beam_area: %f",beam_area);
     	pdb.add_2d_beam_with_energy(
                                             1000, //number of particles
                                             BEAM_CURRENT/beam_area, //beam current density
                                             1.0, //charge per particle
-                                            29.0, //amu
+                                            29, //amu
                                             BEAM_ENERGY, //eV
                                             1,//Normal temperature
                                             1,

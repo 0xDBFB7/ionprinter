@@ -871,6 +871,64 @@ Why did I have 2pir^2 as the area formula? What an idiot.
 
 An annulus with an IR of 0.05 and an OR of 0.005 has an area of $0.00165m^2$. Compare with a simple circle, which has an area of $7.85\times10^{-5}$. A hollow beam with these proportions will have a 21x lower current density.
 
+![not_working](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/not_working.png)
+
+This should work. 
+
+Increasing the beam IR to 0.1 only decreased the epot from 500kv to 447kv, and the scharge dropped from 0.1 to 0.078 - even though the area decreased by 
+
+3.22×10-3
+
+https://arxiv.org/pdf/1401.3951.pdf page 17
+
+Page 26 contains the phrase "plasma meniscus", which might be my favorite statement ever. 
+
+Charge density is 
+
+
+$$
+\frac{I}{Av} = \frac{35.75}{0.00165m^2*9990.616m/s}=2.169 C/M^3
+$$
+Whaaat? That's several orders of magnitude higher than I've ever seen. Is my simulation that screwed up?
+
+<hr>
+
+Oh, interesting - beam deflection is significantly affected by particle mass. A mass of 0.01 amu is easily bent around:
+
+![lowmass](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/lowmass.png)
+
+Higgs manipulation notwithstanding, there's nothing I can possibly do to change the mass.
+
+This makes sense given that the beam deflection is given by 
+$$
+\theta=LB\sqrt{\frac{q}{2mV}}
+$$
+`L` being the length of the magnetic field. 
+
+Without scharge effects, a single aluminum ion would be bent by 
+$$
+0.05 meters \times 0.35 T \times sqrt(1 electron charge / (2 * 29 amu * 15 volts)) = 5.8 degrees.
+$$
+
+| L    | B    | V    | $\theta$ |
+| ---- | ---- | ---- | -------- |
+|      |      |      |          |
+|      |      |      |          |
+|      |      |      |          |
+|      |      |      |          |
+
+
+
+==Ah! We're not space-charge-limited, just magnetic field limited!==
+
+Screw this hollow-beam stuff - we just need a bigger magnet!
+
+Yet again. Daniel Correia, goddamn idiot.
+
+I guess even an excessively simplistic analytical method can tell you much about the character of a problem than an accurate numerical. This puts my ignorance of the majority of physics into stark contrast.
+
+
+
 
 
 ### Quick notes
