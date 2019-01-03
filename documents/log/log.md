@@ -903,29 +903,46 @@ This makes sense given that the beam deflection is given by
 $$
 \theta=LB\sqrt{\frac{q}{2mV}}
 $$
-`L` being the length of the magnetic field. 
+`L` being the length of the magnetic field, and `V` the beam voltage.
 
 Without scharge effects, a single aluminum ion would be bent by 
 $$
 0.05 meters \times 0.35 T \times sqrt(1 electron charge / (2 * 29 amu * 15 volts)) = 5.8 degrees.
 $$
 
-| L    | B    | V    | $\theta$ |
-| ---- | ---- | ---- | -------- |
-|      |      |      |          |
-|      |      |      |          |
-|      |      |      |          |
-|      |      |      |          |
 
-
+| L (m) | B (Tesla) | V (volts) | $\theta$ (degrees) |
+| ----- | --------- | --------- | ------------------ |
+| 0.05  | 0.35      | 15        | 5.8                |
+|       |           |           |                    |
+|       |           |           |                    |
+|       |           |           |                    |
 
 ==Ah! We're not space-charge-limited, just magnetic field limited!==
 
 Screw this hollow-beam stuff - we just need a bigger magnet!
 
-Yet again. Daniel Correia, goddamn idiot.
+Daniel Correia, goddamn idiot.
 
-I guess even an excessively simplistic analytical method can tell you much about the character of a problem than an accurate numerical. This puts my ignorance of the majority of physics into stark contrast.
+I guess even an excessively simplistic analytical method can tell you more about the *character* of a problem than an accurate numerical simulation. This puts my ignorance of the majority of physics into stark contrast. F***ing idiot. I need to hit FLP some more.
+
+<hr>
+
+### 1546479874 > 
+
+<hr>
+
+I guess the optimization problem here is finding the minimum magnetic field that prevents the beam from contacting the magnets. As the magnet radius goes up, we have more time and length in which to bend the beam - but the field also goes down.
+
+<hr>
+
+
+
+
+
+
+
+
 
 
 
