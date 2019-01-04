@@ -1,7 +1,3 @@
-
-
-
-
 # Log introduction
 
 #### 1545020962 >
@@ -1061,8 +1057,6 @@ Well then.
 | -------- | --------- | ---------- | --------- |
 | 35.75    | 15        | 0.005      | 1750      |
 | 1        | 3000      | 0.05       | 7.82      |
-|          |           |            |           |
-|          |           |            |           |
 
 Let's check out a hollow beam for a sec. Just need to add in the annulus term in the bottom...
 
@@ -1079,6 +1073,72 @@ Capping our accel. power to 1000w, we can gain a bit on the voltage.
 Any areas that have overspray can be coated in a layer (or a continuous pumped laminaresque stream) of silicone diff. pump oil to prevent adhesion 
 
 <hr>
+### 1546621015 >
+
+<hr>
+
+https://accelconf.web.cern.ch/AccelConf/p95/ARTICLES/FAQ/FAQ08.PDF
+
+It should be noted that my Mk3 chamber's turbomolecular pump doesn't like magnetic fields. 
+
+https://inis.iaea.org/collection/NCLCollectionStore/_Public/08/297/8297280.pdf
+
+I realized last night that we actually *can* have a focus electrode at a few hundred kilovolts, because they don't actually need to provide any power, just produce a static field. The accel. electrodes can still be maintained at 15v, and supply the substantial amount of current required.
+
+A Cockroft-Walton multiplier can be employed (likely placed on the inside of the vacuum chamber to lessen the insulation requirements) to produce this voltage.
+
+Here's an interesting paper on high-temp CW supplies.
+
+https://pdfs.semanticscholar.org/b23b/2032cd75a47770b857c7b7d0af440256e4e1.pdf
+
+The beam can be deflected either by altering plate voltages, or by deflecting the recombination electron stream.
+
+The only problem to be solved now involves the design of a Pierce-type electrode configuration. I don't trust my IBSimu simulation - I think the extraordinary current densities are not properly simulated by the mesh.
+
+I'd like to verify the epot analytically.
+
+Hmm, no, perhaps not:
+
+| Mesh     | Beam radius | scharge | epot   | Particle # | Current |
+| -------- | ----------- | ------- | ------ | ---------- | ------- |
+| 0.00005  | 0.005       | 0.073   | 109586 | 10000      | 35.75   |
+| 0.000025 | 0.005       | 0.079   | 109702 | 10000      | 35.75   |
+| 0.00005  | 0.005       | 0.09    | 109000 | 100        | 35.75   |
+
+That looks pretty reasonable - scharge and epot seem to be mesh-invariant at these small sizes. I greatly reduced the problem domain in order to simulate at these small mesh sizes - these tests were only 0.025x0.05m. The beam was offset from the left boundary by 0.015m.
+
+http://www.rtftechnologies.org/emtech/cockroft-walton.htm
+
+http://blazelabs.com/l-c-superv1.asp - a 14 watt 54kv C/W. They really seem quite simple.
+
+<hr>
+
+Safety is going to be a concern. X-ray production will probably be detectable as excess current draw on the C/W. A small magnetic field can be employed to restrain the ionization electrons, to prevent them from being accelerated by the focus electrode.
+
+https://apps.dtic.mil/dtic/tr/fulltext/u2/a278139.pdf
+
+<hr>
+
+I'm a little concerned about the power that'll be required to focus. Keeping the beam in equilibrium takes zero power; W=F*D, so as long as the geometry of the electrode is such that the particles don't move along the force vector, no power will be expended.
+
+Focusing the beam, however, will require power. This'll have to be provided by the UHV electrode, so we can only really afford ~20 watts. 
+
+Let's assume a focus distance of 0.1 meters, and an initial beam radius of 0.005m.
+$$
+\frac{0.1}{9990 m/s} = 1.001001e-5s
+$$
+
+$$
+= 499.5 m/s
+$$
+
+Uh oh.
+$$
+0.5 \times 29 amu \times (499.5m/s) ^2 = 0.0375 eV\\
+\times2.232×10^{20}/s = 1.341 \text{ watts}
+$$
+Hell yeah! That's totally reasonable!
+
 
 
 
@@ -1134,4 +1194,8 @@ Brazing to ceramic is totally possible:
 `nrddilith`
 
 oh ha I'm going to be smiling in the video so one could say I'm "beaming" haha
+
+https://www.alphalabinc.com/product/asmgm/
+
+Oh, and it costs the same as a first generation Makerbot Cupcake. That was made out of wood.
 

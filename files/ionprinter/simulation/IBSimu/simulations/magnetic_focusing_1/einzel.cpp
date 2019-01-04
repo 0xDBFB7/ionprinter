@@ -21,16 +21,16 @@
 #define BEAM_CURRENT 35.75 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
-#define BEAM_OFFSET_Y 0.1
+#define BEAM_OFFSET_Y 0.025
 
-#define GRID_SIZE 0.0001 //m
+#define GRID_SIZE 0.00005 //m
 #define RECOMBINATION_POINT 0.5 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.025
-#define MESH_WIDTH 0.2
+#define MESH_LENGTH 0.05
+#define MESH_WIDTH 0.05
 
 #define INTERACTIVE_PLOT 1
 
@@ -68,17 +68,21 @@ int iteration = 0;
 //         && (y <= 0.05-EINZEL_R || y >= 0.05+EINZEL_R));
 // }
 
-bool einzel_1( double x, double y, double z )
-{
-  return(((y >= ((x+0.1)+0.0025)) || (y <= (((-1.0*x)+0.1)-0.0025))) && x < 0.002);
-}
-
-
-bool einzel_2( double x, double y, double z )
-{
-    return(x > 0.0022 && (y >= 0.102 || y <= 0.098));
-}
-
+// bool einzel_1( double x, double y, double z )
+// {
+//   return(((y >= ((x+0.025)+0.0025)) || (y <= (((-1.0*x)+0.025)-0.0025))) && x < 0.002);
+// }
+//
+//
+// bool einzel_2( double x, double y, double z )
+// {
+//     return(x > 0.03 && (y >= 0.102 || y <= 0.098));
+// }
+//
+// bool einzel_3( double x, double y, double z )
+// {
+//     return( y > 0.04 || y < 0.01);
+// }
 
 
 void simu( int *argc, char ***argv )
@@ -86,20 +90,20 @@ void simu( int *argc, char ***argv )
     while(iteration < 1){
     Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
-    // Solid *s1 = new FuncSolid( einzel_1 );
-    // geom.set_solid( 7, s1 );
-    // Solid *s2 = new FuncSolid( einzel_2 );
-    // geom.set_solid( 8, s2 );
-    // Solid *s3 = new FuncSolid( einzel_3 );
-    // geom.set_solid( 9, s3 );
+    Solid *s1 = new FuncSolid( einzel_1 );
+    geom.set_solid( 7, s1 );
+    Solid *s2 = new FuncSolid( einzel_2 );
+    geom.set_solid( 8, s2 );
+    Solid *s3 = new FuncSolid( einzel_3 );
+    geom.set_solid( 9, s3 );
 
     geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  50000.0) );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
-    // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  100.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  15.0) );
+    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+    geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  100.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
@@ -222,8 +226,8 @@ void simu( int *argc, char ***argv )
                                             BEAM_ENERGY, //eV
                                             0.1,//Normal temperature
                                             0.1,
-                                            0.015,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
-                                            0.015,BEAM_IR+BEAM_OFFSET_Y+BEAM_RADIUS //point 2
+                                            0.001,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
+                                            0.001,BEAM_IR+BEAM_OFFSET_Y+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
