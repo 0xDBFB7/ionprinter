@@ -17,19 +17,19 @@
 #endif
 
 #define BEAM_RADIUS 0.005 //m
-#define BEAM_IR 0.05
+#define BEAM_IR 0.0
 #define BEAM_CURRENT 35.75 //A 35
-#define BEAM_ENERGY 15 //eV
+#define BEAM_ENERGY 0.361 //eV
 
-#define BEAM_OFFSET_Y 0
+#define BEAM_OFFSET_Y 0.1
 
-#define GRID_SIZE 0.0005 //m
+#define GRID_SIZE 0.0001 //m
 #define RECOMBINATION_POINT 0.5 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.3
+#define MESH_LENGTH 0.025
 #define MESH_WIDTH 0.2
 
 #define INTERACTIVE_PLOT 1
@@ -49,6 +49,7 @@ int iteration = 0;
 #define EINZEL_3_WIDTH 0.05
 #define EINZEL_Y 0.2
 
+//
 // bool einzel_1( double x, double y, double z )
 // {
 //   return( (x >= EINZEL_X && x <= EINZEL_X+EINZEL_1_WIDTH) && (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
@@ -66,24 +67,24 @@ int iteration = 0;
 //         && x <= EINZEL_X+EINZEL_1_WIDTH+(EINZEL_GAP*2)+(EINZEL_2_WIDTH+EINZEL_3_WIDTH) )
 //         && (y <= 0.05-EINZEL_R || y >= 0.05+EINZEL_R));
 // }
-//
-// bool einzel_1( double x, double y, double z )
-// {
-//   return( (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
-// }
-//
-//
-// bool einzel_2( double x, double y, double z )
-// {
-//     return( (y <= EINZEL_Y-EINZEL_R || y >= EINZEL_Y+EINZEL_R));
-// }
+
+bool einzel_1( double x, double y, double z )
+{
+  return(((y >= ((x+0.1)+0.0025)) || (y <= (((-1.0*x)+0.1)-0.0025))) && x < 0.002);
+}
+
+
+bool einzel_2( double x, double y, double z )
+{
+    return(x > 0.0022 && (y >= 0.102 || y <= 0.098));
+}
 
 
 
 void simu( int *argc, char ***argv )
 {
     while(iteration < 1){
-    Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+    Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
     // Solid *s1 = new FuncSolid( einzel_1 );
     // geom.set_solid( 7, s1 );
@@ -96,13 +97,13 @@ void simu( int *argc, char ***argv )
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  100.0) );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  -100.0) );
+    // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  50000.0) );
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
     // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  100.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );having
     geom.build_mesh();
 
     EpotUMFPACKSolver solver( geom );
@@ -117,14 +118,14 @@ void simu( int *argc, char ***argv )
     efield.set_extrapolation( efldextrpl );
 
 
-    ParticleDataBaseCyl pdb( geom );
+    ParticleDataBase2D pdb( geom );
     pdb.set_thread_count(10);
     bool pmirror[6] = { false, false, false, false, false, false };
     pdb.set_mirror( pmirror );
 
     bool fout[3] = { true, true, true };
     //MeshVectorField bfield( geom, fout);
-    MeshVectorField bfield(MODE_CYL, fout, 1.0, 1.0, "B.dat");
+    MeshVectorField bfield(MODE_2D, fout, 1.0, 1.0, "B.dat");
     //bfield*=20;
 
 
@@ -206,12 +207,12 @@ void simu( int *argc, char ***argv )
     	efield.recalculate();
 
     	pdb.clear();
-      //float beam_area = 2.0*M_PI*pow(BEAM_RADIUS,2); //m^2
+      //float beam_area = M_PI*pow(BEAM_RADIUS,2); //m^2
 
-      //float beam_area = BEAM_RADIUS*2; //m
+      float beam_area = BEAM_RADIUS*2; //m
       //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
 
-      float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
+      //float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
       printf("Beam_area: %f",beam_area);
     	pdb.add_2d_beam_with_energy(
                                             1000, //number of particles
@@ -219,10 +220,10 @@ void simu( int *argc, char ***argv )
                                             1.0, //charge per particle
                                             29, //amu
                                             BEAM_ENERGY, //eV
-                                            1,//Normal temperature
-                                            1,
-                                            0.005,BEAM_IR, //point 1
-                                            0.005,BEAM_IR+BEAM_OFFSET_Y+BEAM_RADIUS //point 2
+                                            0.1,//Normal temperature
+                                            0.1,
+                                            0.015,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
+                                            0.015,BEAM_IR+BEAM_OFFSET_Y+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles

@@ -936,13 +936,149 @@ I guess the optimization problem here is finding the minimum magnetic field that
 
 <hr>
 
+Page 23 of  https://arxiv.org/pdf/1401.3951.pdf describes a Pierce geometry beam extractor.
+
+I wanna play with that. Let's try winding the simulation back a bit to when the metal atoms have just been ionized by electron collision, where they have a typical thermal velocity of 0.361 eV. Let's say the spread is 0.1eV. Given these parameters, the beam will be bent by 37.6 degrees in a 0.35T field.
+
+Oh, and let's also switch back to a non-cylindrical beam.
+
+5.985 eV (the first ionization energy of aluminium) is our absolute minimum electrode voltage.
+
+
+
+![0361ev](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/0361ev.png)
+
+Huh.
+
+| Energy (spread)    | Radius  | Mesh     | scharge   | epot |
+| ------------------ | ------- | -------- | --------- | ---- |
+| 0.361 eV (0.1/0.1) | 0.005 m | 0.0005 m | 0.9 C/m^3 | 9 MV |
+
+Oh, I made a mistake in setting the beam area.
+
+![barely](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/barely.png)
+
+| Energy (spread)    | Radius  | Mesh     | scharge     | epot  |
+| ------------------ | ------- | -------- | ----------- | ----- |
+| 0.361 eV (0.1/0.1) | 0.005 m | 0.0005 m | 0.032 C/m^3 | 400kv |
+
+Charge density (and therefore the repulsion force) goes like
+$$
+\frac{I}{\sqrt{\frac{V}{m}}}
+$$
 
 
 
 
+<hr>
+
+| Material            | Tensile Strength |
+| ------------------- | ---------------- |
+| Pure 1100 aluminium | 75 MPa (11 ksi)  |
 
 
 
+| Energy (spread)    | Radius   | Mesh      | scharge  | epot  |
+| ------------------ | -------- | --------- | -------- | ----- |
+| 0.361 eV (0.1/0.1) | 0.0005 m | 0.00001 m | 10 C/m^3 | 400kv |
+
+https://inis.iaea.org/collection/NCLCollectionStore/_Public/08/297/8297280.pdf describes pierce-style extraction electrode configurations.
+
+![50kv](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/50kv.png)
+
+50kv is sufficient to pull a beam. The overall size of the electrodes has a significant effect on the required voltages, as one would expect.
+
+
+
+![pierce1](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/pierce1.png)
+
+
+
+![10kv_ineffective](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/10kv_ineffective.png)
+
+But lower voltages pose considerable issues. Let's try magnets again!
+
+http://inspirehep.net/record/710232/files/slac-pub-11688.pdf another interesting klystron extraction configuration, a "racetrack".
+
+
+
+![halbach_iron](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/halbach_iron.png)
+
+Ooh, pretty. Pseudo-halbach array with N52 magnets and two iron pole pieces at the edges.
+
+<hr>
+
+Let's re-derive the Brillouin field for heavy particles, since I can't find it anywhere. 
+
+Beam boundary force equation, #46 in https://arxiv.org/pdf/1401.3951.pdf:
+$$
+F = \frac{qI}{2\pi\epsilon_0rv}
+$$
+
+$$
+F=qvB
+$$
+
+$$
+B=\frac{I}{2\pi\epsilon_0rv^2}
+$$
+
+It should be clear at this point that I have no idea what I'm doing. 
+
+Interesting - while the Larmor radius has a mass component, Brillouin focusing seems to be independent of mass. We might be able to get away with alloys if beam deflection is not required.
+
+Oh, scratch that. Since everything's going to attain the same energy, the velocity will be dependent on mass anyway.
+
+Plugging in some values,
+$$
+(35.75 amps)/(2pi*(vacuum permittivity)*(0.005 meters)*(9990 m/s)^2) = 1.29 megateslas
+$$
+Right. This indicates the necessity of incorporating a neutron star into my design. 
+
+Great, so I have two estimates for the necessary magnetic field which differ by nine orders of magnitude.
+
+ON THE DESIGN OF THE TRANSITION REGION OF
+AXISYMMETRIC, MAGNETICALLY FOCUSED
+BEAM VALVES
+
+https://ieeexplore.ieee.org/abstract/document/5259415 
+
+equation 4
+
+One more time!
+$$
+B_b = \sqrt{\frac{\sqrt{2}I}{\pi\epsilon_0(\frac{e}{m})^{(3/2)}V^{(1/2)}r^2}}
+$$
+I'm such an idiot. I can't even get this simple stupid equation right. 
+
+To validate my solution, I plugged in one of the klystron beam parameters that have been repeated ad nauseam above - using electrons in the mass term. This returned a required Brillouin field of 0.504 T - perfectly reasonable.
+
+With a particle mass of 29 amu, a 1.75 kilotesla field would be required.
+
+Well then.
+
+| I (Amps) | V (volts) | Radius (m) | B (Tesla) |
+| -------- | --------- | ---------- | --------- |
+| 35.75    | 15        | 0.005      | 1750      |
+| 1        | 3000      | 0.05       | 7.82      |
+|          |           |            |           |
+|          |           |            |           |
+
+Let's check out a hollow beam for a sec. Just need to add in the annulus term in the bottom...
+
+`sqrt((sqrt(2)*0.001 amps)/(((vacuum permittivity)*((electron charge)/(29 amu))^(3/2)*(3000V)^0.5*   ((pi*(0.1+0.005 meters)^2)-(pi*(0.1 meters)^2    )     )`
+
+
+
+Well, here's the good part! The ion curtain will be easy to design, since it's just electrons!
+
+yaaay
+
+Capping our accel. power to 1000w, we can gain a bit on the voltage.
+
+Any areas that have overspray can be coated in a layer (or a continuous pumped laminaresque stream) of silicone diff. pump oil to prevent adhesion 
+
+<hr>
 
 
 
