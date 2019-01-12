@@ -16,21 +16,21 @@
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.005 //m
-#define BEAM_IR 0.0
-#define BEAM_CURRENT 35.75 //A 35
+#define BEAM_RADIUS 0.001 //m
+#define BEAM_IR 0.01
+#define BEAM_CURRENT 3.5 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
-#define BEAM_OFFSET_Y 0.025
+#define BEAM_OFFSET_Y 0.0125
 
-#define GRID_SIZE 0.00005 //m
-#define RECOMBINATION_POINT 0.5 //m
+#define GRID_SIZE 0.0001 //m
+#define RECOMBINATION_POINT 0.1 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
 #define MESH_LENGTH 0.05
-#define MESH_WIDTH 0.05
+#define MESH_WIDTH 0.03
 
 #define INTERACTIVE_PLOT 1
 
@@ -41,13 +41,59 @@ int iteration = 0;
 
 #define MIDPOINT ((MESH_WIDTH/GRID_SIZE)/2.0)
 
-#define EINZEL_R 0.1
-#define EINZEL_X 0.00
-#define EINZEL_GAP 0.01
-#define EINZEL_1_WIDTH 0.05
-#define EINZEL_2_WIDTH 0.05
-#define EINZEL_3_WIDTH 0.05
-#define EINZEL_Y 0.2
+#define ACCEL_ELECTRODE_HOLE_RADIUS 0.007
+#define ACCEL_ELECTRODE_X 0.005
+
+#define FOCUS_ELECTRODE_RADIUS 0.005
+
+
+//#define ACCEL_ELECTRODE_HOLE_Y 0.05
+
+// #define EINZEL_R 0.1
+// #define EINZEL_X 0.00
+// #define EINZEL_GAP 0.01
+// #define EINZEL_1_WIDTH 0.05
+// #define EINZEL_2_WIDTH 0.05
+// #define EINZEL_3_WIDTH 0.05
+// #define EINZEL_Y 0.2
+
+// bool einzel_1( double x, double y, double z )
+// {
+//   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
+// }
+
+bool einzel_1( double x, double y, double z )
+{
+  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+  return(x < 0.005 && (y >= x+0.0115 || y <= 0.0095));
+}
+//
+// bool einzel_2( double x, double y, double z )
+// {
+//   return(x > 0.0012 && x < 0.002 && (y >= 0.0115 || y <= 0.009));
+// }
+
+// bool einzel_1( double x, double y, double z )
+// {
+//   return(y >= x+0.001 && x <= 0.003);
+// }
+// bool einzel_1( double x, double y, double z )
+// {
+//   return(y >= 0.003 && x <= 0.0027);
+// }
+// bool einzel_2( double x, double y, double z )
+// {
+//   return(x >= 0.003 && y >= 0.003);
+// }
+// bool einzel_3( double x, double y, double z )
+// {
+//   return(y > 0.01 && (x >= 0.02 && x <= 0.03));
+// }
+// //
+// bool einzel_3( double x, double y, double z )
+// {
+//   return(y > 0.01 && (x >= 0.02 && x <= 0.03));
+// }
 
 //
 // bool einzel_1( double x, double y, double z )
@@ -67,7 +113,6 @@ int iteration = 0;
 //         && x <= EINZEL_X+EINZEL_1_WIDTH+(EINZEL_GAP*2)+(EINZEL_2_WIDTH+EINZEL_3_WIDTH) )
 //         && (y <= 0.05-EINZEL_R || y >= 0.05+EINZEL_R));
 // }
-
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(((y >= ((x+0.025)+0.0025)) || (y <= (((-1.0*x)+0.025)-0.0025))) && x < 0.002);
@@ -88,22 +133,22 @@ int iteration = 0;
 void simu( int *argc, char ***argv )
 {
     while(iteration < 1){
-    Geometry geom( MODE_2D, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+    Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
     Solid *s1 = new FuncSolid( einzel_1 );
     geom.set_solid( 7, s1 );
-    Solid *s2 = new FuncSolid( einzel_2 );
-    geom.set_solid( 8, s2 );
-    Solid *s3 = new FuncSolid( einzel_3 );
-    geom.set_solid( 9, s3 );
+    // Solid *s2 = new FuncSolid( einzel_2 );
+    // geom.set_solid( 8, s2 );
+    // Solid *s3 = new FuncSolid( einzel_3 );
+    // geom.set_solid( 9, s3 );
 
     geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  15.0) );
-    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
-    geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  100.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  400000.0) );
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  100000.0) );
+    // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
@@ -111,27 +156,39 @@ void simu( int *argc, char ***argv )
     geom.build_mesh();
 
     EpotUMFPACKSolver solver( geom );
+    //EpotBiCGSTABSolver solver( geom );
 
     EpotField epot( geom );
     MeshScalarField scharge( geom );
     EpotEfield efield( epot );
 
     field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
-      FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
+      FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
       FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
     efield.set_extrapolation( efldextrpl );
 
 
-    ParticleDataBase2D pdb( geom );
+    ParticleDataBaseCyl pdb( geom );
     pdb.set_thread_count(10);
     bool pmirror[6] = { false, false, false, false, false, false };
     pdb.set_mirror( pmirror );
 
     bool fout[3] = { true, true, true };
-    //MeshVectorField bfield( geom, fout);
-    MeshVectorField bfield(MODE_2D, fout, 1.0, 1.0, "B.dat");
-    //bfield*=20;
+    MeshVectorField bfield( geom, fout);
+    //MeshVectorField bfield(MODE_CYL, fout, 1.0, 1.0, "B.dat");
+    //bfield+=1;
 
+    // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
+    //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
+    //       // if(y < bfield.size(1)/2){
+    //         bfield.set( x, y, 0, Vec3D( 0, 0, 1.0));
+    //       // }
+    //       // else{
+    //       //   bfield.set( x, y, 0, -1.0*bfield(x,y,0));
+    //       //
+    //       // }
+    //   }
+    // }
 
     // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
     //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
@@ -144,7 +201,7 @@ void simu( int *argc, char ***argv )
     //       }
     //   }
     // }
-    //
+
 
     // for( int32_t x = 0; x < RECOMBINATION_POINT/GRID_SIZE; x++ ) {
     //   for( int32_t y = 0; y < bfield.size(1); y++ ) {
@@ -213,21 +270,21 @@ void simu( int *argc, char ***argv )
     	pdb.clear();
       //float beam_area = M_PI*pow(BEAM_RADIUS,2); //m^2
 
-      float beam_area = BEAM_RADIUS*2; //m
+      //float beam_area = BEAM_RADIUS*2; //m
       //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
 
-      //float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
+      float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
       printf("Beam_area: %f",beam_area);
     	pdb.add_2d_beam_with_energy(
-                                            1000, //number of particles
+                                            10000, //number of particles
                                             BEAM_CURRENT/beam_area, //beam current density
                                             1.0, //charge per particle
                                             29, //amu
                                             BEAM_ENERGY, //eV
                                             0.1,//Normal temperature
                                             0.1,
-                                            0.001,BEAM_OFFSET_Y-BEAM_RADIUS, //point 1
-                                            0.001,BEAM_IR+BEAM_OFFSET_Y+BEAM_RADIUS //point 2
+                                            0.0005,BEAM_IR, //point 1
+                                            0.0005,BEAM_IR+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles

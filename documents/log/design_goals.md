@@ -4,7 +4,7 @@ Aluminum and Copper were my target metals. I originally planned on testing with 
 
 The design isn't validated with any other materials, though anything that can survive ionization (single elements, essentially - compounds will be quite thoroughly destroyed) and has reasonable boiling temperatures and ionization energies should work.
 
-### Cost.
+### Cost
 
 It would suck to build this only to have it be reserved for institutions or companies: it must be affordable to the hobbyist, like current 3d printers. 
 

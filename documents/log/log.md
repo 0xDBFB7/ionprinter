@@ -776,7 +776,7 @@ I think it's time for some **iterative testing.**
 
 > wicked wicked, had to ask for the digits
 >
->  ffmpeg -framerate 3 -pattern_type glob -i '*.png' xposscan.mp4
+> ffmpeg -framerate 3 -pattern_type glob -i '*.png' xposscan.mp4
 
 <video src="../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/xposscan.mp4"></video>
 
@@ -852,12 +852,6 @@ No effect.
 <hr>
 
 Increasing magnetic field by 10x has a far more significant effect than reducing beam current by 10x.
-
-<hr>
-
-Hmm. 
-
-try halbach and extremely low voltage
 
 <hr>
 
@@ -1073,7 +1067,9 @@ Capping our accel. power to 1000w, we can gain a bit on the voltage.
 Any areas that have overspray can be coated in a layer (or a continuous pumped laminaresque stream) of silicone diff. pump oil to prevent adhesion 
 
 <hr>
+
 ### 1546621015 >
+
 
 <hr>
 
@@ -1099,13 +1095,18 @@ I'd like to verify the epot analytically.
 
 Hmm, no, perhaps not:
 
+Tests run at 0.361 eV input - a conservative scenario:
+
 | Mesh     | Beam radius | scharge | epot   | Particle # | Current |
 | -------- | ----------- | ------- | ------ | ---------- | ------- |
 | 0.00005  | 0.005       | 0.073   | 109586 | 10000      | 35.75   |
 | 0.000025 | 0.005       | 0.079   | 109702 | 10000      | 35.75   |
 | 0.00005  | 0.005       | 0.09    | 109000 | 100        | 35.75   |
+| 0.00001* | 0.005       | 0.161   | 57000  | 1000       | 35.75   |
 
-That looks pretty reasonable - scharge and epot seem to be mesh-invariant at these small sizes. I greatly reduced the problem domain in order to simulate at these small mesh sizes - these tests were only 0.025x0.05m. The beam was offset from the left boundary by 0.015m.
+*I had to alter the mesh dimensions to stay within memory limitations.
+
+That looks pretty reasonable - scharge and epot seem to be relatively mesh-invariant at these small sizes. I greatly reduced the problem domain in order to simulate at these small mesh sizes - these tests were only 0.025x0.05m. The beam was offset from the left boundary by 0.015m.
 
 http://www.rtftechnologies.org/emtech/cockroft-walton.htm
 
@@ -1137,7 +1138,257 @@ $$
 0.5 \times 29 amu \times (499.5m/s) ^2 = 0.0375 eV\\
 \times2.232×10^{20}/s = 1.341 \text{ watts}
 $$
-Hell yeah! That's totally reasonable!
+Hell yeah! That's *totally* reasonable!
+
+We're on the home stretch! I'm so giddy I can barely function right now!
+
+I can add the recombination electron beam to the same simulation after.
+
+<hr>
+
+As above, we have to make sure that nothing can get near the HV plates - they'll be super sensitive.
+
+<hr>
+Had to switch back to BiCGSTAB solver for one test - UFMPACK doesn't seem to like allocating anything over 4Gb.
+
+EarlyOOM is wonderful.
+
+<hr>
+
+Let's try confirming the sim analytically again. 0.005 mm beam:
+$$
+\frac{I}{Av} = \frac{35.75}{7.85\times10^{-5}m^2\times1550m/s}=293.67 C/M^3
+$$
+Oh no. That's not good :(
+
+The simulation is using a beam area of 0.01m^2 in 2d mode. That's surely where my issues arise. Let's switch back to cyl. 
+
+Now we have a beam area of 0.000079 - that's correct. Scharge is now ~2.5 at a mesh  of 0.00005 - very close to the ideal value - so we can be pretty confident in this simulation.
+
+Epot, regrettably, is over 600kv, which'll be a bit tricky.
+
+Beam energy doesn't seem to affect the sim? Curious.
+
+
+
+
+
+
+$$
+K = \frac{V_1}{V_0cosh(va)} = \frac{100 \text{ kilovolts}}{15 volts*cosh(1550 m/s * 0.01)} = 0.002473\\
+charge density = e\epsilon_0V_0K^2v^2 \approx 4.76 C/m^3\\
+\text{Substituting back into I/Av r}=0.039
+$$
+where `a` is the radius of the focus electrodes. r is greater than a, so 100kv is not sufficient to prevent collision.
+
+
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19650023758.pdf
+
+Gah, this is tricky. We're trying to make a Pierce electrode where the acceleration and focusing voltages are five orders of magnitude apart.
+
+![whatsup](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/whatsup.png)
+
+Strange!
+
+If magnets are so ineffective, how can ion thrusters operate at similar charge densities with magnetic confinement? The atomic mass of xenon is 132, further exacerbating the problem.
+
+The NSTAR runs at around 1.7 amps of beam current.
+
+Oh, and there's a problem with recombination prior to exiting the accel. chamber. As long as the velocity difference between the electrons and the 
+
+We can use a 
+
+Goebel et al describes hollow cathodes for ion thrusters. It might be possible to add a small amount of barium oxide to some surface of the graphite nozzle which is cooler than 1900c (the melting point of BaO). Cathode poisoning might be an issue, however.
+
+https://www.bnl.gov/isd/documents/82781.pdf
+
+http://cds.cern.ch/record/176058/files/198704214.pdf
+
+http://www.darshan.ac.in/Upload/DIET/Documents/EE/HV_2160904_Ch_2_05022018_045216AM.pdf
+
+If only I knew what I was doing.
+
+https://sourceforge.net/p/ibsimu/mailman/message/35502967/ 
+
+> There should be 10 or more mesh units within the size of the beam to correctly model the space charge forces if that is what you want to do. Is your beam in micrometer size? If it is then you need simulation methods that are not available in IBSimu.
+
+Aha! Excellent. Some actual data.
+
+Page 256 of Goebel et al and 
+
+https://trs.jpl.nasa.gov/bitstream/handle/2014/6401/03-0240.pdf?sequence=1
+
+discuss mean free path and striking distances. Penning gauge papers might also be a good source, since they're quite similar. This turns out to be a fiendishly complex topic.
+
+Penning/cold cathode gauges use a magnet to make the electrons spiral in a helical fashion in order to increase the odds of colliding with a neutral gas molecule. 
+
+<hr>
+
+Let's try this Starfish thing, hey? https://www.particleincell.com/starfish/
+
+Supposedly, it can simulate supersonic systems - might be helpful for the diff. pump, too.
+
+file:///home/arthurdent/Downloads/Bondarenko_Daniel.pdf describes a neat Colpitts RF generator. I like!
+
+<hr>
+
+Can I run a large current through the beam plasma channel in order to amplify the magnetic repulsion? A la Z-pinch?
+
+https://apps.dtic.mil/dtic/tr/fulltext/u2/a057689.pdf Uh huh! 
+
+Does this actually change anything? The lorentz F=ILB force will apply, I suppose.
+$$
+50A\times0.01 m\times 1 T = 0.5 N
+$$
+Okay, fine, but is that the force on each particle? Surely not! So would that be divided by the number of particles? Let's see:
+$$
+5\times10^{-21}N\\
+F = \frac{qI}{2\pi\epsilon_0rv} = 2\times10^{-9}
+$$
+Nooope! Or, if so, we'll need a tremendous current to confine the beam. 
+
+This also gets into some tricky magnetodynamics - possibly with a hydro stuck in there too. What's going to be the main charge carrier? What's going to feel the force? Seems like it should be the electrons - but Z-pinch works with heavy ions and deuterium too, so clearly not. And how do we recombine a super-hot pinched plasma in a magnetic field? We have to somehow match electron velocities within the ionization energy of the ions. AAAA!
+
+Let's not, before I lose the plot.
+
+Also:
+
+![cpu](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/cpu.png)
+
+<hr>
+
+http://erps.spacegrant.org/uploads/images/images/iepc_articledownload_1988-2007/2013index/73a3ga1n.pdf
+
+<hr>
+
+Oh, ion drive neutralizers aren't interested in the recombination of the downstream gas per se - they only care that the spacecraft isn't gradually charged. The neutralizer voltage is therefore not particularly important.
+
+<hr>
+
+http://www.usp.br/massa/2014/qfl2144/pdf/Capitulo6_WatsonSparkman.pdf 
+Mass spectrometers use a similar 
+
+https://lib.dr.iastate.edu/cgi/viewcontent.cgi?article=1120&context=chem_pubs
+
+Oh hey, there's a book called "Electron Impact Ionization" by T.D. Mark. 
+
+http://articles.adsabs.harvard.edu/full/1967ApJS...14..207L/0000207.000.html 
+
+> It can be said that there currently exists no rigorous theory of the electron impact ionization of atoms and ions
+
+We're outside the environment again! Good lord.
+
+<hr>
+
+Well, perhaps there are some empirical fits that I can use. Indeed!
+
+http://adsbit.harvard.edu/cgi-bin/nph-iarticle_query?1967ApJS...14..207L&defaultprint=YES&filetype=.pdf
+
+<hr>
+
+Starfish looked daunting. Let's try this SMILEI PIC code:
+
+https://smileipic.github.io/Smilei/namelist.html
+
+
+
+Here's an indication of how cool a program's going to be:
+
+![supercomputer](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/supercomputer.png)
+
+Simulation is 5% inspiration, 95% compilation.
+
+Installed according to directions, copied hdf5 to the smilei dir (removing the lfs flag), set in makefile.
+
+https://github.com/UCLA-Plasma-Simulation-Group/QuickPIC-OpenSource
+
+<hr>
+
+There's something seriously the matter with my intuition for where the accel. and focus power comes from. Discussion on space.stackexchange details how theoretically the acceleration grids in an ion drive require zero current. The potential energy already exists upon ionization due to the charge's position in the electric field. I can't believe I've labored under this misunderstanding for so long - the mark of a poor scientist.
+
+<hr>
+
+Bunch of focusing structures:
+
+http://inspirehep.net/record/829291/files/slac-pub-13741.pdf
+
+https://dspace.mit.edu/bitstream/handle/1721.1/93971/01ja008_full.pdf%3Bjsessionid%3D562FEC11C8604EE9488C26217EBAADF2?sequence%3D1
+
+https://dspace.mit.edu/bitstream/handle/1721.1/93930/00ja005_full.pdf?sequence=1
+
+http://accelconf.web.cern.ch/accelconf/r06/PAPERS/TUHO08.PDF
+
+http://inspirehep.net/record/159/files/slac-pub-0056.pdf
+
+https://patentimages.storage.googleapis.com/83/c5/bf/e627ab33fda8e4/US6768265.pdf
+
+https://ilc.kek.jp/Conf/LAM27/8P-13.pdf
+
+http://www.femm.info/wiki/PermanentMagnetExample
+
+http://science.slc.edu/~mfrey/post/femm-simulations/
+
+https://www.astro.umd.edu/~richard/ASTR680/Smith_school_Mar18.pdf
+
+<hr>
+
+I have three days left.
+
+<hr>
+
+SMili doesn't consider recombination. That sucks. Oh well, it'll work for the ionization chamber.
+
+Had to downgrade openmpi to get hdf5.
+
+<hr>
+Seriously considering ICP again. Seems like it's a lot easier to get a high ionization percentage via ICP. I'm thinking of scaling the ICP coil down quite a bit, and making an RF-transparent alumina hot column that's attached to the bowtie. Anything that contacts the hot column will be melted and will simply flow back into the bowtie to be vaporized anew - but ionized gas can be drawn out separately somehow. A charged graphite cap with a nozzle?
+
+<hr>
+
+Hey, wait a minute. 
+
+Arc welders have no trouble sustaining an arc, even with super low voltages. What's the ionization percentage in an arc welder?
+
+http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.666.1290&rep=rep1&type=pdf is an interesting but not sufficiently detailed look at arc welding ionization processes.
+
+<hr>
+
+We're back in hardware mode. Milling gauge features on the 6040.
+
+| Tool size | XY feed   | Z feed | RPM   | Z step | Stepover |
+| --------- | --------- | ------ | ----- | ------ | -------- |
+| 1/8"      | 7 mm/s    | 1 mm/s | 15000 | 0.5 mm | 50%      |
+| 0.25"     | 11.6 mm/s | 1 mm/s | 14000 | 0.5 mm | 50%      |
+|           |           |        |       |        |          |
+
+<hr>
+
+https://pure.tue.nl/ws/portalfiles/portal/2274668/588538.pdf a "root level" paper on a deposition gun.
+
+<hr>
+DigiKey sells these neat [ceramic spacers](https://www.digikey.ca/product-detail/en/essentra-components/CER-4/RPC1922-ND/3811721) - resistant up to around 1700c. A bit big for the bowtie.
+
+<hr>
+
+Resources on merging bodies with elmer:
+
+http://www.elmerfem.org/forum/viewtopic.php?f=4&t=4111&p=14490&hilit=merge+bodies#p14490
+
+<hr>
+
+FEMM can display the inductance of a coil by pressing the "circuit properties" button. That'll be quite useful for the RF coil.
+
+<hr>
+
+McMaster sells Kovar. 
+
+<hr>
+
+
+
+
+
 
 
 
@@ -1145,6 +1396,8 @@ Hell yeah! That's totally reasonable!
 
 
 ### Quick notes
+
+*fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this.
 
 Brass water jacket on diffusion pump - inside and outside soldered
 Better yet, TIG welded output
@@ -1193,9 +1446,23 @@ Brazing to ceramic is totally possible:
 
 `nrddilith`
 
+Not super euphonistic.
+
+
+
 oh ha I'm going to be smiling in the video so one could say I'm "beaming" haha
 
 https://www.alphalabinc.com/product/asmgm/
 
 Oh, and it costs the same as a first generation Makerbot Cupcake. That was made out of wood.
+
+Video text overlay "the money I got from my last business is currently on this table." BPG400 vacuum gauge  - $90 surplus.
+
+nrditron? Priceless.
+
+gizeh vector animations
+
+http://zulko.github.io/blog/2014/09/20/vector-animations-with-python/
+
+
 

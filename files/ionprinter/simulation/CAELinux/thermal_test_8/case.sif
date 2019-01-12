@@ -130,6 +130,7 @@ End
 !0.221 ohms,
 !5873.9 S/m.
 
+!The thermal conductivity of 
 
 Material 1
   Name = "Graphite (generic)"

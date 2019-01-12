@@ -47,6 +47,8 @@ Low-frequency, high-density, inductively coupled plasma sources: Operation and
 applications
 https://aip.scitation.org/doi/pdf/10.1063/1.1343887?class=pdf
 
+https://dspace.flinders.edu.au/xmlui/bitstream/2328/26556/1/Xu%20Low-frequency.pdf
+
 This allows us to ignore much of the Pashen's Law "striking" difficulty with DC discharge plasmas; with a high enough RF power, complete ionization can be essentially assured.
 
 One drawback here is the immense oscillating magnetic field generated. The ion printer will already be sensitive to the earth's magnetic field; any applied field will deflect the path of the ionized gas away from the desired location. This is proportional to the acceleration voltage:
