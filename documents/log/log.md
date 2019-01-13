@@ -1380,10 +1380,71 @@ http://www.elmerfem.org/forum/viewtopic.php?f=4&t=4111&p=14490&hilit=merge+bodie
 FEMM can display the inductance of a coil by pressing the "circuit properties" button. That'll be quite useful for the RF coil.
 
 <hr>
+Brazing to alumina is apparently doable. 
 
 McMaster sells Kovar. 
 
 <hr>
+
+
+
+### 1547366450 >
+
+<hr>
+
+Ah! A flash of inspiration. Going to model this thing up...
+
+Page 148 of Fundamentals has some really amazing info. I think I can pipe some FEMM data into the analytical models it provides. 
+
+In a previous document I described how an ion would be affected by the 
+
+First, we move the bowtie stack off the feedthroughs. This reduces the paralleism requirements and allows us to use standards spark plugs for the high current connections.
+
+Aluminium joints were previously unattainable - however, I've recently learned of the existance of aluminium brazing flux - available at McMaster! TIG is of course also an option - though it has the disadvantage of being rather more permanent than a simple braze.
+
+http://home.earthlink.net/~jimlux/hv/sparkplug.htm
+
+https://www.gsparkplug.com/shop/spark-plug-construction/
+
+Spark plugs apparently use a talcum powder ring for sealing. Very unusual. I'm going to look into this.
+
+In any case, the plug body is typically made of a nickel steel alloy. 
+
+https://weldtalk.hobartwelders.com/forum/application-talk/aluminum/32053-brazing-or-soldering-aluminum-to-stainless-steel
+
+All right! Looks like I'll probably have to weld the plugs in two stages - first braze a copper transition tube to the nickel, and then braze that to the aluminium.
+
+I'm going all out here. We're talking diamond dremel blades, three types of brazing alloys - good stuff.
+
+Designing for 0.33 or 0.41mm aluminium wire.
+
+It might be possible to inject the wire at the top "cold" electrode. We'll see.
+
+Hmm, no, it might be advantageous to have the alumina go through the top graphite block. 
+
+No, scratch that - we probably want an acceleration electrode at the top of the column.
+
+All we really need is to reach 700c throughout the length of the alumina column.
+
+Oh, but copper melts at 1100c. That's what we're aiming for.
+
+The two graphite heaters can be crossed against each other.
+
+The low thermal conductivity of ceramic will aid in the heating efficiency of the bowtie.
+
+Jesus christ, is it 4:30? Good lord.
+
+We have to be careful that the bowtie connector temperature doesn't exceed the melting point of the solder. Might have to braze it in place. Oooooor have a thin copper strip extend quite far, and then bolt a wire onto it. That'll do!
+
+<hr>
+
+<hr>
+
+
+
+
+
+
 
 
 

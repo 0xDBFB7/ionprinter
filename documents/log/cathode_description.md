@@ -140,7 +140,8 @@ Contrary to the above, however, oxide cathodes are, in fact, demountable, if ope
 
  * [1]: Herrmann, Günther, and Siegfr Wagener. The oxide-coated cathode. Vol. 2. London: Chapman & Hall, 1951.1.
  * [2]: Grilj, Marjan. "Thermionic emission."
- * [3]: sources/filament_coatings.pdf(sources/filament_coatings.pdf)
+
+[^3]: [internal](../references/filament_coatings.pdf)
  * [4]: L.W. Turner,(ed), Electronics Engineer's Reference Book, 4th ed. Newnes-Butterworth, London 1976 ISBN 0408001682 pg. 7-36
  * [5]: http://ebeaminc.com/thermionic-cathodes.htm
  * [6]: https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760024327.pdf
