@@ -1396,8 +1396,6 @@ Ah! A flash of inspiration. Going to model this thing up...
 
 Page 148 of Fundamentals has some really amazing info. I think I can pipe some FEMM data into the analytical models it provides. 
 
-In a previous document I described how an ion would be affected by the 
-
 First, we move the bowtie stack off the feedthroughs. This reduces the paralleism requirements and allows us to use standards spark plugs for the high current connections.
 
 Aluminium joints were previously unattainable - however, I've recently learned of the existance of aluminium brazing flux - available at McMaster! TIG is of course also an option - though it has the disadvantage of being rather more permanent than a simple braze.
@@ -1438,20 +1436,28 @@ We have to be careful that the bowtie connector temperature doesn't exceed the m
 
 <hr>
 
-<hr>
 
+https://github.com/MahdiNabil/CFD-PC
 
+https://www.cfd-online.com/Forums/openfoam-programming-development/157898-solver-evaporation-condensation-modeling.html
 
+OpenFOAM has an interCondensatingEvaporatingFoam.
 
+Elmer doesn't natively support evaporation.
 
+Aha! We're actually modelling something like a resistojet. https://arc.aiaa.org/doi/pdf/10.2514/3.26431?casa_token=i2LW00ju9Z0AAAAA:uchPVgnfn9YSBm--KQTgm2lTBYmXeswyaFbrS1eIztJLepFaMLeJwP4E9Vx7JVefCHD8neRIV-U
 
+Solid teflon electrothermal:
 
+https://arc.aiaa.org/doi/pdfplus/10.2514/3.30181?casa_token=DyjNtM037tAAAAAA:1bzo0A4aWYGAuIgogxR7wylh7FNlZxqY3ZmLMSofx-KmzuRFwg6vRx3yb4VXw7w-PmYvkNRiWRA
 
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19880015584.pdf describes some ways to get a more ideal "dry" gas stream from a vaporizer.
 
+The NASA MOC nozzle designer requires pressure, regrettably.
 
+"Z" in PIC is usually atomic number. "A" is mass number.
 
-
-
+Installed piccante.
 
 
 
