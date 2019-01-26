@@ -34,3 +34,59 @@ No charge discrimination.
 
 
 
+```BowtieML
+Hybrid Pierce-type extractor/ICP
+
+= - graphite
+\/ - conductive but sufficiently RF transparent material - graphite?
+|- - alumina insulator
+
+			   - unspecified recombination wizardry
+=====    =====
+o|/        \|o - multi-segment deflection/astigmatism plates (optional)
+o||		   ||o - alumina insulator ring - probably required at HV
+o|\        /|o
+o| \      / |o
+o|  \	 /  |o - 50+kv electrostatic cone
+-----    ----- - 
+			   - standard graphite injection nozzle
+			   
+Electrostatic cone profile can be precisely adjusted to cancel out beam dispersion à la microwave dishes.
+
+The beam must be recombined before exiting the focus chamber. 
+
+Z-pinch and helical B-fields can be added to increase ionization efficiency; these won't affect the ions but it will direct electrons. Care must be taken to ensure that these fields won't interfere with recombination.
+
+Cone must be carefully positioned to prevent axial acceleration and the resultant X-rays. 
+
+A phosphor+pmt interlock could be added for safety.
+
+Why would the particles be compelled to move in a specific direction? With AC B input, would the entire arrangement not be perfectly symmetrical? 
+```
+
+
+
+
+```BowtieML
+Hybrid Goertzel-type extractor
+
+= - graphite
+\/ - conductive but sufficiently RF transparent material - graphite?
+|- - alumina insulator
+
+			   - unspecified recombination wizardry
+=====    =====
+o|/        \|o - multi-segment deflection/astigmatism plates (optional)
+o||		   ||o - alumina insulator ring - probably required at HV
+o|-        -|o
+o|--      --|o
+o|- 	   -|o - 50+kv electrostatic focus structure
+-----    ----- - 
+			   - standard graphite injection nozzle
+
+A reference structure is on p148 of Goerzel
+```
+```
+
+```
+

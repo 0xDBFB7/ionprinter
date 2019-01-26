@@ -5,3 +5,4 @@ references/
 *.vtk
 *.*.vtk
 *.ans
+*.fcstd1

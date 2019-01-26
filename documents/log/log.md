@@ -1459,6 +1459,49 @@ The NASA MOC nozzle designer requires pressure, regrettably.
 
 Installed piccante.
 
+Piccante does not seem to support ionization yet. Installed AlaDyn.
+
+
+
+Installed SMILEI. Very nice. Playing around with it now.
+
+
+
+<hr>
+
+Re: XY stage:
+
+Standard bearings aren't likely to be happy running in vacuum; however, PTFE linear slides will probably work pretty well. We should be able to go pretty fast, since there'll be no air resistance.
+
+<hr>
+
+Let's get a rough approximation of the pressure in the vicinity of the bowtie. 
+$$
+2.232*10^{20} / 6.022*10^{23} = 0.0003706 \text{ moles} \\
+P=(nRT/V)  = (0.0003706 moles * (8.314 ideal gas constant) * 2500 K) /((pi*r^2)*1550 m) \\
+ = r=0.25 mm P=220 kPa / ~2 atm \\
+ = r=4 mm P= 880 Pa / ~0.008113 atm \\
+$$
+Well, the dimensional analysis works out, anyways. I'm totally ignoring the nozzle, of course, and assuming that the thermal velocity is unchanged. I'm considering spinning up an OpenFOAM sim to get some better nozzle simulations.
+
+Oh hey, now that I have the pressure I can use NASA's nozzle designer to look at plume shapes.
+
+Meta: it'd be cool to be able to embed little calculators for different values - almost, but not completely unlike Wolfram's CDF format.
+
+### 
+
+The rest of these notes will be written in the third person. 
+
+
+
+A series of equations that derive http://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-3719.pdf
+
+It may be useful to re-examine the assumption that Al is an ideal metal. The space-charge density difficulties are reduced as atomic mass increases.
+
+Pure copper has a tensile strength of around 200 MPa, and can be heat treated. With an atomic mass of 63.54 amu, only half as many ions would be required. Iron is also an attractive option, at 540 MPa and 55.84 amu.
+
+
+
 
 
 
@@ -1523,7 +1566,9 @@ https://www.alphalabinc.com/product/asmgm/
 
 Oh, and it costs the same as a first generation Makerbot Cupcake. That was made out of wood.
 
-Video text overlay "the money I got from my last business is currently on this table." BPG400 vacuum gauge  - $90 surplus.
+Video text overlay "the money I got from my last business is currently on this table." 
+
+BPG400 vacuum gauge  - $90 surplus.
 
 nrditron? Priceless.
 
