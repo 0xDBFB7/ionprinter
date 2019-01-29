@@ -1494,11 +1494,27 @@ The rest of these notes will be written in the third person.
 
 
 
-A series of equations that derive http://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-3719.pdf
+A series of equations that determine klystron radiation exposure: http://www.slac.stanford.edu/cgi-wrap/getdoc/slac-pub-3719.pdf
 
 It may be useful to re-examine the assumption that Al is an ideal metal. The space-charge density difficulties are reduced as atomic mass increases.
 
 Pure copper has a tensile strength of around 200 MPa, and can be heat treated. With an atomic mass of 63.54 amu, only half as many ions would be required. Iron is also an attractive option, at 540 MPa and 55.84 amu.
+
+<hr>
+
+A depressed collector won't work in this situation - there won't be any charge on the beam! Idiot.
+
+### 1548734507
+
+It's looking like I will have to break the business end into a large number of individual bowties - several hundred, potentially, probably each with its own deflection/focusing amplifier but a collective RF coil.
+
+
+
+Wire feed might get a little tricky in that case. I may have to switch to a liquid feed system, with graphite tubes that run throughout the bowtie. 
+
+
+
+
 
 
 
