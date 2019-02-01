@@ -1,11 +1,16 @@
 """
-This is a typical input script that runs a simulation of
-laser-wakefield acceleration using FBPIC.
+This is an input script that runs a simulation of
+laser-wakefield acceleration with ionization, using FBPIC.
+
+More precisely, this uses a mix of Helium and Nitrogen atoms. To save
+computational time, the Helium is assumed to be already pre-ionized
+up to level 1 (He+) and the Nitrogen is assumed to be pre-ionized up to
+level 5 (N 5+)
 
 Usage
 -----
 - Modify the parameters below to suit your needs
-- Type "python lwfa_script.py" in a terminal
+- Type "python ionization_script.py" in a terminal
 
 Help
 ----
@@ -13,18 +18,18 @@ All the structures implemented in FBPIC are internally documented.
 Enter "print(fbpic_object.__doc__)" to have access to this documentation,
 where fbpic_object is any of the objects or function of FBPIC.
 """
-
 # -------
 # Imports
 # -------
 import numpy as np
-from scipy.constants import c
-# Import the relevant structures in FBPIC
+from scipy.constants import c, e, m_e, m_p
+# Import the relevant structures from fbpic
 from fbpic.main import Simulation
 from fbpic.lpa_utils.laser import add_laser
-from fbpic.openpmd_diag import FieldDiagnostic, ParticleDiagnostic, \
-     set_periodic_checkpoint, restart_from_checkpoint
-
+from fbpic.openpmd_diag import FieldDiagnostic, \
+    ParticleDiagnostic, ParticleChargeDensityDiagnostic, \
+    set_periodic_checkpoint, restart_from_checkpoint
+import math
 # ----------
 # Parameters
 # ----------
@@ -44,54 +49,45 @@ use_cuda = True
 n_order = -1
 
 # The simulation box
-Nz = 800         # Number of gridpoints along z
-zmax = 30.e-6    # Right end of the simulation box (meters)
-zmin = -10.e-6   # Left end of the simulation box (meters)
+Nz = 300         # Number of gridpoints along z
+zmax = 0.03     # Right end of the simulation box (meters)
+zmin = 0   # Left end of the simulation box (meters)
 Nr = 50          # Number of gridpoints along r
-rmax = 20.e-6    # Length of the box along r (meters)
+#Dan's note: as distortion is typically present around the axis, Nr should be
+#sufficiently high for the smallest beam radius to be described by >5 cells
+
+rmax = 0.005    # Length of the box along r (meters)
 Nm = 2           # Number of modes used
 
 # The simulation timestep
 dt = (zmax-zmin)/Nz/c   # Timestep (seconds)
 
 # The particles
-p_zmin = 25.e-6  # Position of the beginning of the plasma (meters)
-p_zmax = 500.e-6 # Position of the end of the plasma (meters)
-p_rmin = 0.      # Minimal radial position of the plasma (meters)
-p_rmax = 18.e-6  # Maximal radial position of the plasma (meters)
-n_e = 4.e18*1.e6 # Density (electrons.meters^-3)
-p_nz = 2         # Number of particles per cell along z
+p_zmin = 0.e-6   # Position of the beginning of the plasma (meters)
+n_He = 2.e24     # Density of Helium atoms
+n_N = 1.e24      # Density of Nitrogen atoms
+p_nz = 1         # Number of particles per cell along z
 p_nr = 2         # Number of particles per cell along r
 p_nt = 4         # Number of particles per cell along theta
-
-# The laser
-a0 = 4.          # Laser amplitude
-w0 = 5.e-6       # Laser waist
-ctau = 5.e-6     # Laser duration
-z0 = 15.e-6      # Laser centroid
 
 # The moving window
 v_window = c       # Speed of the window
 
 # The diagnostics and the checkpoints/restarts
 diag_period = 50         # Period of the diagnostics in number of timesteps
-save_checkpoints = False # Whether to write checkpoint files
 checkpoint_period = 100  # Period for writing the checkpoints
-use_restart = False      # Whether to restart from a previous checkpoint
 track_electrons = False  # Whether to track and write particle ids
 
 # The density profile
-ramp_start = 30.e-6
-ramp_length = 40.e-6
-
+ramp_length = 20.e-6
 def dens_func( z, r ) :
     """Returns relative density at position z and r"""
     # Allocate relative density
     n = np.ones_like(z)
-    # Make linear ramp
-    n = np.where( z<ramp_start+ramp_length, (z-ramp_start)/ramp_length, n )
+    # Make sine-like ramp
+    n = np.where( z<ramp_length, np.sin(np.pi/2*z/ramp_length)**2, n )
     # Supress density before the ramp
-    n = np.where( z<ramp_start, 0., n )
+    n = np.where( z<0, 0., n )
     return(n)
 
 # The interaction length of the simulation (meters)
@@ -100,42 +96,66 @@ L_interact = 50.e-6 # increase to simulate longer distance!
 T_interact = ( L_interact + (zmax-zmin) ) / v_window
 # (i.e. the time it takes for the moving window to slide across the plasma)
 
+# def field_func( F, x, y, z, t , amplitude, length_scale ):
+#     return( F + amplitude * math.cos( 2*np.pi*z/length_scale ) )
+
+
 # ---------------------------
 # Carrying out the simulation
 # ---------------------------
 
-# NB: The code below is only executed when running the script,
-# (`python lwfa_script.py`), but not when importing it (`import lwfa_script`).
 if __name__ == '__main__':
 
     # Initialize the simulation object
     sim = Simulation( Nz, zmax, Nr, rmax, Nm, dt,
-        p_zmin, p_zmax, p_rmin, p_rmax, p_nz, p_nr, p_nt, n_e,
-        dens_func=dens_func, zmin=zmin, boundaries='open',
+        zmin=zmin, boundaries='open', initialize_ions=False,
         n_order=n_order, use_cuda=use_cuda )
+    # By default the simulation initializes an electron species (sim.ptcl[0])
+    # Because we did not pass the arguments `n`, `p_nz`, `p_nr`, `p_nz`,
+    # this electron species does not contain any macroparticles.
+    # It is okay to just remove it from the list of species.
+    sim.ptcl = []
 
-    # Load initial fields
-    # Add a laser to the fields of the simulation
-    add_laser( sim, a0, w0, ctau, z0 )
+    # Add the Helium ions (pre-ionized up to level 1),
+    # the Nitrogen ions (pre-ionized up to level 5)
+    # and the associated electrons (from the pre-ionized levels)
+    atoms_He = sim.add_new_species( q=e, m=4.*m_p, n=n_He,
+        dens_func=dens_func, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin )
+    atoms_N = sim.add_new_species( q=5*e, m=14.*m_p, n=n_N,
+        dens_func=dens_func, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin )
+    # Important: the electron density from N5+ is 5x larger than that from He+
+    n_e = n_He + 5*n_N
+    elec = sim.add_new_species( q=-e, m=m_e, n=n_e,
+        dens_func=dens_func, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin )
 
-    if use_restart is False:
-        # Track electrons if required (species 0 correspond to the electrons)
-        if track_electrons:
-            sim.ptcl[0].track( sim.comm )
-    else:
-        # Load the fields and particles from the latest checkpoint file
-        restart_from_checkpoint( sim )
+    # Activate ionization of He ions (for levels above 1).
+    # Store the created electrons in the species `elec`
+    atoms_He.make_ionizable( 'He', target_species=elec, level_start=1 )
+
+    # Activate ionization of N ions (for levels above 5).
+    # Store the created electrons in a new dedicated electron species that
+    # does not contain any macroparticles initially
+    elec_from_N = sim.add_new_species( q=-e, m=m_e )
+    atoms_N.make_ionizable( 'N', target_species=elec_from_N, level_start=5 )
+
+    if track_electrons:
+        elec.track( sim.comm )
 
     # Configure the moving window
     sim.set_moving_window( v=v_window )
 
     # Add diagnostics
-    sim.diags = [ FieldDiagnostic( diag_period, sim.fld, comm=sim.comm ),
-                  ParticleDiagnostic( diag_period, {"electrons" : sim.ptcl[0]},
-                    select={"uz" : [1., None ]}, comm=sim.comm ) ]
-    # Add checkpoints
-    if save_checkpoints:
-        set_periodic_checkpoint( sim, checkpoint_period )
+    sim.diags = [
+                FieldDiagnostic( diag_period, sim.fld, comm=sim.comm ),
+                ParticleDiagnostic( diag_period,
+                    {"electrons from N": elec_from_N, "electrons": elec},
+                    comm=sim.comm ),
+                # Since rho from `FieldDiagnostic` is 0 almost everywhere
+                # (neutral plasma), it is useful to see the charge density
+                # of individual particles
+                ParticleChargeDensityDiagnostic( diag_period, sim,
+                    {"electrons": elec} )
+                ]
 
     # Number of iterations to perform
     N_step = int(T_interact/sim.dt)

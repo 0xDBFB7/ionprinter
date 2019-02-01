@@ -1486,7 +1486,7 @@ Well, the dimensional analysis works out, anyways. I'm totally ignoring the nozz
 
 Oh hey, now that I have the pressure I can use NASA's nozzle designer to look at plume shapes.
 
-Meta: it'd be cool to be able to embed little calculators for different values - almost, but not completely unlike Wolfram's CDF format.
+Meta: it'd be cool to be able to embed little calculators for different values - almost, but not completely unlike Wolfram's CDF format. Jupyter might be a good option.
 
 ### 
 
@@ -1514,7 +1514,7 @@ Wire feed might get a little tricky in that case. I may have to switch to a liqu
 
 Having more than one bowtie assembly is actually really cool: it allows us to spread out the deposition heat transfer a bit (though we could just run a single bowtie a little faster) - but more importantly, it probably allows us to do alloys or even compounds. We'll see.
 
-
+Oh neat! Jupyter includes mathjax.
 
 
 
