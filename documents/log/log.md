@@ -1516,7 +1516,7 @@ Having more than one bowtie assembly is actually really cool: it allows us to sp
 
 Oh neat! Jupyter includes mathjax.
 
-
+The outer plates can be deposited isogrid - might be difficult to maintain vacuum cleanliness if the grid is on the inside, and it'll look super cool if it's on the outside.
 
 
 
