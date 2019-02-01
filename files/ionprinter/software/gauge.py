@@ -8,4 +8,3 @@ while(True):
     input_string = gauge.readline()
     print(input_string)
     print(input_string.encode(my_str))
-    

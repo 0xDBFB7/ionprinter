@@ -1510,7 +1510,9 @@ It's looking like I will have to break the business end into a large number of i
 
 
 
-Wire feed might get a little tricky in that case. I may have to switch to a liquid feed system, with graphite tubes that run throughout the bowtie. 
+Wire feed might get a little tricky in that case. I may have to switch to a liquid feed system, with graphite tubes that run throughout the bowtie. This would also allow us to use different input material shapes, like beads or ingots.
+
+Having more than one bowtie assembly is actually really cool: it allows us to spread out the deposition heat transfer a bit (though we could just run a single bowtie a little faster) - but more importantly, it probably allows us to do alloys or even compounds. We'll see.
 
 
 
@@ -1594,3 +1596,4 @@ http://zulko.github.io/blog/2014/09/20/vector-animations-with-python/
 
 
 
+Dialog: "Today I have to make a thermionic cathode out of rat poison, nail polish, and vape wire. Perhaps unsurprisingly, this process has not been well described in the literature."

@@ -18,7 +18,7 @@
 
 #define BEAM_RADIUS 0.001 //m
 #define BEAM_IR 0.01
-#define BEAM_CURRENT 3.5 //A 35
+#define BEAM_CURRENT 0.5 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
 #define BEAM_OFFSET_Y 0.0125
@@ -62,11 +62,11 @@ int iteration = 0;
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
 // }
 
-bool einzel_1( double x, double y, double z )
-{
-  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return(x < 0.005 && (y >= x+0.0115 || y <= 0.0095));
-}
+// bool einzel_1( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//   return(x < 0.005 && (y >= x+0.0115 || y <= 0.0095));
+// }
 //
 // bool einzel_2( double x, double y, double z )
 // {
@@ -135,8 +135,8 @@ void simu( int *argc, char ***argv )
     while(iteration < 1){
     Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
-    Solid *s1 = new FuncSolid( einzel_1 );
-    geom.set_solid( 7, s1 );
+    // Solid *s1 = new FuncSolid( einzel_1 );
+    // geom.set_solid( 7, s1 );
     // Solid *s2 = new FuncSolid( einzel_2 );
     // geom.set_solid( 8, s2 );
     // Solid *s3 = new FuncSolid( einzel_3 );
@@ -146,7 +146,7 @@ void simu( int *argc, char ***argv )
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  400000.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  40000.0) );
     // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  100000.0) );
     // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
 
