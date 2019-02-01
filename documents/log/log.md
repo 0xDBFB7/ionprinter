@@ -1597,3 +1597,9 @@ http://zulko.github.io/blog/2014/09/20/vector-animations-with-python/
 
 
 Dialog: "Today I have to make a thermionic cathode out of rat poison, nail polish, and vape wire. Perhaps unsurprisingly, this process has not been well described in the literature."
+
+
+
+A note on customer support:
+
+I think this device is most useful if it's accessible to everyone. The beauty of an entirely novel Unfortunately, due to the complex operating principle, making the nurdditron affordable to hobbyists may be orthogonal with maintaining 1-on-1 customer support, so I can't guarantee the level of customer service that one of the major manufacturers can provide.

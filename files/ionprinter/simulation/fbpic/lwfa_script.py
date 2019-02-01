@@ -78,16 +78,17 @@ diag_period = 50         # Period of the diagnostics in number of timesteps
 checkpoint_period = 100  # Period for writing the checkpoints
 track_electrons = False  # Whether to track and write particle ids
 
-# The density profile
-ramp_length = 20.e-6
-def dens_func( z, r ) :
+input_neutral_beam_radius = 0.0025
+input_neutral_beam_radius = 0.0025
+
+def input_beam( z, r ) :
     """Returns relative density at position z and r"""
     # Allocate relative density
     n = np.ones_like(z)
     # Make sine-like ramp
-    n = np.where( z<ramp_length, np.sin(np.pi/2*z/ramp_length)**2, n )
+    # n = np.where( z<ramp_length, np.sin(np.pi/2*z/ramp_length)**2, n )
     # Supress density before the ramp
-    n = np.where( z<0, 0., n )
+    n = np.where( r>input_neutral_beam_radius, 0., n )
     return(n)
 
 # The interaction length of the simulation (meters)
@@ -120,41 +121,33 @@ if __name__ == '__main__':
     # the Nitrogen ions (pre-ionized up to level 5)
     # and the associated electrons (from the pre-ionized levels)
     atoms_He = sim.add_new_species( q=e, m=4.*m_p, n=n_He,
-        dens_func=dens_func, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin )
-    atoms_N = sim.add_new_species( q=5*e, m=14.*m_p, n=n_N,
-        dens_func=dens_func, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin )
-    # Important: the electron density from N5+ is 5x larger than that from He+
-    n_e = n_He + 5*n_N
-    elec = sim.add_new_species( q=-e, m=m_e, n=n_e,
-        dens_func=dens_func, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin )
+        dens_func=input_beam, p_nz=p_nz, p_nr=p_nr, p_nt=p_nt, p_zmin=p_zmin,continuous_injection=True)
+
+    #created electrons
+    elec = sim.add_new_species( q=-e, m=m_e)
 
     # Activate ionization of He ions (for levels above 1).
     # Store the created electrons in the species `elec`
-    atoms_He.make_ionizable( 'He', target_species=elec, level_start=1 )
+    atoms_He.make_ionizable( 'He', target_species=elec, level_start=0 )
 
-    # Activate ionization of N ions (for levels above 5).
-    # Store the created electrons in a new dedicated electron species that
-    # does not contain any macroparticles initially
-    elec_from_N = sim.add_new_species( q=-e, m=m_e )
-    atoms_N.make_ionizable( 'N', target_species=elec_from_N, level_start=5 )
-
-    if track_electrons:
-        elec.track( sim.comm )
+    # if track_electrons:
+    elec.track( sim.comm )
+    atoms_He.track( sim.comm )
 
     # Configure the moving window
-    sim.set_moving_window( v=v_window )
+    #sim.set_moving_window( v=v_window )
 
     # Add diagnostics
     sim.diags = [
                 FieldDiagnostic( diag_period, sim.fld, comm=sim.comm ),
                 ParticleDiagnostic( diag_period,
-                    {"electrons from N": elec_from_N, "electrons": elec},
+                    {"electrons": elec,"atoms_He": atoms_He},
                     comm=sim.comm ),
                 # Since rho from `FieldDiagnostic` is 0 almost everywhere
                 # (neutral plasma), it is useful to see the charge density
                 # of individual particles
                 ParticleChargeDensityDiagnostic( diag_period, sim,
-                    {"electrons": elec} )
+                    {"electrons": elec,"electrons": atoms_He} )
                 ]
 
     # Number of iterations to perform
