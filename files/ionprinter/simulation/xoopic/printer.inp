@@ -1,0 +1,62 @@
+printer
+{
+
+}
+Variables
+{
+  zmax = .02
+  rmax = .005
+  Jmax = 50
+  Kmax = 50
+ k=1.381E-23
+ m=9.11E-31
+ d=6
+}
+Region
+{
+Grid
+{
+  Geometry=0 //Toggles between rz (0) and xy (1) geometries.
+	J = Jmax //Number of cells in the x1 direction.
+	x1s = 0.0 //Lower coordinate in the x1 direction.
+	x1f = zmax //Upper coordinate in the x1 direction.
+	n1 = 1.0 //grid spacing parameter
+	K = Kmax //Number of cells in the x1 direction.
+	x2s = 0.0
+	x2f = rmax
+	n2 = 1.0 //grid spacing parameter
+}
+Control
+{
+	dt = 5.0E-10
+	ElectrostaticFlag = 0
+}
+
+Species
+{
+ name = electrons
+ m = 9.11E-31
+ q = -1.6e-19
+}
+
+CylindricalAxis
+{
+j1=0
+j2=zmax
+k1=0
+k2=rmax
+normal=1
+}
+
+Diagnostic
+{
+  j1 = 0
+  j2 = Jmax
+  k1 = 0
+  k2 = Kmax
+  VarName = electrons
+  windowName = None
+  title = 2D Power Spectral Density
+}
+
+}

@@ -1516,14 +1516,75 @@ Having more than one bowtie assembly is actually really cool: it allows us to sp
 
 Oh neat! Jupyter includes mathjax.
 
-The outer plates can be deposited isogrid - might be difficult to maintain vacuum cleanliness if the grid is on the inside, and it'll look super cool if it's on the outside.
+The chamber plates can be deposited isogrid to make the whole thing lighter - might be difficult to maintain vacuum cleanliness if the grid is on the inside, and it'll look super cool if it's on the outside.
+
+
+
+g++ 6 produces compiler errors.
+
+
+
+Tried fbpic, timescale issues.
+
+trying xoopic https://ptsg.egr.msu.edu/#Software as one might expect, this program crashes essentially every 10 seconds. Unusable.
+
+Trying Warp.
+
+MPI_FORTRAN_MOD_DIR must be set
+
+
+
+compiled with /configure --with-X11_LIBDIR=/usr/lib/x86_64-linux-gnu/ --with-MPICC=mpicc --with-MPICXX=mpicxx --enable-MPI
+
+
+
+`#GUY DID THE ADDDON`
+
+XOOPIC always segfaults on X exit. Seems to be a libtk bug.
+
+How many bowties and coils can we reasonably fit 
+
+0.004^2 = 0.0000502m^2
+
+0.03^2 / 0.0000502 = 56 
+
+And that's without all the supporting hardware n' stuff
+
+Each gun will do about 0.15 g/hr
+
+http://web.mit.edu/skendig/Public/6.777/project/hopwood.%201999pdf.pdf
+
+https://sci-hub.tw/10.1366/0003702924125276
+
+
+
+
+
+Aluminum brazing rod: seems like pre-heating is important. Someone on youtube uses a barbecue to great effect.
+
+
+
+This is a little outlandish, but it may be possible to build this whole thing without any feedthroughs -  couple power and signals in via transformer coils
+
+Looking at ~15 torr per bowtie.
+
+Oooooooh. I was concerned about bowtie power consumption, right? Having ~100 individual bowties each drawing 200w would be disastrous. I could have some kind of heated graphite plumbing, where one hot element pressurizes a tree... however, the vapor pressure of Al at 1900c is 21.5 torr - we're gaining a huge amount of power there. Graphite vapor pressure at the same is 2.47e-6 torr. Cu is similar at 15 torr.
+
+Cool! This means we can operate the bowties at a much lower temperature - below boiling. 
+
+Having an array of bowties also reduces the current density requirements on the recombination cathode. It adds *tremendous* complexity to the deflection amplifiers, but that's the easy part. 
+
+Good stuff.
 
 
 
 
 
 
-### Quick notes
+
+
+
+Quick notes
 
 *fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this.
 
@@ -1602,4 +1663,11 @@ Dialog: "Today I have to make a thermionic cathode out of rat poison, nail polis
 
 A note on customer support:
 
+
+
 I think this device is most useful if it's accessible to everyone. The beauty of an entirely novel Unfortunately, due to the complex operating principle, making the nurdditron affordable to hobbyists may be orthogonal with maintaining 1-on-1 customer support, so I can't guarantee the level of customer service that one of the major manufacturers can provide.
+
+
+
+Camera that traces the arc of power switch
+

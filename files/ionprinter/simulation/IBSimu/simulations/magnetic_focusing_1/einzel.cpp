@@ -17,20 +17,20 @@
 #endif
 
 #define BEAM_RADIUS 0.001 //m
-#define BEAM_IR 0.01
-#define BEAM_CURRENT 0.5 //A 35
+#define BEAM_IR 0.00
+#define BEAM_CURRENT 0.3 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
 #define BEAM_OFFSET_Y 0.0125
 
-#define GRID_SIZE 0.0001 //m
+#define GRID_SIZE 0.00005 //m
 #define RECOMBINATION_POINT 0.1 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.05
-#define MESH_WIDTH 0.03
+#define MESH_LENGTH 0.01
+#define MESH_WIDTH 0.005
 
 #define INTERACTIVE_PLOT 1
 
@@ -62,17 +62,26 @@ int iteration = 0;
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
 // }
 
+bool einzel_1( double x, double y, double z )
+{
+  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+  return(x < 0.001 && (y >= (x/2)+0.0025 && y <= 0.0095));
+}
+
 // bool einzel_1( double x, double y, double z )
 // {
-//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-//   return(x < 0.005 && (y >= x+0.0115 || y <= 0.0095));
+//   return(y >= 0.0025 && x <= 0.001);
 // }
 //
-// bool einzel_2( double x, double y, double z )
+bool einzel_2( double x, double y, double z )
+{
+  return(x > 0.0011 && x < 0.0018 && (y >= (-x/2)+0.0032 && y <= 0.009));
+}
+//
+// bool einzel_3( double x, double y, double z )
 // {
-//   return(x > 0.0012 && x < 0.002 && (y >= 0.0115 || y <= 0.009));
+//   return(x > 0.0015 && x < 0.0018 && (y >= 0.0025 && y <= 0.009));
 // }
-
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(y >= x+0.001 && x <= 0.003);
@@ -135,10 +144,10 @@ void simu( int *argc, char ***argv )
     while(iteration < 1){
     Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
     //
-    // Solid *s1 = new FuncSolid( einzel_1 );
-    // geom.set_solid( 7, s1 );
-    // Solid *s2 = new FuncSolid( einzel_2 );
-    // geom.set_solid( 8, s2 );
+    Solid *s1 = new FuncSolid( einzel_1 );
+    geom.set_solid( 7, s1 );
+    Solid *s2 = new FuncSolid( einzel_2 );
+    geom.set_solid( 8, s2 );
     // Solid *s3 = new FuncSolid( einzel_3 );
     // geom.set_solid( 9, s3 );
 
@@ -146,9 +155,9 @@ void simu( int *argc, char ***argv )
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  40000.0) );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  100000.0) );
-    // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
+    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  10000.0) );
+    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+    // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  20000.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
