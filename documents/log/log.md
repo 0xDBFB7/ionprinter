@@ -994,7 +994,7 @@ http://inspirehep.net/record/710232/files/slac-pub-11688.pdf another interesting
 
 ![halbach_iron](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/halbach_iron.png)
 
-Ooh, pretty. Pseudo-halbach array with N52 magnets and two iron pole pieces at the edges.
+Ooh, pretty. Pseudo-halbach array with three N52 magnets and two iron pole pieces at the edges.
 
 <hr>
 
@@ -1556,7 +1556,7 @@ http://web.mit.edu/skendig/Public/6.777/project/hopwood.%201999pdf.pdf
 
 https://sci-hub.tw/10.1366/0003702924125276
 
-
+It looks like the driving frequency isn't of much importance in ICP.
 
 
 
@@ -1564,13 +1564,21 @@ Aluminum brazing rod: seems like pre-heating is important. Someone on youtube us
 
 
 
-This is a little outlandish, but it may be possible to build this whole thing without any feedthroughs -  couple power and signals in via transformer coils
+This is a little outlandish, but it might actually be possible to build this whole thing without any feedthroughs - couple power and signals in via transformer coils, put logic in vacuum if possible
 
-Looking at ~15 torr per bowtie.
 
-Oooooooh. I was concerned about bowtie power consumption, right? Having ~100 individual bowties each drawing 200w would be disastrous. I could have some kind of heated graphite plumbing, where one hot element pressurizes a tree... however, the vapor pressure of Al at 1900c is 21.5 torr - we're gaining a huge amount of power there. Graphite vapor pressure at the same is 2.47e-6 torr. Cu is similar at 15 torr.
 
-Cool! This means we can operate the bowties at a much lower temperature - below boiling. 
+
+
+
+
+<hr>
+
+Looking at ~15 torr per bowtie for 0.1g/h
+
+Oooooooh. I was concerned about bowtie power consumption, right? Having ~100 individual bowties each drawing 200w would be disastrous. I could make some kind of heated graphite plumbing, where one hot element pressurizes a tree...however, the vapor pressure of Al at 1900c is 21.5 torr - we're gaining a huge amount of power there. Recall the $T^4$ term in Boltzmann's eponymous equation. Graphite vapor pressure at the same is 2.47e-6 torr. Cu is similar at 15 torr.
+
+Cool! This means that we can operate the bowties at a much lower temperature - below boiling; and each bowtie will have a lower overall enthalpy load.
 
 Having an array of bowties also reduces the current density requirements on the recombination cathode. It adds *tremendous* complexity to the deflection amplifiers, but that's the easy part. 
 
@@ -1578,13 +1586,54 @@ Good stuff.
 
 
 
+Openfoam nozzle reference added - good stuff again. 
 
 
 
+Might be useful for the diff. pump, too.
 
 
 
-Quick notes
+isogrid: https://femci.gsfc.nasa.gov/isogrid/NASA-CR-124075_Isogrid_Design.pdf
+
+With many deposition chambers, dopants can be added to deposited crystals! Do I smell *semiconductors*?
+
+6502 processor feature size was 8 microns. I think we can hit that target.
+
+<hr>
+If we need high deflection voltages, 1000v mosfets are <$1 on digikey. A class A+D PWM+resistor amp should be doable - high-side mosfet drivers at these voltages will be tricky AF.
+
+We now have the ability to use a short "drift tube" section - it may be possible to deflect between two focusing lenses in case we need some extra deflection distance.
+
+The entire 50+ bowtie structure can be built into a spherical cap section to minimize required deflection. Worst case scenario, the bowtie structure can be mounted to a 2-axis voice coil for fine details.
+
+### 1549692113 >
+
+Oxides and compounds should totally be possible. The mean free path at 100 torr is ~539 nanometers, so it is guaranteed that a collision will occur for every particle upon focusing.
+
+solder deposition on pads
+
+
+
+Hey, hang on a minute. I should be able to make a TIG welder with pretty easily - I just need argon. 
+
+There seems to be some contention over whether "Scratch start/lift-start" TIG can be performed on aluminium. 
+
+I can mount the torch to the CNC! Then I can close the loop with an SSR... eh, couldn't be bothered.
+
+
+
+electric hotplate sufficient for preheating braze?
+
+Spark plugs are M12 x 1.25
+
+Glass tubing for spark plug HV insulation
+
+electric arc furnace for alumina ceramic sintering
+
+
+
+## Quick notes
 
 *fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this.
 
@@ -1615,7 +1664,11 @@ https://www.thevespiary.org/library/Files_Uploaded_by_Users/no1uno/pdf/Instrumen
 
 [^100]: [Internal]() [External]()
 
+
+
 The cost of production should be lower than the cost of customer support would be - if any problem arises, we automatically ship out a replacement, no human involved. I'd rather spend money on R&D and in-field testing than a call center.
+
+
 
 Brazing to ceramic is totally possible:
 
@@ -1623,51 +1676,17 @@ Brazing to ceramic is totally possible:
 > to metal, monel or even copper would be considered as a buffer material to permit
 > the high temperature brazes without cracking the ceramics. 
 
-`depositron` already taken
-
-`ionitron`also
-
-`beamotron` and variations taken
-
-`nrdditron`? A bit clunky, but not yet taken...
-
-`ionolith`
-
-`nrddilith`
-
-Not super euphonistic.
 
 
 
-oh ha I'm going to be smiling in the video so one could say I'm "beaming" haha
 
 https://www.alphalabinc.com/product/asmgm/
 
-Oh, and it costs the same as a first generation Makerbot Cupcake. That was made out of wood.
-
-Video text overlay "the money I got from my last business is currently on this table." 
-
-BPG400 vacuum gauge  - $90 surplus.
-
-nrditron? Priceless.
-
-gizeh vector animations
-
-http://zulko.github.io/blog/2014/09/20/vector-animations-with-python/
 
 
 
-Dialog: "Today I have to make a thermionic cathode out of rat poison, nail polish, and vape wire. Perhaps unsurprisingly, this process has not been well described in the literature."
 
+I want my company to die in the fires of the free market if it cannot maintain a constant 
 
-
-A note on customer support:
-
-
-
-I think this device is most useful if it's accessible to everyone. The beauty of an entirely novel Unfortunately, due to the complex operating principle, making the nurdditron affordable to hobbyists may be orthogonal with maintaining 1-on-1 customer support, so I can't guarantee the level of customer service that one of the major manufacturers can provide.
-
-
-
-Camera that traces the arc of power switch
+Nuance Applied Sciences - already taken.
 

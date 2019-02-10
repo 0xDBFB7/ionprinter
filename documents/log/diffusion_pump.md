@@ -20,6 +20,10 @@ I originally tried putting a small Kanthal heater inside my Mk1 diffusion pump's
 
 It became apparent that heating externally would be far simpler; 
 
+
+
+https://www.capvac.com/files/downloads/MSDS/DC704702705_Specs.pdf diffusion pump oil has a vapor pressure equation - we could assume that the nozzle is infinitely small
+
 ### Seals
 
 In the event that the device must be built in multiple sections, I have found McMaster-Carr's high-temperature silicone O-rings (#1283N91) to be perfectly serviceable in these conditions.

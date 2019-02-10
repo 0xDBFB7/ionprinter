@@ -6,8 +6,8 @@ Variables
 {
   zmax = .02
   rmax = .005
-  Jmax = 50
-  Kmax = 50
+  Jmax = 10
+  Kmax = 10
  k=1.381E-23
  m=9.11E-31
  d=6
@@ -28,7 +28,7 @@ Grid
 }
 Control
 {
-	dt = 5.0E-10
+	dt = 5.0E-14
 	ElectrostaticFlag = 0
 }
 
@@ -37,6 +37,24 @@ Species
  name = electrons
  m = 9.11E-31
  q = -1.6e-19
+}
+
+BeamEmitter
+{
+ j1 = 0
+ k1 = 0
+ j2 = 0
+ k2 = 2*Kmax/5
+ normal = 1
+ speciesName = electrons
+ thetadot = 0.0
+ I = 0.1
+ np2c = 1.0E7
+ units=EV
+ v1drift = 10.0
+ v2drift = 0
+ v3drift = 0
+ temperature=2.2
 }
 
 CylindricalAxis
@@ -50,13 +68,58 @@ normal=1
 
 Diagnostic
 {
-  j1 = 0
-  j2 = Jmax
-  k1 = 0
-  k2 = Kmax
-  VarName = electrons
-  windowName = None
-  title = 2D Power Spectral Density
+	//
+	// mandatory parameters for writing to work
+	//
+	// directory name into which save file(s); name can be absolute or relative to current directory
+	directory = output
+
+	// file name for writing data; name is printf format string - %d is replaced with current simulation step;
+	// phi_%04d.dat -- means that for first step, file name will be phi_0001.dat, for 100-th phi_0100.dat, etc.
+	// when appending data to file, just write filename without format string.
+	file = rho%08d.dat
+
+	// variable which value to write to file; variable also defines number of columns in file and format of data in file
+	// format of data in file for each variable is predefined application and cannot be changed in input file
+	// Variable names include predefined (defined in xoopic inside Diagnostics window), custom variables and derivative "variables"
+	VarName = predef Ex
+
+	//
+	// optional parameters
+	//
+	// open diagnostics windows when application starts (open=1) or not (open=0)
+	// default value is 0 -- do not open diagnostics window
+	open = 0
+
+	// should the data be appended to same file (append=1) or new file is created with each write to file (append=0); default value is 0
+	// note: filename (explained above) should be defined accordingly (for appending, there is no need for current comp. step in file name)
+	// appending is useful for writing time depended values to be easily display them later.
+	append = 0
+
+	// writing defined by computational steps
+	// computational step when to write diagnostics to file -- one time only (no repeating!); default is 0 -- no writing
+	n = 0
+	// computational step to start writing; default value is 0 (beginning of simulation)
+	n_start = 0
+	// number of computer steps between writing data to file; 10 means write data every 10-th step.
+	// default value is 1 (write every step)
+	n_step = 100
+	// computational step to stop (end) writing; default value 0 (when simulation stops...)
+	n_end = 10000
+	// when writing derivative diagnostics, this defined width over derivative is computed; see Derivative diagnostics for explanation
+	// value cannot be bigger than n_step; if it is, it is automatically changed to n_step.
+	n_width = 1
+
+	// writing defined by simulation time
+	// simulation time when to write diagnostics to file -- one time only (no repeating!); default is 0 -- no writing
+	t = 0
+	// simulation time to start writing; default value is 0 (beginning of simulation)
+	t_start = 0
+	// simulation time between writing data to file; 1E-5 means that writing will be done approx. every 1E-5 time difference
+	// there is no define value;
+	t_step = 0
+	// simulation time to stop (end) writing; default value 0 (when simulation stops...)
+	t_end = 0
 }
 
 }
