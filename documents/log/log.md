@@ -1526,7 +1526,9 @@ g++ 6 produces compiler errors.
 
 Tried fbpic, timescale issues.
 
-trying xoopic https://ptsg.egr.msu.edu/#Software as one might expect, this program crashes essentially every 10 seconds. Unusable.
+trying xoopic https://ptsg.egr.msu.edu/#Software as one might expect, this program crashes essentially every 10 seconds.
+
+<hr>
 
 Trying Warp.
 
@@ -1535,6 +1537,12 @@ MPI_FORTRAN_MOD_DIR must be set
 
 
 compiled with /configure --with-X11_LIBDIR=/usr/lib/x86_64-linux-gnu/ --with-MPICC=mpicc --with-MPICXX=mpicxx --enable-MPI
+
+<hr>
+
+xoopic compiled with 
+
+./configure --with-X11_LIBDIR=/usr/lib/x86_64-linux-gnu/ --with-MPICC=mpicc --with-MPICXX=mpicxx --enable-MPI --enable-debug
 
 
 
@@ -1607,6 +1615,12 @@ We now have the ability to use a short "drift tube" section - it may be possible
 
 The entire 50+ bowtie structure can be built into a spherical cap section to minimize required deflection. Worst case scenario, the bowtie structure can be mounted to a 2-axis voice coil for fine details.
 
+
+
+Oh! Better yet, the bowties can be built in hexagonal honeycomb panels of 7 or 19, and then arranged spherically, such that each bowtie is within deflection range of the focal point. This'll avoid each individual section being curved.
+
+
+
 ### 1549692113 >
 
 Oxides and compounds should totally be possible. The mean free path at 100 torr is ~539 nanometers, so it is guaranteed that a collision will occur for every particle upon focusing.
@@ -1621,15 +1635,43 @@ There seems to be some contention over whether "Scratch start/lift-start" TIG ca
 
 I can mount the torch to the CNC! Then I can close the loop with an SSR... eh, couldn't be bothered.
 
-
-
 electric hotplate sufficient for preheating braze?
 
-Spark plugs are M12 x 1.25
-
-Glass tubing for spark plug HV insulation
-
 electric arc furnace for alumina ceramic sintering
+
+C-cell graphite electrodes
+
+canadian tire carries alumiweld.
+
+<hr>
+
+Tried Pic-las again, got irritated with XOOPIC's opacity and brittleness.
+
+Sandia's SPARTA is pretty cool. Does recombination, emission, the whole lot. Built very smoothly the first time, but would hang when running on multiple cores with MPI for some reason. Ended up trying a few different versions of openmpi, then resorted to using the internal Debian package, which worked fine - version 2.0.2, for reference. Took the better part of 8 hours. 
+
+```
+MPI_INC = -I/usr/lib/x86_64-linux-gnu/openmpi/include/
+MPI_PATH = -L/usr/lib/x86_64-linux-gnu/openmpi/lib/
+MPI_LIB = -lmpi -lmpi_cxx
+```
+
+```For mpi
+./configure --prefix=/usr/local/
+```
+
+
+
+```
+mpirun -np 8 spa_mpi_dan -v x 100 -v y 100 -v z 100 -in in.free -l my.log
+```
+
+
+
+Went to a meeting, got news that SafeSump Inc. isn't getting paid as expected - about $70k in the hole or something 
+
+pretty dissociated right now 
+
+
 
 
 

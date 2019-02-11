@@ -6,8 +6,8 @@ Variables
 {
   zmax = .02
   rmax = .005
-  Jmax = 10
-  Kmax = 10
+  Jmax = 20
+  Kmax = 20
  k=1.381E-23
  m=9.11E-31
  d=6
@@ -28,7 +28,7 @@ Grid
 }
 Control
 {
-	dt = 5.0E-14
+	dt = 5.0E-13
 	ElectrostaticFlag = 0
 }
 
@@ -74,6 +74,11 @@ Diagnostic
 	// directory name into which save file(s); name can be absolute or relative to current directory
 	directory = output
 
+  j1 = 0
+  j2 = 20
+  k1 = 0
+  k2 = 20
+
 	// file name for writing data; name is printf format string - %d is replaced with current simulation step;
 	// phi_%04d.dat -- means that for first step, file name will be phi_0001.dat, for 100-th phi_0100.dat, etc.
 	// when appending data to file, just write filename without format string.
@@ -82,7 +87,7 @@ Diagnostic
 	// variable which value to write to file; variable also defines number of columns in file and format of data in file
 	// format of data in file for each variable is predefined application and cannot be changed in input file
 	// Variable names include predefined (defined in xoopic inside Diagnostics window), custom variables and derivative "variables"
-	VarName = predef Ex
+	VarName = electrons
 
 	//
 	// optional parameters
@@ -105,7 +110,7 @@ Diagnostic
 	// default value is 1 (write every step)
 	n_step = 100
 	// computational step to stop (end) writing; default value 0 (when simulation stops...)
-	n_end = 10000
+	n_end = 1000
 	// when writing derivative diagnostics, this defined width over derivative is computed; see Derivative diagnostics for explanation
 	// value cannot be bigger than n_step; if it is, it is automatically changed to n_step.
 	n_width = 1

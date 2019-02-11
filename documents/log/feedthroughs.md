@@ -34,3 +34,24 @@ Anodic bonding to alumina might just be possible.
 
 Reverse bias leads to a deteriorated bond quality. That's interesting.
 
+### Spark plugs
+
+http://home.earthlink.net/~jimlux/hv/sparkplug.htm
+
+https://www.gsparkplug.com/shop/spark-plug-construction/
+
+Spark plugs apparently use a talcum powder ring for sealing. Very unusual. I'm going to look into this.
+
+In any case, the plug body is typically made of a nickel steel alloy. 
+
+https://weldtalk.hobartwelders.com/forum/application-talk/aluminum/32053-brazing-or-soldering-aluminum-to-stainless-steel
+
+All right! Looks like I'll probably have to weld the plugs in two stages - first braze a copper transition tube to the nickel, and then braze that to the aluminium.
+
+Glass tubing for spark plug HV insulation
+
+Purchased some NGK D8EA non-resistor gasket copper-core plugs. These have an M12 x 1.25 thread and a 19 mm reach.
+
+Solder wets the tip of these plugs very well if the surface is sanded slightly 
+
+https://electrontubestore.com/index.php?main_page=product_info&cPath=1_239&products_id=711
