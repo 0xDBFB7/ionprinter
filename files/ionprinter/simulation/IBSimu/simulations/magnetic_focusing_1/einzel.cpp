@@ -16,21 +16,21 @@
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.001 //m
+#define BEAM_RADIUS 0.0005 //m
 #define BEAM_IR 0.00
-#define BEAM_CURRENT 0.3 //A 35
+#define BEAM_CURRENT 0.2 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
 #define BEAM_OFFSET_Y 0.0125
 
-#define GRID_SIZE 0.00005 //m
+#define GRID_SIZE 0.00001 //m
 #define RECOMBINATION_POINT 0.1 //m
 
 #define BFIELD_X 0.3
 #define BFIELD_PEAK 10
 
-#define MESH_LENGTH 0.01
-#define MESH_WIDTH 0.005
+#define MESH_LENGTH 0.005
+#define MESH_WIDTH 0.003
 
 #define INTERACTIVE_PLOT 1
 
@@ -57,26 +57,28 @@ int iteration = 0;
 // #define EINZEL_3_WIDTH 0.05
 // #define EINZEL_Y 0.2
 
+
+
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
 // }
 
-bool einzel_1( double x, double y, double z )
-{
-  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return(x < 0.001 && (y >= (x/2)+0.0025 && y <= 0.0095));
-}
+// bool einzel_1( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//   return(x < 0.001 && (y >= (x/2)+0.0007 && y <= 0.0095));
+// }
 
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(y >= 0.0025 && x <= 0.001);
 // }
 //
-bool einzel_2( double x, double y, double z )
-{
-  return(x > 0.0011 && x < 0.0018 && (y >= (-x/2)+0.0032 && y <= 0.009));
-}
+// bool einzel_2( double x, double y, double z )
+// {
+//   return(x > 0.0011 && x < 0.0013 && (y >= (-x/2)+0.002 && y <= 0.009));
+// }
 //
 // bool einzel_3( double x, double y, double z )
 // {
@@ -155,13 +157,13 @@ void simu( int *argc, char ***argv )
     geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
     geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
     geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-    geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  10000.0) );
-    geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+    // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  20000.0) );
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
     // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  20000.0) );
 
     // geom.set_boundary( 4, Bound(BOUND_NEUMANN,    0.0) );
     //geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0)  );
-    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );having
+    // geom.set_boundary( 8, Bound(BOUND_DIRICHLET, -12.0e3) );
     geom.build_mesh();
 
     EpotUMFPACKSolver solver( geom );
@@ -291,9 +293,9 @@ void simu( int *argc, char ***argv )
                                             29, //amu
                                             BEAM_ENERGY, //eV
                                             0.1,//Normal temperature
-                                            0.1,
-                                            0.0005,BEAM_IR, //point 1
-                                            0.0005,BEAM_IR+BEAM_RADIUS //point 2
+                                            10,
+                                            0.001,BEAM_IR, //point 1
+                                            0.001,BEAM_IR+BEAM_RADIUS //point 2
                                             );
 
       // pdb.add_cylindrical_beam_with_energy(  1000, //number of particles
@@ -338,16 +340,16 @@ void simu( int *argc, char ***argv )
       }
     }
 
-  if(INTERACTIVE_PLOT){
-    GTKPlotter plotter( argc, argv );
-    plotter.set_geometry( &geom );
-    plotter.set_epot( &epot );
-    plotter.set_bfield( &bfield );
-    plotter.set_scharge( &scharge );
-    plotter.set_particledatabase( &pdb );
-    plotter.new_geometry_plot_window();
-    plotter.run();
-  }
+  // if(INTERACTIVE_PLOT){
+  //   GTKPlotter plotter( argc, argv );
+  //   plotter.set_geometry( &geom );
+  //   plotter.set_epot( &epot );
+  //   plotter.set_bfield( &bfield );
+  //   plotter.set_scharge( &scharge );
+  //   plotter.set_particledatabase( &pdb );
+  //   plotter.new_geometry_plot_window();
+  //   plotter.run();
+  // }
   GeomPlotter geomplotter( geom );
   geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
   geomplotter.set_epot( &epot );

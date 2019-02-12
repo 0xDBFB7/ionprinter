@@ -1,0 +1,42 @@
+SPARTA (4 Jan 2019)
+# thermal gas in a 3d box with collisions
+# particles reflect off global box boundaries
+
+seed	    	    12345
+dimension   	    3
+global              gridcut 1.0e-5 comm/sort yes
+
+boundary	    rr rr rr
+
+create_box  	    0 0.0001 0 0.0001 0 0.0001
+Created orthogonal box = (0 0 0) to (0.0001 0.0001 0.0001)
+create_grid 	    10 10 10
+WARNING: Could not acquire nearby ghost cells b/c grid partition is not clumped (../grid.cpp:384)
+Created 1000 child grid cells
+  parent cells = 1
+  CPU time = 0.00639764 secs
+  create/ghost percent = 87.9589 12.0411
+
+balance_grid        rcb part
+Balance grid migrated 948 cells
+  CPU time = 0.00445675 secs
+  reassign/sort/migrate/ghost percent = 48.6199 0.369269 24.9398 26.071
+
+species		    ar.species Ar
+mixture		    air Ar vstream 0.0 0.0 0.0 temp 273.15
+
+global              nrho 7.07043E22
+global              fnum 7.07043E6
+
+collide		    vss air ar.vss
+
+create_particles    air n 10000
+Created 10000 particles
+  CPU time = 0.00458425 secs
+
+stats		    100
+compute             temp temp
+stats_style	    step cpu np nattempt ncoll c_temp
+
+compute             1 grid all n
+ERROR: Illegal compute grid command (../compute_grid.cpp:47)

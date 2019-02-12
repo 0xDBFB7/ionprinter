@@ -1662,7 +1662,7 @@ MPI_LIB = -lmpi -lmpi_cxx
 
 
 ```
-mpirun -np 8 spa_mpi_dan -v x 100 -v y 100 -v z 100 -in in.free -l my.log
+mpirun -np 15 --hostfile hostfile spa_mpi_dan -v x 100 -v y 100 -v z 100 -in in.free -l my.log
 ```
 
 
@@ -1670,6 +1670,8 @@ mpirun -np 8 spa_mpi_dan -v x 100 -v y 100 -v z 100 -in in.free -l my.log
 Went to a meeting, got news that SafeSump Inc. isn't getting paid as expected - about $70k in the hole or something 
 
 pretty dissociated right now 
+
+
 
 
 
