@@ -57,3 +57,44 @@ Paraview - sometimes you've gotta hit color map > rescale to data range after re
 https://github.com/ElmerCSC/elmerfem/tree/devel/fem/tests
 
 https://barbagroup.github.io/essential_skills_RRC/laplace/1/
+
+
+
+
+
+
+
+<hr>
+
+Here's the current simulation breakdown:
+
+- [ ] OpenFOAM -> Bowtie and diffusion pump nozzle design
+- [x] ElmerFEM -> graphite+ceramic bowtie thermal sim, possibly effective for plasmas (see D. Bordenko)
+- [x] FEMM -> Magnetic fields, very effective
+- [x] IBSimu -> first-order beam simulation without collision or anything fancy
+- [ ] 
+- [ ] WARP -> 
+
+
+
+- [ ] sparselizard -> 
+- [ ] AlaDyn or Piccante -> Ionization, no recombination
+- [ ] Pic-Las
+- [ ] VSim -> Presumably very expensive. I could get a free trial, but I don't want to waste their time.
+
+- [ ] SMILEi -> haven't had much luck with postprocessing. Ionization, no recombination?
+- [ ] WARP -> 
+- [ ] Starfish -> still in development at the moment. Fluid stuff is . Programmed in java.
+
+
+
+
+
+- [ ] fbpic - cannot be used for this purpose due to femtosecond timestep limitations 
+
+| Software | Purpose                             | Ioniz. | Recom. | ICP  | Done |
+| -------- | ----------------------------------- | ------ | ------ | ---- | ---- |
+|          | graphite+ceramic bowtie thermal sim |        |        |      |      |
+|          |                                     |        |        |      |      |
+|          |                                     |        |        |      |      |
+
