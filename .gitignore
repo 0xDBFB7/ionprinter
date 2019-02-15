@@ -6,3 +6,7 @@ references/
 *.*.vtk
 *.ans
 *.fcstd1
+*.o
+
+.ipynb_checkpoints
+*/.ipynb_checkpoints/*

@@ -65,7 +65,6 @@ w3d.nz = 250
 
 # --- Set the time step size. This needs to be small enough to satisfy the Courant limit.
 
-
 # --- Specify injection of the particles
 top.inject = 1 # 2 means space-charge limited injection
 top.rinject = source_curvature_radius # Source radius of curvature

@@ -1685,11 +1685,13 @@ Hang on a minute.
 
 If we can design a nozzle that can perfectly "focus" a gas stream to a micron point, the entire ICP+einzel issue becomes moot, unless extremely fine deflection is required. Is such a nozzle possible?
 
+
+
 Let's ignore that for now.
 
-
-
 Sn has a molar mass of 118g, so we'll print at almost 5x the speed. Tin is 5x the density, however, so we really aren't gaining that much. 40g/h is still our target.
+
+
 
 
 
