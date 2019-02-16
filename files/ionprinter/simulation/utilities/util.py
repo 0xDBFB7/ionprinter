@@ -34,7 +34,7 @@ def scharge_bfield(beam_current,beam_velocity,beam_radius):
 #     K = V_1/(V_0*math.cosh(focusing_period_v))
 #     return -0.5*electron_charge()*V_0*(K**2.0)*(focusing_period_v**2.0)*y_position
 
-print(scharge_efield(0.178,9990,0.005)/10**6)
+#print(scharge_efield(0.178,9990,0.005)/10**6)
 #0.00001963495
 # print(einzel_focus_efield(20000,10000,0.001,0.001,0.0005)/10**6)
 

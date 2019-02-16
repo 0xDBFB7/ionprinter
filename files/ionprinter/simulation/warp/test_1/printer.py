@@ -31,6 +31,10 @@ w3d.ymmin = -sim_radius
 w3d.ymmax = +sim_radius
 w3d.zmmin = 0.
 w3d.zmmax = 1.0
+
+w3d.nx = w3d.ny = 38
+w3d.nz = 250
+
 #########Timestep#########
 dz = (w3d.zmmax - w3d.zmmin)/w3d.nz
 vzfinal = sqrt(2.*diode_voltage*jperev/beam.mass)
@@ -42,7 +46,7 @@ diode_voltage = 10.*kV
 input_beam_temperature = 0.361 # in eV
 input_beam_radius = 1*mm
 
-beam = Species(type=Aluminium, charge_state=+1, name='beam')
+beam = Species(type=Aluminium, charge_state=0, name='beam')
 
 beam.a0       = input_beam_radius #initial beam width in x
 beam.b0       = input_beam_radius #initial beam width in y
@@ -54,6 +58,9 @@ beam.vthperp  = sqrt(input_beam_temperature*jperev/beam.mass)
 derivqty()
 
 
+def createmybeam():
+  beam.addparticles(...)
+installparticleloader(createmybeam)
 
 #https://sites.google.com/a/lbl.gov/warp/home/how-to-s/lattice/time-dependent-lattice-elements
 

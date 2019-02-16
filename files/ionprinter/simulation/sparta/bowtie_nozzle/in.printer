@@ -12,7 +12,6 @@ create_grid 	    10 10 10
 
 balance_grid        rcb part
 
-#watch out! this isn't global!
 species		    printer.species Al
 mixture		    Al vstream 0.0 0.0 0.0 temp 273.15
 

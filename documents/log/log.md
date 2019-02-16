@@ -1693,7 +1693,16 @@ Sn has a molar mass of 118g, so we'll print at almost 5x the speed. Tin is 5x th
 
 
 
+https://pure.tudelft.nl/portal/files/8786408/2016_SPc_HEATER_CHIP_WITH_DIFFERENT_MICROCHANNELs_GEOMETRIES_FOR_A_LOW_PRESSURE_FREE_MOLECULAR_MICRO_RESISTOJET.pdf
 
+Interesting: 
+
+> Because of the high Knudsen number (or low
+> pressure) the Navier-Stokes equation cannot be
+> applied. The Direct Simulation Monte
+> Carlo (DSMC) method is ideal
+
+That simplifies things a little bit - while I'll still use OpenFOAM for the diffusion pump nozzle, I can keep the bowtie in sparta.
 
 
 
