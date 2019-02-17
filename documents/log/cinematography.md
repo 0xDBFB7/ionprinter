@@ -43,3 +43,9 @@ oh ha I'm going to be smiling in the video so one could say I'm "beaming" haha
 
 
 mixing dialogue with music: https://www.youtube.com/watch?v=fvUn8l30VLc
+
+
+
+
+
+One of the diffusion pump videos shows me struggling to open a bottle of 704. Might make a good rest 

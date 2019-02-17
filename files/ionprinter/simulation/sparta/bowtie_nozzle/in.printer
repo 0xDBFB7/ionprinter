@@ -1,35 +1,48 @@
 # thermal gas in a 3d box with collisions
 # particles reflect off global box boundaries
+#Pizza py:
+#visualize with vtk(dump("bowtie_nozzle/dump.all")).many("output/new")
+#repair generated surf with
+#sdata(1,"bowtie_nozzle/nozzle.surf").write("bowtie_nozzle/nozzle.surf")
 
 seed	    	    12345
 dimension   	    3
 global              gridcut 1.0e-5 comm/sort yes
 
-boundary	    rr rr rr
+boundary	    oo oo oo
 
-create_box  	    0 0.0001 0 0.0001 0 0.0001
-create_grid 	    10 10 10
+create_box  	    0 2 0 2 0 2
+create_grid 	    100 500 100
 
 balance_grid        rcb part
 
-species		    printer.species Al
-mixture		    Al vstream 0.0 0.0 0.0 temp 273.15
 
-global              nrho 7.07043E22
+species		    printer.species Al
+mixture		    neutral_input Al nrho 1E20 temp 2000 #deg K
+
 global              fnum 7.07043E6
 
-collide		    vss air ar.vss
 
-create_particles    air n 10000
+
+collide		    vss neutral_input printer.vss
+
+read_surf nozzle.surf group nozzle_surface clip #surf's up!
+
+surf_collide	    nozzle_surface diffuse 300.0 0.0
+surf_modify         all collide nozzle_surface
+
+create_particles    neutral_input n 100000
+#fix		    in emit/face neutral_input xlo
 
 stats		    100
 compute             temp temp
 stats_style	    step cpu np nattempt ncoll c_temp
 
-compute             1 grid all n
-region              slab block INF INF INF INF 4.5e-5 5.5e-5
-dump                2 image all 100 image.*.ppm type type pdiam 3.0e-6 size 512 512 gline yes 0.005 gridx 0.00005 c_1[1]
-dump_modify	    2 pad 4 region slab
+dump d particle neutral_input 5 dump.all id type x y z xs ys zs vx vy vz
+dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
+#dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
+
+#dump 4 image neutral_input 100 tmp.*.ppm
 
 timestep 	    7.00E-9
-run 		    1000
+run 		    100

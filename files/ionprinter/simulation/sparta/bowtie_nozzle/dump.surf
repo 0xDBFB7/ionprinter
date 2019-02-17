@@ -1,0 +1,30 @@
+ITEM: TIMESTEP
+0
+ITEM: NUMBER OF SURFS
+6
+ITEM: BOX BOUNDS oo oo oo
+0 2
+0 2
+0 2
+ITEM: SURFS id v1x v1y v1z v2x v2y v2z v3x v3y v3z 
+1 1 0 1 1 1 0 1 1 1 
+2 1 0 1 1 0 0 1 1 0 
+3 1 1 1 1 1 0 0 1 0 
+4 1 1 1 0 1 0 0 1 1 
+5 1 1 1 0 1 1 0 0 1 
+6 1 1 1 0 0 1 1 0 1 
+ITEM: TIMESTEP
+100
+ITEM: NUMBER OF SURFS
+6
+ITEM: BOX BOUNDS oo oo oo
+0 2
+0 2
+0 2
+ITEM: SURFS id v1x v1y v1z v2x v2y v2z v3x v3y v3z 
+1 1 0 1 1 1 0 1 1 1 
+2 1 0 1 1 0 0 1 1 0 
+3 1 1 1 1 1 0 0 1 0 
+4 1 1 1 0 1 0 0 1 1 
+5 1 1 1 0 1 1 0 0 1 
+6 1 1 1 0 0 1 1 0 1 

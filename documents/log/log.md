@@ -1706,6 +1706,12 @@ That simplifies things a little bit - while I'll still use OpenFOAM for the diff
 
 
 
+A rough estimate of the print speed of a standard reprap yields a print speed of ~8 grams/hr. 
+
+If the graphite bowtie is prone to cracking, we can instead use reinforced carbon-carbon, built up by resin-filled sheets then pyrolized.
+
+
+
 ## Quick notes
 
 *fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this.
