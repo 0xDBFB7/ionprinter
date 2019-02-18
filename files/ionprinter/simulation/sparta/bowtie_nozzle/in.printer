@@ -35,7 +35,7 @@ surf_modify         all collide nozzle_surface
 
 #create_particles    neutral_input n 10000
 
-fix in emit/surf neutral_input emitting_region subsonic 28 NULL #pressure units?
+fix in emit/surf neutral_input emitting_region subsonic 28 100000 #pressure units?
 
 stats		    100
 compute             temp temp

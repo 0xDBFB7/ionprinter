@@ -4,3 +4,4 @@ pizza/*
 output/
 *.surf
 *.stl
+*.all
