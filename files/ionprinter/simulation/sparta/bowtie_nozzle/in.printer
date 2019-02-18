@@ -11,38 +11,40 @@ global              gridcut 1.0e-5 comm/sort yes
 
 boundary	    oo oo oo
 
-create_box  	    0 2 0 2 0 2
-create_grid 	    100 500 100
+create_box  	    0 0.002 0 0.002 0 0.01
+create_grid 	    100 100 500
 
 balance_grid        rcb part
 
 
 species		    printer.species Al
-mixture		    neutral_input Al nrho 1E20 temp 2000 #deg K
+mixture		    neutral_input Al nrho 1.3327E23 temp 2000 #deg K
 
-global              fnum 7.07043E6
-
+global              fnum 7E6
+global cellmax 10000
 
 
 collide		    vss neutral_input printer.vss
 
 read_surf nozzle.surf group nozzle_surface clip #surf's up!
+read_surf emitting_region.surf group emitting_region clip #surf's up!
 
-surf_collide	    nozzle_surface diffuse 300.0 0.0
+
+surf_collide	    nozzle_surface diffuse 2000 0.0 #deg K
 surf_modify         all collide nozzle_surface
 
-create_particles    neutral_input n 100000
-#fix		    in emit/face neutral_input xlo
+#create_particles    neutral_input n 10000
+
+fix in emit/surf neutral_input emitting_region subsonic 28 NULL #pressure units?
 
 stats		    100
 compute             temp temp
 stats_style	    step cpu np nattempt ncoll c_temp
 
-dump d particle neutral_input 5 dump.all id type x y z xs ys zs vx vy vz
-dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
+dump d particle neutral_input 10 dump.all id type x y z xs ys zs vx vy vz
 #dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
 
 #dump 4 image neutral_input 100 tmp.*.ppm
 
 timestep 	    7.00E-9
-run 		    100
+run 		    5000

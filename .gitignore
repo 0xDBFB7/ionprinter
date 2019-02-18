@@ -7,6 +7,6 @@ references/
 *.ans
 *.fcstd1
 *.o
-
+*.stl
 .ipynb_checkpoints
 */.ipynb_checkpoints/*

@@ -1710,6 +1710,10 @@ A rough estimate of the print speed of a standard reprap yields a print speed of
 
 If the graphite bowtie is prone to cracking, we can instead use reinforced carbon-carbon, built up by resin-filled sheets then pyrolized.
 
+If the focus pierce electrodes are made out of graphite, the entire ionization chamber can be raised to 2000c to prevent deposition. Might absorb the ICP field is all.
+
+
+
 
 
 ## Quick notes
