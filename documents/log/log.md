@@ -1714,6 +1714,24 @@ If the focus pierce electrodes are made out of graphite, the entire ionization c
 
 
 
+going to be hard to make this nozzle focused enough to not deposit onto the surface of the chamber. Little needle?
+
+Maybe I can drill the graphite visually - hook up the elp camera and try to line it up by hand
+
+
+
+emissivity is a surface phenomenon! A thin layer of tungsten could be sputtered onto the bowtie if power consumption is excessive!
+
+OOOH how about a dip in aluminum oxide? Nope - emissivity of alumina is 0.2-0.5, not really enough to make a difference
+
+tungsten oxide powder could be applied to the bowtie and then reduced with hydrogen to form tungsten...
+
+growing quartz?
+
+
+
+https://www.tandfonline.com/doi/pdf/10.1080/02786829408959748
+
 
 
 ## Quick notes

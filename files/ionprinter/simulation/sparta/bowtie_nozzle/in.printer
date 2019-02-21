@@ -16,11 +16,10 @@ create_grid 	    100 100 500
 
 balance_grid        rcb part
 
-
 species		    printer.species Al
 mixture		    neutral_input Al nrho 1.3327E23 temp 2000 #deg K
 
-global              fnum 7E6
+global              fnum 4.8436E5
 global cellmax 10000
 
 
@@ -35,7 +34,7 @@ surf_modify         all collide nozzle_surface
 
 #create_particles    neutral_input n 10000
 
-fix in emit/surf neutral_input emitting_region subsonic 28 100000 #pressure units?
+fix in emit/surf neutral_input emitting_region subsonic 28 2000 #pressure units?
 
 stats		    100
 compute             temp temp
@@ -47,4 +46,4 @@ dump d particle neutral_input 10 dump.all id type x y z xs ys zs vx vy vz
 #dump 4 image neutral_input 100 tmp.*.ppm
 
 timestep 	    7.00E-9
-run 		    5000
+run 		    350

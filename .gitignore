@@ -8,5 +8,7 @@ references/
 *.fcstd1
 *.o
 *.stl
+*.mp4
+*.avi
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
