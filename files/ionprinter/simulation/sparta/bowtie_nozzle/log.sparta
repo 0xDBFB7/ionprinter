@@ -1,0 +1,159 @@
+SPARTA (4 Jan 2019)
+# thermal gas in a 3d box with collisions
+# particles reflect off global box boundaries
+#Pizza py:
+#visualize with vtk(dump("bowtie_nozzle/dump.all")).many("output/new")
+#repair generated surf with
+#sdata(1,"bowtie_nozzle/nozzle.surf").write("bowtie_nozzle/nozzle.surf")
+
+seed	    	    12345
+dimension   	    3
+global              gridcut 1.0e-5 comm/sort yes
+
+boundary	    oo oo oo
+
+create_box  	    0 0.002 0 0.002 0 0.01
+Created orthogonal box = (0 0 0) to (0.002 0.002 0.01)
+create_grid 	    100 100 500
+WARNING: Could not acquire nearby ghost cells b/c grid partition is not clumped (../grid.cpp:384)
+Created 5000000 child grid cells
+  parent cells = 1
+  CPU time = 0.495575 secs
+  create/ghost percent = 69.6112 30.3888
+
+balance_grid        rcb part
+Balance grid migrated 4668664 cells
+  CPU time = 3.87717 secs
+  reassign/sort/migrate/ghost percent = 29.9155 1.39493 43.0562 25.6334
+
+species		    printer.species Al
+mixture		    neutral_input Al nrho 1.3327E23 temp 2000 #deg K
+
+global              fnum 4.8436E5
+global cellmax 10000
+
+
+collide		    vss neutral_input printer.vss
+
+read_surf nozzle.surf group nozzle_surface clip #surf's up!
+  1069 points
+  2134 triangles
+  clipped to 1069 points
+  clipped to 2078 tris
+  0.0007 0.0013 xlo xhi
+  0.0007 0.00129912 ylo yhi
+  0 0.0015 zlo zhi
+  9.50483e-06 min triangle edge length
+  2.63808e-11 min triangle area
+  13731 = cells with surfs
+  35021 = total surfs in all grid cells
+  39 = max surfs in one grid cell
+  0.475241 = min surf-size/cell-size ratio
+  1 0 = number of pushed cells
+  13731 0 = cells overlapping surfs, overlap cells with unmarked corner pts
+  4951312 34957 13731 = cells outside/inside/overlapping surfs
+  13656 75 = surf cells with 1,2,etc splits
+  3.96643e-08 3.96643e-08 = cell-wise and global flow volume
+  CPU time = 2.95843 secs
+  read/sort/check/surf2grid/ghost/inout/particle percent = 1.1929 14.8903 0.218337 51.4481 32.2504 58.6217 0.171767
+  surf2grid time = 1.52206 secs
+  map/rvous/split percent = 19.3744 59.5605 17.8187
+read_surf emitting_region.surf group emitting_region clip #surf's up!
+  148 points
+  292 triangles
+  clipped to 148 points
+  clipped to 292 tris
+  0.00093 0.00107 xlo xhi
+  0.00093 0.00106987 ylo yhi
+  0.00052 0.00062 zlo zhi
+  5.94169e-06 min triangle edge length
+  1.49688e-12 min triangle area
+  13947 = cells with surfs
+  37193 = total surfs in all grid cells
+  82 = max surfs in one grid cell
+  0.297084 = min surf-size/cell-size ratio
+  1 0 = number of pushed cells
+  13947 0 = cells overlapping surfs, overlap cells with unmarked corner pts
+  4951000 35053 13947 = cells outside/inside/overlapping surfs
+  13872 75 = surf cells with 1,2,etc splits
+  3.96628e-08 3.96628e-08 = cell-wise and global flow volume
+  CPU time = 4.19148 secs
+  read/sort/check/surf2grid/ghost/inout/particle percent = 3.79669 10.6864 0.869865 47.3035 37.3435 49.8075 0.405458
+  surf2grid time = 1.98272 secs
+  map/rvous/split percent = 23.7976 53.0893 12.9694
+
+
+surf_collide	    nozzle_surface diffuse 2000 0.0 #deg K
+surf_modify         all collide nozzle_surface
+
+#create_particles    neutral_input n 10000
+
+fix in emit/surf neutral_input emitting_region subsonic 28 2000 #pressure units?
+
+stats		    100
+compute             temp temp
+stats_style	    step cpu np nattempt ncoll c_temp
+
+dump d particle neutral_input 10 dump.all id type x y z xs ys zs vx vy vz
+#dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
+
+#dump 4 image neutral_input 100 tmp.*.ppm
+
+timestep 	    7.00E-9
+run 		    350
+Memory usage per proc in Mbytes:
+  particles (ave,min,max) = 0 0 0
+  grid      (ave,min,max) = 61.444 60.8889 62.7639
+  surf      (ave,min,max) = 0.271828 0.271828 0.271828
+  total     (ave,min,max) = 61.7158 61.1607 63.0357
+Step CPU Np Natt Ncoll c_temp 
+       0            0        0        0        0            0 
+     100    16.219161    68600      206       89    4814.4113 
+     200    32.773572   115090      476      227    4219.0987 
+     300    51.552305   155598      741      336    3859.5613 
+     350    61.461288   173913      862      390    3720.1482 
+Loop time of 61.4637 on 15 procs for 350 steps with 173913 particles
+
+Particle moves    = 34926458 (34.9M)
+Cells touched     = 66664831 (66.7M)
+Particle comms    = 982577 (0.983M)
+Boundary collides = 0 (0K)
+Boundary exits    = 4991 (4.99K)
+SurfColl checks   = 101745756 (102M)
+SurfColl occurs   = 1969433 (1.97M)
+Surf reactions    = 0 (0K)
+Collide attempts  = 145170 (0.145M)
+Collide occurs    = 67961 (68K)
+Reactions         = 0 (0K)
+Particles stuck   = 0
+
+Particle-moves/CPUsec/proc: 37883
+Particle-moves/step: 99789.9
+Cell-touches/particle/step: 1.90872
+Particle comm iterations/step: 1.94857
+Particle fraction communicated: 0.0281327
+Particle fraction colliding with boundary: 0
+Particle fraction exiting boundary: 0.0001429
+Surface-checks/particle/step: 2.91314
+Surface-collisions/particle/step: 0.056388
+Surf-reactions/particle/step: 0
+Collision-attempts/particle/step: 0.00415645
+Collisions/particle/step: 0.00194583
+Reactions/particle/step: 0
+
+Move  time (%) = 1.04826 (1.70549)
+Coll  time (%) = 8.07952 (13.1452)
+Sort  time (%) = 19.0244 (30.9522)
+Comm  time (%) = 3.56824 (5.80544)
+Modfy time (%) = 5.87578 (9.55975)
+Outpt time (%) = 16.7483 (27.2491)
+Other time (%) = 7.11926 (11.5829)
+
+Particles: 11594.2 ave 67248 max 23 min
+Histogram: 11 2 0 0 0 0 0 0 0 2
+Cells:      333343 ave 333465 max 333333 min
+Histogram: 13 1 0 0 0 0 0 0 0 1
+GhostCell: 20960.4 ave 30667 max 13466 min
+Histogram: 1 1 6 1 0 3 2 0 0 1
+EmptyCell: 0 ave 0 max 0 min
+Histogram: 15 0 0 0 0 0 0 0 0 0

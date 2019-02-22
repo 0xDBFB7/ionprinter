@@ -1710,7 +1710,7 @@ A rough estimate of the print speed of a standard reprap yields a print speed of
 
 If the graphite bowtie is prone to cracking, we can instead use reinforced carbon-carbon, built up by resin-filled sheets then pyrolized.
 
-If the focus pierce electrodes are made out of graphite, the entire ionization chamber can be raised to 2000c to prevent deposition. Might absorb the ICP field is all.
+If the focus pierce electrodes are made out of graphite, the entire ionization chamber can be raised to 2000c to prevent deposition. Might absorb the ICP field.
 
 
 
@@ -1724,7 +1724,7 @@ emissivity is a surface phenomenon! A thin layer of tungsten could be sputtered 
 
 OOOH how about a dip in aluminum oxide? Nope - emissivity of alumina is 0.2-0.5, not really enough to make a difference
 
-tungsten oxide powder could be applied to the bowtie and then reduced with hydrogen to form tungsten...
+tungsten oxide powder could be applied to the bowtie and then reduced with hydrogen to form tungsten.
 
 growing quartz?
 

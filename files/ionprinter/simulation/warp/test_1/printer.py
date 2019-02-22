@@ -50,7 +50,7 @@ beam.a0       = input_beam_radius #initial beam width in x
 beam.b0       = input_beam_radius #initial beam width in y
 beam.ap0      = .0e0 #initial beam envelope vx/vz? Wat?
 beam.bp0      = .0e0
-# beam.ibeam    = 0
+beam.ibeam    = 10
 beam.vthz     = sqrt(input_beam_temperature*jperev/beam.mass)
 beam.vthperp  = sqrt(input_beam_temperature*jperev/beam.mass)
 derivqty()
@@ -98,19 +98,18 @@ plot_current_limit = 1
 
 def beamplots():
     window(0)
-    fma() #frame advance
-    # pfzr(plotsg=0, cond=0, titles=False)
-    # ppzr(titles=False)
-    ppzx()
-    limits(w3d.zmminglobal, w3d.zmmaxglobal, w3d.xmmin, w3d.xmmax)
+    fma()
+    pfzr(plotsg=0, cond=0, titles=False)
+    ppzr(titles=False)
+    limits(w3d.zmminglobal, w3d.zmmaxglobal, 0., 10)
     ptitles('Hot plate source into solenoid transport', 'Z (m)', 'R (m)')
     refresh()
 
-    # window(1)
-    # fma()
-    # pzcurr()
-    # limits(w3d.zmminglobal, w3d.zmmaxglobal, 0., plot_current_limit)
-    # refresh()
+    window(1)
+    fma()
+    pzcurr()
+    limits(w3d.zmminglobal, w3d.zmmaxglobal, 0., 10000*1.5)
+    refresh()
 
 # --- Call beamplots after every 20 steps
 @callfromafterstep
