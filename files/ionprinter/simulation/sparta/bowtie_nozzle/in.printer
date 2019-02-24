@@ -43,6 +43,9 @@ stats_style	    step cpu np nattempt ncoll c_temp
 dump d particle neutral_input 10 dump.all id type x y z xs ys zs vx vy vz
 #dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
 
+dump warp_dump particle neutral_input 350 warp.dump x y z vx vy vz
+
+
 #dump 4 image neutral_input 100 tmp.*.ppm
 
 timestep 	    7.00E-9

@@ -52,6 +52,16 @@ Glass tubing for spark plug HV insulation
 
 Purchased some NGK D8EA non-resistor gasket copper-core plugs. These have an M12 x 1.25 thread and a 19 mm reach.
 
-Solder wets the tip of these plugs very well if the surface is sanded slightly 
+Solder wets the tip of these plugs very well if the surface is sanded slightly.
 
 https://electrontubestore.com/index.php?main_page=product_info&cPath=1_239&products_id=711
+
+Compressible graphite crush gaskets
+
+
+
+Brazing to ceramic is totally possible:
+
+> Where ceramics were to be brazed
+> to metal, monel or even copper would be considered as a buffer material to permit
+> the high temperature brazes without cracking the ceramics. 

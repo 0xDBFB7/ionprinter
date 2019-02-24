@@ -90,3 +90,22 @@ A reference structure is on p148 of Goerzel
 
 ```
 
+```
+      ||
+      ||
+      \
+        \  |  |
+      \   \|  |
+      ||\	  |
+      ||  \---|
+      
+          
+
+The region where wire is injected must be colder than the melting point of the wire, else gas will escape. A large radiator can be attached to the nozzle.
+
+
+    
+    
+
+```
+

@@ -9,3 +9,6 @@ It seems to me that the key to good science is to always ensure that this mental
 Incidentally, this statement itself is one of those constructed realities.
 
 <hr>
+
+The cost of production should be lower than the cost of customer support would be - if any problem arises, we automatically ship out a replacement, no human involved. I'd rather spend money on R&D and in-field testing than a call center.
+

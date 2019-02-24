@@ -1568,8 +1568,6 @@ It looks like the driving frequency isn't of much importance in ICP.
 
 
 
-Aluminum brazing rod: seems like pre-heating is important. Someone on youtube uses a barbecue to great effect.
-
 
 
 This is a little outlandish, but it might actually be possible to build this whole thing without any feedthroughs - couple power and signals in via transformer coils, put logic in vacuum if possible
@@ -1708,23 +1706,11 @@ That simplifies things a little bit - while I'll still use OpenFOAM for the diff
 
 A rough estimate of the print speed of a standard reprap yields a print speed of ~8 grams/hr. 
 
-If the graphite bowtie is prone to cracking, we can instead use reinforced carbon-carbon, built up by resin-filled sheets then pyrolized.
+
 
 If the focus pierce electrodes are made out of graphite, the entire ionization chamber can be raised to 2000c to prevent deposition. Might absorb the ICP field.
 
 
-
-going to be hard to make this nozzle focused enough to not deposit onto the surface of the chamber. Little needle?
-
-Maybe I can drill the graphite visually - hook up the elp camera and try to line it up by hand
-
-
-
-emissivity is a surface phenomenon! A thin layer of tungsten could be sputtered onto the bowtie if power consumption is excessive!
-
-OOOH how about a dip in aluminum oxide? Nope - emissivity of alumina is 0.2-0.5, not really enough to make a difference
-
-tungsten oxide powder could be applied to the bowtie and then reduced with hydrogen to form tungsten.
 
 growing quartz?
 
@@ -1734,16 +1720,30 @@ https://www.tandfonline.com/doi/pdf/10.1080/02786829408959748
 
 
 
+<hr>
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Quick notes
 
-*fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this.
+*fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this. Ah, right! So that I can run in parallel with domain decomposition!
 
 Brass water jacket on diffusion pump - inside and outside soldered
 Better yet, TIG welded output
 flapper on diffusion pump for quick cycling without cooldown
 diffusion pump cooling loop on oil?
 
-Nail polish barium carbonate coating
+
 
 plasma de-ionizes due to *black body radiation*? Wait, what? How does that work? That can't be. Perhaps it cools to below the ionization temperature, but it can't possibly spontaneously form an electron.
 
@@ -1752,8 +1752,6 @@ Pyrolytic graphite as mu-metal alternative
 dumet glass-to-wire seal
 
 Fresnel zone plate
-
-ion curtain can use a grid
 
 https://www.nasa.gov/sites/default/files/atoms/files/cryogenic_selective_surfaces_final_report_niac_phase_i.pdf
 
@@ -1767,15 +1765,9 @@ https://www.thevespiary.org/library/Files_Uploaded_by_Users/no1uno/pdf/Instrumen
 
 
 
-The cost of production should be lower than the cost of customer support would be - if any problem arises, we automatically ship out a replacement, no human involved. I'd rather spend money on R&D and in-field testing than a call center.
 
 
 
-Brazing to ceramic is totally possible:
-
-> Where ceramics were to be brazed
-> to metal, monel or even copper would be considered as a buffer material to permit
-> the high temperature brazes without cracking the ceramics. 
 
 
 
