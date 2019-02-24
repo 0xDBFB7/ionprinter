@@ -85,7 +85,7 @@ y_center_offset = 0.001 #The sparta sim goes from 0 to 2mm.
                         #wanna have the same center so that particles are added in the right place.
 #TooHardError - oh, that's whimsical
 
-w3d.bound0 = dirichlet #boundary at z=0
+w3d.bound0 = neumann #boundary at z=0
 w3d.boundnz = neumann
 w3d.boundxy = neumann
 
@@ -192,10 +192,10 @@ registersolver(solver)
 # # installconductor(source, dfill=largepos)
 #
 #2
-zz = ZAnnulus(0.0005,0.002,0.003,voltage=-100000,xcent=0.001,ycent=0.001)
+zz = ZAnnulus(0.0003,0.002,0.002,voltage=-300000,xcent=0.001,ycent=0.001,zcent=0.003)
 installconductor(zz)
 
-z2 = ZAnnulus(0.0005,0.002,0.003,voltage=0,xcent=0.001,ycent=0.001,zcent=0.005)
+z2 = ZAnnulus(0.0003,0.002,0.001,voltage=0,xcent=0.001,ycent=0.001,zcent=0.0052)
 installconductor(zz)
 #
 
