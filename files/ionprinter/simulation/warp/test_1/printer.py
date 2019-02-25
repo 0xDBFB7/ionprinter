@@ -36,7 +36,7 @@ w3d.solvergeom = w3d.XYZgeom
 # # --- Basic parameters
 # channel_radius = 1.*mm
 #
-diode_voltage = 10*kV
+diode_voltage = 1*kV
 #
 # # --- Setup source plate
 # source_radius = 1*mm
@@ -50,21 +50,19 @@ diode_voltage = 10*kV
 # plate_width = 1*mm # --- thickness of aperture plate
 
 # --- Setup simulation species
-beam = Species(type=Potassium, charge_state=1, name='beam')
+#ah, that's the key! how many particles would be in the thin slice of time that we've just added?
+
+beam = Species(type=Potassium, charge_state=1, weight=1, name='beam')
 elec = Species(type=Electron, name='electrons')
-# --- Child-Langmuir current between parallel plates
-# j = 4./9.*eps0*sqrt(2.*echarge*beam.charge_state/beam.mass)*diode_voltage**1.5/zplate**2
-# diode_current = pi*source_radius**2*j
-#
-# print("Child-Langmuir current density = ", j)
-# print("Child-Langmuir current = ", diode_current)
+
+physical_beam_current = 0.000776
 
 # --- Set basic beam parameters
 beam.a0       = 0.01 #not actually used - the beam profile is set by sparta.
 beam.b0       = 0.01 #Defines where the 1 npinject particle goes.
 beam.ap0      = .0e0
 beam.bp0      = .0e0
-beam.ibeam    = 0.0003295 #total_beam_current* npinject/ actual particles? something like that?
+beam.ibeam    = physical_beam_current #total_beam_current* npinject/ actual particles? something like that?
 # beam.vthz     = sqrt(source_temperature*jperev/beam.mass)
 # beam.vthperp  = sqrt(source_temperature*jperev/beam.mass)
 derivqty()
@@ -86,7 +84,7 @@ y_center_offset = 0.001 #The sparta sim goes from 0 to 2mm.
 #TooHardError - oh, that's whimsical
 
 w3d.bound0 = neumann #boundary at z=0
-w3d.boundnz = neumann
+w3d.boundnz = neumann #might need fixing!
 w3d.boundxy = neumann
 
 top.pbound0 = absorb
@@ -107,13 +105,13 @@ vzfinal = sqrt(2.*diode_voltage*jperev/beam.mass)
 top.dt = 0.4*(dz/vzfinal)
 
 # --- Specify injection of the particles
-top.inject = 1 # 2 means space-charge limited injection
+# top.inject = 0 # 2 means space-charge limited injection
 # top.rinject = 1*mm # Source radius of curvature
 
 #It appears that we have to trick warp into calculating the particle Scharge field.
 #Without npinject, the particles added via neutral_inject are not affected by the field
 
-top.npinject = 1000 #number of macroparticles per "real" particle?
+# top.npinject = npinject_count #number of macroparticles per "real" particle?
 # top.vinject = diode_voltage
 # w3d.l_inj_exact = true
 
@@ -124,31 +122,20 @@ def neutral_inject():
                         [x[3] for x in sparta_particles],
                         [x[4] for x in sparta_particles],
                         [x[5] for x in sparta_particles])
-    #beam.add_uniform_cylinder(10000,0.001,0,0.001)
-  # for i in range(1000):
-  #     beam.addparticles(0,0,0,0,0,1000000)
 
 installparticleloader(neutral_inject)
 
-# def createmybeam():
-#     for i in range(1000):
-#         beam.addparticles(0,0.1,0,0,0,1000)
-#
-# installparticleloader(createmybeam)
 
-# def input_neutrals():
-#     for i in range(0,100):
-#         beam.addparticles(0,0,0,1000,1000,1000)
-#
-#installuserinjection(createmyplasma)
+ICP_field_period = 1e-6 #seconds
+ICP_max_field = 1.0
 
 def getfielddata(time):
-    return fieldamplitude*sin(time/fieldperiod*2*pi)
+    return ICP_max_field*sin(time/ICP_field_period*2*pi)
 
-# addnewsolenoid(zi=0,
-#                zf=1,
-#                ri=0,
-#                maxbz=0.05)
+addnewsolenoid(zi=0.00,
+               zf=0.01,
+               ri=0.003,
+               maxbz=1)
 
 # def plotsolenoids():
 #     cc = array([10],dtype=ubyte)
@@ -192,13 +179,16 @@ registersolver(solver)
 # # installconductor(source, dfill=largepos)
 #
 #2
-zz = ZAnnulus(0.0003,0.002,0.002,voltage=-300000,xcent=0.001,ycent=0.001,zcent=0.003)
-installconductor(zz)
 
-z2 = ZAnnulus(0.0003,0.002,0.001,voltage=0,xcent=0.001,ycent=0.001,zcent=0.0052)
-installconductor(zz)
+# pierce_1 = ZAnnulus(0.0003,0.002,0.0001,voltage=100000,xcent=0.001,ycent=0.001,zcent=0.0002)
+# installconductor(pierce_1)
+# #
+# pierce_cone = ZAnnulus(0.0003,0.002,0.001,voltage=0,xcent=0.001,ycent=0.001,zcent=0.0004)
+# installconductor(pierce_cone)
 #
-
+# rsrf = [0.0003 , 0.001,  0.001  ]
+# zsrf = [0.0005 ,  0.0015,  0.0005]
+# pierce_cone = ZSrfrv(rsrf=rsrf,zsrf=zsrf,voltage=10000000,xcent=0.001,ycent=0.001,zcent=0.001)
 
 
 # # --- Create aperture plate
@@ -212,7 +202,7 @@ installconductor(zz)
 # installconductor(pipe)
 
 # --- Setup the particle scraper
-scraper = ParticleScraper([zz,z2])
+# scraper = ParticleScraper([pierce_1,pierce_cone])
 
 # --- Set pline1 to include appropriate parameters
 top.pline1 = ("Injected beam. Semi-Gaus. %dx%d. npinject=%d, dt=%d"%(w3d.nx, w3d.nz, top.npinject, top.dt))
@@ -222,14 +212,16 @@ package("w3d")
 generate()
 
 # --- Open up plotting windows
-# winon(1, suffix='current')
+winon(1, suffix='current')
 winon()
 
 def beamplots():
     window(0)
     fma()
     pfzx(plotsg=1, cond=0, titles=False)
-    zz.draw(filled=150)
+    # pierce_1.draw(filled=150)
+    # pierce_2.draw(filled=150)
+    # pierce_cone.draw(filled=150)
     # source.draw(filled=150, fullplane=False)
     # plate.draw(filled=100, fullplane=False)
     # pipe.draw(filled=100, fullplane=False)
@@ -239,11 +231,15 @@ def beamplots():
     ptitles('Hot plate source into solenoid transport', 'Z (m)', 'R (m)')
     refresh()
 
-    # window(1)
-    # fma()
-    # pzcurr()
-    # limits(w3d.zmminglobal, w3d.zmmaxglobal, 0., diode_current*1.5)
-    # refresh()
+    window(1)
+    fma()
+    # pfzx(plotrho=1)
+    #pzrhomax()
+    # pzppcell()
+    pzvzrms()
+
+    limits(w3d.zmminglobal, w3d.zmmaxglobal, 0., 5000)
+    refresh()
 
 # --- Call beamplots after every 20 steps
 @callfromafterstep

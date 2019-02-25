@@ -1,0 +1,52 @@
+# thermal gas in a 3d box with collisions
+# particles reflect off global box boundaries
+#Pizza py:
+#visualize with vtk(dump("bowtie_nozzle/dump.all")).many("output/new")
+#repair generated surf with
+#sdata(1,"bowtie_nozzle/nozzle.surf").write("bowtie_nozzle/nozzle.surf")
+
+seed	    	    12345
+dimension   	    3
+global              gridcut 1.0e-5 comm/sort yes
+
+boundary	    oo oo oo
+
+create_box  	    0 0.002 0 0.002 0 0.01
+create_grid 	    100 100 500
+
+balance_grid        rcb part
+
+species		    printer.species Al
+mixture		    neutral_input Al nrho 1.3327E23 temp 2000 #deg K
+
+global              fnum 4.8436E5
+global cellmax 10000
+
+
+collide		    vss neutral_input printer.vss
+
+read_surf nozzle.surf group nozzle_surface clip #surf's up!
+read_surf emitting_region.surf group emitting_region clip #surf's up!
+
+
+surf_collide	    nozzle_surface diffuse 2000 0.0 #deg K
+surf_modify         all collide nozzle_surface
+
+#create_particles    neutral_input n 10000
+
+fix in emit/surf neutral_input emitting_region subsonic 28 2000 #pressure units?
+
+stats		    100
+compute             temp temp
+stats_style	    step cpu np nattempt ncoll c_temp
+
+dump d particle neutral_input 10 dump.all id type x y z xs ys zs vx vy vz
+#dump d2 surf nozzle_surface 100 dump.surf id  v1x  v1y  v1z  v2x  v2y  v2z  v3x  v3y  v3z
+
+dump warp_dump particle neutral_input 350 warp.dump x y z vx vy vz
+
+
+#dump 4 image neutral_input 100 tmp.*.ppm
+
+timestep 	    7.00E-9
+run 		    350

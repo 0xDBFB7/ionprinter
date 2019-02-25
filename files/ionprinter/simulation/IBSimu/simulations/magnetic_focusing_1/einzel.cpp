@@ -21,7 +21,10 @@ using namespace std;
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_CURRENT 0.2 //A 35
+#define BEAM_RADIUS 0.0003
+#define BEAM_IR 0
+
+#define BEAM_CURRENT 0.077604 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
 #define GRID_SIZE 0.00001 //m
@@ -34,7 +37,7 @@ using namespace std;
 
 #define MIDPOINT ((MESH_WIDTH/GRID_SIZE)/2.0)
 
-#define INTERACTIVE_PLOT 0
+#define INTERACTIVE_PLOT 1
 
 
 float beam_radius = 0.0005;
@@ -45,14 +48,14 @@ float recombination_point = 0.1;
 // there's no reason why we can't run many, many copies of this in parallel - no disk writes are required
 // gnu parallel
 
-feature_1_grid;
-feature_2_grid;
-feature_3_grid;
-
+// feature_1_grid;
+// feature_2_grid;
+// feature_3_grid;
+//
 
 int iteration = 0;
 
-
+#define RECOMBINATION_POINT 0.0015
 
 // bool einzel_1( double x, double y, double z )
 // {
@@ -64,6 +67,18 @@ int iteration = 0;
 //   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
 //   return(x < 0.001 && (y >= (x/2)+0.0007 && y <= 0.0095));
 // }
+
+bool einzel_1( double x, double y, double z )
+{
+  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+  return((x > 0.00115 && x < 0.0012) && y > 0.0004);
+}
+
+bool einzel_2( double x, double y, double z )
+{
+  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+  return((x > 0.00135 && x < 0.0014) && y > 0.0004);
+}
 
 // bool einzel_1( double x, double y, double z )
 // {
@@ -83,10 +98,10 @@ void simu( int *argc, char ***argv )
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
-      // Solid *s1 = new FuncSolid( einzel_1 );
-      // geom.set_solid( 7, s1 );
-      // Solid *s2 = new FuncSolid( einzel_2 );
-      // geom.set_solid( 8, s2 );
+      Solid *s1 = new FuncSolid( einzel_1 );
+      geom.set_solid( 7, s1 );
+      Solid *s2 = new FuncSolid( einzel_2 );
+      geom.set_solid( 8, s2 );
       // Solid *s3 = new FuncSolid( einzel_3 );
       // geom.set_solid( 9, s3 );
 
@@ -94,8 +109,8 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  20000.0) );
-      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  20000.0) );
+      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  20000.0) );
       geom.build_mesh();
 
@@ -135,8 +150,8 @@ void simu( int *argc, char ***argv )
                                               1.0, //charge per particle
                                               29, //amu
                                               BEAM_ENERGY, //eV
-                                              0.1,//Normal temperature
-                                              10,
+                                              0.5,//Normal temperature
+                                              0.5,
                                               0.001,BEAM_IR, //point 1
                                               0.001,BEAM_IR+BEAM_RADIUS //point 2
                                               );
@@ -171,16 +186,16 @@ void simu( int *argc, char ***argv )
         }
       }
 
-    // if(INTERACTIVE_PLOT){
-    //   GTKPlotter plotter( argc, argv );
-    //   plotter.set_geometry( &geom );
-    //   plotter.set_epot( &epot );
-    //   plotter.set_bfield( &bfield );
-    //   plotter.set_scharge( &scharge );
-    //   plotter.set_particledatabase( &pdb );
-    //   plotter.new_geometry_plot_window();
-    //   plotter.run();
-    // }
+    if(INTERACTIVE_PLOT){
+      GTKPlotter plotter( argc, argv );
+      plotter.set_geometry( &geom );
+      plotter.set_epot( &epot );
+      plotter.set_bfield( &bfield );
+      plotter.set_scharge( &scharge );
+      plotter.set_particledatabase( &pdb );
+      plotter.new_geometry_plot_window();
+      plotter.run();
+    }
 
     GeomPlotter geomplotter( geom );
     geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
