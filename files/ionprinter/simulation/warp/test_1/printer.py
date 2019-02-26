@@ -36,7 +36,7 @@ w3d.solvergeom = w3d.XYZgeom
 # # --- Basic parameters
 # channel_radius = 1.*mm
 #
-diode_voltage = 1*kV
+diode_voltage = 0.01*kV
 #
 # # --- Setup source plate
 # source_radius = 1*mm
@@ -69,6 +69,7 @@ derivqty()
 
 # --- Length of simulation box
 runlen = 0.2
+
 
 # --- Variables to set symmetry, when using 3D
 #w3d.l4symtry = true
@@ -135,7 +136,9 @@ def getfielddata(time):
 addnewsolenoid(zi=0.00,
                zf=0.01,
                ri=0.003,
-               maxbz=1)
+               maxbz=0.01,func=getfielddata)
+
+beam_collision = LangevinCollisions(beam)
 
 # def plotsolenoids():
 #     cc = array([10],dtype=ubyte)

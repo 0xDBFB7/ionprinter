@@ -27,6 +27,10 @@ using namespace std;
 #define BEAM_CURRENT 0.077604 //A 35
 #define BEAM_ENERGY 0.361 //eV
 
+#define ION_CURTAIN_ENERGY 0.1
+#define ION_CURTAIN_WIRE_RADIUS 0.001
+#define ION_CURTAIN_WIRE_WIDTH 0.0005
+
 #define GRID_SIZE 0.00001 //m
 
 #define MESH_LENGTH 0.005
@@ -55,8 +59,7 @@ float recombination_point = 0.1;
 
 int iteration = 0;
 
-#define RECOMBINATION_POINT 0.0015
-
+#define RECOMBINATION_POINT 0.003
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
@@ -75,6 +78,12 @@ bool einzel_1( double x, double y, double z )
 }
 
 bool einzel_2( double x, double y, double z )
+{
+  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+  return((x > 0.00135 && x < 0.0014) && y > 0.0004);
+}
+
+bool recombination( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
   return((x > 0.00135 && x < 0.0014) && y > 0.0004);
@@ -145,15 +154,29 @@ void simu( int *argc, char ***argv )
         float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
         printf("Beam_area: %f",beam_area);
       	pdb.add_2d_beam_with_energy(
-                                              10000, //number of particles
+                                              1000, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
                                               1.0, //charge per particle
                                               29, //amu
                                               BEAM_ENERGY, //eV
-                                              0.5,//Normal temperature
-                                              0.5,
+                                              0.3,//Normal temperature
+                                              0.1,
                                               0.001,BEAM_IR, //point 1
                                               0.001,BEAM_IR+BEAM_RADIUS //point 2
+                                              );
+
+        float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
+
+        pdb.add_2d_beam_with_energy(
+                                              1000, //number of particles
+                                              BEAM_CURRENT/beam_area, //beam current density
+                                              -1.0, //charge per particle
+                                              0.000548, //amu
+                                              ION_CURTAIN_ENERGY, //eV
+                                              0.3,//Normal temperature
+                                              0.1,
+                                              0.0015+ION_CURTAIN_WIRE_WIDTH,ION_CURTAIN_WIRE_RADIUS, //point 1
+                                              0.0015,ION_CURTAIN_WIRE_RADIUS //point 2
                                               );
 
       	pdb.iterate_trajectories( scharge, efield, bfield );
@@ -186,6 +209,16 @@ void simu( int *argc, char ***argv )
         }
       }
 
+    GeomPlotter geomplotter( geom );
+    geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
+    geomplotter.set_epot( &epot );
+    geomplotter.set_bfield( &bfield );
+    geomplotter.set_particle_database( &pdb );
+    geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
+    std::stringstream fmt;
+    fmt << "images/" << iteration << ".png";
+    geomplotter.plot_png(fmt.str());
+
     if(INTERACTIVE_PLOT){
       GTKPlotter plotter( argc, argv );
       plotter.set_geometry( &geom );
@@ -197,15 +230,6 @@ void simu( int *argc, char ***argv )
       plotter.run();
     }
 
-    GeomPlotter geomplotter( geom );
-    geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
-    geomplotter.set_epot( &epot );
-    geomplotter.set_bfield( &bfield );
-    geomplotter.set_particle_database( &pdb );
-    geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
-    std::stringstream fmt;
-    fmt << "images/" << iteration << ".png";
-    geomplotter.plot_png(fmt.str());
 
     iteration+=1;
 

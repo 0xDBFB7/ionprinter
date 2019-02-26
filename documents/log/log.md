@@ -1723,11 +1723,11 @@ https://www.tandfonline.com/doi/pdf/10.1080/02786829408959748
 <hr>
 
 
+![0](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/0.png)
 
 
 
-
-
+Back in IBSimu after a while - space charge density is harder to get right in Warp, so I'm doing this for now.
 
 
 

@@ -12,3 +12,4 @@ Incidentally, this statement itself is one of those constructed realities.
 
 The cost of production should be lower than the cost of customer support would be - if any problem arises, we automatically ship out a replacement, no human involved. I'd rather spend money on R&D and in-field testing than a call center.
 
+Bandcamp-like price for consumables?

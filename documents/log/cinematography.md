@@ -49,3 +49,15 @@ mixing dialogue with music: https://www.youtube.com/watch?v=fvUn8l30VLc
 
 
 One of the diffusion pump videos shows me struggling to open a bottle of 704. Might make a good rest 
+
+
+
+PCB in profile,
+
+rotate,
+
+
+
+
+
+Wright pub scene style rapid vacuum hiss, part removed from chamber 
