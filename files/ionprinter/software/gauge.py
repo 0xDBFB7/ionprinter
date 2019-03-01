@@ -4,7 +4,7 @@
 
 # 0 Length of data string 7 (Set value)
 # 1 Page number 5 (For BPG400)
-# 2 Status → Status byte
+# 2 Status - Status byte
 # 3 Error → Error byte
 # 4 Measurement high byte 0 … 255 → Calculation of pressure value
 # 5 Measurement low byte 0 … 255 → Calculation of pressure value
@@ -26,9 +26,8 @@ while(True):
                 break
 
     gauge_value = 10.0**((input_string[4] * 256.0 + input_string[5]) / 4000.0 - 12.5)
-
     if(len(sys.argv) > 2):
-        print("Bar: {} Pa: {} Status: {} ({}) Error: {} ({})".format(gauge_value,gauge_value*100000.0,
+        print("mBar: {} Pa: {} Status: {} ({}) Error: {} ({})".format(gauge_value,gauge_value*100000.0,
                                                         input_string[2],bin(input_string[2]),
                                                         input_string[3],bin(input_string[3])))
     else:

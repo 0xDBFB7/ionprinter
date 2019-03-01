@@ -1,0 +1,5 @@
+#set xrange [0:10]
+#set yrange [0:40]
+set datafile separator ","
+plot "gauge.csv" using 0:2 with lines
+reread

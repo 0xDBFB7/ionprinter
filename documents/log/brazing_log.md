@@ -11,3 +11,5 @@ Many voids were found in the final braze - it was not in any way airtight. This 
 Standard table salt is effective as a flux. AvE recommends using a glass rod to remove dross.
 
 Electrochemical weld cleaning
+
+Looks like I put a bit too much heat on the feedthroughs - porosity

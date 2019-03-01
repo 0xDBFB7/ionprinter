@@ -25,7 +25,7 @@ using namespace std;
 #define BEAM_IR 0
 
 #define BEAM_CURRENT 0.077604 //A 35
-#define BEAM_ENERGY 0.361 //eV
+#define BEAM_ENERGY 0.25 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
@@ -34,7 +34,7 @@ using namespace std;
 #define GRID_SIZE 0.00001 //m
 
 #define MESH_LENGTH 0.005
-#define MESH_WIDTH 0.003
+#define MESH_WIDTH 0.0015
 
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
 #define MESH_Y_SIZE MESH_WIDTH/GRID_SIZE
@@ -71,23 +71,29 @@ int iteration = 0;
 //   return(x < 0.001 && (y >= (x/2)+0.0007 && y <= 0.0095));
 // }
 
+#define EINZEL_1_X 0.0012
+#define EINZEL_1_THICKNESS 0.0005
+
+#define EINZEL_2_X 0.00123
+#define EINZEL_2_THICKNESS 0.0001
+
 bool einzel_1( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x > 0.00115 && x < 0.0012) && y > 0.0004);
+  return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && y >= 0.0004);
 }
 
 bool einzel_2( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x > 0.00135 && x < 0.0014) && y > 0.0004);
+  return((x > EINZEL_2_X && x < EINZEL_2_X+EINZEL_2_THICKNESS) && y > 0.0004);
 }
 
-bool recombination( double x, double y, double z )
-{
-  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x > 0.00135 && x < 0.0014) && y > 0.0004);
-}
+// bool recombination_electrode_1( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//   return((x > 0.00135 && x < 0.0014) && y > 0.0004);
+// }
 
 // bool einzel_1( double x, double y, double z )
 // {
@@ -111,6 +117,8 @@ void simu( int *argc, char ***argv )
       geom.set_solid( 7, s1 );
       Solid *s2 = new FuncSolid( einzel_2 );
       geom.set_solid( 8, s2 );
+      // Solid *s3 = new FuncSolid( recombination_electrode_1 );
+      // geom.set_solid( 9, s2 );
       // Solid *s3 = new FuncSolid( einzel_3 );
       // geom.set_solid( 9, s3 );
 
@@ -118,8 +126,10 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  20000.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  0.0) );
+
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  20000.0) );
       geom.build_mesh();
 
@@ -156,7 +166,7 @@ void simu( int *argc, char ***argv )
       	pdb.add_2d_beam_with_energy(
                                               1000, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
-                                              1.0, //charge per particle
+                                              0.0, //charge per particle
                                               29, //amu
                                               BEAM_ENERGY, //eV
                                               0.3,//Normal temperature
@@ -167,19 +177,23 @@ void simu( int *argc, char ***argv )
 
         float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
 
-        pdb.add_2d_beam_with_energy(
-                                              1000, //number of particles
-                                              BEAM_CURRENT/beam_area, //beam current density
-                                              -1.0, //charge per particle
-                                              0.000548, //amu
-                                              ION_CURTAIN_ENERGY, //eV
-                                              0.3,//Normal temperature
-                                              0.1,
-                                              0.0015+ION_CURTAIN_WIRE_WIDTH,ION_CURTAIN_WIRE_RADIUS, //point 1
-                                              0.0015,ION_CURTAIN_WIRE_RADIUS //point 2
-                                              );
-
+        // pdb.add_2d_beam_with_energy(
+        //                                       1000, //number of particles
+        //                                       BEAM_CURRENT/beam_area, //beam current density
+        //                                       -1.0, //charge per particle
+        //                                       0.000548, //amu
+        //                                       ION_CURTAIN_ENERGY, //eV
+        //                                       0.3,//Normal temperature
+        //                                       0.1,
+        //                                       0.0015+ION_CURTAIN_WIRE_WIDTH,ION_CURTAIN_WIRE_RADIUS, //point 1
+        //                                       0.0015,ION_CURTAIN_WIRE_RADIUS //point 2
+        //                                       );
+        //
       	pdb.iterate_trajectories( scharge, efield, bfield );
+
+        //Make a histogram of particle energies
+        //https://sourceforge.net/p/ibsimu/mailman/message/28374280/
+
 
 
         for( int ii = 0; ii < epot.size(0); ii++ ) {
@@ -208,6 +222,37 @@ void simu( int *argc, char ***argv )
           }
         }
       }
+
+
+    vector<trajectory_diagnostic_e> diagnostics;
+    diagnostics.push_back( DIAG_CURR );
+    diagnostics.push_back( DIAG_EK );
+    TrajectoryDiagnosticData tdata;
+    pdb.trajectories_at_plane( tdata, AXIS_X, 0.003, diagnostics );
+    const TrajectoryDiagnosticColumn &energy = tdata(1);
+    const TrajectoryDiagnosticColumn &current = tdata(0);
+
+    ofstream of_trajdiag( "trajdiag.dat" );
+    for( uint32_t i = 0; i < energy.size(); i++ ) {
+      of_trajdiag << energy(i) << " "
+            << current(i) << "\n";
+    }
+    of_trajdiag.close();
+
+    Histogram1D energy_histo( 20, energy.data(), current.data() );
+    vector<double> energy_data = energy_histo.get_data();
+    ofstream of_histo( "histo.dat" );
+    for( uint32_t i = 0; i < energy_histo.n(); i++ ) {
+       of_histo << energy_histo.coord(i) << " " << energy_histo(i) << "\n";
+    }
+    of_histo.close();
+    double range[2];
+    energy_histo.get_range( range );
+    std::cout << "range[0] = " << range[0] << "\n";
+    std::cout << "range[1] = " << range[1] << "\n";
+    if( range[0] == range[1] )
+      std::cout << "ranges equal\n";
+
 
     GeomPlotter geomplotter( geom );
     geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );

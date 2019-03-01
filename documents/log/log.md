@@ -1727,9 +1727,15 @@ https://www.tandfonline.com/doi/pdf/10.1080/02786829408959748
 
 
 
-Back in IBSimu after a while - space charge density is harder to get right in Warp, so I'm doing this for now.
+Back in IBSimu after a while - accurately setting space charge density is a bit more difficult in Warp, so I'm doing this for now.
 
 
+
+choose random particle in domain and change charge to emulate collision - probably not required, however.
+
+<hr>
+
+Okay, we've got a bit of a problem here. Enabled diagnostics. It looks like the main reason why I'm able to focus the beam in IBSimu is that the particles are being accelerated to high velocities - over 5kev - without any einzel voltage applied. Why's that?
 
 
 
