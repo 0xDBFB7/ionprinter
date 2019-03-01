@@ -1737,6 +1737,12 @@ choose random particle in domain and change charge to emulate collision - probab
 
 Okay, we've got a bit of a problem here. Enabled diagnostics. It looks like the main reason why I'm able to focus the beam in IBSimu is that the particles are being accelerated to high velocities - over 5kev - without any einzel voltage applied. Why's that?
 
+The beam has a certain potential energy due to its space charge, of course - if all fields are removed, the beam explodes, which requires energy. 
+
+
+
+Frequency multiplexing? Put a band-pass filter on each plate with a different frequency range and connect them all in parallel? Would need to be rectified...
+
 
 
 
