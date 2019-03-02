@@ -1743,6 +1743,8 @@ The beam has a certain potential energy due to its space charge, of course - if 
 
 Frequency multiplexing? Put a band-pass filter on each plate with a different frequency range and connect them all in parallel? Would need to be rectified...
 
+It'd be great if we could dump the energy from the beam somehow.
+
 
 
 
