@@ -31,8 +31,11 @@ There's a whole bunch of nuance to be added here regarding electron drift veloci
 I don't yet know how many electrons we'll need for this section.
 
 <hr>
-
 ### The ion curtain cathode
+
+Hope that joke isn't
+
+over the line
 
 Our target print speed is 2.232×10^20 atoms/s.
 
