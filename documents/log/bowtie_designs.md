@@ -109,3 +109,21 @@ The region where wire is injected must be colder than the melting point of the w
 
 ```
 
+``` 
+()  = BaO coating or hot cathode
+_   = high-resistance gradient deflector
+--  = ceramic insulator
+O   = ICP coil
+[] 	= iron and mu-metal/pyrolytic graphite core and shield to prevent icp-recomb. interference
+| | = graphite bowtie nozzle
+
+   ||(     )||
+   ||(_   _)|| 	    - recombination another fixed distance away
+O] ----- ----- [O   - very small ~250um gap to stay within Langmuir limits
+O] ----- ----- [O   - precise C-L-defined gap for ionization, +100v or so
+	   | |		    - bowtie nozzle extension
+ ======_O_======
+ 
+ Entire structure can be heated to prevent deposition and avoid 
+```
+

@@ -24,17 +24,17 @@ using namespace std;
 #define BEAM_RADIUS 0.0003
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.077604 //A 35
+#define BEAM_CURRENT 0.00099333 //A 35
 #define BEAM_ENERGY 0.25 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
 #define ION_CURTAIN_WIRE_WIDTH 0.0005
 
-#define GRID_SIZE 0.00001 //m
+#define GRID_SIZE 0.000005 //m
 
-#define MESH_LENGTH 0.005
-#define MESH_WIDTH 0.0015
+#define MESH_LENGTH 0.002
+#define MESH_WIDTH 0.0004
 
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
 #define MESH_Y_SIZE MESH_WIDTH/GRID_SIZE
@@ -71,11 +71,11 @@ int iteration = 0;
 //   return(x < 0.001 && (y >= (x/2)+0.0007 && y <= 0.0095));
 // }
 
-#define EINZEL_1_X 0.0012
-#define EINZEL_1_THICKNESS 0.0002
+#define EINZEL_1_X 0.0001
+#define EINZEL_1_THICKNESS 0.00001
 
-#define EINZEL_2_X 0.00123
-#define EINZEL_2_THICKNESS 0.0001
+#define EINZEL_2_X 0.000115
+#define EINZEL_2_THICKNESS 0.00001
 
 
 #define EINZEL_3_X 0.00136
@@ -84,13 +84,13 @@ int iteration = 0;
 bool einzel_1( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= 0.0004 && y < 0.00044) );
+  return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= 0.0003 && y < 0.001) );
 }
 
 bool einzel_2( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x > EINZEL_2_X && x < EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= 0.0004 && y < 0.00044));
+  return((x > EINZEL_2_X && x < EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= 0.0003 && y < 0.001));
 }
 //
 // bool einzel_3( double x, double y, double z )
@@ -136,7 +136,7 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  20000.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  100.0) );
       geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  20000.0) );
 
@@ -180,8 +180,8 @@ void simu( int *argc, char ***argv )
                                               BEAM_ENERGY, //eV
                                               0.3,//Normal temperature
                                               0.1,
-                                              0.001,BEAM_IR, //point 1
-                                              0.001,BEAM_IR+BEAM_RADIUS //point 2
+                                              0.0001,BEAM_IR, //point 1
+                                              0.0001,BEAM_IR+BEAM_RADIUS //point 2
                                               );
 
         float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
@@ -237,7 +237,7 @@ void simu( int *argc, char ***argv )
     diagnostics.push_back( DIAG_CURR );
     diagnostics.push_back( DIAG_EK );
     TrajectoryDiagnosticData tdata;
-    pdb.trajectories_at_plane( tdata, AXIS_X, 0.003, diagnostics );
+    pdb.trajectories_at_plane( tdata, AXIS_X, 0.00015, diagnostics );
     const TrajectoryDiagnosticColumn &energy = tdata(1);
     const TrajectoryDiagnosticColumn &current = tdata(0);
 
