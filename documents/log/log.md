@@ -1747,6 +1747,20 @@ It'd be great if we could dump the energy from the beam somehow.
 
 
 
+This einzel optimization problem is a perfect application for a genetic algorithm. 
+
+st5 antenna evolved: 
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20060024675.pdf
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20040152147.pdf
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20060015686.pdf
+
+https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20030067398.pdf
+
+
+
 
 ## Quick notes
 

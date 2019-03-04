@@ -24,17 +24,17 @@ using namespace std;
 #define BEAM_RADIUS 0.0003
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.00099333 //A 35
-#define BEAM_ENERGY 0.25 //eV
+#define BEAM_CURRENT 0.0024251 //A 35
+#define BEAM_ENERGY 50 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
 #define ION_CURTAIN_WIRE_WIDTH 0.0005
 
-#define GRID_SIZE 0.000005 //m
+#define GRID_SIZE 0.00003 //m
 
-#define MESH_LENGTH 0.002
-#define MESH_WIDTH 0.0004
+#define MESH_LENGTH 0.005
+#define MESH_WIDTH 0.005
 
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
 #define MESH_Y_SIZE MESH_WIDTH/GRID_SIZE
@@ -59,45 +59,58 @@ float recombination_point = 0.1;
 
 int iteration = 0;
 
-#define RECOMBINATION_POINT 0.003
+#define RECOMBINATION_POINT 0.004
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
 // }
 
-// bool einzel_1( double x, double y, double z )
-// {
-//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-//   return(x < 0.001 && (y >= (x/2)+0.0007 && y <= 0.0095));
-// }
-
-#define EINZEL_1_X 0.0001
-#define EINZEL_1_THICKNESS 0.00001
-
-#define EINZEL_2_X 0.000115
-#define EINZEL_2_THICKNESS 0.00001
 
 
-#define EINZEL_3_X 0.00136
-#define EINZEL_3_THICKNESS 0.0001
+#define EINZEL_1_X 0.0015
+#define EINZEL_1_THICKNESS 0.0011
+#define EINZEL_1_HEIGHT 0.00005
+#define EINZEL_1_Y 0.0007
+
+#define EINZEL_GAP 0.0001
+
+#define EINZEL_2_X EINZEL_1_X+EINZEL_GAP
+#define EINZEL_2_THICKNESS 0.0005
+#define EINZEL_2_HEIGHT 0.00005
+#define EINZEL_2_Y 0.0007
+
+#define EINZEL_3_X EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_GAP
+#define EINZEL_3_THICKNESS 0.0011
+#define EINZEL_3_HEIGHT 0.00005
+#define EINZEL_3_Y 0.0007
+
 
 bool einzel_1( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= 0.0003 && y < 0.001) );
+   return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+  // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+  // return ((x >= 0.001 && x <= 0.0013) && )
 }
+
+// bool einzel_1( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//   return(((y >= 2.0*x+0.001) && x <= EINZEL_1_X) && (y >= 0.0015 && y < 0.0017) );
+// }
+
 
 bool einzel_2( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x > EINZEL_2_X && x < EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= 0.0003 && y < 0.001));
+  return((x >= EINZEL_2_X && x <= EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= EINZEL_2_Y && y <= EINZEL_2_Y+EINZEL_2_HEIGHT));
 }
 //
-// bool einzel_3( double x, double y, double z )
-// {
-//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-//   return((x > EINZEL_3_X && x < EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= 0.0004 && y < 0.00044));
-// }
+bool einzel_3( double x, double y, double z )
+{
+  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+  return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
+}
 
 // bool recombination_electrode_1( double x, double y, double z )
 // {
@@ -128,17 +141,17 @@ void simu( int *argc, char ***argv )
       Solid *s2 = new FuncSolid( einzel_2 );
       geom.set_solid( 8, s2 );
       // Solid *s3 = new FuncSolid( recombination_electrode_1 );
-      // geom.set_solid( 9, s2 );
-      // Solid *s3 = new FuncSolid( einzel_3 );
       // geom.set_solid( 9, s3 );
+      Solid *s3 = new FuncSolid( einzel_3 );
+      geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  100.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  -100.0) );
       geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
-      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  20000.0) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  -100.0) );
 
       geom.build_mesh();
 
@@ -173,15 +186,15 @@ void simu( int *argc, char ***argv )
         float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
         printf("Beam_area: %f",beam_area);
       	pdb.add_2d_beam_with_energy(
-                                              1000, //number of particles
+                                              5000, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
                                               1.0, //charge per particle
                                               29, //amu
                                               BEAM_ENERGY, //eV
-                                              0.3,//Normal temperature
+                                              0.2,//Normal temperature
                                               0.1,
-                                              0.0001,BEAM_IR, //point 1
-                                              0.0001,BEAM_IR+BEAM_RADIUS //point 2
+                                              0.001,BEAM_IR, //point 1
+                                              0.001,BEAM_IR+BEAM_RADIUS //point 2
                                               );
 
         float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
@@ -237,7 +250,7 @@ void simu( int *argc, char ***argv )
     diagnostics.push_back( DIAG_CURR );
     diagnostics.push_back( DIAG_EK );
     TrajectoryDiagnosticData tdata;
-    pdb.trajectories_at_plane( tdata, AXIS_X, 0.00015, diagnostics );
+    pdb.trajectories_at_plane( tdata, AXIS_X, 0.002, diagnostics );
     const TrajectoryDiagnosticColumn &energy = tdata(1);
     const TrajectoryDiagnosticColumn &current = tdata(0);
 
@@ -266,6 +279,7 @@ void simu( int *argc, char ***argv )
     GeomPlotter geomplotter( geom );
     geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
     geomplotter.set_epot( &epot );
+    geomplotter.set_efield( &efield );
     geomplotter.set_bfield( &bfield );
     geomplotter.set_particle_database( &pdb );
     geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
@@ -277,6 +291,7 @@ void simu( int *argc, char ***argv )
       GTKPlotter plotter( argc, argv );
       plotter.set_geometry( &geom );
       plotter.set_epot( &epot );
+      plotter.set_efield( &efield );
       plotter.set_bfield( &bfield );
       plotter.set_scharge( &scharge );
       plotter.set_particledatabase( &pdb );
