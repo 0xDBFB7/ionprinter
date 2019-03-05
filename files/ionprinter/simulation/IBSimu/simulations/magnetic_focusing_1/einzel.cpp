@@ -15,7 +15,6 @@
 #include <ctime>
 #include <iostream>
 
-#include <perlin.h>
 
 using namespace std;
 
@@ -23,11 +22,11 @@ using namespace std;
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.0003
+#define BEAM_RADIUS 0.003
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.0024251 //A 35
-#define BEAM_ENERGY 50 //eV
+#define BEAM_CURRENT 0.0001 //A 35
+#define BEAM_ENERGY 0.25 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
@@ -69,22 +68,22 @@ int iteration = 0;
 
 
 
-#define EINZEL_1_X 0.0015
+#define EINZEL_1_X 0.0005
 #define EINZEL_1_THICKNESS 0.0011
 #define EINZEL_1_HEIGHT 0.00005
-#define EINZEL_1_Y 0.0007
+#define EINZEL_1_Y 0.0033
 
 #define EINZEL_GAP 0.0001
 
 #define EINZEL_2_X EINZEL_1_X+EINZEL_GAP
 #define EINZEL_2_THICKNESS 0.0005
 #define EINZEL_2_HEIGHT 0.00005
-#define EINZEL_2_Y 0.0007
+#define EINZEL_2_Y 0.0033
 
 #define EINZEL_3_X EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_GAP
 #define EINZEL_3_THICKNESS 0.0011
 #define EINZEL_3_HEIGHT 0.00005
-#define EINZEL_3_Y 0.0007
+#define EINZEL_3_Y 0.0033
 
 
 bool einzel_1( double x, double y, double z )
@@ -150,9 +149,9 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  -100.0) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  0.0) );
+      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     400.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
+      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  400.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  -100.0) );
 
       geom.build_mesh();
@@ -191,10 +190,10 @@ void simu( int *argc, char ***argv )
                                               5000, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
                                               1.0, //charge per particle
-                                              29, //amu
+                                              26, //amu
                                               BEAM_ENERGY, //eV
-                                              0.2,//Normal temperature
-                                              0.1,
+                                              0.0,//Normal temperature
+                                              0.0,
                                               0.001,BEAM_IR, //point 1
                                               0.001,BEAM_IR+BEAM_RADIUS //point 2
                                               );
@@ -279,7 +278,7 @@ void simu( int *argc, char ***argv )
 
 
     GeomPlotter geomplotter( geom );
-    geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_WIDTH/GRID_SIZE );
+    geomplotter.set_size( 1000, 1000 );
     geomplotter.set_epot( &epot );
     geomplotter.set_efield( &efield );
     geomplotter.set_bfield( &bfield );

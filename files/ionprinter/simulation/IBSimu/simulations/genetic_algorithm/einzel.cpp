@@ -19,6 +19,8 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include <Magick++.h>
+
 #include "perlin.h"
 
 using namespace std;
@@ -36,8 +38,8 @@ using namespace std;
 
 #define GRID_SIZE 0.00005 //m
 
-#define MESH_LENGTH 0.002
-#define MESH_HEIGHT 0.003
+#define MESH_LENGTH 0.004
+#define MESH_HEIGHT 0.004
 
 #define MIDPOINT ((MESH_HEIGHT/GRID_SIZE)/2.0)
 
@@ -58,7 +60,7 @@ using namespace std;
 const int MESH_X_SIZE = MESH_LENGTH/GRID_SIZE;
 const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 
-float beam_radius = 0.0003;
+float beam_radius = 0.002;
 
 float recombination_point = 0;
 
@@ -162,48 +164,52 @@ float final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine r
   return max_e;
 }
 
-
-void fill_perlin(){
-    for(int x = 0; x < MESH_X_SIZE; x++){
-      for(int y = 0; y < MESH_Y_SIZE; y++){
-        feature_1_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
-      }
-    }
-    for(int x = 0; x < MESH_X_SIZE; x++){
-      for(int y = 0; y < MESH_Y_SIZE; y++){
-        feature_2_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
-      }
-    }
-    for(int x = 0; x < MESH_X_SIZE; x++){
-      for(int y = 0; y < MESH_Y_SIZE; y++){
-        feature_3_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
-      }
-    }
+void create_meshes(){
+  Image image;
 }
 
-void filter_perlin(){
-    for(int x = 0; x < MESH_X_SIZE; x++){
-      for(int y = 0; y < MESH_Y_SIZE; y++){
-        if(feature_1_grid[x][y] > 0.7){
-          feature_1_grid[x][y] = 1.0;
-        }
-      }
-    }
-    for(int x = 0; x < MESH_X_SIZE; x++){
-      for(int y = 0; y < MESH_Y_SIZE; y++){
-        if(feature_2_grid[x][y] > 0.7){
-          feature_2_grid[x][y] = 1.0;
-        }
-      }
-    }
-    for(int x = 0; x < MESH_X_SIZE; x++){
-      for(int y = 0; y < MESH_Y_SIZE; y++){
-        if(feature_3_grid[x][y] > 0.7){
-          feature_3_grid[x][y] = 1.0;
-        }
-      }
-    }
-}
+
+// void fill_perlin(){
+//     for(int x = 0; x < MESH_X_SIZE; x++){
+//       for(int y = 0; y < MESH_Y_SIZE; y++){
+//         feature_1_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
+//       }
+//     }
+//     for(int x = 0; x < MESH_X_SIZE; x++){
+//       for(int y = 0; y < MESH_Y_SIZE; y++){
+//         feature_2_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration+1);
+//       }
+//     }
+//     for(int x = 0; x < MESH_X_SIZE; x++){
+//       for(int y = 0; y < MESH_Y_SIZE; y++){
+//         feature_3_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration+2);
+//       }
+//     }
+// }
+//
+// void filter_perlin(){
+//     for(int x = 0; x < MESH_X_SIZE; x++){
+//       for(int y = 0; y < MESH_Y_SIZE; y++){
+//         if(feature_1_grid[x][y] > 0.7){
+//           feature_1_grid[x][y] = 1.0;
+//         }
+//       }
+//     }
+//     for(int x = 0; x < MESH_X_SIZE; x++){
+//       for(int y = 0; y < MESH_Y_SIZE; y++){
+//         if(feature_2_grid[x][y] > 0.7){
+//           feature_2_grid[x][y] = 1.0;
+//         }
+//       }
+//     }
+//     for(int x = 0; x < MESH_X_SIZE; x++){
+//       for(int y = 0; y < MESH_Y_SIZE; y++){
+//         if(feature_3_grid[x][y] > 0.7){
+//           feature_3_grid[x][y] = 1.0;
+//         }
+//       }
+//     }
+// }
 
 void seed_algorithm(){
   feature_1_voltage = BASE_VOLTAGE+(-VOLTAGE_DEVIATION/2.0+random_float(VOLTAGE_DEVIATION));
@@ -213,8 +219,8 @@ void seed_algorithm(){
   printf("Feature 2 voltage: %f\n",feature_2_voltage);
   printf("Feature 3 voltage: %f\n",feature_3_voltage);
 
-  fill_perlin();
-  filter_perlin();
+  // fill_perlin();
+  // filter_perlin();
 
 }
 
@@ -287,6 +293,10 @@ bool einzel_3( double x, double y, double z )
 
 void simu( int *argc, char ** argv )
 {
+
+    Magick::InitializeMagick(*argv);
+
+
     if(*argc > 1){
       run_id = argv[1];
       cout<<"Running with ID: " << run_id << "\n";

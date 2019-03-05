@@ -1761,6 +1761,20 @@ https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20030067398.pdf
 
 
 
+If we substitute in electrons, we're fine again:
+
+
+
+![ebeam](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/ebeam.png)
+
+
+
+![ebeam](../../files/ionprinter/simulation/IBSimu/simulations/magnetic_focusing_1/images/individual/back_to.png)
+
+But a 29 amu particle increases the scharge density commensurately.
+
+Oh, those last runs used 50eV injection energy. Void.
+
 ## Quick notes
 
 
