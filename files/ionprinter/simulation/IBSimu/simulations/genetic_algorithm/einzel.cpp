@@ -44,13 +44,13 @@ using namespace std;
 #define INTERACTIVE_PLOT 0
 
 //evolution parameters
-#define BASE_VOLTAGE 50.0
-#define VOLTAGE_DEVIATION 30.0
+#define BASE_VOLTAGE 100
+#define VOLTAGE_DEVIATION 50.0
 
 
 #define SEED_EVOLVE_THRESHOLD 0.05
 
-#define MAX_ITERATIONS 100
+#define MAX_ITERATIONS 10000000000
 
 #define NUMBER_OF_PARTICLES 1000
 
@@ -64,7 +64,7 @@ float recombination_point = 0;
 
 int iteration = 0;
 
-string run_id = "";
+string run_id = "test";
 
 // there's no reason why we can't run many, many copies of this in parallel - no disk writes are required
 // gnu parallel
@@ -91,7 +91,7 @@ std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could 
   float lowest_position = 0;
   float previous_lowest = 0;
 
-  for(float x_pos = beam_x_position; x_pos < (MESH_LENGTH/GRID_SIZE); x_pos++){
+  for(float x_pos = beam_x_position; x_pos < (MESH_LENGTH/GRID_SIZE)-1; x_pos++){
     vector<trajectory_diagnostic_e> diagnostics;
     diagnostics.push_back( DIAG_VR );
     TrajectoryDiagnosticData tdata;
@@ -113,34 +113,53 @@ std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could 
 }
 
 void dump_arrays(){
-  FILE *f = fopen("client.data", "wb");
+  stringstream file_prefix;
+  file_prefix << "data/1/" << run_id << "/" << "feature_1_grid" << iteration << ".bin";
+  FILE *f = fopen(file_prefix.str().c_str(), "wb");
+  fwrite(feature_1_grid, sizeof(float), sizeof(feature_1_grid), f);
+  fclose(f);
+
+  file_prefix.str("");
+  file_prefix << "data/1/" << run_id << "/" << "feature_2_grid" << iteration << ".bin";
+  f = fopen(file_prefix.str().c_str(), "wb");
+  fwrite(feature_1_grid, sizeof(float), sizeof(feature_1_grid), f);
+  fclose(f);
+
+  file_prefix.str("");
+  file_prefix << "data/1/" << run_id << "/" << "feature_3_grid" << iteration << ".bin";
+  f = fopen(file_prefix.str().c_str(), "wb");
   fwrite(feature_1_grid, sizeof(float), sizeof(feature_1_grid), f);
   fclose(f);
 }
 
 
-int surviving_particle_count(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+float surviving_particle_count(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
   float lowest_position = 0;
   float previous_lowest = 0;
 
   vector<trajectory_diagnostic_e> diagnostics;
   diagnostics.push_back( DIAG_VR );
   TrajectoryDiagnosticData tdata;
-  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH, diagnostics );
+  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH-GRID_SIZE, diagnostics ); //just before the end
   const TrajectoryDiagnosticColumn &rad_v = tdata(0);
   return rad_v.size();
 }
 
-int final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
-  float lowest_position = 0;
-  float previous_lowest = 0;
+float final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+  float max_e = 0;
 
   vector<trajectory_diagnostic_e> diagnostics;
   diagnostics.push_back( DIAG_EK );
   TrajectoryDiagnosticData tdata;
-  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH, diagnostics );
+  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH-GRID_SIZE, diagnostics );
   const TrajectoryDiagnosticColumn &energy = tdata(0);
-  //return energy(10);
+
+  for( uint32_t i = 0; i < energy.size(); i++ ) {
+    if(energy(i) > max_e){
+      max_e = energy(i);
+    }
+  }
+  return max_e;
 }
 
 
@@ -199,38 +218,44 @@ void seed_algorithm(){
 
 }
 
-void append_to_log_file(string data){
-  std::ofstream outfile;
-
-  stringstream file_prefix;
-  file_prefix << "data/1/" << run_id << "/" << iteration << ".csv";
-  outfile.open(file_prefix.str(), std::ios_base::app);
-  outfile << data;
-  outfile.close();
-}
 
 
-#define FITNESS_SURVIVING_COUNT_GAIN -500
-#define FITNESS_LOWEST_RADIAL_V 100
+#define FITNESS_SURVIVING_COUNT_GAIN -50
+#define FITNESS_LOWEST_RADIAL_V_GAIN 10
 
+#define FIT_SAVE_THRESHOLD
 
 float fitness(ParticleDataBaseCyl pdb){
+
+
+  int low_rad_v_x, radial_v_at_pos;
+  tie(low_rad_v_x, radial_v_at_pos) = lowest_radial_v_pos(pdb);
+
+  float final_max_e = final_beam_energy(pdb);
+
+  float surviving_particle_ratio = surviving_particle_count(pdb)/(float)NUMBER_OF_PARTICLES;
+
+  float final_fitness = (-1.0*radial_v_at_pos);
+
+
 
   stringstream log_row;
   log_row.precision(4);
 
-  int quotient, remainder;
-  tie(quotient, remainder)  = lowest_radial_v_pos(pdb);
+  log_row << iteration << "," << surviving_particle_ratio << "," << final_max_e << "," << radial_v_at_pos << ","
+            << final_fitness << "," << feature_1_voltage << "," << feature_2_voltage << "," << feature_3_voltage << "\n";
 
-  float surviving_particle_ratio = surviving_particle_count(pdb)/(float)NUMBER_OF_PARTICLES;
-
-  float final_fitness = surviving_particle_ratio;
-
-  log_row << "\n";
   cout << "\n###############################################################\n";
   cout << log_row.str();
   cout << "\n###############################################################\n";
-  append_to_log_file(log_row.str());
+
+
+  std::ofstream outfile;
+  stringstream file_prefix;
+  file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
+  outfile.open(file_prefix.str(), std::ios_base::app);
+  outfile << log_row.str();
+  outfile.close();
 }
 
 bool einzel_1( double x, double y, double z )
@@ -262,7 +287,7 @@ bool einzel_3( double x, double y, double z )
 
 void simu( int *argc, char ** argv )
 {
-    if(*argc > 0){
+    if(*argc > 1){
       run_id = argv[1];
       cout<<"Running with ID: " << run_id << "\n";
     }
@@ -321,7 +346,7 @@ void simu( int *argc, char ** argv )
         //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
 
         float beam_area = (M_PI*pow(beam_radius,2));
-        printf("Beam_area: %f",beam_area);
+        printf("Beam_area: %f\n",beam_area);
       	pdb.add_2d_beam_with_energy(
                                               NUMBER_OF_PARTICLES, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
@@ -424,9 +449,9 @@ void simu( int *argc, char ** argv )
     geomplotter.set_bfield( &bfield );
     geomplotter.set_particle_database( &pdb );
     geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
-    std::stringstream fmt;
-    fmt << "images/" << iteration << ".png";
-    geomplotter.plot_png(fmt.str());
+    stringstream file_prefix;
+    file_prefix << "data/1/" << run_id << "/" << iteration << ".png";
+    geomplotter.plot_png(file_prefix.str());
 
     if(INTERACTIVE_PLOT){
       GTKPlotter plotter( argc, &argv );
@@ -441,6 +466,7 @@ void simu( int *argc, char ** argv )
     }
 
     fitness(pdb);
+    dump_arrays();
 
     iteration+=1;
   }

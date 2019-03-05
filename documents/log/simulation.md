@@ -79,8 +79,6 @@ Here's the current simulation breakdown:
 - [ ] 
 - [ ] WARP -> 
 
-
-
 - [ ] sparselizard -> 
 - [ ] AlaDyn or Piccante -> Ionization, no recombination
 - [ ] Pic-Las
