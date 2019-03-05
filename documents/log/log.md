@@ -1761,8 +1761,12 @@ https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20030067398.pdf
 
 
 
-
 ## Quick notes
+
+
+
+  O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
+  ;login: The USENIX Magazine, February 2011:42-47.
 
 *fix elmerfem VTU/VTE before wasting more time!* - darn, I can't remember why I wanted to do this. Ah, right! So that I can run in parallel with domain decomposition!
 

@@ -18,36 +18,46 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include "perlin.h"
+
 using namespace std;
 
 #ifdef GTK3
 #include "gtkplotter.hpp"
 #endif
 
-
-#define BEAM_RADIUS 0.0003
-#define BEAM_IR 0
-
 #define BEAM_CURRENT 0.0024251 //A 35
-#define BEAM_ENERGY 50 //eV
+#define BEAM_ENERGY 0.25 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
 #define ION_CURTAIN_WIRE_WIDTH 0.0005
 
-#define GRID_SIZE 0.00003 //m
+#define GRID_SIZE 0.00005 //m
 
 #define MESH_LENGTH 0.002
 #define MESH_HEIGHT 0.003
 
 #define MIDPOINT ((MESH_HEIGHT/GRID_SIZE)/2.0)
 
-#define INTERACTIVE_PLOT 1
+#define INTERACTIVE_PLOT 0
+
+//evolution parameters
+#define BASE_VOLTAGE 50.0
+#define VOLTAGE_DEVIATION 30.0
+
+
+#define SEED_EVOLVE_THRESHOLD 0.05
+
+#define MAX_ITERATIONS 100
+
+#define NUMBER_OF_PARTICLES 1000
+
 
 const int MESH_X_SIZE = MESH_LENGTH/GRID_SIZE;
-const int MESH_Y_SIZE = MESH_WIDTH/GRID_SIZE;
+const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 
-float beam_radius = 0.0005;
+float beam_radius = 0.0003;
 
 float recombination_point = 0;
 
@@ -56,7 +66,9 @@ int iteration = 0;
 // there's no reason why we can't run many, many copies of this in parallel - no disk writes are required
 // gnu parallel
 
-bool feature_1_grid[MESH_X_SIZE][MESH_Y_SIZE];
+float feature_1_grid[MESH_X_SIZE][MESH_Y_SIZE];
+float feature_2_grid[MESH_X_SIZE][MESH_Y_SIZE];
+float feature_3_grid[MESH_X_SIZE][MESH_Y_SIZE];
 
 float beam_x_position = 0;
 
@@ -66,19 +78,13 @@ float feature_3_voltage = 0;
 
 float current_fitness = 0.0;
 
+
 float random_float(float bound){
-  //generates a random float between 0 and bound.
-  // return ()(float)rand()/(float)(RAND_MAX/bound));
+  return ((float)rand()/(float)(RAND_MAX))*bound;
 }
 
-#define BASE_VOLTAGE 50.0
-#define VOLTAGE_DEVIATION 30.0
 
-
-#define SEED_EVOLVE_THRESHOLD 0.05
-
-
-int lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+float lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
   float lowest_position = 0;
   float previous_lowest = 0;
 
@@ -86,7 +92,7 @@ int lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine r
     vector<trajectory_diagnostic_e> diagnostics;
     diagnostics.push_back( DIAG_VR );
     TrajectoryDiagnosticData tdata;
-    pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
+    pdb.trajectories_at_plane( tdata, AXIS_X, x_pos*GRID_SIZE, diagnostics );
     const TrajectoryDiagnosticColumn &rad_v = tdata(0);
 
     float particle_average = 0;
@@ -94,54 +100,169 @@ int lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine r
       particle_average += rad_v(i); //totally rad brotha!
     }
     particle_average /= rad_v.size();
-
-    printf("radial_v_avg: %f,%f",particle_average,x_pos);
-    if(particle_average < previous_lowest || previous_lowest == 0){
+    printf("radial_v_avg: %f,%f\n",particle_average,x_pos);
+    if(particle_average == particle_average && (particle_average < previous_lowest || previous_lowest == 0)){
       previous_lowest = particle_average;
-      lowest_position = x_pos;
+      lowest_position = x_pos*GRID_SIZE;
     }
   }
   return lowest_position;
 }
 
+void dump_arrays(){
+  FILE *f = fopen("client.data", "wb");
+  fwrite(feature_1_grid, sizeof(float), sizeof(feature_1_grid), f);
+  fclose(f);
+}
+
+
+int surviving_particle_count(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+  float lowest_position = 0;
+  float previous_lowest = 0;
+
+  vector<trajectory_diagnostic_e> diagnostics;
+  diagnostics.push_back( DIAG_VR );
+  TrajectoryDiagnosticData tdata;
+  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH, diagnostics );
+  const TrajectoryDiagnosticColumn &rad_v = tdata(0);
+  return rad_v.size();
+}
+
+int final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+  float lowest_position = 0;
+  float previous_lowest = 0;
+
+  vector<trajectory_diagnostic_e> diagnostics;
+  diagnostics.push_back( DIAG_EK );
+  TrajectoryDiagnosticData tdata;
+  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH, diagnostics );
+  const TrajectoryDiagnosticColumn &energy = tdata(0);
+  //return energy(10);
+
+}
+
+
+void fill_perlin(){
+    for(int x = 0; x < MESH_X_SIZE; x++){
+      for(int y = 0; y < MESH_Y_SIZE; y++){
+        feature_1_grid[x][y] = perlin2d(x, y, 0.1, 4, iteration);
+      }
+    }
+    for(int x = 0; x < MESH_X_SIZE; x++){
+      for(int y = 0; y < MESH_Y_SIZE; y++){
+        feature_2_grid[x][y] = perlin2d(x, y, 0.1, 4, iteration);
+      }
+    }
+    for(int x = 0; x < MESH_X_SIZE; x++){
+      for(int y = 0; y < MESH_Y_SIZE; y++){
+        feature_3_grid[x][y] = perlin2d(x, y, 0.1, 4, iteration);
+      }
+    }
+}
+
+void filter_perlin(){
+    for(int x = 0; x < MESH_X_SIZE; x++){
+      for(int y = 0; y < MESH_Y_SIZE; y++){
+        if(feature_1_grid[x][y] > 0.7){
+          feature_1_grid[x][y] = 1.0;
+        }
+      }
+    }
+    for(int x = 0; x < MESH_X_SIZE; x++){
+      for(int y = 0; y < MESH_Y_SIZE; y++){
+        if(feature_2_grid[x][y] > 0.7){
+          feature_2_grid[x][y] = 1.0;
+        }
+      }
+    }
+    for(int x = 0; x < MESH_X_SIZE; x++){
+      for(int y = 0; y < MESH_Y_SIZE; y++){
+        if(feature_3_grid[x][y] > 0.7){
+          feature_3_grid[x][y] = 1.0;
+        }
+      }
+    }
+}
+
 void seed_algorithm(){
-  feature_1_voltage = BASE_VOLTAGE+(VOLTAGE_DEVIATION-random_float(VOLTAGE_DEVIATION/2.0));
-  feature_2_voltage = BASE_VOLTAGE+(VOLTAGE_DEVIATION-random_float(VOLTAGE_DEVIATION/2.0));
-  feature_3_voltage = BASE_VOLTAGE+(VOLTAGE_DEVIATION-random_float(VOLTAGE_DEVIATION/2.0));
-  printf("Feature 1 voltage: %f",feature_1_voltage);
-  printf("Feature 2 voltage: %f",feature_2_voltage);
-  printf("Feature 3 voltage: %f",feature_3_voltage);
-  recombination_point = BASE_RECOMB_X+(VOLTAGE_DEVIATION-random_float(VOLTAGE_DEVIATION/2.0));
+  feature_1_voltage = BASE_VOLTAGE+(-VOLTAGE_DEVIATION/2.0+random_float(VOLTAGE_DEVIATION));
+  feature_2_voltage = BASE_VOLTAGE+(-VOLTAGE_DEVIATION/2.0+random_float(VOLTAGE_DEVIATION));
+  feature_3_voltage = 0;
+  printf("Feature 1 voltage: %f\n",feature_1_voltage);
+  printf("Feature 2 voltage: %f\n",feature_2_voltage);
+  printf("Feature 3 voltage: %f\n",feature_3_voltage);
+
+  fill_perlin();
+  filter_perlin();
+
 }
 
-float fitness(){
-
+void append_to_log_file(string data){
+  std::ofstream outfile;
+  outfile.open("test.txt", std::ios_base::app);
+  outfile << data;
+  outfile.close();
 }
+
+float fitness(ParticleDataBaseCyl pdb){
+
+  printf("%f",surviving_particle_count(pdb)/NUMBER_OF_PARTICLES);
+  printf("%f",lowest_radial_v_pos(pdb));
+  append_to_log_file("test");
+}
+
+bool einzel_1( double x, double y, double z )
+{
+  int x_1 = x/GRID_SIZE;
+  int y_1 = y/GRID_SIZE;
+
+  return feature_1_grid[x_1][y_1] == 1.0;
+}
+
+
+bool einzel_2( double x, double y, double z )
+{
+  int x_1 = x/GRID_SIZE;
+  int y_1 = y/GRID_SIZE;
+
+  return feature_2_grid[x_1][y_1] == 1.0;
+}
+//
+bool einzel_3( double x, double y, double z )
+{
+  int x_1 = x/GRID_SIZE;
+  int y_1 = y/GRID_SIZE;
+
+  return feature_3_grid[x_1][y_1] == 1.0;
+}
+
+
 
 void simu( int *argc, char ***argv )
 {
-    while(iteration < 1){
 
 
 
+    while(iteration < MAX_ITERATIONS){
       srand(time(NULL));   // Initialization, should only be called once.
-
+      seed_algorithm();
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+
 
       Solid *s1 = new FuncSolid( einzel_1 );
       geom.set_solid( 7, s1 );
-      Solid *s2 = new FuncSolid( einzel_2 );
-      geom.set_solid( 8, s2 );
-      Solid *s3 = new FuncSolid( einzel_3 );
-      geom.set_solid( 9, s3 );
+      // Solid *s2 = new FuncSolid( einzel_2 );
+      // geom.set_solid( 8, s2 );
+      // Solid *s3 = new FuncSolid( einzel_3 );
+      // geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  feature_1_voltage) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
-      geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
+      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
 
       geom.build_mesh();
 
@@ -165,6 +286,8 @@ void simu( int *argc, char ***argv )
       bool fout[3] = { true, true, true };
       MeshVectorField bfield( geom, fout);
 
+
+
       for( size_t i = 0; i < 15; i++ ) {
       	solver.solve( epot, scharge );
       	efield.recalculate();
@@ -173,18 +296,18 @@ void simu( int *argc, char ***argv )
         //float beam_area = BEAM_RADIUS*2; //m
         //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
 
-        float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
+        float beam_area = (M_PI*pow(beam_radius,2));
         printf("Beam_area: %f",beam_area);
       	pdb.add_2d_beam_with_energy(
-                                              5000, //number of particles
+                                              NUMBER_OF_PARTICLES, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
                                               1.0, //charge per particle
                                               29, //amu
                                               BEAM_ENERGY, //eV
                                               0.2,//Normal temperature
                                               0.1,
-                                              0.001,BEAM_IR, //point 1
-                                              0.001,BEAM_IR+BEAM_RADIUS //point 2
+                                              beam_x_position,0, //point 1
+                                              beam_x_position,0+beam_radius //point 2
                                               );
 
         float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
@@ -257,11 +380,21 @@ void simu( int *argc, char ***argv )
     // of_histo.close();
     // double range[2];
     // energy_histo.get_range( range );
-
+    //
+    // GeomPlotter geomplotter( geom );
+    // geomplotter.set_size(1000,1000);
+    // geomplotter.set_epot( &epot );
+    // geomplotter.set_efield( &efield );
+    // geomplotter.set_bfield( &bfield );
+    // geomplotter.set_particle_database( &pdb );
+    // geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
+    // std::stringstream fmt;
+    // fmt << "images/" << iteration << ".png";
+    // geomplotter.plot_png(fmt.str());
 
 
     GeomPlotter geomplotter( geom );
-    geomplotter.set_size( MESH_LENGTH/GRID_SIZE+40, MESH_HEIGHT/GRID_SIZE );
+    geomplotter.set_size(1000,1000);
     geomplotter.set_epot( &epot );
     geomplotter.set_efield( &efield );
     geomplotter.set_bfield( &bfield );
@@ -283,6 +416,7 @@ void simu( int *argc, char ***argv )
       plotter.run();
     }
 
+    fitness(pdb);
 
     iteration+=1;
   }

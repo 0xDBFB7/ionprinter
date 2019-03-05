@@ -15,6 +15,8 @@
 #include <ctime>
 #include <iostream>
 
+#include <perlin.h>
+
 using namespace std;
 
 #ifdef GTK3

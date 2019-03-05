@@ -42,6 +42,10 @@ StatCurrentSolve can output the current and heating power values; just set
 
 http://www.elmerfem.org/forum/viewtopic.php?f=3&t=3246&p=10282&hilit=find+current+potential#p10282
 
+Heat flux BCs are specified in watts per square meter. 
+
+Fixing the temperature of the two mounting lobes has a huge impact on the temperature. 
+
 #### Sparselizard
 
 #### COMSOL
