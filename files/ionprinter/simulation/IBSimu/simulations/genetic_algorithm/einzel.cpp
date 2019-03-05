@@ -10,6 +10,7 @@
 #include "particlediagplotter.hpp"
 #include "geomplotter.hpp"
 #include "config.h"
+#include <tuple>
 
 #include <cstdlib>
 #include <ctime>
@@ -63,6 +64,8 @@ float recombination_point = 0;
 
 int iteration = 0;
 
+string run_id = "";
+
 // there's no reason why we can't run many, many copies of this in parallel - no disk writes are required
 // gnu parallel
 
@@ -84,11 +87,11 @@ float random_float(float bound){
 }
 
 
-float lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
   float lowest_position = 0;
   float previous_lowest = 0;
 
-  for( uint32_t x_pos = beam_x_position; x_pos < (MESH_LENGTH/GRID_SIZE); x_pos++){
+  for(float x_pos = beam_x_position; x_pos < (MESH_LENGTH/GRID_SIZE); x_pos++){
     vector<trajectory_diagnostic_e> diagnostics;
     diagnostics.push_back( DIAG_VR );
     TrajectoryDiagnosticData tdata;
@@ -100,13 +103,13 @@ float lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine
       particle_average += rad_v(i); //totally rad brotha!
     }
     particle_average /= rad_v.size();
-    printf("radial_v_avg: %f,%f\n",particle_average,x_pos);
-    if(particle_average == particle_average && (particle_average < previous_lowest || previous_lowest == 0)){
+    if(!isnan(particle_average) && (particle_average < previous_lowest || previous_lowest == 0)){
       previous_lowest = particle_average;
       lowest_position = x_pos*GRID_SIZE;
     }
   }
-  return lowest_position;
+  return {lowest_position,previous_lowest};
+  //returns point where velocity is most inward and said inward velocity
 }
 
 void dump_arrays(){
@@ -138,24 +141,23 @@ int final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine rec
   pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH, diagnostics );
   const TrajectoryDiagnosticColumn &energy = tdata(0);
   //return energy(10);
-
 }
 
 
 void fill_perlin(){
     for(int x = 0; x < MESH_X_SIZE; x++){
       for(int y = 0; y < MESH_Y_SIZE; y++){
-        feature_1_grid[x][y] = perlin2d(x, y, 0.1, 4, iteration);
+        feature_1_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
       }
     }
     for(int x = 0; x < MESH_X_SIZE; x++){
       for(int y = 0; y < MESH_Y_SIZE; y++){
-        feature_2_grid[x][y] = perlin2d(x, y, 0.1, 4, iteration);
+        feature_2_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
       }
     }
     for(int x = 0; x < MESH_X_SIZE; x++){
       for(int y = 0; y < MESH_Y_SIZE; y++){
-        feature_3_grid[x][y] = perlin2d(x, y, 0.1, 4, iteration);
+        feature_3_grid[x][y] = perlin2d(x, y, 0.05, 4, iteration);
       }
     }
 }
@@ -199,16 +201,36 @@ void seed_algorithm(){
 
 void append_to_log_file(string data){
   std::ofstream outfile;
-  outfile.open("test.txt", std::ios_base::app);
+
+  stringstream file_prefix;
+  file_prefix << "data/1/" << run_id << "/" << iteration << ".csv";
+  outfile.open(file_prefix.str(), std::ios_base::app);
   outfile << data;
   outfile.close();
 }
 
+
+#define FITNESS_SURVIVING_COUNT_GAIN -500
+#define FITNESS_LOWEST_RADIAL_V 100
+
+
 float fitness(ParticleDataBaseCyl pdb){
 
-  printf("%f",surviving_particle_count(pdb)/NUMBER_OF_PARTICLES);
-  printf("%f",lowest_radial_v_pos(pdb));
-  append_to_log_file("test");
+  stringstream log_row;
+  log_row.precision(4);
+
+  int quotient, remainder;
+  tie(quotient, remainder)  = lowest_radial_v_pos(pdb);
+
+  float surviving_particle_ratio = surviving_particle_count(pdb)/(float)NUMBER_OF_PARTICLES;
+
+  float final_fitness = surviving_particle_ratio;
+
+  log_row << "\n";
+  cout << "\n###############################################################\n";
+  cout << log_row.str();
+  cout << "\n###############################################################\n";
+  append_to_log_file(log_row.str());
 }
 
 bool einzel_1( double x, double y, double z )
@@ -238,10 +260,12 @@ bool einzel_3( double x, double y, double z )
 
 
 
-void simu( int *argc, char ***argv )
+void simu( int *argc, char ** argv )
 {
-
-
+    if(*argc > 0){
+      run_id = argv[1];
+      cout<<"Running with ID: " << run_id << "\n";
+    }
 
     while(iteration < MAX_ITERATIONS){
       srand(time(NULL));   // Initialization, should only be called once.
@@ -251,18 +275,18 @@ void simu( int *argc, char ***argv )
 
       Solid *s1 = new FuncSolid( einzel_1 );
       geom.set_solid( 7, s1 );
-      // Solid *s2 = new FuncSolid( einzel_2 );
-      // geom.set_solid( 8, s2 );
-      // Solid *s3 = new FuncSolid( einzel_3 );
-      // geom.set_solid( 9, s3 );
+      Solid *s2 = new FuncSolid( einzel_2 );
+      geom.set_solid( 8, s2 );
+      Solid *s3 = new FuncSolid( einzel_3 );
+      geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  feature_1_voltage) );
-      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
-      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
+      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
+      geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
 
       geom.build_mesh();
 
@@ -405,7 +429,7 @@ void simu( int *argc, char ***argv )
     geomplotter.plot_png(fmt.str());
 
     if(INTERACTIVE_PLOT){
-      GTKPlotter plotter( argc, argv );
+      GTKPlotter plotter( argc, &argv );
       plotter.set_geometry( &geom );
       plotter.set_epot( &epot );
       plotter.set_efield( &efield );
@@ -423,12 +447,12 @@ void simu( int *argc, char ***argv )
 }
 
 
-int main( int argc, char **argv )
+int main( int argc, char ** argv )
 {
     try {
         ibsimu.set_message_threshold( MSG_VERBOSE, 1 );
 	ibsimu.set_thread_count( 10 );
-        simu( &argc, &argv );
+        simu( &argc, argv );
     } catch ( Error e ) {
 	e.print_error_message( ibsimu.message( 0 ) );
         exit( 1 );
