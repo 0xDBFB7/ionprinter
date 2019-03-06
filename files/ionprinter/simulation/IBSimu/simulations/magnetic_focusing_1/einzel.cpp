@@ -25,7 +25,7 @@ using namespace std;
 #define BEAM_RADIUS 0.003
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.0001 //A 35
+#define BEAM_CURRENT 0.0003 //A 35
 #define BEAM_ENERGY 0.25 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
@@ -68,7 +68,7 @@ int iteration = 0;
 
 
 
-#define EINZEL_1_X 0.0005
+#define EINZEL_1_X 0.0007
 #define EINZEL_1_THICKNESS 0.0011
 #define EINZEL_1_HEIGHT 0.00005
 #define EINZEL_1_Y 0.0033
