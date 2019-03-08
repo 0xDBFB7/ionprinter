@@ -164,9 +164,7 @@ float final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine r
   return max_e;
 }
 
-void create_meshes(){
-  Image image;
-}
+// void fill_perlin(){
 
 
 // void fill_perlin(){

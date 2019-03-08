@@ -94,16 +94,8 @@ bool einzel_1( double x, double y, double z )
   // return ((x >= 0.001 && x <= 0.0013) && )
 }
 
-// bool einzel_1( double x, double y, double z )
-// {
-//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-//   return(((y >= 2.0*x+0.001) && x <= EINZEL_1_X) && (y >= 0.0015 && y < 0.0017) );
-// }
-
-
 bool einzel_2( double x, double y, double z )
 {
-  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
   return((x >= EINZEL_2_X && x <= EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= EINZEL_2_Y && y <= EINZEL_2_Y+EINZEL_2_HEIGHT));
 }
 //
@@ -157,24 +149,6 @@ float final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine r
 }
 
 
-// bool recombination_electrode_1( double x, double y, double z )
-// {
-//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-//   return((x > 0.00135 && x < 0.0014) && y > 0.0004);
-// }
-
-// bool einzel_1( double x, double y, double z )
-// {
-//   return(y >= 0.0025 && x <= 0.001);
-// }
-//
-// bool einzel_2( double x, double y, double z )
-// {
-//   return(x > 0.0011 && x < 0.0013 && (y >= (-x/2)+0.002 && y <= 0.009));
-// }
-//
-
-
 void simu( int *argc, char ***argv )
 {
     while(iteration < 1){
@@ -185,8 +159,6 @@ void simu( int *argc, char ***argv )
       geom.set_solid( 7, s1 );
       Solid *s2 = new FuncSolid( einzel_2 );
       geom.set_solid( 8, s2 );
-      // Solid *s3 = new FuncSolid( recombination_electrode_1 );
-      // geom.set_solid( 9, s3 );
       Solid *s3 = new FuncSolid( einzel_3 );
       geom.set_solid( 9, s3 );
 
@@ -231,7 +203,7 @@ void simu( int *argc, char ***argv )
         float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
         printf("Beam_area: %f",beam_area);
       	pdb.add_2d_beam_with_energy(
-                                              5000, //number of particles
+                                              1000, //number of particles
                                               BEAM_CURRENT/beam_area, //beam current density
                                               1.0, //charge per particle
                                               26, //amu

@@ -1,0 +1,10 @@
+libdir=/usr/lib/x86_64-linux-gnu/
+includedir=/usr/lib/x86_64-linux-gnu/
+
+Name: umfpack
+Description: Unsymmetric multifrontal sparse LU factorization package
+Version: 5
+URL: http://www.cise.ufl.edu/research/sparse/umfpack/
+Libs: -L${libdir} -lumfpack
+Libs.private: -lm @PC_LIBS@
+Cflags: -I${includedir}
