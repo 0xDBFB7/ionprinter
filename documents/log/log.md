@@ -1775,6 +1775,14 @@ But a 29 amu particle increases the scharge density commensurately.
 
 Oh, those last runs used 50eV injection energy. Void.
 
+
+
+https://www.eng-tips.com/viewthread.cfm?qid=254704
+
+> SREID: In my opinion 1018 and 12L14 give permeability more than 1000 when annealed and slow cooled. Nevertheless, consider that Ni or Cr plating process ( after magnetic annealing)reduces permeability due to Hydrogen adsorbation. Several test of Silicon -Iron alloy confirm this problem. However a simple baking (390-400 F) after plating restores magnetic properties.
+
+
+
 ## Quick notes
 
 
