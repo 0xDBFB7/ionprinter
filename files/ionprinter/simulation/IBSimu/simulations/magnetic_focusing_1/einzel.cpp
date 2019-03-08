@@ -68,7 +68,7 @@ int iteration = 0;
 
 
 
-#define EINZEL_1_X 0.0013
+#define EINZEL_1_X 0.0007
 #define EINZEL_1_THICKNESS 0.0011
 #define EINZEL_1_HEIGHT 0.00005
 #define EINZEL_1_Y 0.003
@@ -76,7 +76,7 @@ int iteration = 0;
 #define EINZEL_GAP 0.0001
 
 #define EINZEL_2_X EINZEL_1_X+EINZEL_GAP
-#define EINZEL_2_THICKNESS 0.0005
+#define EINZEL_2_THICKNESS 0.001
 #define EINZEL_2_HEIGHT 0.00005
 #define EINZEL_2_Y 0.003
 
@@ -112,6 +112,50 @@ bool einzel_3( double x, double y, double z )
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
   return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
 }
+
+
+std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+  float lowest_position = 0;
+  float previous_lowest = 0;
+
+  for(float x_pos = 0.001; x_pos < (MESH_LENGTH/GRID_SIZE)-1; x_pos++){
+    vector<trajectory_diagnostic_e> diagnostics;
+    diagnostics.push_back( DIAG_VR );
+    TrajectoryDiagnosticData tdata;
+    pdb.trajectories_at_plane( tdata, AXIS_X, x_pos*GRID_SIZE, diagnostics );
+    const TrajectoryDiagnosticColumn &rad_v = tdata(0);
+
+    float particle_average = 0;
+    for( uint32_t i = 0; i < rad_v.size(); i++ ) {
+      particle_average += rad_v(i); //totally rad brotha!
+    }
+    particle_average /= rad_v.size();
+    if(!isnan(particle_average) && (particle_average < previous_lowest || previous_lowest == 0)){
+      previous_lowest = particle_average;
+      lowest_position = x_pos*GRID_SIZE;
+    }
+  }
+  return {lowest_position,previous_lowest};
+  //returns point where velocity is most inward and said inward velocity
+}
+
+float final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+  float max_e = 0;
+
+  vector<trajectory_diagnostic_e> diagnostics;
+  diagnostics.push_back( DIAG_EK );
+  TrajectoryDiagnosticData tdata;
+  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH-GRID_SIZE, diagnostics );
+  const TrajectoryDiagnosticColumn &energy = tdata(0);
+
+  for( uint32_t i = 0; i < energy.size(); i++ ) {
+    if(energy(i) > max_e){
+      max_e = energy(i);
+    }
+  }
+  return max_e;
+}
+
 
 // bool recombination_electrode_1( double x, double y, double z )
 // {
@@ -149,9 +193,9 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     600.0) );
+      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     500.0) );
       geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  600.0) );
+      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  500.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  -100.0) );
 
       geom.build_mesh();
@@ -287,6 +331,13 @@ void simu( int *argc, char ***argv )
     std::stringstream fmt;
     fmt << "images/" << iteration << ".png";
     geomplotter.plot_png(fmt.str());
+
+    // printf("Final beam energy: %f",final_beam_energy(pdb));
+    //
+    // int low_rad_v_x, radial_v_at_pos;
+    // tie(low_rad_v_x, radial_v_at_pos) = lowest_radial_v_pos(pdb);
+    //
+    // printf("Optimal recombination point: %f, velocity: ", low_rad_v_x);
 
     if(INTERACTIVE_PLOT){
       GTKPlotter plotter( argc, argv );
