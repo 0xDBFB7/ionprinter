@@ -62,9 +62,9 @@ float feature_3_voltage = 0;
 float recombination_point = MESH_LENGTH;
 
 int iteration = 0;
-string run_id = "test";
+string run_id = "1";
 
-//? ? x,r,voltage 
+//? ? x,r,voltage
 
 bool einzel_1( double x, double y, double z ){
    return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
@@ -79,7 +79,7 @@ bool einzel_3( double x, double y, double z ){
 }
 
 
-std::tuple <float, float> dump_(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
   float lowest_position = 0;
   float previous_lowest = 0;
 
@@ -184,11 +184,10 @@ void simu( int *argc, char ** argv )
       run_id = argv[1];
       cout<<"Running with ID: " << run_id << "\n";
     }
+    int value = atoi(myString.c_str());
 
-    for(float  = 0)
+    for(float  = 0) //decompose domain based on number of processes
 
-      srand(time(NULL));   // Initialization, should only be called once.
-      seed_algorithm();
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
 
@@ -359,8 +358,7 @@ void simu( int *argc, char ** argv )
       plotter.run();
     }
 
-    fitness(pdb);
-    dump_arrays();
+
 
     iteration+=1;
   }
