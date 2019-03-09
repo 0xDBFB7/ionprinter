@@ -19,10 +19,6 @@
 #include <time.h>
 #include <stdlib.h>
 
-#include <Magick++.h>
-
-#include "perlin.h"
-
 using namespace std;
 
 #ifdef GTK3
@@ -37,14 +33,17 @@ using namespace std;
 
 #define GRID_SIZE 0.00005 //m
 
-#define MESH_LENGTH 0.004
-#define MESH_HEIGHT 0.004
+#define MESH_LENGTH 0.005
+#define MESH_HEIGHT 0.005
 
 #define MIDPOINT ((MESH_HEIGHT/GRID_SIZE)/2.0)
 
 #define INTERACTIVE_PLOT 0
 
 #define NUMBER_OF_PARTICLES 1000
+#define DIAGNOSTIC_X_INTERVAL 10*GRID_SIZE;
+
+#define PNG_PLOT 0
 
 #define MAX_RUN_ID 16 //specify domain decomposition
 
@@ -62,9 +61,29 @@ float feature_3_voltage = 0;
 float recombination_point = MESH_LENGTH;
 
 int iteration = 0;
-string run_id = "1";
+int run_id = "1";
 
 //? ? x,r,voltage
+
+float feature_1_X = 0.0007;
+float feature_1_Y = 0.003;
+float feature_1_X_len = 0.0011;
+float feature_1_Y_len = 0.00005;
+
+float feature_1_gap = 0.0001;
+
+#define feature_2_X EINZEL_1_X+EINZEL_1_X_LEN+EINZEL_GAP;
+float feature_2_X = 0.0007;
+float feature_2_Y = 0.003;
+float feature_2_X_len = 0.0011;
+float feature_2_Y_len = 0.00005;
+
+float feature_2_gap = 0.0001;
+
+#define EINZEL_3_X EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_GAP
+#define EINZEL_3_THICKNESS 0.0011
+#define EINZEL_3_HEIGHT 0.00005
+#define EINZEL_3_Y 0.003
 
 bool einzel_1( double x, double y, double z ){
    return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
@@ -75,116 +94,91 @@ bool einzel_2( double x, double y, double z ){
 }
 
 bool einzel_3( double x, double y, double z ){
+  int EINZEL_3_X = EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_3_GAP;
   return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
 }
 
 
 void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+
+  //start at zero since particles could go backwards
+  for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
+    vector<trajectory_diagnostic_e> diagnostics;
+    diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
+    diagnostics.push_back( DIAG_EK );
+    diagnostics.push_back( DIAG_R );
+
+    TrajectoryDiagnosticData tdata;
+    pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
+    const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
+    const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
+    const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
+
+    float particle_average = 0;
+    for( uint32_t i = 0; i < diag_rad_v.size(); i++ ) {
+
+      stringstream log_row;
+      log_row.precision(8);
+
+      log_row << run_id << ","
+              << iteration << ","
+              << beam_current << ","
+              << beam_radius << ","
+              << beam_x_position << ","
+              << feature_1_voltage << ","
+              << feature_2_voltage << ","
+              << feature_3_voltage << ","
+              << diag_energy(i) << ","
+              << diag_radial_position(i) << ","
+              << diag_radial_velocity(i) << "\n";
+
+      std::ofstream outfile;
+      stringstream file_prefix;
+      file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
+      outfile.open(file_prefix.str(), std::ios_base::app);
+      outfile << log_row.str();
+      outfile.close();
+    }
+  }
+}
+
+void dump_features(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
   float lowest_position = 0;
   float previous_lowest = 0;
 
   for(float x_pos = beam_x_position; x_pos < (MESH_LENGTH/GRID_SIZE)-1; x_pos++){
-    vector<trajectory_diagnostic_e> diagnostics;
-    diagnostics.push_back( DIAG_VR );
-    TrajectoryDiagnosticData tdata;
-    pdb.trajectories_at_plane( tdata, AXIS_X, x_pos*GRID_SIZE, diagnostics );
-    const TrajectoryDiagnosticColumn &rad_v = tdata(0);
 
-    float particle_average = 0;
-    for( uint32_t i = 0; i < rad_v.size(); i++ ) {
-      particle_average += rad_v(i); //totally rad brotha!
-    }
-    particle_average /= rad_v.size();
-
-
-    if(!isnan(particle_average) && (particle_average < previous_lowest || previous_lowest == 0)){
+    if(!isnan(particle_average) && !isnan(particle_average)){
       previous_lowest = particle_average;
       lowest_position = x_pos*GRID_SIZE;
     }
 
+    stringstream log_row;
+    log_row.precision(4);
+
+    log_row <<
+
+    std::ofstream outfile;
+    stringstream file_prefix;
+    file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
+    outfile.open(file_prefix.str(), std::ios_base::app);
+    outfile << log_row.str();
+    outfile.close();
+
   }
-  return {lowest_position,previous_lowest};
   //returns point where velocity is most inward and said inward velocity
 }
 
-float surviving_particle_count(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
-  float lowest_position = 0;
-  float previous_lowest = 0;
-
-  vector<trajectory_diagnostic_e> diagnostics;
-  diagnostics.push_back( DIAG_VR );
-  TrajectoryDiagnosticData tdata;
-  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH-GRID_SIZE, diagnostics ); //just before the end
-  const TrajectoryDiagnosticColumn &rad_v = tdata(0);
-  return rad_v.size();
-}
-
-float final_beam_energy(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
-  float max_e = 0;
-
-  vector<trajectory_diagnostic_e> diagnostics;
-  diagnostics.push_back( DIAG_EK );
-  TrajectoryDiagnosticData tdata;
-  pdb.trajectories_at_plane( tdata, AXIS_X, MESH_LENGTH-GRID_SIZE, diagnostics );
-  const TrajectoryDiagnosticColumn &energy = tdata(0);
-
-  for( uint32_t i = 0; i < energy.size(); i++ ) {
-    if(energy(i) > max_e){
-      max_e = energy(i);
-    }
-  }
-  return max_e;
-}
-
-#define FITNESS_SURVIVING_COUNT_GAIN -50
-#define FITNESS_LOWEST_RADIAL_V_GAIN 10
-
-#define FIT_SAVE_THRESHOLD
-
-float fitness(ParticleDataBaseCyl pdb){
-
-
-  int low_rad_v_x, radial_v_at_pos;
-  tie(low_rad_v_x, radial_v_at_pos) = lowest_radial_v_pos(pdb);
-
-  float final_max_e = final_beam_energy(pdb);
-
-  float surviving_particle_ratio = surviving_particle_count(pdb)/(float)NUMBER_OF_PARTICLES;
-
-  float final_fitness = (-1.0*radial_v_at_pos);
-
-
-
-  stringstream log_row;
-  log_row.precision(4);
-
-  log_row << iteration << "," << surviving_particle_ratio << "," << final_max_e << "," << radial_v_at_pos << ","
-            << final_fitness << "," << feature_1_voltage << "," << feature_2_voltage << "," << feature_3_voltage << "\n";
-
-  cout << "\n###############################################################\n";
-  cout << log_row.str();
-  cout << "\n###############################################################\n";
-
-
-  std::ofstream outfile;
-  stringstream file_prefix;
-  file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
-  outfile.open(file_prefix.str(), std::ios_base::app);
-  outfile << log_row.str();
-  outfile.close();
-}
 
 void simu( int *argc, char ** argv )
 {
 
-    Magick::InitializeMagick(*argv);
 
 
     if(*argc > 1){
-      run_id = argv[1];
+      run_id = atoi(rgv[1]);
       cout<<"Running with ID: " << run_id << "\n";
     }
-    int value = atoi(myString.c_str());
 
     for(float  = 0) //decompose domain based on number of processes
 
@@ -334,17 +328,18 @@ void simu( int *argc, char ** argv )
     // fmt << "images/" << iteration << ".png";
     // geomplotter.plot_png(fmt.str());
 
-
-    GeomPlotter geomplotter( geom );
-    geomplotter.set_size(1000,1000);
-    geomplotter.set_epot( &epot );
-    geomplotter.set_efield( &efield );
-    geomplotter.set_bfield( &bfield );
-    geomplotter.set_particle_database( &pdb );
-    geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
-    stringstream file_prefix;
-    file_prefix << "data/1/" << run_id << "/" << iteration << ".png";
-    geomplotter.plot_png(file_prefix.str());
+    if(PNG_PLOT){
+      GeomPlotter geomplotter( geom );
+      geomplotter.set_size(1000,1000);
+      geomplotter.set_epot( &epot );
+      geomplotter.set_efield( &efield );
+      geomplotter.set_bfield( &bfield );
+      geomplotter.set_particle_database( &pdb );
+      geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
+      stringstream file_prefix;
+      file_prefix << "data/1/" << run_id << "/" << iteration << ".png";
+      geomplotter.plot_png(file_prefix.str());
+    }
 
     if(INTERACTIVE_PLOT){
       GTKPlotter plotter( argc, &argv );
