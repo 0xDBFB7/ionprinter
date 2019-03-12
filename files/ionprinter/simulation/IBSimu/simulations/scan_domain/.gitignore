@@ -2,5 +2,6 @@
 *.svg
 *.zip
 *.mp4
+*.csv
 *.o
 data/

@@ -41,7 +41,7 @@ using namespace std;
 #define INTERACTIVE_PLOT 0
 
 #define NUMBER_OF_PARTICLES 1000
-#define DIAGNOSTIC_X_INTERVAL 10.0*GRID_SIZE
+#define DIAGNOSTIC_X_INTERVAL 3.0*GRID_SIZE
 
 #define PNG_PLOT 0
 
@@ -114,6 +114,8 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
           << feature_2_voltage << ","
           << feature_3_voltage << "\n"; //block header
 
+  log_row << "\n"; //block terminate
+
   for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
     vector<trajectory_diagnostic_e> diagnostics;
     diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
@@ -144,14 +146,14 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
               << diag_radial_velocity(i) << "\n";
     }
 
-    log_row << "\n\n"; //block terminate
   }
+  log_row << "\n"; //block terminate
 
 
   //dump features
   log_row << "\#Feature dump\n";
-  for(float y = 0; y < MESH_HEIGHT; y+=GRID_SIZE) {
-    for(float x = 0; x < MESH_LENGTH; x+=GRID_SIZE) {
+  for(float y = 0; y < MESH_HEIGHT; y+=(GRID_SIZE/4.0)) {
+    for(float x = 0; x < MESH_LENGTH; x+=(GRID_SIZE/4.0)) {
       if(feature_1(x,y,0)){
         log_row << x << ","
                 << y << ","
@@ -169,7 +171,7 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
       }
     }
   }
-  log_row << "\n\n"; //block terminate
+  log_row << "\n"; //block terminate
 
   std::ofstream outfile;
   stringstream file_prefix;
