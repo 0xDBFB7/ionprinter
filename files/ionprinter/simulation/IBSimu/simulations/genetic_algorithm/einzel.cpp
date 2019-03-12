@@ -89,7 +89,7 @@ float random_float(float bound){
 }
 
 
-std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine ideal recombination point?
   float lowest_position = 0;
   float previous_lowest = 0;
 

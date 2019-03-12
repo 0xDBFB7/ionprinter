@@ -27,9 +27,9 @@ using namespace std;
 
 #define BEAM_ENERGY 0.25 //eV
 
-// #define ION_CURTAIN_ENERGY 0.1
-// #define ION_CURTAIN_WIRE_RADIUS 0.001
-// #define ION_CURTAIN_WIRE_WIDTH 0.0005
+#define ION_CURTAIN_ENERGY 0.1
+#define ION_CURTAIN_WIRE_RADIUS 0.001
+#define ION_CURTAIN_WIRE_WIDTH 0.0005
 
 #define GRID_SIZE 0.00005 //m
 
@@ -41,17 +41,17 @@ using namespace std;
 #define INTERACTIVE_PLOT 0
 
 #define NUMBER_OF_PARTICLES 1000
-#define DIAGNOSTIC_X_INTERVAL 10*GRID_SIZE;
+#define DIAGNOSTIC_X_INTERVAL 10.0*GRID_SIZE
 
 #define PNG_PLOT 0
 
-#define MAX_RUN_ID 16 //specify domain decomposition
+#define NUMBER_OF_PROCESSES 16.0 //specify domain decomposition
 
 const int MESH_X_SIZE = MESH_LENGTH/GRID_SIZE;
 const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 
 
-float beam_current = 0.0005;
+double beam_current = 0.0005;
 float beam_radius = 0.002;
 float beam_x_position = 0;
 float feature_1_voltage = 0;
@@ -61,7 +61,7 @@ float feature_3_voltage = 0;
 float recombination_point = MESH_LENGTH;
 
 int iteration = 0;
-int run_id = "1";
+int run_id = 1;
 
 //? ? x,r,voltage
 
@@ -69,39 +69,51 @@ float feature_1_X = 0.0007;
 float feature_1_Y = 0.003;
 float feature_1_X_len = 0.0011;
 float feature_1_Y_len = 0.00005;
-
 float feature_1_gap = 0.0001;
 
-#define feature_2_X EINZEL_1_X+EINZEL_1_X_LEN+EINZEL_GAP;
-float feature_2_X = 0.0007;
+
+float feature_2_X = feature_1_X+feature_1_X_len+feature_1_gap;
 float feature_2_Y = 0.003;
 float feature_2_X_len = 0.0011;
 float feature_2_Y_len = 0.00005;
-
 float feature_2_gap = 0.0001;
 
-#define EINZEL_3_X EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_GAP
-#define EINZEL_3_THICKNESS 0.0011
-#define EINZEL_3_HEIGHT 0.00005
-#define EINZEL_3_Y 0.003
 
-bool einzel_1( double x, double y, double z ){
-   return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+float feature_3_X = feature_2_X+feature_2_X_len+feature_2_gap;
+float feature_3_Y = 0.003;
+float feature_3_X_len = 0.0011;
+float feature_3_Y_len = 0.00005;
+float feature_3_gap = 0.0001;
+
+bool feature_1( double x, double y, double z ){
+   return((x >= feature_1_X && x <= feature_1_X+feature_1_X_len) && (y >= feature_1_Y && y <= feature_1_Y+feature_1_Y_len));
 }
 
-bool einzel_2( double x, double y, double z ){
-  return((x >= EINZEL_2_X && x <= EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= EINZEL_2_Y && y <= EINZEL_2_Y+EINZEL_2_HEIGHT));
+bool feature_2( double x, double y, double z ){
+   return((x >= feature_2_X && x <= feature_2_X+feature_2_X_len) && (y >= feature_2_Y && y <= feature_2_Y+feature_2_Y_len));
 }
 
-bool einzel_3( double x, double y, double z ){
-  int EINZEL_3_X = EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_3_GAP;
-  return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
+bool feature_3( double x, double y, double z ){
+   return((x >= feature_2_X && x <= feature_2_X+feature_2_X_len) && (y >= feature_2_Y && y <= feature_2_Y+feature_2_Y_len));
 }
-
 
 void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
 
   //start at zero since particles could go backwards
+
+  stringstream log_row;
+  log_row.precision(8);
+
+  log_row << run_id << ","
+          << iteration << ","
+          << (run_id*1000000)+iteration << ","
+          << beam_current << ","
+          << beam_radius << ","
+          << beam_x_position << ","
+          << feature_1_voltage << ","
+          << feature_2_voltage << ","
+          << feature_3_voltage << "\n"; //block header
+
   for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
     vector<trajectory_diagnostic_e> diagnostics;
     diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
@@ -114,82 +126,127 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
     const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
     const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
 
-    float particle_average = 0;
-    for( uint32_t i = 0; i < diag_rad_v.size(); i++ ) {
+    // float particle_velocity_average = 0;
+    // for( uint32_t i = 0; i < rad_v.size(); i++ ) {
+    //   particle_velocity_average += diag_radial_velocity(i); //totally rad brotha!
+    // }
+    // if(diag_radial_velocity != 0){
+    //   particle_velocity_average /= diag_radial_velocity.size();
+    // }
+    // else{
+    //   particle_velocity_average = 0.0;
+    // }
 
-      stringstream log_row;
-      log_row.precision(8);
-
-      log_row << run_id << ","
-              << iteration << ","
-              << beam_current << ","
-              << beam_radius << ","
-              << beam_x_position << ","
-              << feature_1_voltage << ","
-              << feature_2_voltage << ","
-              << feature_3_voltage << ","
-              << diag_energy(i) << ","
+    for( uint32_t i = 0; i < diag_radial_velocity.size(); i++ ) {
+      log_row << x_pos << ","
               << diag_radial_position(i) << ","
+              << diag_energy(i) << ","
               << diag_radial_velocity(i) << "\n";
-
-      std::ofstream outfile;
-      stringstream file_prefix;
-      file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
-      outfile.open(file_prefix.str(), std::ios_base::app);
-      outfile << log_row.str();
-      outfile.close();
-    }
-  }
-}
-
-void dump_features(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
-  float lowest_position = 0;
-  float previous_lowest = 0;
-
-  for(float x_pos = beam_x_position; x_pos < (MESH_LENGTH/GRID_SIZE)-1; x_pos++){
-
-    if(!isnan(particle_average) && !isnan(particle_average)){
-      previous_lowest = particle_average;
-      lowest_position = x_pos*GRID_SIZE;
     }
 
-    stringstream log_row;
-    log_row.precision(4);
-
-    log_row <<
-
-    std::ofstream outfile;
-    stringstream file_prefix;
-    file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
-    outfile.open(file_prefix.str(), std::ios_base::app);
-    outfile << log_row.str();
-    outfile.close();
-
+    log_row << "\n\n"; //block terminate
   }
-  //returns point where velocity is most inward and said inward velocity
+
+
+  //dump features
+  log_row << "\#Feature dump\n";
+  for(float y = 0; y < MESH_HEIGHT; y+=GRID_SIZE) {
+    for(float x = 0; x < MESH_LENGTH; x+=GRID_SIZE) {
+      if(feature_1(x,y,0)){
+        log_row << x << ","
+                << y << ","
+                << feature_1_voltage << "\n";
+      }
+      if(feature_2(x,y,0)){
+        log_row << x << ","
+                << y << ","
+                << feature_2_voltage << "\n";
+      }
+      if(feature_3(x,y,0)){
+        log_row << x << ","
+                << y << ","
+                << feature_3_voltage << "\n";
+      }
+    }
+  }
+  log_row << "\n\n"; //block terminate
+
+  std::ofstream outfile;
+  stringstream file_prefix;
+  file_prefix << "data/1/" << run_id << "/" << "data" << ".csv";
+  outfile.open(file_prefix.str(), std::ios_base::app);
+  outfile << log_row.str();
+  outfile.close();
 }
+
+// void dump_features(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
+//   float lowest_position = 0;
+//   float previous_lowest = 0;
+//
+//   for(float x = 0; x_pos < ; x_pos++){
+//
+//     stringstream log_row;
+//     log_row.precision(8);
+//
+//     log_row << run_id << ","
+//             << iteration << ","
+//             << (run_id*1000000)+iteration << ","
+//             << beam_current << ","
+//             << beam_radius << ","
+//             << beam_x_position << ","
+//             << feature_1_voltage << ","
+//             << feature_2_voltage << ","
+//             << feature_3_voltage << ","
+//             << x_pos << ","
+//             << diag_energy(i) << ","
+//             << diag_radial_position(i) << ","
+//             << diag_radial_velocity(i) << "\n";
+//
+//     std::ofstream outfile;
+//     stringstream file_prefix;
+//     file_prefix << "data/1/" << run_id << "/" << "log" << ".csv";
+//     outfile.open(file_prefix.str(), std::ios_base::app);
+//     outfile << log_row.str();
+//     outfile.close();
+//
+//   }
+//   //returns point where velocity is most inward and said inward velocity
+// }
+
+void erase_file(){
+  std::ofstream outfile;
+  stringstream file_prefix;
+  file_prefix << "data/1/" << run_id << "/" << "data" << ".csv";
+  outfile.open(file_prefix.str(), std::ofstream::out | std::ofstream::trunc);
+  outfile.close();
+}
+
+#define MIN_BEAM_CURRENT 0.0001
+#define MAX_BEAM_CURRENT 0.001
+#define BEAM_CURRENT_STEPS 10.0
 
 
 void simu( int *argc, char ** argv )
 {
 
 
-
     if(*argc > 1){
-      run_id = atoi(rgv[1]);
-      cout<<"Running with ID: " << run_id << "\n";
+      run_id = atoi(argv[1]);
+      cout << "Running with ID: " << run_id << "\n";
     }
 
-    for(float  = 0) //decompose domain based on number of processes
+    erase_file();
+
+    for(beam_current = (((((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES))*(run_id-1))+MIN_BEAM_CURRENT);
+                  beam_current < (((((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES))*(run_id))+MIN_BEAM_CURRENT);
+                            beam_current += (((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES)/BEAM_CURRENT_STEPS) ){ //decompose domain based on number of processes
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
-
-
-      Solid *s1 = new FuncSolid( einzel_1 );
+      Solid *s1 = new FuncSolid( feature_1 );
       geom.set_solid( 7, s1 );
-      Solid *s2 = new FuncSolid( einzel_2 );
+      Solid *s2 = new FuncSolid( feature_2 );
       geom.set_solid( 8, s2 );
-      Solid *s3 = new FuncSolid( einzel_3 );
+      Solid *s3 = new FuncSolid( feature_3 );
       geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
@@ -236,7 +293,7 @@ void simu( int *argc, char ** argv )
         printf("Beam_area: %f\n",beam_area);
       	pdb.add_2d_beam_with_energy(
                                               NUMBER_OF_PARTICLES, //number of particles
-                                              BEAM_CURRENT/beam_area, //beam current density
+                                              beam_current/beam_area, //beam current density
                                               1.0, //charge per particle
                                               29, //amu
                                               BEAM_ENERGY, //eV
@@ -353,7 +410,7 @@ void simu( int *argc, char ** argv )
       plotter.run();
     }
 
-
+    dump_particles(pdb);
 
     iteration+=1;
   }
