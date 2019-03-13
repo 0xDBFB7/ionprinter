@@ -40,7 +40,8 @@ using namespace std;
 
 #define INTERACTIVE_PLOT 0
 
-#define NUMBER_OF_PARTICLES 1000
+#define NUMBER_OF_PARTICLES 100
+#define DIAGNOSTIC_PARTICLE_INTERPOLATE 30
 #define DIAGNOSTIC_X_INTERVAL 3.0*GRID_SIZE
 
 #define PNG_PLOT 0
@@ -54,9 +55,9 @@ const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 double beam_current = 0.0005;
 float beam_radius = 0.002;
 float beam_x_position = 0;
-float feature_1_voltage = 0;
+float feature_1_voltage = 200;
 float feature_2_voltage = 0;
-float feature_3_voltage = 0;
+float feature_3_voltage = 200;
 
 float recombination_point = MESH_LENGTH;
 
@@ -104,17 +105,21 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
   stringstream log_row;
   log_row.precision(8);
 
-  log_row << run_id << ","
-          << iteration << ","
-          << (run_id*1000000)+iteration << ","
-          << beam_current << ","
-          << beam_radius << ","
-          << beam_x_position << ","
-          << feature_1_voltage << ","
-          << feature_2_voltage << ","
-          << feature_3_voltage << "\n"; //block header
+  // log_row << run_id << ","
+  //         << iteration << ","
+  //         << (run_id*1000000)+iteration << ","
+  //         << beam_current << ","
+  //         << beam_radius << ","
+  //         << beam_x_position << ","
+  //         << feature_1_voltage << ","
+  //         << feature_2_voltage << ","
+  //         << feature_3_voltage << "\n"; //block header
+  //
+  // log_row << "\n"; //block terminate
 
-  log_row << "\n"; //block terminate
+  //later can plot just energy vs min. radius
+
+  //find indices of top and bottom, and save only those?
 
   for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
     vector<trajectory_diagnostic_e> diagnostics;
@@ -139,39 +144,157 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
     //   particle_velocity_average = 0.0;
     // }
 
-    for( uint32_t i = 0; i < diag_radial_velocity.size(); i++ ) {
-      log_row << x_pos << ","
+    for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=DIAGNOSTIC_PARTICLE_INTERPOLATE) {
+
+      log_row << run_id << ","
+              << iteration << ","
+              << (run_id*1000000)+iteration << ","
+              << beam_current << ","
+              << beam_radius << ","
+              << beam_x_position << ","
+              << feature_1_voltage << ","
+              << feature_2_voltage << ","
+              << feature_3_voltage << "," //block header
+              << feature_1_X  << ","
+              << feature_1_Y << ","
+              << feature_1_X_len << ","
+              << feature_1_Y_len << ","
+              << feature_1_gap << ","
+              << feature_2_X  << ","
+              << feature_2_Y << ","
+              << feature_2_X_len << ","
+              << feature_2_Y_len << ","
+              << feature_2_gap << ","
+              << feature_3_X  << ","
+              << feature_3_Y << ","
+              << feature_3_X_len << ","
+              << feature_3_Y_len << ","
+              << feature_3_gap << ","
+              << x_pos << ","
               << diag_radial_position(i) << ","
               << diag_energy(i) << ","
-              << diag_radial_velocity(i) << "\n";
+              << diag_radial_velocity(i) << ","
+              << 0.0 << "\n";
     }
 
   }
-  log_row << "\n"; //block terminate
+  // log_row << "\n"; //block terminate
 
 
-  //dump features
-  log_row << "\#Feature dump\n";
+  // //dump features
   for(float y = 0; y < MESH_HEIGHT; y+=(GRID_SIZE/4.0)) {
     for(float x = 0; x < MESH_LENGTH; x+=(GRID_SIZE/4.0)) {
       if(feature_1(x,y,0)){
-        log_row << x << ","
+        log_row << run_id << ","
+                << iteration << ","
+                << (run_id*1000000)+iteration << ","
+                << beam_current << ","
+                << beam_radius << ","
+                << beam_x_position << ","
+
+                << feature_1_voltage << ","
+                << feature_2_voltage << ","
+                << feature_3_voltage << "," //block header
+
+                << feature_1_X  << ","
+                << feature_1_Y << ","
+                << feature_1_X_len << ","
+                << feature_1_Y_len << ","
+                << feature_1_gap << ","
+
+                << feature_2_X  << ","
+                << feature_2_Y << ","
+                << feature_2_X_len << ","
+                << feature_2_Y_len << ","
+                << feature_2_gap << ","
+
+                << feature_3_X  << ","
+                << feature_3_Y << ","
+                << feature_3_X_len << ","
+                << feature_3_Y_len << ","
+                << feature_3_gap << ","
+
+                << x << ","
                 << y << ","
+                << 0.0 << ","
+                << 0.0 << ","
                 << feature_1_voltage << "\n";
       }
       if(feature_2(x,y,0)){
-        log_row << x << ","
+        log_row << run_id << ","
+                << iteration << ","
+                << (run_id*1000000)+iteration << ","
+                << beam_current << ","
+                << beam_radius << ","
+                << beam_x_position << ","
+
+                << feature_1_voltage << ","
+                << feature_2_voltage << ","
+                << feature_3_voltage << "," //block header
+
+                << feature_1_X  << ","
+                << feature_1_Y << ","
+                << feature_1_X_len << ","
+                << feature_1_Y_len << ","
+                << feature_1_gap << ","
+
+                << feature_2_X  << ","
+                << feature_2_Y << ","
+                << feature_2_X_len << ","
+                << feature_2_Y_len << ","
+                << feature_2_gap << ","
+
+                << feature_3_X  << ","
+                << feature_3_Y << ","
+                << feature_3_X_len << ","
+                << feature_3_Y_len << ","
+                << feature_3_gap << ","
+
+                << x << ","
                 << y << ","
+                << 0.0 << ","
+                << 0.0 << ","
                 << feature_2_voltage << "\n";
       }
       if(feature_3(x,y,0)){
-        log_row << x << ","
+        log_row << run_id << ","
+                << iteration << ","
+                << (run_id*1000000)+iteration << ","
+                << beam_current << ","
+                << beam_radius << ","
+                << beam_x_position << ","
+
+                << feature_1_voltage << ","
+                << feature_2_voltage << ","
+                << feature_3_voltage << "," //block header
+
+                << feature_1_X  << ","
+                << feature_1_Y << ","
+                << feature_1_X_len << ","
+                << feature_1_Y_len << ","
+                << feature_1_gap << ","
+
+                << feature_2_X  << ","
+                << feature_2_Y << ","
+                << feature_2_X_len << ","
+                << feature_2_Y_len << ","
+                << feature_2_gap << ","
+
+                << feature_3_X  << ","
+                << feature_3_Y << ","
+                << feature_3_X_len << ","
+                << feature_3_Y_len << ","
+                << feature_3_gap << ","
+
+                << x << ","
                 << y << ","
+                << 0.0 << ","
+                << 0.0 << ","
                 << feature_3_voltage << "\n";
       }
     }
   }
-  log_row << "\n"; //block terminate
+  // log_row << "\n\n"; //block terminate
 
   std::ofstream outfile;
   stringstream file_prefix;

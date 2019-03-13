@@ -1,5 +1,13 @@
 set datafile separator ","
-splot 'assembled_output.csv' every :3::1 using -2:1:2:4 with points, \
-      'assembled_output.csv' every :3::2 using -2:1:2:3 with points #features
 
+#set hidden3d
+#set dgrid3d 50,100
+
+splot 'assembled_output.csv' using 4:25:26:27 linecolor palette
+
+#splot 'assembled_output.csv' every :3::2 using -2:1:2 with points
+
+#splot 'assembled_output.csv' index b using -2:1:2 with points
+
+#    'assembled_output.csv' every :3::2 using -2:1:2 with points #features
 pause -1
