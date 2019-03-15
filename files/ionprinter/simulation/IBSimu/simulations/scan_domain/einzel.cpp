@@ -101,9 +101,10 @@ bool feature_3( double x, double y, double z ){
 void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
 
   //start at zero since particles could go backwards
-
-  stringstream log_row;
-  log_row.precision(8);
+  stringstream file_prefix;
+  file_prefix << "data/1/" << run_id << "/" << "data" << ".csv";
+  // stringstream log_row;
+  // log_row.precision(8);
 
   // log_row << run_id << ","
   //         << iteration << ","
@@ -120,6 +121,7 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
   //later can plot just energy vs min. radius
 
   //find indices of top and bottom, and save only those?
+  FILE *f = fopen(file_prefix.str().c_str(), "a+b");
 
   for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
     vector<trajectory_diagnostic_e> diagnostics;
@@ -144,37 +146,64 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
     //   particle_velocity_average = 0.0;
     // }
 
+    float particle_velocity_average = 0;
     for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=DIAGNOSTIC_PARTICLE_INTERPOLATE) {
+      // fwrite(run_id, sizeof(int), 1, f);
+      // fwrite(iteration, sizeof(int), 1, f);
+      // fwrite(beam_current, sizeof(float), 1, f);
+      // fwrite(beam_radius, sizeof(float), 1, f);
+      // fwrite(beam_x_position, sizeof(float), 1, f);
+      // fwrite(feature_1_voltage, sizeof(float), 1, f);
+      // fwrite(feature_2_voltage, sizeof(float), 1, f);
+      // fwrite(feature_3_voltage, sizeof(float), 1, f);
+      //
+      // fwrite(feature_1_X, sizeof(float), 1, f);
+      // fwrite(feature_1_Y, sizeof(float), 1, f);
+      // fwrite(feature_1_X_len, sizeof(float), 1, f);
+      // fwrite(feature_1_Y_len, sizeof(float), 1, f);
+      // fwrite(feature_1_gap, sizeof(float), 1, f);
+      //
+      // fwrite(feature_2_X, sizeof(float), 1, f);
+      // fwrite(feature_2_Y, sizeof(float), 1, f);
+      // fwrite(feature_2_X_len, sizeof(float), 1, f);
+      // fwrite(feature_2_Y_len, sizeof(float), 1, f);
+      // fwrite(feature_2_gap, sizeof(float), 1, f);
+      //
+      // fwrite(feature_3_X, sizeof(float), 1, f);
+      // fwrite(feature_3_Y, sizeof(float), 1, f);
+      // fwrite(feature_3_X_len, sizeof(float), 1, f);
+      // fwrite(feature_3_Y_len, sizeof(float), 1, f);
+      // fwrite(feature_3_gap, sizeof(float), 1, f);
 
-      log_row << run_id << ","
-              << iteration << ","
-              << (run_id*1000000)+iteration << ","
-              << beam_current << ","
-              << beam_radius << ","
-              << beam_x_position << ","
-              << feature_1_voltage << ","
-              << feature_2_voltage << ","
-              << feature_3_voltage << "," //block header
-              << feature_1_X  << ","
-              << feature_1_Y << ","
-              << feature_1_X_len << ","
-              << feature_1_Y_len << ","
-              << feature_1_gap << ","
-              << feature_2_X  << ","
-              << feature_2_Y << ","
-              << feature_2_X_len << ","
-              << feature_2_Y_len << ","
-              << feature_2_gap << ","
-              << feature_3_X  << ","
-              << feature_3_Y << ","
-              << feature_3_X_len << ","
-              << feature_3_Y_len << ","
-              << feature_3_gap << ","
-              << x_pos << ","
-              << diag_radial_position(i) << ","
-              << diag_energy(i) << ","
-              << diag_radial_velocity(i) << ","
-              << 0.0 << "\n";
+      // log_row << run_id << ","
+      //         << iteration << ","
+      //         << (run_id*1000000)+iteration << ","
+      //         << beam_current << ","
+      //         << beam_radius << ","
+      //         << beam_x_position << ","
+      //         << feature_1_voltage << ","
+      //         << feature_2_voltage << ","
+      //         << feature_3_voltage << "," //block header
+      //         << feature_1_X  << ","
+      //         << feature_1_Y << ","
+      //         << feature_1_X_len << ","
+      //         << feature_1_Y_len << ","
+      //         << feature_1_gap << ","
+      //         << feature_2_X  << ","
+      //         << feature_2_Y << ","
+      //         << feature_2_X_len << ","
+      //         << feature_2_Y_len << ","
+      //         << feature_2_gap << ","
+      //         << feature_3_X  << ","
+      //         << feature_3_Y << ","
+      //         << feature_3_X_len << ","
+      //         << feature_3_Y_len << ","
+      //         << feature_3_gap << ","
+      //         << x_pos << ","
+      //         << diag_radial_position(i) << ","
+      //         << diag_energy(i) << ","
+      //         << diag_radial_velocity(i) << ","
+      //         << 0.0 << "\n";
     }
 
   }
@@ -182,126 +211,124 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
 
 
   // //dump features
-  for(float y = 0; y < MESH_HEIGHT; y+=(GRID_SIZE/4.0)) {
-    for(float x = 0; x < MESH_LENGTH; x+=(GRID_SIZE/4.0)) {
-      if(feature_1(x,y,0)){
-        log_row << run_id << ","
-                << iteration << ","
-                << (run_id*1000000)+iteration << ","
-                << beam_current << ","
-                << beam_radius << ","
-                << beam_x_position << ","
-
-                << feature_1_voltage << ","
-                << feature_2_voltage << ","
-                << feature_3_voltage << "," //block header
-
-                << feature_1_X  << ","
-                << feature_1_Y << ","
-                << feature_1_X_len << ","
-                << feature_1_Y_len << ","
-                << feature_1_gap << ","
-
-                << feature_2_X  << ","
-                << feature_2_Y << ","
-                << feature_2_X_len << ","
-                << feature_2_Y_len << ","
-                << feature_2_gap << ","
-
-                << feature_3_X  << ","
-                << feature_3_Y << ","
-                << feature_3_X_len << ","
-                << feature_3_Y_len << ","
-                << feature_3_gap << ","
-
-                << x << ","
-                << y << ","
-                << 0.0 << ","
-                << 0.0 << ","
-                << feature_1_voltage << "\n";
-      }
-      if(feature_2(x,y,0)){
-        log_row << run_id << ","
-                << iteration << ","
-                << (run_id*1000000)+iteration << ","
-                << beam_current << ","
-                << beam_radius << ","
-                << beam_x_position << ","
-
-                << feature_1_voltage << ","
-                << feature_2_voltage << ","
-                << feature_3_voltage << "," //block header
-
-                << feature_1_X  << ","
-                << feature_1_Y << ","
-                << feature_1_X_len << ","
-                << feature_1_Y_len << ","
-                << feature_1_gap << ","
-
-                << feature_2_X  << ","
-                << feature_2_Y << ","
-                << feature_2_X_len << ","
-                << feature_2_Y_len << ","
-                << feature_2_gap << ","
-
-                << feature_3_X  << ","
-                << feature_3_Y << ","
-                << feature_3_X_len << ","
-                << feature_3_Y_len << ","
-                << feature_3_gap << ","
-
-                << x << ","
-                << y << ","
-                << 0.0 << ","
-                << 0.0 << ","
-                << feature_2_voltage << "\n";
-      }
-      if(feature_3(x,y,0)){
-        log_row << run_id << ","
-                << iteration << ","
-                << (run_id*1000000)+iteration << ","
-                << beam_current << ","
-                << beam_radius << ","
-                << beam_x_position << ","
-
-                << feature_1_voltage << ","
-                << feature_2_voltage << ","
-                << feature_3_voltage << "," //block header
-
-                << feature_1_X  << ","
-                << feature_1_Y << ","
-                << feature_1_X_len << ","
-                << feature_1_Y_len << ","
-                << feature_1_gap << ","
-
-                << feature_2_X  << ","
-                << feature_2_Y << ","
-                << feature_2_X_len << ","
-                << feature_2_Y_len << ","
-                << feature_2_gap << ","
-
-                << feature_3_X  << ","
-                << feature_3_Y << ","
-                << feature_3_X_len << ","
-                << feature_3_Y_len << ","
-                << feature_3_gap << ","
-
-                << x << ","
-                << y << ","
-                << 0.0 << ","
-                << 0.0 << ","
-                << feature_3_voltage << "\n";
-      }
-    }
-  }
+  // for(float y = 0; y < MESH_HEIGHT; y+=(GRID_SIZE/4.0)) {
+  //   for(float x = 0; x < MESH_LENGTH; x+=(GRID_SIZE/4.0)) {
+  //     if(feature_1(x,y,0)){
+  //       log_row << run_id << ","
+  //               << iteration << ","
+  //               << (run_id*1000000)+iteration << ","
+  //               << beam_current << ","
+  //               << beam_radius << ","
+  //               << beam_x_position << ","
+  //
+  //               << feature_1_voltage << ","
+  //               << feature_2_voltage << ","
+  //               << feature_3_voltage << "," //block header
+  //
+  //               << feature_1_X  << ","
+  //               << feature_1_Y << ","
+  //               << feature_1_X_len << ","
+  //               << feature_1_Y_len << ","
+  //               << feature_1_gap << ","
+  //
+  //               << feature_2_X  << ","
+  //               << feature_2_Y << ","
+  //               << feature_2_X_len << ","
+  //               << feature_2_Y_len << ","
+  //               << feature_2_gap << ","
+  //
+  //               << feature_3_X  << ","
+  //               << feature_3_Y << ","
+  //               << feature_3_X_len << ","
+  //               << feature_3_Y_len << ","
+  //               << feature_3_gap << ","
+  //
+  //               << x << ","
+  //               << y << ","
+  //               << 0.0 << ","
+  //               << 0.0 << ","
+  //               << feature_1_voltage << "\n";
+  //     }
+  //     if(feature_2(x,y,0)){
+  //       log_row << run_id << ","
+  //               << iteration << ","
+  //               << (run_id*1000000)+iteration << ","
+  //               << beam_current << ","
+  //               << beam_radius << ","
+  //               << beam_x_position << ","
+  //
+  //               << feature_1_voltage << ","
+  //               << feature_2_voltage << ","
+  //               << feature_3_voltage << "," //block header
+  //
+  //               << feature_1_X  << ","
+  //               << feature_1_Y << ","
+  //               << feature_1_X_len << ","
+  //               << feature_1_Y_len << ","
+  //               << feature_1_gap << ","
+  //
+  //               << feature_2_X  << ","
+  //               << feature_2_Y << ","
+  //               << feature_2_X_len << ","
+  //               << feature_2_Y_len << ","
+  //               << feature_2_gap << ","
+  //
+  //               << feature_3_X  << ","
+  //               << feature_3_Y << ","
+  //               << feature_3_X_len << ","
+  //               << feature_3_Y_len << ","
+  //               << feature_3_gap << ","
+  //
+  //               << x << ","
+  //               << y << ","
+  //               << 0.0 << ","
+  //               << 0.0 << ","
+  //               << feature_2_voltage << "\n";
+  //     }
+  //     if(feature_3(x,y,0)){
+  //       log_row << run_id << ","
+  //               << iteration << ","
+  //               << (run_id*1000000)+iteration << ","
+  //               << beam_current << ","
+  //               << beam_radius << ","
+  //               << beam_x_position << ","
+  //
+  //               << feature_1_voltage << ","
+  //               << feature_2_voltage << ","
+  //               << feature_3_voltage << "," //block header
+  //
+  //               << feature_1_X  << ","
+  //               << feature_1_Y << ","
+  //               << feature_1_X_len << ","
+  //               << feature_1_Y_len << ","
+  //               << feature_1_gap << ","
+  //
+  //               << feature_2_X  << ","
+  //               << feature_2_Y << ","
+  //               << feature_2_X_len << ","
+  //               << feature_2_Y_len << ","
+  //               << feature_2_gap << ","
+  //
+  //               << feature_3_X  << ","
+  //               << feature_3_Y << ","
+  //               << feature_3_X_len << ","
+  //               << feature_3_Y_len << ","
+  //               << feature_3_gap << ","
+  //
+  //               << x << ","
+  //               << y << ","
+  //               << 0.0 << ","
+  //               << 0.0 << ","
+  //               << feature_3_voltage << "\n";
+  //     }
+  //   }
+  // }
   // log_row << "\n\n"; //block terminate
-
-  std::ofstream outfile;
-  stringstream file_prefix;
-  file_prefix << "data/1/" << run_id << "/" << "data" << ".csv";
-  outfile.open(file_prefix.str(), std::ios_base::app);
-  outfile << log_row.str();
-  outfile.close();
+  fclose(f);
+  // std::ofstream outfile;
+  // outfile.open(file_prefix.str(), std::ios_base::app);
+  // outfile << log_row.str();
+  // outfile.close();
 }
 
 // void dump_features(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
@@ -365,6 +392,11 @@ void simu( int *argc, char ** argv )
     for(beam_current = (((((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES))*(run_id-1))+MIN_BEAM_CURRENT);
                   beam_current < (((((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES))*(run_id))+MIN_BEAM_CURRENT);
                             beam_current += (((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES)/BEAM_CURRENT_STEPS) ){ //decompose domain based on number of processes
+
+                            for(feature_1_X = 0.0005; feature_1_X < 0.0005; feature_1_X+=(0.0005/10.0))
+
+    for(feature_1_X = 0.0005; feature_1_X < 0.0005; feature_1_X+=(0.0005/10.0))
+
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
       Solid *s1 = new FuncSolid( feature_1 );
