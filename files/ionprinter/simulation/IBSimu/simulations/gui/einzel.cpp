@@ -19,6 +19,10 @@
 #include <time.h>
 #include <stdlib.h>
 
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Button.H>
 using namespace std;
 
 #ifdef GTK3
@@ -86,6 +90,8 @@ float feature_3_X_len = 0.0011;
 float feature_3_Y_len = 0.0003;
 float feature_3_gap = 0.0001;
 
+
+
 bool feature_1( double x, double y, double z ){
    return((x >= feature_1_X && x <= feature_1_X+feature_1_X_len) && (y >= feature_1_Y && y <= feature_1_Y+feature_1_Y_len));
 }
@@ -126,17 +132,7 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
     const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
     const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
 
-    // particle_velocity_average = 0;
-    // for( uint32_t i = 0; i < rad_v.size(); i++ ) {
-    //   particle_velocity_average += diag_radial_velocity(i); //totally rad brotha!
-    // }
-    // particle_velocity_average /= diag_radial_velocity.size()
-    // // if(diag_radial_velocity != 0){
-    // //   particle_velocity_average /= diag_radial_velocity.size();
-    // // }
-    // // else{
-    // //   particle_velocity_average = 0.0;
-    // // }
+
     float sum_particle_velocity = 0;
     for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=DIAGNOSTIC_PARTICLE_INTERPOLATE) {
       sum_particle_velocity -= diag_radial_velocity(i);
@@ -186,87 +182,30 @@ void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recom
   outfile.close();
 }
 
-void erase_file(){
-  std::ofstream outfile;
-  stringstream file_prefix;
-  file_prefix << "data/1/" << run_id << "/" << "data" << ".csv";
-  outfile.open(file_prefix.str(), std::ofstream::out | std::ofstream::trunc);
-  outfile.close();
-}
-
-#define MIN_BEAM_CURRENT 0.0001
-#define MAX_BEAM_CURRENT 0.001
-#define BEAM_CURRENT_STEPS 5.0
-
-#define FEATURE_1_X_MIN
-#define FEATURE_1_X_STEP 20.0
-#define FEATURE_1_Y_STEP 20.0
-
-#define FEATURE_2_GAP_MIN 0.0001
-#define FEATURE_2_GAP_MAX 0.002
-#define FEATURE_2_GAP_STEP 0.00025
-
-#define FEATURE_3_GAP_MIN 0.0001
-#define FEATURE_3_GAP_MAX 0.002
-#define FEATURE_3_GAP_STEP 0.00025
-
-// #define FEATURE_1_THICKNESS_STEPS 10.0
-
-#define BEAM_RADIUS_MIN 0.0005
-#define BEAM_RADIUS_MAX 0.0025
-#define BEAM_RADIUS_STEP 0.0005 //4 steps
-
-
-
-#define FEATURE_1_VOLTAGE_MIN 50.0
-#define FEATURE_1_VOLTAGE_MAX 200.0
-#define FEATURE_1_VOLTAGE_STEP 20
-
-#define FEATURE_2_VOLTAGE_MIN -100.0
-#define FEATURE_2_VOLTAGE_MAX 50.0
-#define FEATURE_2_VOLTAGE_STEP 20
-
-#define FEATURE_3_VOLTAGE_MIN 50.0
-#define FEATURE_3_VOLTAGE_MAX 200.0
-#define FEATURE_3_VOLTAGE_STEP 20
-
-//1 day product = 726050
-
 void simu( int *argc, char ** argv )
 {
-
 
     if(*argc > 1){
       run_id = atoi(argv[1]);
       cout << "Running with ID: " << run_id << "\n";
     }
 
-    erase_file();
+    Fl_Window *window = new Fl_Window(340,180);
+    Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
+    box->box(FL_UP_BOX);
+    box->labelfont(FL_BOLD+FL_ITALIC);
+    box->labelsize(36);
+    box->labeltype(FL_SHADOW_LABEL);
+    window->end();
+    window->show();
+    Fl_Button *button = new Fl_Button(x, y, width, height, "label");
 
-    // for(beam_current = (((((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES))*(run_id-1))+MIN_BEAM_CURRENT);
-    //               beam_current < (((((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES))*(run_id))+MIN_BEAM_CURRENT);
-    //                         beam_current += (((MAX_BEAM_CURRENT-MIN_BEAM_CURRENT)/NUMBER_OF_PROCESSES)/BEAM_CURRENT_STEPS)){ //decompose domain based on number of processes
-    //
+    Fl::run();
 
-    // for(beam_radius = BEAM_RADIUS_MIN; beam_radius < BEAM_RADIUS_MAX; beam_radius += BEAM_RADIUS_STEP){
-      // for(feature_1_gap = beam_radius; feature_2_gap < FEATURE_2_GAP_MAX; feature_2_gap += FEATURE_2_GAP_STEP){ //8
-      // for(feature_2_gap = beam_radius; feature_2_gap < FEATURE_2_GAP_MAX; feature_2_gap += FEATURE_2_GAP_STEP){ //8
-      // for(feature_3_gap = beam_radius; feature_3_gap < FEATURE_3_GAP_MAX; feature_3_gap += FEATURE_3_GAP_STEP){ //8
-
-      // for(feature_3_X_len = 0.0005; feature_3_X_len < 0.002; feature_3_X_len += 0.0005){ //8
-      //
-      //   feature_2_X_len = feature_1_X_len;
-      //   feature_3_X_len = feature_1_X_len;
-      //
-      //   feature_2_X = feature_1_X+feature_1_X_len+feature_1_gap;
-      //   feature_3_X = feature_2_X+feature_2_X_len+feature_2_gap;
-      // // for(feature_2_gap = FEATURE_3_VOLTAGE_MIN; feature_2_gap  < FEATURE_3_VOLTAGE_MAX; feature_2_gap +=FEATURE_3_VOLTAGE_STEP){
-        //
-        // for(feature_1_voltage = FEATURE_1_VOLTAGE_MIN; feature_1_voltage < FEATURE_1_VOLTAGE_MAX; feature_1_voltage+=FEATURE_1_VOLTAGE_STEP){
-        //   for(feature_2_voltage = FEATURE_2_VOLTAGE_MIN; feature_2_voltage < FEATURE_2_VOLTAGE_MAX; feature_2_voltage+=FEATURE_2_VOLTAGE_STEP){
-        //     for(feature_2_voltage = FEATURE_3_VOLTAGE_MIN; feature_2_voltage < FEATURE_3_VOLTAGE_MAX; feature_2_voltage+=FEATURE_3_VOLTAGE_STEP){
-        //
-
+    while(1){
+      while(Fl::wait()){
+        
+      }
       clock_t start = clock();
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
@@ -446,13 +385,6 @@ void simu( int *argc, char ** argv )
     clock_t end = clock();
     float seconds = (float)(end - start) / CLOCKS_PER_SEC;
     printf("\nEst. simulation time (days): %f\n",((seconds)/NUMBER_OF_PROCESSES));
-    }
-  }
-}
-// }
-// }
-// }
-}
 
   }
 }

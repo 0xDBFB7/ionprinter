@@ -100,3 +100,8 @@ Here's the current simulation breakdown:
 |          |                                     |        |        |      |      |
 |          |                                     |        |        |      |      |
 
+## Graphing
+
+Gnuplot 
+
+PLPlot
