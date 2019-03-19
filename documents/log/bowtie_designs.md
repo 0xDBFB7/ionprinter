@@ -104,9 +104,6 @@ A reference structure is on p148 of Goerzel
 The region where wire is injected must be colder than the melting point of the wire, else gas will escape. A large radiator can be attached to the nozzle.
 
 
-    
-    
-
 ```
 
 ``` 
@@ -125,5 +122,16 @@ O] ----- ----- [O   - precise C-L-defined gap for ionization, +100v or so
  ======_O_======
  
  Entire structure can be heated to prevent deposition and avoid 
+```
+
+```
+:  = graphite "drawing die"
+
+ 		 
+--------------------||
+-----------|		||
+########## :========||
+-----------|
+----------------------------
 ```
 

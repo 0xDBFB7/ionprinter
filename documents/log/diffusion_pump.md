@@ -1,6 +1,6 @@
 ### Why diffusion?
 
-Diffusion pumps are pretty simple and cheap, with no moving parts. The alternatives:
+Diffusion pumps are simple and cheap, with no moving parts. The alternatives:
 
 * Turbomolecular pumps provide fast pumping rates and low base pressures. My Mk3 test chamber was built around a 20 year old Varian Turbo-V200 turbopump. However, these pumps require intricate, many-stage 5-axis-machined rotors spinning at 50k+ RPM, requiring specialized bearings, high stiffness, and careful design. Presumably achievable, but it seemed like a lot more complexity. My attempts at machining rotors with an electronic indexer failed miserably. 
 * Sprengel pumps could be interesting
@@ -24,6 +24,10 @@ It became apparent that heating externally would be far simpler;
 
 https://www.capvac.com/files/downloads/MSDS/DC704702705_Specs.pdf diffusion pump oil has a vapor pressure equation - we could assume that the nozzle is infinitely small
 
+### Sensors
+
+
+
 ### Seals
 
 In the event that the device must be built in multiple sections, I have found McMaster-Carr's high-temperature silicone O-rings (#1283N91) to be perfectly serviceable in these conditions.
@@ -40,8 +44,9 @@ Diffusion pumps can make a mess. A process known as backstreaming can cause erra
 
 A well-designed pump (in other words, not one of my design) should have relatively minimal backstreaming; however, if this becomes an issue, a chilled optically-dense baffle can be attached to the input, preventing this effect at the cost of a ~60% reduction in pumping speed.
 
-
 ### Chiller
+
+
 
 ### Other stuff
 

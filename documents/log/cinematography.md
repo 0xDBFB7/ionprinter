@@ -18,7 +18,7 @@ A note on customer support:
 
 
 
-I think this device is most useful if it's accessible to everyone. The beauty of an entirely novel Unfortunately, due to the complex operating principle, making the nurdditron affordable to hobbyists may be orthogonal with maintaining 1-on-1 customer support, so I can't guarantee the level of customer service that one of the major manufacturers can provide.
+I think this device is most useful if it's accessible to everyone. The beauty of an entirely novel Unfortunately, due to the complex operating principle, making the nrdditron affordable to hobbyists may be orthogonal with maintaining 1-on-1 customer support, so I can't guarantee the level of customer service that one of the major manufacturers can provide.
 
 
 
@@ -61,3 +61,7 @@ rotate,
 
 
 Wright pub scene style rapid vacuum hiss, part removed from chamber 
+
+
+
+One of the videos captured recently shows the turbo controller smoking. To make this more clear, I can xor the video with a clip a few seconds before to isolate the smoke.

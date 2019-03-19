@@ -8,8 +8,9 @@
 
 Hot cathodes produce a cloud of electrons via thermionic emission. We need a bunch of electrons for a number of processes: 
 
-* For discharge ionization, to catalyze sparking an arc across the ionization chamber, and
+* For discharge ionization, to catalyze sparking an arc across the ionization chamber via townsend avalanche
 * For plasma recombination, to neutralize the exiting ions.
+* For vacuum tubes?
 
 There's two main types of hot cathodes: directly and indirectly heated.
 
@@ -112,9 +113,9 @@ Contrary to standard vacuum tubes, we don't actually care about cathode lifespan
 Okay, so let's look at all our cathode options. [10] provides a good summary.
 
 
-| Material      | Work Function | Typ. Emission | Efficiency       | Operating temp. | Resistant to poisoning | Vacuum required |
-| ------------- | ------------- | ------------- | ---------------- | --------------- | ---------------------- | --------------- |
-| Pure tungsten | 4.54 eV       | 4A/cm^2       | 17.5 W/A (1400w) | 2400K           | :heavy_check_mark:     |                 |
+| Material      | Work Function | Typ. Emission | Efficiency       | Operating temp. | Resistant to poisoning | Vacuum level required |
+| ------------- | ------------- | ------------- | ---------------- | --------------- | ---------------------- | --------------------- |
+| Pure tungsten | 4.54 eV       | 4A/cm^2       | 17.5 W/A (1400w) | 2400K           | :heavy_check_mark:     |                       |
 
 Tungsten wire is cheap and readily available, but the low efficiency is nkiller.
 
@@ -126,7 +127,7 @@ Again, readily available, and again a really abysmal efficiency. Good enough for
 
 | Material     | Work Function | Typ. Emission | Efficiency   | Operating temp. | Resistant to poisoning |
 | ------------ | ------------- | ------------- | ------------ | --------------- | ---------------------- |
-| Barium Oxide | 1.5 eV        | 0.5A/cm^2     | 2 W/A (160w) | 1100K           | :heavy_check_mark:     |
+| Barium Oxide | 1.5 eV        | 0.5A/cm^2     | 2 W/A (160w) | 1100K           |                        |
 
 Oxide cathodes are apparently a little tricky to make.
 
@@ -141,18 +142,18 @@ Contrary to the above, however, oxide cathodes are, in fact, demountable, if ope
 ***
 
 
- * [1]: Herrmann, Günther, and Siegfr Wagener. The oxide-coated cathode. Vol. 2. London: Chapman & Hall, 1951.1.
- * [2]: Grilj, Marjan. "Thermionic emission."
+ * [^1]: Herrmann, Günther, and Siegfr Wagener. The oxide-coated cathode. Vol. 2. London: Chapman & Hall, 1951.1.
+ * [^2]: Grilj, Marjan. "Thermionic emission."
 
 [^3]: [internal](../references/filament_coatings.pdf)
- * [4]: L.W. Turner,(ed), Electronics Engineer's Reference Book, 4th ed. Newnes-Butterworth, London 1976 ISBN 0408001682 pg. 7-36
+ * [^4]: L.W. Turner,(ed), Electronics Engineer's Reference Book, 4th ed. Newnes-Butterworth, London 1976 ISBN 0408001682 pg. 7-36
  * [5]: http://ebeaminc.com/thermionic-cathodes.htm
  * [6]: https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19760024327.pdf
  * [7]: https://www.duniway.com/images/_pg/hot-filament-ion-gauge-tube.pdf
     https://electrontubestore.com/thoriated-tungsten.pdf
- * [8]: Criado, E., et al. "Ion beam neutralization and properties of plasmas from low power ring cusp ion thrusters." Physics of Plasmas 19.2 (2012): 023505.
+ * [^8]: Criado, E., et al. "Ion beam neutralization and properties of plasmas from low power ring cusp ion thrusters." Physics of Plasmas 19.2 (2012): 023505.
  * [9]: http://www.imajeenyus.com/vacuum/20060813_thermionic_emission/index.shtml
- * [10]: Jenkins, R. O. "A review of thermionic cathodes." Vacuum 19.8 (1969): 353-359.
+ * [^10]: Jenkins, R. O. "A review of thermionic cathodes." Vacuum 19.8 (1969): 353-359.
 
 [^5]: ebeam Inc. - Thermionic Cathodes [Internal]() [External](http://ebeaminc.com/thermionic-cathodes.htm)
 

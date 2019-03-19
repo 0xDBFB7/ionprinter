@@ -22,11 +22,11 @@ using namespace std;
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.0025
+#define BEAM_RADIUS 0.0035
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.0003 //A 35
-#define BEAM_ENERGY 0.25 //eV
+#define BEAM_CURRENT 0.001 //A 35
+#define BEAM_ENERGY 100 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
@@ -68,21 +68,21 @@ int iteration = 0;
 
 
 
-#define EINZEL_1_X 0.0007
+#define EINZEL_1_X 0.001
 #define EINZEL_1_THICKNESS 0.0011
-#define EINZEL_1_HEIGHT 0.00005
+#define EINZEL_1_HEIGHT 0.0002
 #define EINZEL_1_Y 0.003
 
-#define EINZEL_GAP 0.0001
+#define EINZEL_GAP 0.0003
 
 #define EINZEL_2_X EINZEL_1_X+EINZEL_GAP
 #define EINZEL_2_THICKNESS 0.001
-#define EINZEL_2_HEIGHT 0.00005
+#define EINZEL_2_HEIGHT 0.0002
 #define EINZEL_2_Y 0.003
 
 #define EINZEL_3_X EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_GAP
 #define EINZEL_3_THICKNESS 0.0011
-#define EINZEL_3_HEIGHT 0.00005
+#define EINZEL_3_HEIGHT 0.0002
 #define EINZEL_3_Y 0.003
 
 
@@ -165,9 +165,9 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     500.0) );
+      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     2000.0) );
       geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  500.0) );
+      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  2000.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  -100.0) );
 
       geom.build_mesh();
