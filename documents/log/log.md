@@ -1783,7 +1783,11 @@ https://www.eng-tips.com/viewthread.cfm?qid=254704
 
 Planned on dumping every point to disk and then gnuplotting, but there's just too much data - many gbps.
 
+Planned on scanning over entire problem domain and filtering out good points, but that's inefficient.
 
+How about a GUI? Considered a few GUI options (Qt, GTK+), ended up chosing FLTK - really lightweight and quick to set up.
+
+<http://seriss.com/people/erco/fltk/>
 
 ## Quick notes
 

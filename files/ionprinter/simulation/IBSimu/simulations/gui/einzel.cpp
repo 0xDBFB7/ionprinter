@@ -23,6 +23,25 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Return_Button.H>
+#include <FL/Fl_Chart.H>
+#include <FL/Fl_Counter.H>
+#include <FL/Fl_Value_Output.H>
+#include <FL/Fl_Shared_Image.H>
+#include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_Group.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Cairo.H>
+#include <FL/Fl_Cairo_Window.H>
+
+
+#include <cairo.h>
+
+#include "plplot/plplot.h"
+#include "plplot/plstream.h"
+
+
 using namespace std;
 
 #ifdef GTK3
@@ -45,16 +64,16 @@ using namespace std;
 #define INTERACTIVE_PLOT 0
 
 #define NUMBER_OF_PARTICLES 100
-#define DIAGNOSTIC_PARTICLE_INTERPOLATE 30
 #define DIAGNOSTIC_X_INTERVAL 5.0*GRID_SIZE
 
-#define PNG_PLOT 1
 
 #define NUMBER_OF_PROCESSES 16.0 //specify domain decomposition
 
 const int MESH_X_SIZE = MESH_LENGTH/GRID_SIZE;
 const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 
+#define BUTTON_HEIGHT 30
+#define BUTTON_WIDTH 100
 
 double beam_current = 0.0005;
 float beam_radius = 0.002;
@@ -68,162 +87,91 @@ float recombination_point = MESH_LENGTH;
 int iteration = 0;
 int run_id = 1;
 
-//? ? x,r,voltage
+//Thanks, https://blog.as.uky.edu/allen/?page_id=677
+//and https://groups.google.com/forum/#!msg/fltkgeneral/7ncncZH7qRg/6iIYqmoRBwAJ
 
-float feature_1_X = 0.0007;
-float feature_1_Y = 0.003;
-float feature_1_X_len = 0.0011;
-float feature_1_Y_len = 0.0003;
-float feature_1_gap = 0.0001;
-
-
-float feature_2_X = feature_1_X+feature_1_X_len+feature_1_gap;
-float feature_2_Y = 0.003;
-float feature_2_X_len = 0.0011;
-float feature_2_Y_len = 0.0003;
-float feature_2_gap = 0.0001;
-
-
-float feature_3_X = feature_2_X+feature_2_X_len+feature_2_gap;
-float feature_3_Y = 0.003;
-float feature_3_X_len = 0.0011;
-float feature_3_Y_len = 0.0003;
-float feature_3_gap = 0.0001;
-
-
-
-bool feature_1( double x, double y, double z ){
-   return((x >= feature_1_X && x <= feature_1_X+feature_1_X_len) && (y >= feature_1_Y && y <= feature_1_Y+feature_1_Y_len));
-}
-
-bool feature_2( double x, double y, double z ){
-   return((x >= feature_2_X && x <= feature_2_X+feature_2_X_len) && (y >= feature_2_Y && y <= feature_2_Y+feature_2_Y_len));
-}
-
-bool feature_3( double x, double y, double z ){
-   return((x >= feature_3_X && x <= feature_3_X+feature_3_X_len) && (y >= feature_3_Y && y <= feature_3_Y+feature_3_Y_len));
-}
-
-void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
-
-  //start at zero since particles could go backwards
-  stringstream file_prefix;
-  file_prefix << "data/1/" << run_id << "/" << "data" << ".csv";
-  stringstream log_row;
-  log_row.precision(8);
-
-
-  //later can plot just energy vs min. radius
-
-  //find indices of top and bottom, and save only those?
-  // FILE *f = fopen(file_prefix.str().c_str(), "a+b");
-
-  float x_pos = 0;
-
-  for(x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
-    vector<trajectory_diagnostic_e> diagnostics;
-    diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
-    diagnostics.push_back( DIAG_EK );
-    diagnostics.push_back( DIAG_R );
-
-    TrajectoryDiagnosticData tdata;
-    pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
-    const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
-    const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
-    const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
-
-
-    float sum_particle_velocity = 0;
-    for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=DIAGNOSTIC_PARTICLE_INTERPOLATE) {
-      sum_particle_velocity -= diag_radial_velocity(i);
-    }
-
-    float average_particle_energy = 0;
-    for( uint32_t i = 0; i < diag_energy.size(); i+=DIAGNOSTIC_PARTICLE_INTERPOLATE) {
-      average_particle_energy += diag_energy(i);
-    }
-    average_particle_energy /= diag_energy.size();
-
-    if(sum_particle_velocity < 0){
-      log_row << run_id << ","
-              << iteration << ","
-              << beam_current << ","
-              << beam_radius << ","
-              << beam_x_position << ","
-              << feature_1_voltage << ","
-              << feature_2_voltage << ","
-              << feature_3_voltage << "," //block header
-              << feature_1_X  << ","
-              << feature_1_Y << ","
-              << feature_1_X_len << ","
-              << feature_1_Y_len << ","
-              << feature_1_gap << ","
-              << feature_2_X  << ","
-              << feature_2_Y << ","
-              << feature_2_X_len << ","
-              << feature_2_Y_len << ","
-              << feature_2_gap << ","
-              << feature_3_X  << ","
-              << feature_3_Y << ","
-              << feature_3_X_len << ","
-              << feature_3_Y_len << ","
-              << feature_3_gap << ","
-              << x_pos << ","
-              << sum_particle_velocity << ","
-              << average_particle_energy << ","
-              << "\n";
-      }
-  }
-  // log_row << "\n\n"; //block terminate
-  // fclose(f);
-  std::ofstream outfile;
-  outfile.open(file_prefix.str(), std::ios_base::app);
-  outfile << log_row.str();
-  outfile.close();
-}
 
 void simu( int *argc, char ** argv )
 {
+    Fl_Window *window = new Fl_Window(1000,1000);
+    // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
+    // box->box(FL_UP_BOX);
+    // box->labelfont(FL_BOLD+FL_ITALIC);
+    // box->labelsize(36);
+    // box->labeltype(FL_SHADOW_LABEL);
 
-    if(*argc > 1){
-      run_id = atoi(argv[1]);
-      cout << "Running with ID: " << run_id << "\n";
-    }
-
-    Fl_Window *window = new Fl_Window(340,180);
+    Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
+    Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
+    avg_energy->value(100.0);
+    // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_HEIGHT, "Refresh Sim");
+    Fl_Return_Button *refresh_sim = new Fl_Return_Button(10, 10, BUTTON_WIDTH*2, BUTTON_HEIGHT*2, "@refresh  Refresh Sim");
     Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
-    box->box(FL_UP_BOX);
-    box->labelfont(FL_BOLD+FL_ITALIC);
-    box->labelsize(36);
-    box->labeltype(FL_SHADOW_LABEL);
+    // FL_Image::fl_register_images();
+    //Fl_PNG_Image png("tmp.png");
+    //box->image(png);
+
     window->end();
     window->show();
-    Fl_Button *button = new Fl_Button(x, y, width, height, "label");
 
-    Fl::run();
+
+    cairo_surface_t *cairoSurface;
+    cairo_t         *cairoContext;
+
+    cairoSurface = cairo_ps_surface_create( "ext-cairo-test.ps", 720, 540 );
+    cairoContext = Fl::cairo_cc();
+
+    PLFLT x[NSIZE], y[NSIZE];
+    PLFLT xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
+    int   i;
+
+    // Prepare data to be plotted.
+    for ( i = 0; i < NSIZE; i++ )
+    {
+        x[i] = (PLFLT) ( i ) / (PLFLT) ( NSIZE - 1 );
+        y[i] = ymax * x[i] * x[i];
+    }
+
+    pls = new plstream();
+
+    // Parse and process command line arguments
+    pls->parseopts( &argc, argv, PL_PARSE_FULL );
+
+    // Initialize plplot
+    pls->init();
+
+    // Create a labelled box to hold the plot.
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->lab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" );
+
+    // Plot the data that was prepared above.
+    pls->line( NSIZE, x, y );
+
+
 
     while(1){
-      while(Fl::wait()){
-        
+      while(Fl::check()){
+        if(refresh_sim->value()){
+          break;
+        }
       }
       clock_t start = clock();
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
-      Solid *s1 = new FuncSolid( feature_1 );
-      geom.set_solid( 7, s1 );
-      Solid *s2 = new FuncSolid( feature_2 );
-      geom.set_solid( 8, s2 );
-      Solid *s3 = new FuncSolid( feature_3 );
-      geom.set_solid( 9, s3 );
+      // Solid *s1 = new FuncSolid( feature_1 );
+      // geom.set_solid( 7, s1 );
+      // Solid *s2 = new FuncSolid( feature_2 );
+      // geom.set_solid( 8, s2 );
+      // Solid *s3 = new FuncSolid( feature_3 );
+      // geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  feature_1_voltage) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
-      geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
+      // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  feature_1_voltage) );
+      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
 
       geom.build_mesh();
 
@@ -320,6 +268,31 @@ void simu( int *argc, char ** argv )
       }
 
 
+    float x_pos = 0;
+
+    for(x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
+      vector<trajectory_diagnostic_e> diagnostics;
+      diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
+      diagnostics.push_back( DIAG_EK );
+      diagnostics.push_back( DIAG_R );
+
+      TrajectoryDiagnosticData tdata;
+      pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
+      const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
+      const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
+      const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
+
+      float sum_particle_velocity = 0;
+      for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
+        sum_particle_velocity -= diag_radial_velocity(i);
+      }
+
+      float average_particle_energy = 0;
+      for( uint32_t i = 0; i < diag_energy.size(); i+=1) {
+        average_particle_energy += diag_energy(i);
+      }
+      average_particle_energy /= diag_energy.size();
+    }
     // vector<trajectory_diagnostic_e> diagnostics;
     // diagnostics.push_back( DIAG_EK );
     // diagnostics.push_back( DIAG_X );
@@ -353,38 +326,36 @@ void simu( int *argc, char ** argv )
     // fmt << "images/" << iteration << ".png";
     // geomplotter.plot_png(fmt.str());
 
-    if(PNG_PLOT){
-      GeomPlotter geomplotter( geom );
-      geomplotter.set_size(1000,1000);
-      geomplotter.set_epot( &epot );
-      geomplotter.set_efield( &efield );
-      geomplotter.set_bfield( &bfield );
-      geomplotter.set_particle_database( &pdb );
-      geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
-      stringstream file_prefix;
-      file_prefix << "data/1/" << run_id << "/" << iteration << ".png";
-      geomplotter.plot_png(file_prefix.str());
-    }
+    // if(PNG_PLOT){
+      // GeomPlotter geomplotter( geom );
+      // geomplotter.set_size(1000,1000);
+      // geomplotter.set_epot( &epot );
+      // geomplotter.set_efield( &efield );
+      // geomplotter.set_bfield( &bfield );
+      // geomplotter.set_particle_database( &pdb );
+      // geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
+      // stringstream file_prefix;
+      // file_prefix << "tmp.png";
+      // geomplotter.plot_png(file_prefix.str());
+    // }
 
-    if(INTERACTIVE_PLOT){
-      GTKPlotter plotter( argc, &argv );
-      plotter.set_geometry( &geom );
-      plotter.set_epot( &epot );
-      plotter.set_efield( &efield );
-      plotter.set_bfield( &bfield );
-      plotter.set_scharge( &scharge );
-      plotter.set_particledatabase( &pdb );
-      plotter.new_geometry_plot_window();
-      plotter.run();
-    }
+    // if(INTERACTIVE_PLOT){
+    //   GTKPlotter plotter( argc, &argv );
+    //   plotter.set_geometry( &geom );
+    //   plotter.set_epot( &epot );
+    //   plotter.set_efield( &efield );
+    //   plotter.set_bfield( &bfield );
+    //   plotter.set_scharge( &scharge );
+    //   plotter.set_particledatabase( &pdb );
+    //   plotter.new_geometry_plot_window();
+    //   plotter.run();
+    // }
 
-    dump_particles(pdb);
+//    dump_particles(pdb);
 
     iteration+=1;
-
     clock_t end = clock();
-    float seconds = (float)(end - start) / CLOCKS_PER_SEC;
-    printf("\nEst. simulation time (days): %f\n",((seconds)/NUMBER_OF_PROCESSES));
+    float sim_duration = (float)(end - start) / CLOCKS_PER_SEC;
 
   }
 }
@@ -392,6 +363,8 @@ void simu( int *argc, char ** argv )
 
 int main( int argc, char ** argv )
 {
+  x00 *x = new x00( argc, argv );
+
     try {
         ibsimu.set_message_threshold( MSG_VERBOSE, 1 );
 	ibsimu.set_thread_count( 10 );

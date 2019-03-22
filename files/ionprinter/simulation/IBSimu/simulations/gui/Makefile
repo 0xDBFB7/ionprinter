@@ -1,6 +1,6 @@
 CC = g++
-LDFLAGS = `pkg-config --libs ibsimu-1.0.6 umfpack` `Magick++-config --ldflags --libs` `fltk-config --ldflags` -lfltk
-CXXFLAGS = -Wall -g `pkg-config --cflags ibsimu-1.0.6 umfpack` -std=c++17 `Magick++-config --cxxflags --cppflags` `fltk-config --cxxflags` -lfltk
+LDFLAGS = `pkg-config --libs ibsimu-1.0.6 umfpack cairo plplot` `Magick++-config --ldflags --libs` `fltk-config --use-cairo --ldflags` -lfltk -lplplot
+CXXFLAGS = -Wall -g `pkg-config --cflags ibsimu-1.0.6 umfpack plplot cairo` -std=c++17 -DFLTK_HAVE_CAIRO `Magick++-config --cxxflags --cppflags` `fltk-config --use-cairo --cxxflags` -lfltk -lplplot
 
 plasmacyl: einzel.o
 	$(CC) -o einzel einzel.o $(LDFLAGS)
