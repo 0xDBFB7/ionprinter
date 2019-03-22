@@ -27,6 +27,7 @@
 #include <FL/Fl_Chart.H>
 #include <FL/Fl_Counter.H>
 #include <FL/Fl_Value_Output.H>
+#include <FL/Fl_Value_Slider.H>
 #include <FL/Fl_Shared_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Group.H>
@@ -40,6 +41,7 @@
 
 #include "plplot/plplot.h"
 #include "plplot/plstream.h"
+#include "plstream.h"
 
 
 using namespace std;
@@ -75,6 +77,10 @@ const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 #define BUTTON_HEIGHT 30
 #define BUTTON_WIDTH 100
 
+#define WINDOW_X_SIZE 1000
+#define WINDOW_Y_SIZE 1000
+
+
 double beam_current = 0.0005;
 float beam_radius = 0.002;
 float beam_x_position = 0.001;
@@ -93,7 +99,7 @@ int run_id = 1;
 
 void simu( int *argc, char ** argv )
 {
-    Fl_Window *window = new Fl_Window(1000,1000);
+    Fl_Window *window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
     // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
     // box->box(FL_UP_BOX);
     // box->labelfont(FL_BOLD+FL_ITALIC);
@@ -101,59 +107,29 @@ void simu( int *argc, char ** argv )
     // box->labeltype(FL_SHADOW_LABEL);
 
     Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
+    Fl_Value_Slider *beam_current_slider = new Fl_Value_Slider(50,50,100,100);
     Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
     avg_energy->value(100.0);
     // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_HEIGHT, "Refresh Sim");
     Fl_Return_Button *refresh_sim = new Fl_Return_Button(10, 10, BUTTON_WIDTH*2, BUTTON_HEIGHT*2, "@refresh  Refresh Sim");
     Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
-    // FL_Image::fl_register_images();
-    //Fl_PNG_Image png("tmp.png");
-    //box->image(png);
+    Fl_Box *beam_plot_box = new Fl_Box(10,10,500,500);
+    Fl_Box *test_plot_box = new Fl_Box(0,0,1000,1000);
+    // Fl_Group beam_plot_group = new Fl_Group();
+    // beam_plot_group->add(beam_plot_box)
 
-    window->end();
+    // window->end();
     window->show();
 
 
-    cairo_surface_t *cairoSurface;
-    cairo_t         *cairoContext;
-
-    cairoSurface = cairo_ps_surface_create( "ext-cairo-test.ps", 720, 540 );
-    cairoContext = Fl::cairo_cc();
-
-    PLFLT x[NSIZE], y[NSIZE];
-    PLFLT xmin = 0., xmax = 1., ymin = 0., ymax = 100.;
-    int   i;
-
-    // Prepare data to be plotted.
-    for ( i = 0; i < NSIZE; i++ )
-    {
-        x[i] = (PLFLT) ( i ) / (PLFLT) ( NSIZE - 1 );
-        y[i] = ymax * x[i] * x[i];
-    }
-
-    pls = new plstream();
-
-    // Parse and process command line arguments
-    pls->parseopts( &argc, argv, PL_PARSE_FULL );
-
-    // Initialize plplot
-    pls->init();
-
-    // Create a labelled box to hold the plot.
-    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
-    pls->lab( "x", "y=100 x#u2#d", "Simple PLplot demo of a 2D line plot" );
-
-    // Plot the data that was prepared above.
-    pls->line( NSIZE, x, y );
-
-
-
     while(1){
+
       while(Fl::check()){
         if(refresh_sim->value()){
           break;
         }
       }
+
       clock_t start = clock();
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
@@ -268,9 +244,8 @@ void simu( int *argc, char ** argv )
       }
 
 
-    float x_pos = 0;
-
-    for(x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
+    float x;
+    for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
       vector<trajectory_diagnostic_e> diagnostics;
       diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
       diagnostics.push_back( DIAG_EK );
@@ -293,6 +268,7 @@ void simu( int *argc, char ** argv )
       }
       average_particle_energy /= diag_energy.size();
     }
+
     // vector<trajectory_diagnostic_e> diagnostics;
     // diagnostics.push_back( DIAG_EK );
     // diagnostics.push_back( DIAG_X );
@@ -327,19 +303,19 @@ void simu( int *argc, char ** argv )
     // geomplotter.plot_png(fmt.str());
 
     // if(PNG_PLOT){
-      // GeomPlotter geomplotter( geom );
-      // geomplotter.set_size(1000,1000);
-      // geomplotter.set_epot( &epot );
-      // geomplotter.set_efield( &efield );
-      // geomplotter.set_bfield( &bfield );
-      // geomplotter.set_particle_database( &pdb );
-      // geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
-      // stringstream file_prefix;
-      // file_prefix << "tmp.png";
-      // geomplotter.plot_png(file_prefix.str());
+    GeomPlotter geomplotter( geom );
+    geomplotter.set_size(750,750);
+    geomplotter.set_epot( &epot );
+    geomplotter.set_efield( &efield );
+    geomplotter.set_bfield( &bfield );
+    geomplotter.set_particle_database( &pdb );
+    geomplotter.set_fieldgraph_plot(FIELD_BFIELD_Z);
+    stringstream file_prefix;
+    file_prefix << "beam.png";
+    geomplotter.plot_png(file_prefix.str());
     // }
 
-    // if(INTERACTIVE_PLOT){
+    // // if(INTERACTIVE_PLOT){
     //   GTKPlotter plotter( argc, &argv );
     //   plotter.set_geometry( &geom );
     //   plotter.set_epot( &epot );
@@ -349,13 +325,35 @@ void simu( int *argc, char ** argv )
     //   plotter.set_particledatabase( &pdb );
     //   plotter.new_geometry_plot_window();
     //   plotter.run();
-    // }
+    // // }
 
-//    dump_particles(pdb);
+
+
 
     iteration+=1;
     clock_t end = clock();
     float sim_duration = (float)(end - start) / CLOCKS_PER_SEC;
+
+    cairo_t         *cairoContext;
+    plsetopt( "-geometry", "300x300" );
+    plsfnam (	"test.png" );
+    plsdev( "pngcairo" );
+    plinit();
+    pl_cmd( PLESC_DEVINIT, cairoContext );
+    plenv( 0.0, 1.0, 0.0, 1.0, 1, 0 );
+    pllab("x", "y", "Energy");
+    plend();
+    // pls->line( NSIZE, x, y );
+
+    // pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
+
+    Fl::flush();
+    Fl_PNG_Image beam_plot("beam.png");
+    beam_plot_box->image(beam_plot);
+
+    Fl_PNG_Image png("test.png");
+    test_plot_box->image(png);
+    window->redraw();
 
   }
 }
@@ -363,7 +361,6 @@ void simu( int *argc, char ** argv )
 
 int main( int argc, char ** argv )
 {
-  x00 *x = new x00( argc, argv );
 
     try {
         ibsimu.set_message_threshold( MSG_VERBOSE, 1 );
