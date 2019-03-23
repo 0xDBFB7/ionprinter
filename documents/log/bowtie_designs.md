@@ -55,7 +55,7 @@ Electrostatic cone profile can be precisely adjusted to cancel out beam dispersi
 
 The beam must be recombined before exiting the focus chamber. 
 
-Z-pinch and helical B-fields can be added to increase ionization efficiency; these won't affect the ions but it will direct electrons. Care must be taken to ensure that these fields won't interfere with recombination.
+Z-pinch and helical B-fields can be added to increase ionization efficiency; these won't affect the ions but will direct electrons. Care must be taken to ensure that these fields don't interfere with recombination.
 
 Cone must be carefully positioned to prevent axial acceleration and the resultant X-rays. 
 
@@ -103,7 +103,6 @@ A reference structure is on p148 of Goerzel
 
 The region where wire is injected must be colder than the melting point of the wire, else gas will escape. A large radiator can be attached to the nozzle.
 
-
 ```
 
 ``` 
@@ -125,13 +124,46 @@ O] ----- ----- [O   - precise C-L-defined gap for ionization, +100v or so
 ```
 
 ```
-:  = graphite "drawing die"
-
- 		 
+:  = graphite "drawing die" injector
+#  = injected wire
+- 
 --------------------||
------------|		||
+-----------\		||
 ########## :========||
------------|
+-----------/
 ----------------------------
+ ^   	   ^	    ^ - transition to ideal vapor temperature occurs here
+ |         | - transition to melting temperature occurs around here.
+ |				gas-tight seal must be formed.
+ | -This side radiatively cooled by graphite fins to below melting point
+
+This may allow us to accept different gauges of wire.
 ```
+
+<hr>
+
+There are some difficulties in using ICP for this application - namely,
+
+- Ambiguity in output particle energy spectrum
+- Time-varying components leading to excessively complex simulations
+- Less controlled magnetic field - shielding from recombination current will likely be required
+
+The main reason why I considered it in the first place was to obviate the need for a heavy and dangerous high-power, high-voltage transformer. 
+
+
+
+However, the precise ionization cross section at 
+
+However, the electron impact cross section for most of the elements we would choose peaks at below 
+
+Lotz, Wolfgang. "Electron-impact ionization cross-sections for atoms up to Z= 108." *Zeitschrift für Physik A Hadrons and nuclei* 232.2 (1970): 101-107, https://link.springer.com/content/pdf/10.1007/BF01393132.pdf
+
+```
+
+, simple transverse-electron impact might be a simpler route.
+
+
+```
+
+
 

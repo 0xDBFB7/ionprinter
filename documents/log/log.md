@@ -1789,6 +1789,30 @@ How about a GUI? Considered a few GUI options (Qt, GTK+), ended up chosing FLTK 
 
 <http://seriss.com/people/erco/fltk/>
 
+
+
+<https://link.springer.com/content/pdf/10.1007/BF01393132.pdf>
+
+> ai, b~, and c~ are
+> individual constants, which have to be determined by experiment,
+> theory, or reasonable guesswork. 
+>
+> In order to facilitate the guesswork, I made the following assumptions, which should be accepted as working hypotheses: 
+
+legend.
+
+oh, a more modern version: <https://link.springer.com/content/pdf/10.1007/BF01392963.pdf>
+
+Lotz, Wolfgang. "Electron-impact ionization cross-sections and ionization rate coefficients for atoms and ions from hydrogen to calcium." *Zeitschrift für Physik* 216.3 (1968): 241-247.
+
+also, 
+
+Shevelko, V. P., and H. Tawara. "Semiempirical formulae for multiple ionization of neutral atoms and positive ions by electron impact." *Journal of Physics B: Atomic, Molecular and Optical Physics*28.18 (1995): L589.
+
+has formulae for n>=3.
+
+
+
 ## Quick notes
 
 

@@ -36,6 +36,7 @@
 #include <FL/Fl_Cairo.H>
 #include <FL/Fl_Cairo_Window.H>
 
+#include <unistd.h>
 
 #include <cairo.h>
 
@@ -50,7 +51,6 @@ using namespace std;
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_ENERGY 0.25 //eV
 
 #define ION_CURTAIN_ENERGY 0.1
 #define ION_CURTAIN_WIRE_RADIUS 0.001
@@ -77,10 +77,12 @@ const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
 #define BUTTON_HEIGHT 30
 #define BUTTON_WIDTH 100
 
-#define WINDOW_X_SIZE 1000
+#define WINDOW_X_SIZE 1500
 #define WINDOW_Y_SIZE 1000
 
+#define PL_PNG_OFFSET -200
 
+double beam_input_energy = 0.25; //eV
 double beam_current = 0.0005;
 float beam_radius = 0.002;
 float beam_x_position = 0.001;
@@ -93,12 +95,72 @@ float recombination_point = MESH_LENGTH;
 int iteration = 0;
 int run_id = 1;
 
+// int current_solid_number = 0;
+// std::vector<Solid> feature_solids; //oh no! it's global!
+// std::vector<float> feature_voltages;
+// std::vector<float> feature_points;
+
 //Thanks, https://blog.as.uky.edu/allen/?page_id=677
 //and https://groups.google.com/forum/#!msg/fltkgeneral/7ncncZH7qRg/6iIYqmoRBwAJ
 
+int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
+{
+  int i, j, c = 0;
+  for (i = 0, j = nvert-1; i < nvert; j = i++) {
+    if ( ((verty[i]>testy) != (verty[j]>testy)) &&
+     (testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i]) + vertx[i]) )
+       c = !c;
+  }
+  return c;
+}
+
+//
+// int mouse_input::handle(int event) {
+//   switch(event) {
+//     case FL_PUSH:
+//       highlight = 1;
+//       redraw();
+//       return 1;
+//     case FL_DRAG: {
+//         int t = Fl::event_inside(this);
+//         if (t != highlight) {
+//           highlight = t;
+//           redraw();
+//         }
+//       }
+//       return 1;
+//     case FL_RELEASE:
+//       if (highlight) {
+//         highlight = 0;
+//         redraw();
+//         do_callback();
+//         // never do anything after a callback, as the callback
+//         // may delete the widget!
+//       }
+//       return 1;
+//     case FL_SHORTCUT:
+//       if (Fl::event_key() == 'x') {
+//         do_callback();
+//         return 1;
+//       }
+//       return 0;
+//     default:
+//       return Fl_Widget::handle(event);
+//   }
+// }
+
+// bool einzel_3( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//   return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
+// }
 
 void simu( int *argc, char ** argv )
 {
+
+
+
+    //////////////////////////graphics initialization///////////////////////////
     Fl_Window *window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
     // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
     // box->box(FL_UP_BOX);
@@ -106,49 +168,53 @@ void simu( int *argc, char ** argv )
     // box->labelsize(36);
     // box->labeltype(FL_SHADOW_LABEL);
 
-    Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
-    Fl_Value_Slider *beam_current_slider = new Fl_Value_Slider(50,50,100,100);
-    Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
-    avg_energy->value(100.0);
+    // Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
+    // Fl_Value_Slider *beam_current_slider = new Fl_Value_Slider(100,600,100,100);
+    // Fl_Float_Input *beam_current_input = new Fl_Float_Input(100,600,100,100);
+    Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_HEIGHT*2-20,
+                                                                                BUTTON_WIDTH*2,BUTTON_HEIGHT*2, "Heavy beam current (amps)");
+    beam_current_input->step(0.0001,0);
+    // Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
+    // avg_energy->value(100.0);
+
     // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_HEIGHT, "Refresh Sim");
-    Fl_Return_Button *refresh_sim = new Fl_Return_Button(10, 10, BUTTON_WIDTH*2, BUTTON_HEIGHT*2, "@refresh  Refresh Sim");
-    Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
-    Fl_Box *beam_plot_box = new Fl_Box(10,10,500,500);
-    Fl_Box *test_plot_box = new Fl_Box(0,0,1000,1000);
+    Fl_Return_Button *refresh_sim = new Fl_Return_Button(WINDOW_X_SIZE-BUTTON_WIDTH*2, WINDOW_Y_SIZE-BUTTON_HEIGHT*2-20,
+                                              BUTTON_WIDTH*2, BUTTON_HEIGHT*2, "@refresh  Refresh Sim");
+    // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
+    Fl_Box *beam_plot_box = new Fl_Box(5,5,750,750);
+    Fl_Box *test_plot_box = new Fl_Box(70,5,1000,1000);
     // Fl_Group beam_plot_group = new Fl_Group();
     // beam_plot_group->add(beam_plot_box)
 
-    // window->end();
-    window->show();
+    // window->show();
 
 
     while(1){
+      window->show();
 
       while(Fl::check()){
         if(refresh_sim->value()){
           break;
         }
+        beam_current = beam_current_input->value();
       }
+
+
 
       clock_t start = clock();
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
-      // Solid *s1 = new FuncSolid( feature_1 );
-      // geom.set_solid( 7, s1 );
-      // Solid *s2 = new FuncSolid( feature_2 );
-      // geom.set_solid( 8, s2 );
-      // Solid *s3 = new FuncSolid( feature_3 );
-      // geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
-      // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  feature_1_voltage) );
-      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
-      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
-
+      // for(int n : feature_points) {
+      //   Solid *s1 = new FuncSolid( feature_1 );
+      //   geom.set_solid(n+7, s1 );
+      //   geom.set_boundary(n+7, Bound(BOUND_DIRICHLET,  feature_voltages[n]) );
+      // }
       geom.build_mesh();
 
       EpotUMFPACKSolver solver( geom );
@@ -188,7 +254,7 @@ void simu( int *argc, char ** argv )
                                               beam_current/beam_area, //beam current density
                                               1.0, //charge per particle
                                               29, //amu
-                                              BEAM_ENERGY, //eV
+                                              beam_input_energy, //eV
                                               0.2,//Normal temperature
                                               0.1,
                                               beam_x_position,0, //point 1
@@ -244,7 +310,6 @@ void simu( int *argc, char ** argv )
       }
 
 
-    float x;
     for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
       vector<trajectory_diagnostic_e> diagnostics;
       diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
@@ -335,7 +400,7 @@ void simu( int *argc, char ** argv )
     float sim_duration = (float)(end - start) / CLOCKS_PER_SEC;
 
     cairo_t         *cairoContext;
-    plsetopt( "-geometry", "300x300" );
+    plsetopt( "-geometry", "600x600" );
     plsfnam (	"test.png" );
     plsdev( "pngcairo" );
     plinit();
@@ -347,7 +412,9 @@ void simu( int *argc, char ** argv )
 
     // pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
 
-    Fl::flush();
+    // Fl::flush();
+    window->end();
+
     Fl_PNG_Image beam_plot("beam.png");
     beam_plot_box->image(beam_plot);
 
