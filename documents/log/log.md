@@ -1811,7 +1811,9 @@ Shevelko, V. P., and H. Tawara. "Semiempirical formulae for multiple ionization 
 
 has formulae for n>=3.
 
+> Aquadag is used in many types of high-voltage lab apparatus where a conductive coating is needed on an insulating surface. The surfaces of some metals (most notably aluminum) can develop nonconductive oxide layers, which tend to disrupt the electrostatic field produced around the surface of the metal when used as an electrode. Aquadag is not subject to such effects and provides a completely uniform equipotential surface for electrostatics.
 
+Aha! The electrode material is important!
 
 ## Quick notes
 

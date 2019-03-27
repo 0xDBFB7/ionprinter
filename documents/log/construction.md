@@ -36,7 +36,7 @@ Spun up a few more times, achieved a base vacuum level of around 0.8 millibar (6
 
 Set up a liquid cooling system for the turbo.
 
-Purchased some nichrome wire from DashVapes. Needed a card, amusingly.
+Purchased some nichrome wire from DashVapes. Needed a driver's license, amusingly.
 
 Quite nervous around this thing right now; the clamping force on the turbo is almost surely insufficient. If it crashes, it will send high-energy shrapnel in all directions, including through my torso. I *like* my torso the way it is, thank you very much.
 
@@ -47,4 +47,58 @@ I raised the input voltage to the turbopump controller to 56v, which worked admi
 Unfortunately, upon re-cycling the chamber, the controller exploded from the excess voltage, presumably spikes due to high startup current. I am unsure as to the cause; the mosfet drivers were clearly blown, but the mosfets themselves were also shorted. The drivers have headroom to 85v, and the mosfets are good to 100v - I can't imagine that switching noise got that high.
 
 
+
+Holy crap! The high-side mosfet gate trace and 2 ohm gate resistor blew! That's an incredible failure mode.
+
+Found out why the mosfet gate oxide blew in the first place: the gate was swinging across the entire 50v. Tried increasing the charge pump cap to 0.22 uf , but the driver blew up immediately.
+
+Simplified everything to one channel, same problem. Swapped mosfets, drivers, added an external boostrap diode. Voltage across the diode 
+
+
+
+I am an ABSOLUTE NINCOMPOOP.  A complete and total kneebiter.
+
+So I tried to determine what caused the tragic loss of my gate oxide. Lo and behold, it seemed that the mosfet gate was swinging the full 48v input, plus 12v from the charge pump.
+
+This is super strange for several reasons: one, the circuit was functioning normally, where the gate should have been destroyed in microseconds; 
+and two, the block diagram of the MIC4604 driver doesn't reveal a failure mode that could possibly cause this issue.
+
+Cue several hours of anti-Hippocratic probing and prodding that James A. Garfield would have blushed at, and wanton swapping of $40 in drivers
+
+until I realised 
+
+it's a *charge pump*, you total f***ing idiot. It's *not ground referenced*.
+
+
+Floating the board's supply and connecting the scope ground to the drain of the MOSFET revealed a perfect 12v square wave.
+
+<hr>
+
+Spun the pump up again: noise is causing the driver Arduino to reset, which sucks. However, I was able to spin it all the way up; the current visibly dropped from 8a to ~4. The liquid cooling water warmed up quite pleasantly. Capacitors on the driver board warmed up slightly. Only achieved a base vacuum of around 0.7 mBar.
+
+The pump occasionally spins down rapidly when latchup occurs: the energy is being dumped into the mosfets and TVS diode.
+
+
+
+Tried using solder to seal up the 
+
+Need to cast some crush gaskets.
+
+Wood seems to be an effective mold for solder. Aluminum coated with aquadag or graphite also works.
+
+caulk also works? Huh.
+
+<https://www.youtube.com/watch?v=92OLGmu3hws>
+
+Tried casting lead-free solder in sand: failed miserably, sand melted.
+
+Made a little aluminum mold for a gasket: failed miserably, surface tension of solder was too high. 
+
+Tried O-rings to seal, failed miserably, couldn't get below 400 mbar.
+
+Ah, but pure 1101 aluminum wire works perfectly!
+
+Mm, not quite - they were prone to cracking. 
+
+Soldered some copper wires into rings - worked slightly better, but still not perfect.
 

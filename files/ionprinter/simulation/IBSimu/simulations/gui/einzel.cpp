@@ -186,11 +186,10 @@ void simu( int *argc, char ** argv )
     // Fl_Group beam_plot_group = new Fl_Group();
     // beam_plot_group->add(beam_plot_box)
 
-    // window->show();
+    window->show();
 
 
     while(1){
-      window->show();
 
       while(Fl::check()){
         if(refresh_sim->value()){
@@ -412,14 +411,6 @@ void simu( int *argc, char ** argv )
 
     // pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
 
-    // Fl::flush();
-    window->end();
-
-    Fl_PNG_Image beam_plot("beam.png");
-    beam_plot_box->image(beam_plot);
-
-    Fl_PNG_Image png("test.png");
-    test_plot_box->image(png);
     window->redraw();
 
   }
