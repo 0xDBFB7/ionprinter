@@ -38,6 +38,9 @@
 
 #include <unistd.h>
 
+#include <mgl2/mgl.h>
+#include "mgl2/fltk.h"
+
 #include <cairo.h>
 
 #include "plplot/plplot.h"
@@ -58,23 +61,25 @@ using namespace std;
 
 #define GRID_SIZE 0.00005 //m
 
-#define MESH_LENGTH 0.004
-#define MESH_HEIGHT 0.004
+#define MESH_X 0.004
+#define MESH_Y 0.004
 
-#define MIDPOINT ((MESH_HEIGHT/GRID_SIZE)/2.0)
+#define IBSIMU_PLOT_RESOLUTION 125000
+
+#define MIDPOINT ((MESH_Y/GRID_SIZE)/2.0)
 
 #define INTERACTIVE_PLOT 0
 
-#define NUMBER_OF_PARTICLES 100
+#define NUMBER_OF_PARTICLES 500
 #define DIAGNOSTIC_X_INTERVAL 5.0*GRID_SIZE
 
 
 #define NUMBER_OF_PROCESSES 16.0 //specify domain decomposition
 
-const int MESH_X_SIZE = MESH_LENGTH/GRID_SIZE;
-const int MESH_Y_SIZE = MESH_HEIGHT/GRID_SIZE;
+const int MESH_X_SIZE = MESH_X/GRID_SIZE;
+const int MESH_Y_SIZE = MESH_Y/GRID_SIZE;
 
-#define BUTTON_HEIGHT 30
+#define BUTTON_Y 30
 #define BUTTON_WIDTH 100
 
 #define WINDOW_X_SIZE 1500
@@ -90,7 +95,7 @@ float feature_1_voltage = 200;
 float feature_2_voltage = 0;
 float feature_3_voltage = 200;
 
-float recombination_point = MESH_LENGTH;
+float recombination_point = MESH_X;
 
 int iteration = 0;
 int run_id = 1;
@@ -152,8 +157,12 @@ int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
 // bool einzel_3( double x, double y, double z )
 // {
 //   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-//   return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
+//   return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_Y));
 // }
+
+Fl_PNG_Image* beam_envelope;
+Fl_PNG_Image* IBSimu_plot;
+
 
 void simu( int *argc, char ** argv )
 {
@@ -171,18 +180,18 @@ void simu( int *argc, char ** argv )
     // Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
     // Fl_Value_Slider *beam_current_slider = new Fl_Value_Slider(100,600,100,100);
     // Fl_Float_Input *beam_current_input = new Fl_Float_Input(100,600,100,100);
-    Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_HEIGHT*2-20,
-                                                                                BUTTON_WIDTH*2,BUTTON_HEIGHT*2, "Heavy beam current (amps)");
+    Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_Y*2-20,
+                                                                                BUTTON_WIDTH*2,BUTTON_Y*2, "Heavy beam current (amps)");
     beam_current_input->step(0.0001,0);
     // Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
     // avg_energy->value(100.0);
 
-    // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_HEIGHT, "Refresh Sim");
-    Fl_Return_Button *refresh_sim = new Fl_Return_Button(WINDOW_X_SIZE-BUTTON_WIDTH*2, WINDOW_Y_SIZE-BUTTON_HEIGHT*2-20,
-                                              BUTTON_WIDTH*2, BUTTON_HEIGHT*2, "@refresh  Refresh Sim");
+    // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_Y, "Refresh Sim");
+    Fl_Return_Button *refresh_sim = new Fl_Return_Button(WINDOW_X_SIZE-BUTTON_WIDTH*2, WINDOW_Y_SIZE-BUTTON_Y*2-20,
+                                              BUTTON_WIDTH*2, BUTTON_Y*2, "@refresh  Refresh Sim");
     // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
-    Fl_Box *beam_plot_box = new Fl_Box(5,5,750,750);
-    Fl_Box *test_plot_box = new Fl_Box(70,5,1000,1000);
+    Fl_Box *IBSimu_plot_box = new Fl_Box(10,0,500,500);
+    Fl_Box *beam_envelope_box = new Fl_Box(-250,250,1000,1000);
     // Fl_Group beam_plot_group = new Fl_Group();
     // beam_plot_group->add(beam_plot_box)
 
@@ -202,7 +211,7 @@ void simu( int *argc, char ** argv )
 
       clock_t start = clock();
 
-      Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_HEIGHT/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+      Geometry geom( MODE_CYL, Int3D(MESH_X/GRID_SIZE,MESH_Y/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
@@ -309,29 +318,7 @@ void simu( int *argc, char ** argv )
       }
 
 
-    for(float x_pos = 0; x_pos < MESH_LENGTH-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
-      vector<trajectory_diagnostic_e> diagnostics;
-      diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
-      diagnostics.push_back( DIAG_EK );
-      diagnostics.push_back( DIAG_R );
 
-      TrajectoryDiagnosticData tdata;
-      pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
-      const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
-      const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
-      const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
-
-      float sum_particle_velocity = 0;
-      for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
-        sum_particle_velocity -= diag_radial_velocity(i);
-      }
-
-      float average_particle_energy = 0;
-      for( uint32_t i = 0; i < diag_energy.size(); i+=1) {
-        average_particle_energy += diag_energy(i);
-      }
-      average_particle_energy /= diag_energy.size();
-    }
 
     // vector<trajectory_diagnostic_e> diagnostics;
     // diagnostics.push_back( DIAG_EK );
@@ -366,9 +353,8 @@ void simu( int *argc, char ** argv )
     // fmt << "images/" << iteration << ".png";
     // geomplotter.plot_png(fmt.str());
 
-    // if(PNG_PLOT){
     GeomPlotter geomplotter( geom );
-    geomplotter.set_size(750,750);
+    geomplotter.set_size(500,500);
     geomplotter.set_epot( &epot );
     geomplotter.set_efield( &efield );
     geomplotter.set_bfield( &bfield );
@@ -377,45 +363,90 @@ void simu( int *argc, char ** argv )
     stringstream file_prefix;
     file_prefix << "beam.png";
     geomplotter.plot_png(file_prefix.str());
-    // }
 
-    // // if(INTERACTIVE_PLOT){
-    //   GTKPlotter plotter( argc, &argv );
-    //   plotter.set_geometry( &geom );
-    //   plotter.set_epot( &epot );
-    //   plotter.set_efield( &efield );
-    //   plotter.set_bfield( &bfield );
-    //   plotter.set_scharge( &scharge );
-    //   plotter.set_particledatabase( &pdb );
-    //   plotter.new_geometry_plot_window();
-    //   plotter.run();
-    // // }
+    IBSimu_plot = new Fl_PNG_Image("beam.png");
+    IBSimu_plot_box->image(IBSimu_plot);
 
 
+    /////////////////////////////INITIALIZE PLOTTER////////////////////////////
+
+    cairo_t         *cairoContext;
+    plsetopt( "-geometry", "500x500" );
+    plsfnam (	"test.png" );
+    plsdev( "pngcairo" );
+    plinit();
+    pl_cmd( PLESC_DEVINIT, cairoContext );
+    // plenv( 0.0, 1.0, 0.0, 1.0, 1, 0 );
+    // pllab("x", "y", "Energy");
+    // pls->w3d( 1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax,
+    //     alt[k], az[k] );
+    pls->mesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
+    /////////////////////////////INITIALIZE PLOTTER////////////////////////////
+
+
+    PLFLT *output_energy_x = new PLFLT[ (MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL ];
+    PLFLT *output_energy_y = new PLFLT[ (MESH_Y-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL ];
+    PLFLT **z;
+    pls->Alloc2dGrid( &z, XPTS, YPTS );
+
+    for(float x_pos = 0; x_pos < MESH_X-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
+      vector<trajectory_diagnostic_e> diagnostics;
+      diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
+      diagnostics.push_back( DIAG_EK );
+      diagnostics.push_back( DIAG_R );
+
+      TrajectoryDiagnosticData tdata;
+      pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
+      const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
+      const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
+      const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
+
+      for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
+        sum_particle_velocity -= diag_radial_velocity(i);
+      }
+      for( uint32_t i = 0; i < diag_energy.size(); i+=1) {
+        average_particle_energy += diag_energy(i);
+      }
+    }
+
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
+    pls->col0( 2 );
+    pls->shades( (const PLFLT * const *) u, nx, ny, NULL,
+        xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
+        clev, nc, 0, 1, 1.0, plcallback::fill, 0, NULL, NULL );
+    pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
+        -1.0, plcallback::tr2, (void *) &cgrid2 );
+    // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+    pls->path( nseg, xmin, ymax, xmax, ymax );
+    pls->path( nseg, xmin, ymin, xmax, ymin );
+    pls->col0( 1 );
+
+    pls->stransform( NULL, NULL );
+
+
+
+    plend();
+    pls->Free2dGrid( z, XPTS, YPTS );
+    // delete[] x;
+    // delete[] y;
+
+    // pls->line( NSIZE, x, y );
+
+    // pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
+    beam_envelope = new Fl_PNG_Image("test.png");
+    beam_envelope_box->image(beam_envelope);
 
 
     iteration+=1;
     clock_t end = clock();
     float sim_duration = (float)(end - start) / CLOCKS_PER_SEC;
 
-    cairo_t         *cairoContext;
-    plsetopt( "-geometry", "600x600" );
-    plsfnam (	"test.png" );
-    plsdev( "pngcairo" );
-    plinit();
-    pl_cmd( PLESC_DEVINIT, cairoContext );
-    plenv( 0.0, 1.0, 0.0, 1.0, 1, 0 );
-    pllab("x", "y", "Energy");
-    plend();
-    // pls->line( NSIZE, x, y );
-
-    // pls->plot3d( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR, true );
-
     window->redraw();
 
   }
 }
-
+// from examples/fltk_example.cpp
 
 int main( int argc, char ** argv )
 {

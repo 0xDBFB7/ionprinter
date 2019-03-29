@@ -102,3 +102,10 @@ Mm, not quite - they were prone to cracking.
 
 Soldered some copper wires into rings - worked slightly better, but still not perfect.
 
+Ordered in some copper crush washers from McMaster. These worked well, though a large amount of torque was required to seat them, and I'm not sure how the aluminum threads are holding up. A substantial amount of black residue was deposited onto the surface of the spark plugs. I am unsure of its composition.
+
+
+
+Got everything cleaned and polished, washers seated, spark plugs attached - then the second roughing pump coupler exploded. 
+
+3D-printing some new ones now.
