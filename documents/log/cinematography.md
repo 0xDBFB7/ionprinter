@@ -65,3 +65,7 @@ Wright pub scene style rapid vacuum hiss, part removed from chamber
 
 
 One of the videos captured recently shows the turbo controller smoking. To make this more clear, I can xor the video with a clip a few seconds before to isolate the smoke.
+
+
+
+"Still alive-style" ASCII outro with credits.

@@ -1,0 +1,9 @@
+set logscale y
+set ylabel "Chamber pressure (mBar)"
+set xlabel "Time (minutes)"
+set xdata time
+set timefmt "%s"
+set format x "%M"
+set datafile separator ","
+plot "second_pulldown.csv" using 1:2 with lines
+pause 1000

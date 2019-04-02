@@ -100,12 +100,24 @@ Ah, but pure 1101 aluminum wire works perfectly!
 
 Mm, not quite - they were prone to cracking. 
 
-Soldered some copper wires into rings - worked slightly better, but still not perfect.
+Soldered some copper wires into rings - worked slightly better, but still not perfectly.
 
-Ordered in some copper crush washers from McMaster. These worked well, though a large amount of torque was required to seat them, and I'm not sure how the aluminum threads are holding up. A substantial amount of black residue was deposited onto the surface of the spark plugs. I am unsure of its composition.
+Ordered in some copper crush washers (#97725A250) from McMaster. These worked well, though a large amount of torque was required to seat them, and I'm not sure how the aluminum threads are holding up. A substantial amount of black residue was deposited onto the surface of the spark plugs from the last attempts. I am unsure of its composition.
 
 
 
 Got everything cleaned and polished, washers seated, spark plugs attached - then the second roughing pump coupler exploded. 
 
-3D-printing some new ones now.
+Designed in openscad, 3D-printing some new ones now.
+
+Printed, installed. Worked fine, except there was a large amount of vibration - might split it into a spider coupling.
+
+Pumped down. Copper sealing rings worked perfectly. It wasn't worth the time to try to make my own.
+
+Hit 5x10^-4 mBar. 
+
+
+
+Two days later, hit 2.37x10^-5 millibar, even with a few things in the chamber. 
+
+![second_pulldown](../../data/second_pulldown.png)

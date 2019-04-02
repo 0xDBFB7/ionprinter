@@ -71,13 +71,16 @@ using namespace std;
 #define INTERACTIVE_PLOT 0
 
 #define NUMBER_OF_PARTICLES 500
-#define DIAGNOSTIC_X_INTERVAL 5.0*GRID_SIZE
+#define DIAGNOSTIC_X_INTERVAL (5.0*GRID_SIZE)
 
 
 #define NUMBER_OF_PROCESSES 16.0 //specify domain decomposition
 
-const int MESH_X_SIZE = MESH_X/GRID_SIZE;
-const int MESH_Y_SIZE = MESH_Y/GRID_SIZE;
+const int MESH_X_SIZE = (MESH_X/GRID_SIZE);
+const int MESH_Y_SIZE = (MESH_Y/GRID_SIZE);
+
+const int X_DIAGNOSTIC_COUNT = ((MESH_X-GRID_SIZE)/(DIAGNOSTIC_X_INTERVAL));
+
 
 #define BUTTON_Y 30
 #define BUTTON_WIDTH 100
@@ -163,6 +166,21 @@ int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
 Fl_PNG_Image* beam_envelope;
 Fl_PNG_Image* IBSimu_plot;
 
+PLFLT    **particle_x_velocities, **particle_y_velocities;
+plstream *pls;
+
+float particle_y_coords[X_DIAGNOSTIC_COUNT][NUMBER_OF_PARTICLES];
+
+void vector_plot_transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data ){
+    PLFLT *trdata;
+    PLFLT xmax;
+
+    trdata = (PLFLT *) data;
+    xmax   = *trdata;
+
+    *xt = x*((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL);
+    *yt = particle_y_coords[(int) x][(int) y];
+}
 
 void simu( int *argc, char ** argv )
 {
@@ -370,30 +388,47 @@ void simu( int *argc, char ** argv )
 
     /////////////////////////////INITIALIZE PLOTTER////////////////////////////
 
-    cairo_t         *cairoContext;
-    plsetopt( "-geometry", "500x500" );
-    plsfnam (	"test.png" );
-    plsdev( "pngcairo" );
-    plinit();
-    pl_cmd( PLESC_DEVINIT, cairoContext );
+
     // plenv( 0.0, 1.0, 0.0, 1.0, 1, 0 );
     // pllab("x", "y", "Energy");
     // pls->w3d( 1.0, 1.0, 1.2, -3.0, 3.0, -3.0, 3.0, zmin, zmax,
     //     alt[k], az[k] );
-    pls->mesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
+    // pls->mesh( x, y, z, XPTS, YPTS, opt[k] | MAG_COLOR );
     /////////////////////////////INITIALIZE PLOTTER////////////////////////////
 
+    //////////////////INITIALIZE RADIAL VELOCITY VECTOR PLOTTER//////////////
+    PLINT narr;
 
-    PLFLT *output_energy_x = new PLFLT[ (MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL ];
-    PLFLT *output_energy_y = new PLFLT[ (MESH_Y-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL ];
-    PLFLT **z;
-    pls->Alloc2dGrid( &z, XPTS, YPTS );
+    // Set of points making a polygon to use as the arrow
+    PLFLT arrow_x[6]  = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
+    PLFLT arrow_y[6]  = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
 
-    for(float x_pos = 0; x_pos < MESH_X-GRID_SIZE; x_pos+=DIAGNOSTIC_X_INTERVAL){
-      vector<trajectory_diagnostic_e> diagnostics;
-      diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
-      diagnostics.push_back( DIAG_EK );
-      diagnostics.push_back( DIAG_R );
+    pls = new plstream();
+
+    cairo_t         *cairoContext;
+    pls->setopt( "-geometry", "500x500" );
+    pls->sfnam (	"test.png" );
+    pls->sdev( "pngcairo" );
+    pls->init();
+    pls->cmd( PLESC_DEVINIT, cairoContext );
+
+    pls->svect( arrow_x, arrow_y, narr, 0 ); //set arrow style
+
+
+    pls->Alloc2dGrid( &particle_x_velocities,X_DIAGNOSTIC_COUNT, NUMBER_OF_PARTICLES );
+    pls->Alloc2dGrid( &particle_y_velocities,X_DIAGNOSTIC_COUNT, NUMBER_OF_PARTICLES );
+
+    // PLFLT *output_energy_x = new PLFLT[(MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL];
+    // PLFLT *output_energy_y = new PLFLT[(MESH_Y-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL];
+    // PLFLT **z;
+    // pls->Alloc2dGrid( &z, XPTS, YPTS );
+
+    vector<trajectory_diagnostic_e> diagnostics;
+    diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
+    diagnostics.push_back( DIAG_EK );
+    diagnostics.push_back( DIAG_R );
+
+    for(float x_pos = 0; x_pos < (MESH_X-GRID_SIZE)-1; x_pos+=DIAGNOSTIC_X_INTERVAL){
 
       TrajectoryDiagnosticData tdata;
       pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
@@ -401,33 +436,27 @@ void simu( int *argc, char ** argv )
       const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
       const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
 
-      for( uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
-        sum_particle_velocity -= diag_radial_velocity(i);
-      }
-      for( uint32_t i = 0; i < diag_energy.size(); i+=1) {
-        average_particle_energy += diag_energy(i);
+      for(uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
+        particle_y_coords[(int) (x_pos/DIAGNOSTIC_X_INTERVAL)][i] = diag_radial_position(i);
+        printf("%i,%i\n",(int) (x_pos/DIAGNOSTIC_X_INTERVAL),i);
+        // printf("%i,%i\n",X_DIAGNOSTIC_COUNT,NUMBER_OF_PARTICLES);
+        particle_y_velocities[(int)(x_pos/(DIAGNOSTIC_X_INTERVAL))][i] = diag_radial_velocity(i);
       }
     }
 
-    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
-    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
+    pls->env(0.0, MESH_X, 0.0, MESH_Y, 0, 0 );
+    pls->lab( "(x)", "(y)","Example 22");
     pls->col0( 2 );
-    pls->shades( (const PLFLT * const *) u, nx, ny, NULL,
-        xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
-        clev, nc, 0, 1, 1.0, plcallback::fill, 0, NULL, NULL );
-    pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
-        -1.0, plcallback::tr2, (void *) &cgrid2 );
-    // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
-    pls->path( nseg, xmin, ymax, xmax, ymax );
-    pls->path( nseg, xmin, ymin, xmax, ymin );
+    PLPointer dummy;
+    pls->vect( particle_x_velocities, particle_y_velocities,
+          ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL),
+          NUMBER_OF_PARTICLES, -1.0, vector_plot_transform, dummy);
     pls->col0( 1 );
 
-    pls->stransform( NULL, NULL );
-
-
+    pls->Free2dGrid(particle_x_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
+    pls->Free2dGrid(particle_y_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
 
     plend();
-    pls->Free2dGrid( z, XPTS, YPTS );
     // delete[] x;
     // delete[] y;
 

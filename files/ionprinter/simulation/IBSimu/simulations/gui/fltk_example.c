@@ -1,265 +1,418 @@
-include <config.h>
-#include <fltk/run.h>
-//#include <fltk/x.h>
-#include <fltk/fltk_cairo.h>
-#include <fltk/DoubleBufferWindow.h>
-#include <fltk/draw.h>
-#include <fltk/math.h>
+//--------------------------------------------------------------------------
+//    Simple vector plot example
+//--------------------------------------------------------------------------
+//
+//--------------------------------------------------------------------------
+// Copyright (C) 2004  Andrew Ross
+//
+// This file is part of PLplot.
+//
+// PLplot is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Library General Public License as published by
+// the Free Software Foundation; version 2 of the License.
+//
+// PLplot is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Library General Public License for more details.
+//
+// You should have received a copy of the GNU Library General Public License
+// along with PLplot; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+//--------------------------------------------------------------------------
+//
+//--------------------------------------------------------------------------
+// Implementation of PLplot example 22 in C++.
+//--------------------------------------------------------------------------
 
-#include <fltk/Group.h>
-#include <fltk/TabGroup.h>
+#include "plc++demos.h"
 
-#include <iostream>
-#include <plplot.h>
-#include <plstream.h>
+#ifdef PL_USE_NAMESPACE
+using namespace std;
+#endif
 
-using namespace fltk;
-
-int nsteps = 1000;
-
-class CairoWindow : public Window
+//
+// Global transform function for a constriction using data passed in
+// This is the same transformation used in constriction.
+//
+void
+transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
 {
-   public:
+    PLFLT *trdata;
+    PLFLT xmax;
 
-      CairoWindow(int argc, const char *argv[])
-         : Window(720,540), firstPass(true), ArgC(argc), ArgV(argv)
-      {
-         n = 0;
-         resizable(this);                         // comment this out for fixed-size
-         color(fltk::WHITE);                      // desired background color
-     }
+    trdata = (PLFLT *) data;
+    xmax   = *trdata;
 
-      CairoWindow(int x, int y, int w, int h, int argc, const char *argv[])
-         : Window(x, y, w, h), firstPass(true), ArgC(argc), ArgV(argv)
-      {
-         n = 0;
-         resizable(this);                         // comment this out for fixed-size
-         color(fltk::WHITE);                      // desired background color
-      }
+    *xt = x;
+    *yt = y / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+}
 
-      bool firstPass;
-      int ArgC;
-      const char **ArgV;
 
-      void Init()
-      {
-         // Make sure the cairo context exists before attempting
-         // to pass the pointer to plplot.
-         if(fltk::cr != NULL)
-         {
-            // Perform the plplot initialization required by your
-            // task.
-            pls = new plstream();
-            pls->parseopts(&ArgC, ArgV, PL_PARSE_FULL);
+class x22 {
+public:
+    x22( int, char ** );
 
-            ymin = -0.1;
-            ymax = 0.1;
+private:
+    void circulation();
+    void constriction( int astyle );
+    void constriction2();
+    void potential();
+    void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
 
-            tmin  = 0.;
-            tmax  = 110.;
-            tjump = 0.3;
+    PLFLT MIN( PLFLT x, PLFLT y ) { return ( x < y ? x : y ); };
+    PLFLT MAX( PLFLT x, PLFLT y ) { return ( x > y ? x : y ); };
 
-            colbox     = 1;
-            collab     = 3;
-            styline[0] = colline[0] = 2;      // pens color and line style
-            styline[1] = colline[1] = 3;
-            styline[2] = colline[2] = 4;
-            styline[3] = colline[3] = 5;
+    plstream *pls;
 
-            legline[0] = "sum";                       // pens legend
-            legline[1] = "sin";
-            legline[2] = "sin*noi";
-            legline[3] = "sin+noi";
+    PLFLT    **u, **v;
+    PLcGrid2 cgrid2;
+    int      nx, ny, nc, nseg;
+};
 
-            xlab = 0.; ylab = 0.25;   // legend position
+// Vector plot of the circulation about the origin
+void
+x22::circulation()
+{
+    int   i, j;
+    PLFLT dx, dy, x, y;
+    PLFLT xmin, xmax, ymin, ymax;
 
-            autoy = true;             // autoscale y
-            acc   = true;
+    dx = 1.0;
+    dy = 1.0;
 
-            pls->sdev("extcairo");
-            pls->init();
+    xmin = -nx / 2 * dx;
+    xmax = nx / 2 * dx;
+    ymin = -ny / 2 * dy;
+    ymax = ny / 2 * dy;
 
-            // Need to save the cairo context or else the rest of
-            // the fltk drawing calls get out of whack...
-            cairo_save(cr);
 
-            pls->cmd(PLESC_DEVINIT, fltk::cr);
+    // Create data - cirulation around the origin.
+    for ( i = 0; i < nx; i++ )
+    {
+        for ( j = 0; j < ny; j++ )
+        {
+            x = ( i - nx / 2 + 0.5 ) * dx;
+            y = ( j - ny / 2 + 0.5 ) * dy;
+            cgrid2.xg[i][j] = x;
+            cgrid2.yg[i][j] = y;
+            u[i][j]         = y;
+            v[i][j]         = -x;
+        }
+    }
 
-            cairo_restore(cr);
+    // Plot vectors with default arrows
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
+    pls->col0( 2 );
+    pls->vect( u, v, nx, ny, 0.0, plcallback::tr2, (void *) &cgrid2 );
+    pls->col0( 1 );
+}
 
-            pls->adv(0);
-            pls->vsta();
+// Vector plot of flow through a constricted pipe
+void
+x22::constriction( int astyle )
+{
+    int   i, j;
+    PLFLT dx, dy, x, y;
+    PLFLT xmin, xmax, ymin, ymax;
+    PLFLT Q, b, dbdx;
+    char  title[80];
 
-            pls->sError(&pl_errcode, errmsg);
+    dx = 1.0;
+    dy = 1.0;
 
-            pls->stripc( &id1, "bcnst", "bcnstv",
-                          tmin, tmax, tjump, ymin, ymax,
-                          xlab, ylab,
-                          autoy, acc,
-                          colbox, collab,
-                          colline, styline, legline,
-                          "t", "", "Strip chart demo" );
+    xmin = -nx / 2 * dx;
+    xmax = nx / 2 * dx;
+    ymin = -ny / 2 * dy;
+    ymax = ny / 2 * dy;
 
-            if ( pl_errcode )
+    Q = 2.0;
+    for ( i = 0; i < nx; i++ )
+    {
+        x = ( i - nx / 2 + 0.5 ) * dx;
+        for ( j = 0; j < ny; j++ )
+        {
+            y = ( j - ny / 2 + 0.5 ) * dy;
+            cgrid2.xg[i][j] = x;
+            cgrid2.yg[i][j] = y;
+            b = ymax / 4.0 * ( 3.0 - cos( M_PI * x / xmax ) );
+            if ( fabs( y ) < b )
             {
-               std::cout << errmsg << std::endl;
-                delete pls;
-                exit( 1 );
-            }
-
-            pls->sError(NULL, NULL);
-
-            autoy = false; // autoscale y
-            acc   = true;  // accumulate/
-
-            y1 = y2 = y3 = y4 = 0.0;
-            dt = 0.1;
-
-            // Only after successfully calling this we can flip the
-            // flag to false.
-            firstPass = false;
-         }
-      }
-
-      static void TimeOutCB(void *data)
-      {
-         CairoWindow *w = (CairoWindow *) data;
-         // We check if we should run the real-time data
-         // capture and computation, otherwise do not
-         // reset the timeout and "stop" the real-time.
-         if(w->n < nsteps)
-         {
-            // If this is the first time we called in here
-            // then initialize the class and the plplot interface.
-            if(w->firstPass == true)
-            {
-               w->Init();
+                dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *
+                       M_PI / xmax * y / b;
+                u[i][j] = Q * ymax / b;
+                v[i][j] = dbdx * u[i][j];
             }
             else
             {
-               // Otherwise, perform the real-time computation
-               // and request a re-draw of the screen from the
-               // fltk main loop.
-               w->Compute();
-               fltk::redraw();
+                u[i][j] = 0.0;
+                v[i][j] = 0.0;
             }
-            fltk::repeat_timeout(0.01, w->TimeOutCB, data);
-         }
-      }
+        }
+    }
 
-      void Compute()
-      {
-         // Compute values for each time-step
-         t     = (double) n * dt;
-        //noise = (1.0 * (rand() / (RAND_MAX + 1.0))) - 0.5;
-        noise = pls->randd() - 0.5;
-        y1    = y1 + noise;
-        y2    = sin( t * M_PI / 18. );
-        y3    = y2 * noise;
-        y4    = y2 + noise / 3.;
-
-        ++n;
-      }
-
-      void draw()
-      {
-         // So we wait to see if this is the first time we called into here
-         // and if it is, then we set timeout. Now go to TimeOutCB to follow
-         // the sequence of events.
-         if(firstPass == false)
-         {
-            cairo_save(cr);
-
-            // For a reason I don't understand, adding the
-            // cairo_save/restore calls in Init() when passing
-            // the cairo context in pls->cmd(PLESC_DEVINIT, fltk::cr)
-            // causes the plot to draw up-side-down, so we reflect
-            // it back to right-side-up.
-            cairo_translate(cr, 0.0, h());
-            cairo_scale(cr, 1.0, -1.0);
-
-            if ( n % 2 )
-               pls->stripa( id1, 0, t, y1 );
-            if ( n % 3 )
-                pls->stripa( id1, 1, t, y2 );
-            if ( n % 4 )
-                pls->stripa( id1, 2, t, y3 );
-            if ( n % 5 )
-                pls->stripa( id1, 3, t, y4 );
-
-            cairo_restore(cr);
-         }
-         else
-         {
-            fltk::add_timeout(0.01, this->TimeOutCB, this);
-         }
-      }
-
-      static PLINT pl_errcode;
-      static char  errmsg[160];
-
-      PLINT n;
-   private:
-      plstream *pls;
-
-      PLINT      id1;
-      bool       autoy, acc;
-      PLFLT      y1, y2, y3, y4, ymin, ymax, xlab, ylab;
-      PLFLT      t, tmin, tmax, tjump, dt, noise;
-      PLINT      colbox, collab, colline[4], styline[4];
-      const char *legline[4];
-};
-
-PLINT CairoWindow::pl_errcode   = 0;
-char  CairoWindow:: errmsg[160] = "";
-
-int main(int argc, char** argv)
-{
-   fltk::Window *w = new fltk::Window(720, 540);
-   w->begin();
-   {
-      fltk::TabGroup *t = new fltk::TabGroup(0, 0, w->w(), w->h());
-      t->begin();
-      {
-         //fltk::Group *g = new fltk::Group(0, 0, t->w(), t->h() - 24, " Plot ");
-         //g->box(fltk::EMBOSSED_BOX);
-         //g->begin();
-         {
-            const char *constArgv[argc];
-            for(int i = 0; i < argc; ++i)
-            {
-               constArgv[i] = "\0"; //argv[i];
-            }
-
-            // Create the window
-            //CairoWindow *plotWin = new CairoWindow(0, 0, g->w(), g->h(), argc, constArgv);
-            CairoWindow *plotWin = new CairoWindow(0, 0, t->w(), t->h() - 24, argc, constArgv);
-
-         }
-         //g->end();
-      }
-      t->end();
-   }
-   w->end();
-   w->show();
-
-   // The plplot library expects argv as const pointers
-   // but fltk does not, so we create a const copy to pass
-   // to plplot.
-   //const char *constArgv[argc];
-   //for(int i = 0; i < argc; ++i)
-   //{
-   //   constArgv[i] = argv[i];
-   //}
-
-   //// Create the window
-   //CairoWindow window(argc, constArgv);
-   //window.show(argc,argv);
-
-   // In fltk, ONLY after calling the main loop in run() will the
-   // fltk cairo context be created and the surface initialized.
-   // Trying to operate on the fltk cairo context before calling run()
-   // will result in the use of a null pointer. From here go to draw() call
-   // in CairoWindow() for more comments on these steps.
-   return fltk::run();
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    sprintf( title, "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
+    pls->lab( "(x)", "(y)", title );
+    pls->col0( 2 );
+    pls->vect( u, v, nx, ny, -1.0, plcallback::tr2, (void *) &cgrid2 );
+    pls->col0( 1 );
 }
+
+//
+// Vector plot of flow through a constricted pipe
+// with a coordinate transform
+//
+void
+x22::constriction2( void )
+{
+    int   i, j;
+    PLFLT dx, dy, x, y;
+    PLFLT xmin, xmax, ymin, ymax;
+    PLFLT Q, b;
+#define NC    11
+    int   nc = NC;
+    PLFLT clev[NC];
+
+    dx = 1.0;
+    dy = 1.0;
+
+    xmin = -nx / 2 * dx;
+    xmax = nx / 2 * dx;
+    ymin = -ny / 2 * dy;
+    ymax = ny / 2 * dy;
+
+    pls->stransform( transform, ( PLPointer ) & xmax );
+
+    Q = 2.0;
+    for ( i = 0; i < nx; i++ )
+    {
+        x = ( i - nx / 2 + 0.5 ) * dx;
+        for ( j = 0; j < ny; j++ )
+        {
+            y = ( j - ny / 2 + 0.5 ) * dy;
+            cgrid2.xg[i][j] = x;
+            cgrid2.yg[i][j] = y;
+            b       = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+            u[i][j] = Q * ymax / b;
+            v[i][j] = 0.0;
+        }
+    }
+
+    for ( i = 0; i < nc; i++ )
+    {
+        clev[i] = Q + i * Q / ( nc - 1 );
+    }
+
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
+    pls->col0( 2 );
+    pls->shades( (const PLFLT * const *) u, nx, ny, NULL,
+        xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
+        clev, nc, 0, 1, 1.0, plcallback::fill, 0, NULL, NULL );
+    pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
+        -1.0, plcallback::tr2, (void *) &cgrid2 );
+    // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
+    pls->path( nseg, xmin, ymax, xmax, ymax );
+    pls->path( nseg, xmin, ymin, xmax, ymin );
+    pls->col0( 1 );
+
+    pls->stransform( NULL, NULL );
+}
+
+// Vector plot of the gradient of a shielded potential (see example 9)
+void
+x22::potential()
+{
+    const int nper   = 100;
+    const int nlevel = 10;
+
+    int       i, j, nr, ntheta;
+    PLFLT     eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
+    PLFLT     div1, div1i, div2, div2i;
+    PLFLT     **z, r, theta, x, y, dz;
+    PLFLT     xmin, xmax, ymin, ymax, rmax, zmax, zmin;
+    PLFLT     px[nper], py[nper], clevel[nlevel];
+
+    nr     = nx;
+    ntheta = ny;
+
+    // Create data to be plotted
+    pls->Alloc2dGrid( &z, nr, ntheta );
+
+    // Potential inside a conducting cylinder (or sphere) by method of images.
+    // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
+    // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
+    // Also put in smoothing term at small distances.
+
+    rmax = (PLFLT) nr;
+
+    eps = 2.;
+
+    q1 = 1.;
+    d1 = rmax / 4.;
+
+    q1i = -q1 * rmax / d1;
+    d1i = pow( rmax, 2. ) / d1;
+
+    q2 = -1.;
+    d2 = rmax / 4.;
+
+    q2i = -q2 * rmax / d2;
+    d2i = pow( rmax, 2. ) / d2;
+
+    for ( i = 0; i < nr; i++ )
+    {
+        r = 0.5 + (PLFLT) i;
+        for ( j = 0; j < ntheta; j++ )
+        {
+            theta           = 2. * M_PI / ( ntheta - 1 ) * ( 0.5 + (PLFLT) j );
+            x               = r * cos( theta );
+            y               = r * sin( theta );
+            cgrid2.xg[i][j] = x;
+            cgrid2.yg[i][j] = y;
+            div1            = sqrt( pow( ( x - d1 ), 2. ) + pow( ( y - d1 ), 2. ) + pow( eps, 2. ) );
+            div1i           = sqrt( pow( ( x - d1i ), 2. ) + pow( ( y - d1i ), 2. ) + pow( eps, 2. ) );
+            div2            = sqrt( pow( ( x - d2 ), 2. ) + pow( ( y + d2 ), 2. ) + pow( eps, 2. ) );
+            div2i           = sqrt( pow( ( x - d2i ), 2. ) + pow( ( y + d2i ), 2. ) + pow( eps, 2. ) );
+            z[i][j]         = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
+            u[i][j]         = -q1 * ( x - d1 ) / pow( div1, 3. ) - q1i * ( x - d1i ) / pow( div1i, 3.0 )
+                              - q2 * ( x - d2 ) / pow( div2, 3. ) - q2i * ( x - d2i ) / pow( div2i, 3. );
+            v[i][j] = -q1 * ( y - d1 ) / pow( div1, 3. ) - q1i * ( y - d1i ) / pow( div1i, 3.0 )
+                      - q2 * ( y + d2 ) / pow( div2, 3. ) - q2i * ( y + d2i ) / pow( div2i, 3. );
+        }
+    }
+
+    f2mnmx( cgrid2.xg, nr, ntheta, &xmin, &xmax );
+    f2mnmx( cgrid2.yg, nr, ntheta, &ymin, &ymax );
+    f2mnmx( z, nr, ntheta, &zmin, &zmax );
+
+    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
+    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
+    // Plot contours of the potential
+    dz = ( zmax - zmin ) / (PLFLT) nlevel;
+    for ( i = 0; i < nlevel; i++ )
+    {
+        clevel[i] = zmin + ( (PLFLT) i + 0.5 ) * dz;
+    }
+    pls->col0( 3 );
+    pls->lsty( 2 );
+    pls->cont( z, nr, ntheta, 1, nr, 1, ntheta, clevel, nlevel, plcallback::tr2, (void *) &cgrid2 );
+    pls->lsty( 1 );
+    pls->col0( 1 );
+
+    // Plot the vectors of the gradient of the potential
+    pls->col0( 2 );
+    pls->vect( u, v, nr, ntheta, 25.0, plcallback::tr2, (void *) &cgrid2 );
+    pls->col0( 1 );
+
+    // Plot the perimeter of the cylinder
+    for ( i = 0; i < nper; i++ )
+    {
+        theta = ( 2. * M_PI / ( nper - 1 ) ) * (PLFLT) i;
+        px[i] = rmax * cos( theta );
+        py[i] = rmax * sin( theta );
+    }
+    pls->line( nper, px, py );
+
+    pls->Free2dGrid( z, nr, ntheta );
+}
+
+void
+x22::f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
+{
+    int i, j;
+
+    *fmax = f[0][0];
+    *fmin = *fmax;
+
+    for ( i = 0; i < nx; i++ )
+    {
+        for ( j = 0; j < ny; j++ )
+        {
+            *fmax = MAX( *fmax, f[i][j] );
+            *fmin = MIN( *fmin, f[i][j] );
+        }
+    }
+}
+
+
+x22::x22( int argc, char ** argv )
+{
+    PLINT narr;
+    bool  fill;
+
+    // Set of points making a polygon to use as the arrow
+    PLFLT arrow_x[6]  = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
+    PLFLT arrow_y[6]  = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
+    PLFLT arrow2_x[6] = { -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 };
+    PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
+
+    // Create new plstream
+    pls = new plstream();
+
+    // Parse and process command line arguments
+
+    pls->parseopts( &argc, argv, PL_PARSE_FULL );
+
+    // Initialize plplot
+
+    pls->init();
+
+    nx   = 20;
+    ny   = 20;
+    nc   = 11;
+    nseg = 20;
+
+    // Allocate arrays
+    pls->Alloc2dGrid( &cgrid2.xg, nx, ny );
+    pls->Alloc2dGrid( &cgrid2.yg, nx, ny );
+    pls->Alloc2dGrid( &u, nx, ny );
+    pls->Alloc2dGrid( &v, nx, ny );
+
+    cgrid2.nx = nx;
+    cgrid2.ny = ny;
+
+    circulation();
+
+    narr = 6;
+    fill = false;
+
+    // Set arrow style using arrow_x and arrow_y then
+    // plot using these arrows.
+    pls->svect( arrow_x, arrow_y, narr, fill );
+    constriction( 1 );
+
+    // Set arrow style using arrow2_x and arrow2_y then
+    // plot using these filled arrows.
+    fill = true;
+    pls->svect( arrow2_x, arrow2_y, narr, fill );
+    constriction( 2 );
+
+    constriction2();
+
+    // Reset arrow style to the default by passing two
+    // NULL arrays (this are the default arguments)
+    pls->svect( );
+
+    potential();
+
+    pls->Free2dGrid( cgrid2.xg, nx, ny );
+    pls->Free2dGrid( cgrid2.yg, nx, ny );
+    pls->Free2dGrid( u, nx, ny );
+    pls->Free2dGrid( v, nx, ny );
+
+    delete pls;
+}
+
+int main( int argc, char ** argv )
+{
+    x22 *x = new x22( argc, argv );
+    delete x;
+}
+
+
+//--------------------------------------------------------------------------
+//                              End of x22.cc
+//--------------------------------------------------------------------------

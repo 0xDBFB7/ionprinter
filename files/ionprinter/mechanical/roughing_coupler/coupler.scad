@@ -3,8 +3,8 @@ $fn=60;
 outer_diameter = 33;
 inner_diameter = 18.5;
 height = 41;
-spoke_depth = 3.5;
-spoke_width = 3.8;
+spoke_depth = 4.3;
+spoke_width = 4.6;
 difference(){
     difference(){
     cylinder(height,d=outer_diameter);
