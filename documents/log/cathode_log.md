@@ -8,7 +8,10 @@ Four Nichrome 80 filaments were wound with 4 turns around a 2.38 mm mandrel: two
 
 The wire hadn't been cleaned before winding, so the coils were sprayed with IPA. Ultrasonic cleaning would probably have been preferable: if this technique is not found to work, surface contaminants may be the cause.
 
-Two of the coils were dipped in 
+Two of the coils were dipped in the solution. Two remained uncoated to act as controls.
 
 [^commercial_coatings]: [internal](../references/filament_coatings.pdf)
 
+<hr>
+
+Another strike against barium oxide cathodes: the temperature-resistivity curve for nichrome is pretty funky and surjective, whereas tungsten's curve is quite well-behaved.

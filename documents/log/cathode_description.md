@@ -107,6 +107,11 @@ This won't really be an issue for us, since our repressurisation will be automat
 
 Contrary to standard vacuum tubes, we don't actually care about cathode lifespan very much; cathodes can be a cheap consumable.
 
+[^10]
+
+> The cathodes can be made to give usable
+> emission in demountable systems by increasing their temperature (thus shortening the life very considerably)
+
 ***
 
 
@@ -153,7 +158,7 @@ Contrary to the above, however, oxide cathodes are, in fact, demountable, if ope
     https://electrontubestore.com/thoriated-tungsten.pdf
  * [^8]: Criado, E., et al. "Ion beam neutralization and properties of plasmas from low power ring cusp ion thrusters." Physics of Plasmas 19.2 (2012): 023505.
  * [9]: http://www.imajeenyus.com/vacuum/20060813_thermionic_emission/index.shtml
- * [^10]: Jenkins, R. O. "A review of thermionic cathodes." Vacuum 19.8 (1969): 353-359.
+ * [^10]: Jenkins, R. O. "A review of thermionic cathodes." Vacuum 19.8 (1969): 353-359. [Internal](../../references/jenkins1969.pdf)
 
 [^5]: ebeam Inc. - Thermionic Cathodes [Internal]() [External](http://ebeaminc.com/thermionic-cathodes.htm)
 
