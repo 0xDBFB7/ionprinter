@@ -38,6 +38,9 @@
 
 #include <unistd.h>
 
+#include <algorithm>    // std::min_element, std::max_element
+
+
 #include <mgl2/mgl.h>
 #include "mgl2/fltk.h"
 
@@ -85,8 +88,8 @@ const int X_DIAGNOSTIC_COUNT = ((MESH_X-GRID_SIZE)/(DIAGNOSTIC_X_INTERVAL));
 #define BUTTON_Y 30
 #define BUTTON_WIDTH 100
 
-#define WINDOW_X_SIZE 1500
-#define WINDOW_Y_SIZE 1000
+#define WINDOW_X_SIZE 1920
+#define WINDOW_Y_SIZE 1080
 
 #define PL_PNG_OFFSET -200
 
@@ -99,6 +102,7 @@ float feature_2_voltage = 0;
 float feature_3_voltage = 200;
 
 float recombination_point = MESH_X;
+
 
 int iteration = 0;
 int run_id = 1;
@@ -189,6 +193,8 @@ void simu( int *argc, char ** argv )
 
     //////////////////////////graphics initialization///////////////////////////
     Fl_Window *window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
+    // Fl_Window *plot_window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
+
     // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
     // box->box(FL_UP_BOX);
     // box->labelfont(FL_BOLD+FL_ITALIC);
@@ -209,7 +215,7 @@ void simu( int *argc, char ** argv )
                                               BUTTON_WIDTH*2, BUTTON_Y*2, "@refresh  Refresh Sim");
     // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
     Fl_Box *IBSimu_plot_box = new Fl_Box(10,0,500,500);
-    Fl_Box *beam_envelope_box = new Fl_Box(-250,250,1000,1000);
+    Fl_Box *beam_envelope_box = new Fl_Box(500,0,1000,1000);
     // Fl_Group beam_plot_group = new Fl_Group();
     // beam_plot_group->add(beam_plot_box)
 
@@ -281,7 +287,7 @@ void simu( int *argc, char ** argv )
                                               1.0, //charge per particle
                                               29, //amu
                                               beam_input_energy, //eV
-                                              0.2,//Normal temperature
+                                              0.1,//Normal temperature
                                               0.1,
                                               beam_x_position,0, //point 1
                                               beam_x_position,0+beam_radius //point 2
@@ -406,9 +412,11 @@ void simu( int *argc, char ** argv )
     pls = new plstream();
 
     cairo_t         *cairoContext;
-    pls->setopt( "-geometry", "500x500" );
+    pls->setopt( "-geometry", "1000x1000" );
     pls->sfnam (	"test.png" );
     pls->sdev( "pngcairo" );
+    plssub( 2, 2 );
+
     pls->init();
     pls->cmd( PLESC_DEVINIT, cairoContext );
 
@@ -418,40 +426,70 @@ void simu( int *argc, char ** argv )
     pls->Alloc2dGrid( &particle_x_velocities,X_DIAGNOSTIC_COUNT, NUMBER_OF_PARTICLES );
     pls->Alloc2dGrid( &particle_y_velocities,X_DIAGNOSTIC_COUNT, NUMBER_OF_PARTICLES );
 
-    // PLFLT *output_energy_x = new PLFLT[(MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL];
-    // PLFLT *output_energy_y = new PLFLT[(MESH_Y-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL];
-    // PLFLT **z;
-    // pls->Alloc2dGrid( &z, XPTS, YPTS );
+
+
+
+    double final_particle_energies[NUMBER_OF_PARTICLES];
+    double final_particle_energies_x[NUMBER_OF_PARTICLES];
 
     vector<trajectory_diagnostic_e> diagnostics;
     diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
     diagnostics.push_back( DIAG_EK );
     diagnostics.push_back( DIAG_R );
 
-    for(float x_pos = 0; x_pos < (MESH_X-GRID_SIZE)-1; x_pos+=DIAGNOSTIC_X_INTERVAL){
+    for(int x_pos = 0; x_pos < X_DIAGNOSTIC_COUNT; x_pos+=1){
 
       TrajectoryDiagnosticData tdata;
-      pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
+      pdb.trajectories_at_plane( tdata, AXIS_X, x_pos*DIAGNOSTIC_X_INTERVAL, diagnostics );
       const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
       const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
       const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
 
       for(uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
-        particle_y_coords[(int) (x_pos/DIAGNOSTIC_X_INTERVAL)][i] = diag_radial_position(i);
-        printf("%i,%i\n",(int) (x_pos/DIAGNOSTIC_X_INTERVAL),i);
+        particle_y_coords[x_pos][i] = diag_radial_position(i);
+
+        // printf("%i,%i\n",(int) (x_pos/DIAGNOSTIC_X_INTERVAL),i);
         // printf("%i,%i\n",X_DIAGNOSTIC_COUNT,NUMBER_OF_PARTICLES);
-        particle_y_velocities[(int)(x_pos/(DIAGNOSTIC_X_INTERVAL))][i] = diag_radial_velocity(i);
+        particle_y_velocities[x_pos][i] = diag_radial_velocity(i);
+        particle_x_velocities[x_pos][i] = 100.0;
+      }
+      if(x_pos > X_DIAGNOSTIC_COUNT-2){
+        for(uint32_t i = 0; i < diag_energy.size(); i+=1) {
+          final_particle_energies[i] = diag_energy(i);
+          final_particle_energies_x[i] = i;
+        }
       }
     }
 
-    pls->env(0.0, MESH_X, 0.0, MESH_Y, 0, 0 );
-    pls->lab( "(x)", "(y)","Example 22");
+    ///cool array printer
+    // for(auto const& value: final_particle_energies)
+    // {
+    //     std::cout << value << "\n";
+    // }
+    ///setup plotter
+
+    //plot beam exit energy
+    plcol0( 1 );
+    pls->env(0.0,(*std::max_element(std::begin(final_particle_energies_x), std::end(final_particle_energies_x)))*1, 0.0,
+                  *std::max_element(std::begin(final_particle_energies), std::end(final_particle_energies))*1.2, 0, 0 );
+
+    pls->lab( "x (particle)", "y (eV)","Beam exit energy");
+    pls->col0( 2 );
+    plline(NUMBER_OF_PARTICLES, final_particle_energies_x,final_particle_energies);
+    pls->col0( 1 );
+
+    //plot beam velocity vectors
+    plcol0( 1 );
+    pls->env(0.0,100, 0.0, 100, 0, 0 );
+    pls->lab( "x (particle)", "y (eV)","Beam exit energy");
     pls->col0( 2 );
     PLPointer dummy;
     pls->vect( particle_x_velocities, particle_y_velocities,
           X_DIAGNOSTIC_COUNT,
-          NUMBER_OF_PARTICLES, -1.0, vector_plot_transform, dummy);
+          NUMBER_OF_PARTICLES, 0, vector_plot_transform, dummy);
     pls->col0( 1 );
+
+
 
     pls->Free2dGrid(particle_x_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
     pls->Free2dGrid(particle_y_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );

@@ -21,6 +21,8 @@
 
 #include <Python.h>
 
+#include <vector>
+#include <stdexcept>
 
 #include <unistd.h>
 
@@ -241,13 +243,152 @@ int run_id = 1;
 // }
 // from examples/fltk_example.cpp
 
+PyObject *p1;
+
+
+static PyObject* run_simulation(){
+
+  ibsimu.set_message_threshold( MSG_VERBOSE, 1 );
+  ibsimu.set_thread_count( 10 );
+
+  Geometry geom( MODE_CYL, Int3D(MESH_X/GRID_SIZE,MESH_Y/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+
+  geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
+  geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
+  geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
+  geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
+
+  // for(int n : feature_points) {
+  //   Solid *s1 = new FuncSolid( feature_1 );
+  //   geom.set_solid(n+7, s1 );
+  //   geom.set_boundary(n+7, Bound(BOUND_DIRICHLET,  feature_voltages[n]) );
+  // }
+
+  geom.build_mesh();
+
+  EpotUMFPACKSolver solver( geom );
+  //EpotBiCGSTABSolver solver( geom );
+
+  EpotField epot( geom );
+  MeshScalarField scharge( geom );
+  EpotEfield efield( epot );
+
+  field_extrpl_e efldextrpl[6] = { FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE,
+  FIELD_SYMMETRIC_POTENTIAL, FIELD_EXTRAPOLATE,
+  FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
+  efield.set_extrapolation( efldextrpl );
+
+  ParticleDataBaseCyl pdb( geom );
+  pdb.set_thread_count(10);
+  bool pmirror[6] = { false, false, false, false, false, false };
+  pdb.set_mirror( pmirror );
+
+  bool fout[3] = { true, true, true };
+  MeshVectorField bfield( geom, fout);
+
+    for( size_t i = 0; i < 15; i++ ) {
+    	solver.solve( epot, scharge );
+    	efield.recalculate();
+    	pdb.clear();
+
+      //float beam_area = BEAM_RADIUS*2; //m
+      //see https://sourceforge.net/p/ibsimu/mailman/message/31283552/
+
+      float beam_area = (M_PI*pow(beam_radius,2));
+      printf("Beam_area: %f\n",beam_area);
+    	pdb.add_2d_beam_with_energy(
+                                            NUMBER_OF_PARTICLES, //number of particles
+                                            beam_current/beam_area, //beam current density
+                                            1.0, //charge per particle
+                                            29, //amu
+                                            beam_input_energy, //eV
+                                            0.2,//Normal temperature
+                                            0.1,
+                                            beam_x_position,0, //point 1
+                                            beam_x_position,0+beam_radius //point 2
+                                            );
+
+      float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
+
+      // pdb.add_2d_beam_with_energy(
+      //                                       1000, //number of particles
+      //                                       BEAM_CURRENT/beam_area, //beam current density
+      //                                       -1.0, //charge per particle
+      //                                       0.000548, //amu
+      //                                       ION_CURTAIN_ENERGY, //eV
+      //                                       0.3,//Normal temperature
+      //                                       0.1,
+      //                                       0.0015+ION_CURTAIN_WIRE_WIDTH,ION_CURTAIN_WIRE_RADIUS, //point 1
+      //                                       0.0015,ION_CURTAIN_WIRE_RADIUS //point 2
+      //                                       );
+      //
+    	pdb.iterate_trajectories( scharge, efield, bfield );
+
+      //Make a histogram of particle energies
+      //https://sourceforge.net/p/ibsimu/mailman/message/28374280/
+
+      for( int ii = 0; ii < epot.size(0); ii++ ) {
+        for( int jj = 0; jj < epot.size(1); jj++ ) {
+          for( int kk = 0; kk < epot.size(2); kk++ ) {
+            // double z = scharge.h()*kk+scharge.origo(2);
+             if(ii > recombination_point/GRID_SIZE) {
+               epot(ii,jj,kk) = 0;
+             }
+          }
+        }
+      }
+
+      //Rather than adjust the charge of the particles after recombination,
+      //I'm nulling out the space charge field.
+      //'s easier, ya see.
+      //code block taken from the IBSimu mailing list.
+      for( int ii = 0; ii < scharge.size(0); ii++ ) {
+        for( int jj = 0; jj < scharge.size(1); jj++ ) {
+          for( int kk = 0; kk < scharge.size(2); kk++ ) {
+            // double z = scharge.h()*kk+scharge.origo(2);
+             if(ii > recombination_point/GRID_SIZE) {
+              scharge(ii,jj,kk) = 0;
+             }
+          }
+        }
+      }
+    }
+
+    vector<trajectory_diagnostic_e> diagnostics;
+    diagnostics.push_back( DIAG_VR ); //first added is index 0, second is index 1, etc.
+    diagnostics.push_back( DIAG_EK );
+    diagnostics.push_back( DIAG_R );
+
+    for(float x_pos = 0; x_pos < (MESH_X-GRID_SIZE)-1; x_pos+=DIAGNOSTIC_X_INTERVAL){
+
+      TrajectoryDiagnosticData tdata;
+      pdb.trajectories_at_plane( tdata, AXIS_X, x_pos, diagnostics );
+      const TrajectoryDiagnosticColumn &diag_radial_position = tdata(2);
+      const TrajectoryDiagnosticColumn &diag_energy = tdata(1);
+      const TrajectoryDiagnosticColumn &diag_radial_velocity = tdata(0);
+
+      for(uint32_t i = 0; i < diag_radial_velocity.size(); i+=1) {
+        particle_y_coords[(int) (x_pos/DIAGNOSTIC_X_INTERVAL)][i] = diag_radial_position(i);
+        printf("%i,%i\n",(int) (x_pos/DIAGNOSTIC_X_INTERVAL),i);
+        // printf("%i,%i\n",X_DIAGNOSTIC_COUNT,NUMBER_OF_PARTICLES);
+        particle_y_velocities[(int)(x_pos/(DIAGNOSTIC_X_INTERVAL))][i] = diag_radial_velocity(i);
+      }
+    }
+  }
+  PyObject *d = PyDict_New()
+  for (...) {
+    PyDict_SetItem(d, key, val);
+  }
+  return d;
+}
+
 static PyObject* simulate(PyObject *self, PyObject *args) {
     const char* name;
     if (!PyArg_ParseTuple(args, "s", &name)) {
         return NULL;
     }
 
-    printf("Hello, %s!\n", name);
+
     Py_RETURN_NONE;
 }
 
@@ -263,6 +404,10 @@ static PyObject* simulate(PyObject *self, PyObject *args) {
 static PyMethodDef simulation_methods[] = {
     {
         "simulate", simulate, METH_VARARGS,
+        "Run an ion beam simulation"
+    },
+    {
+        "run_simulation", run_simulation, METH_VARARGS,
         "Run an ion beam simulation"
     },
     {NULL, NULL, 0, NULL}

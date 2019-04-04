@@ -8,5 +8,5 @@ hello_module = Extension('IBSimulate', sources = ['einzel.cpp'], include_dirs=pk
 
 setup(name='IBSimulate',
       version='0.1.0',
-      description='Hello world module written in C',
+      description='Simulate an ion beam',
       ext_modules=[hello_module])
