@@ -1,15 +1,16 @@
-//--------------------------------------------------------------------------
-//    Simple vector plot example
-//--------------------------------------------------------------------------
+//      Demo of multiple stream/window capability (requires Tk or Tcl-DP).
 //
-//--------------------------------------------------------------------------
-// Copyright (C) 2004  Andrew Ross
+//      Maurice LeBrun
+//      IFS, University of Texas at Austin
+//
+// Copyright (C) 2004  Alan W. Irwin
 //
 // This file is part of PLplot.
 //
 // PLplot is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Library General Public License as published by
-// the Free Software Foundation; version 2 of the License.
+// it under the terms of the GNU Library General Public License as published
+// by the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
 //
 // PLplot is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,401 +19,415 @@
 //
 // You should have received a copy of the GNU Library General Public License
 // along with PLplot; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
-//--------------------------------------------------------------------------
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 //
+//
+
+#include "plcdemos.h"
+
+static PLFLT x[101], y[101];
+static PLFLT xscale, yscale, xoff, yoff, xs[6], ys[6];
+static PLINT space0 = 0, mark0 = 0, space1 = 1500, mark1 = 1500;
+
+void plot1( void );
+void plot2( void );
+void plot3( void );
+void plot4( void );
+void plot5( void );
+void mypltr( PLFLT x, PLFLT y, PLFLT *tx, PLFLT *ty, void *pltr_data );
+
 //--------------------------------------------------------------------------
-// Implementation of PLplot example 22 in C++.
+// main
+//
+// Plots several simple functions from other example programs.
+//
+// This version sends the output of the first 4 plots (one page) to two
+// independent streams.
 //--------------------------------------------------------------------------
 
-#include "plc++demos.h"
-
-#ifdef PL_USE_NAMESPACE
-using namespace std;
-#endif
-
-//
-// Global transform function for a constriction using data passed in
-// This is the same transformation used in constriction.
-//
-void
-transform( PLFLT x, PLFLT y, PLFLT *xt, PLFLT *yt, PLPointer data )
+int
+main( int argc, char *argv[] )
 {
-    PLFLT *trdata;
-    PLFLT xmax;
+    int digmax;
 
-    trdata = (PLFLT *) data;
-    xmax   = *trdata;
+// Select either TK or DP driver and use a small window
+// Using DP results in a crash at the end due to some odd cleanup problems
+// The geometry strings MUST be in writable memory
 
-    *xt = x;
-    *yt = y / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
+    char  geometry_master[] = "500x410+100+200";
+    char  geometry_slave[]  = "500x410+650+200";
+
+    char  driver[80] = "";
+
+    PLINT fam, num, bmax;
+    PLFLT xp0, yp0;
+    PLINT xleng0, yleng0, xoff0, yoff0;
+    int   valid_geometry;
+
+// plplot initialization
+// Parse and process command line arguments
+
+    (void) plparseopts( &argc, argv, PL_PARSE_FULL );
+
+    // If valid geometry specified on command line, use it for both streams.
+    plgpage( &xp0, &yp0, &xleng0, &yleng0, &xoff0, &yoff0 );
+    valid_geometry = ( xleng0 > 0 && yleng0 > 0 );
+
+// Set up first stream
+
+    if ( valid_geometry )
+        plspage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
+    else
+        plsetopt( "geometry", geometry_master );
+
+    plssub( 2, 2 );
+    plinit();
+
+    plgdev( driver );
+    plgfam( &fam, &num, &bmax );
+
+    printf( "Demo of multiple output streams via the %s driver.\n", driver );
+    printf( "Running with the second stream as slave to the first.\n" );
+    printf( "\n" );
+
+// Start next stream
+
+    plsstrm( 1 );
+
+    if ( valid_geometry )
+        plspage( xp0, yp0, xleng0, yleng0, xoff0, yoff0 );
+    else
+        plsetopt( "geometry", geometry_slave );
+
+// Turn off pause to make this a slave (must follow master)
+    plspause( 0 );
+    plsdev( driver );
+    plsfam( fam, num, bmax );
+    // Currently number of digits in format number can only be
+    // set via the command line option
+    plsetopt( "fflen", "2" );
+    plinit();
+
+// Set up the data & plot
+// Original case
+
+    plsstrm( 0 );
+
+    xscale = 6.;
+    yscale = 1.;
+    xoff   = 0.;
+    yoff   = 0.;
+    plot1();
+
+// Set up the data & plot
+
+    xscale = 1.;
+    yscale = 1.e+6;
+    plot1();
+
+// Set up the data & plot
+
+    xscale = 1.;
+    yscale = 1.e-6;
+    digmax = 2;
+    plsyax( digmax, 0 );
+    plot1();
+
+// Set up the data & plot
+
+    xscale = 1.;
+    yscale = 0.0014;
+    yoff   = 0.0185;
+    digmax = 5;
+    plsyax( digmax, 0 );
+    plot1();
+
+// To slave
+// The pleop() ensures the eop indicator gets lit.
+
+    plsstrm( 1 );
+    plot4();
+    pleop();
+
+// Back to master
+
+    plsstrm( 0 );
+    plot2();
+    plot3();
+
+// To slave
+
+    plsstrm( 1 );
+    plot5();
+    pleop();
+
+// Back to master to wait for user to advance
+
+    plsstrm( 0 );
+    pleop();
+
+// Call plend to finish off.
+
+    plend();
+    exit( 0 );
 }
 
+//--------------------------------------------------------------------------
 
-class x22 {
-public:
-    x22( int, char ** );
-
-private:
-    void circulation();
-    void constriction( int astyle );
-    void constriction2();
-    void potential();
-    void f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax );
-
-    PLFLT MIN( PLFLT x, PLFLT y ) { return ( x < y ? x : y ); };
-    PLFLT MAX( PLFLT x, PLFLT y ) { return ( x > y ? x : y ); };
-
-    plstream *pls;
-
-    PLFLT    **u, **v;
-    PLcGrid2 cgrid2;
-    int      nx, ny, nc, nseg;
-};
-
-// Vector plot of the circulation about the origin
 void
-x22::circulation()
+plot1( void )
 {
-    int   i, j;
-    PLFLT dx, dy, x, y;
+    int   i;
     PLFLT xmin, xmax, ymin, ymax;
 
-    dx = 1.0;
-    dy = 1.0;
-
-    xmin = -nx / 2 * dx;
-    xmax = nx / 2 * dx;
-    ymin = -ny / 2 * dy;
-    ymax = ny / 2 * dy;
-
-
-    // Create data - cirulation around the origin.
-    for ( i = 0; i < nx; i++ )
+    for ( i = 0; i < 60; i++ )
     {
-        for ( j = 0; j < ny; j++ )
-        {
-            x = ( i - nx / 2 + 0.5 ) * dx;
-            y = ( j - ny / 2 + 0.5 ) * dy;
-            cgrid2.xg[i][j] = x;
-            cgrid2.yg[i][j] = y;
-            u[i][j]         = y;
-            v[i][j]         = -x;
-        }
+        x[i] = xoff + xscale * ( i + 1 ) / 60.0;
+        y[i] = yoff + yscale * pow( x[i], 2. );
     }
 
-    // Plot vectors with default arrows
-    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
-    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - circulation" );
-    pls->col0( 2 );
-    pls->vect( u, v, nx, ny, 0.0, plcallback::tr2, (void *) &cgrid2 );
-    pls->col0( 1 );
-}
+    xmin = x[0];
+    xmax = x[59];
+    ymin = y[0];
+    ymax = y[59];
 
-// Vector plot of flow through a constricted pipe
-void
-x22::constriction( int astyle )
-{
-    int   i, j;
-    PLFLT dx, dy, x, y;
-    PLFLT xmin, xmax, ymin, ymax;
-    PLFLT Q, b, dbdx;
-    char  title[80];
-
-    dx = 1.0;
-    dy = 1.0;
-
-    xmin = -nx / 2 * dx;
-    xmax = nx / 2 * dx;
-    ymin = -ny / 2 * dy;
-    ymax = ny / 2 * dy;
-
-    Q = 2.0;
-    for ( i = 0; i < nx; i++ )
+    for ( i = 0; i < 6; i++ )
     {
-        x = ( i - nx / 2 + 0.5 ) * dx;
-        for ( j = 0; j < ny; j++ )
-        {
-            y = ( j - ny / 2 + 0.5 ) * dy;
-            cgrid2.xg[i][j] = x;
-            cgrid2.yg[i][j] = y;
-            b = ymax / 4.0 * ( 3.0 - cos( M_PI * x / xmax ) );
-            if ( fabs( y ) < b )
-            {
-                dbdx = ymax / 4.0 * sin( M_PI * x / xmax ) *
-                       M_PI / xmax * y / b;
-                u[i][j] = Q * ymax / b;
-                v[i][j] = dbdx * u[i][j];
-            }
-            else
-            {
-                u[i][j] = 0.0;
-                v[i][j] = 0.0;
-            }
-        }
+        xs[i] = x[i * 10 + 3];
+        ys[i] = y[i * 10 + 3];
     }
 
-    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
-    sprintf( title, "#frPLplot Example 22 - constriction (arrow style %d)", astyle );
-    pls->lab( "(x)", "(y)", title );
-    pls->col0( 2 );
-    pls->vect( u, v, nx, ny, -1.0, plcallback::tr2, (void *) &cgrid2 );
-    pls->col0( 1 );
-}
+// Set up the viewport and window using PLENV. The range in X is
+// 0.0 to 6.0, and the range in Y is 0.0 to 30.0. The axes are
+// scaled separately (just = 0), and we just draw a labelled
+// box (axis = 0).
 
-//
-// Vector plot of flow through a constricted pipe
-// with a coordinate transform
-//
-void
-x22::constriction2( void )
-{
-    int   i, j;
-    PLFLT dx, dy, x, y;
-    PLFLT xmin, xmax, ymin, ymax;
-    PLFLT Q, b;
-#define NC    11
-    int   nc = NC;
-    PLFLT clev[NC];
+    plcol0( 1 );
+    plenv( xmin, xmax, ymin, ymax, 0, 0 );
+    plcol0( 6 );
+    pllab( "(x)", "(y)", "#frPLplot Example 1 - y=x#u2" );
 
-    dx = 1.0;
-    dy = 1.0;
+// Plot the data points
 
-    xmin = -nx / 2 * dx;
-    xmax = nx / 2 * dx;
-    ymin = -ny / 2 * dy;
-    ymax = ny / 2 * dy;
+    plcol0( 9 );
+    plpoin( 6, xs, ys, 9 );
 
-    pls->stransform( transform, ( PLPointer ) & xmax );
+// Draw the line through the data
 
-    Q = 2.0;
-    for ( i = 0; i < nx; i++ )
-    {
-        x = ( i - nx / 2 + 0.5 ) * dx;
-        for ( j = 0; j < ny; j++ )
-        {
-            y = ( j - ny / 2 + 0.5 ) * dy;
-            cgrid2.xg[i][j] = x;
-            cgrid2.yg[i][j] = y;
-            b       = ymax / 4.0 * ( 3 - cos( M_PI * x / xmax ) );
-            u[i][j] = Q * ymax / b;
-            v[i][j] = 0.0;
-        }
-    }
-
-    for ( i = 0; i < nc; i++ )
-    {
-        clev[i] = Q + i * Q / ( nc - 1 );
-    }
-
-    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
-    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - constriction with plstransform" );
-    pls->col0( 2 );
-    pls->shades( (const PLFLT * const *) u, nx, ny, NULL,
-        xmin + dx / 2, xmax - dx / 2, ymin + dy / 2, ymax - dy / 2,
-        clev, nc, 0, 1, 1.0, plcallback::fill, 0, NULL, NULL );
-    pls->vect( (const PLFLT * const *) u, (const PLFLT * const *) v, nx, ny,
-        -1.0, plcallback::tr2, (void *) &cgrid2 );
-    // Plot edges using plpath (which accounts for coordinate transformation) rather than plline
-    pls->path( nseg, xmin, ymax, xmax, ymax );
-    pls->path( nseg, xmin, ymin, xmax, ymin );
-    pls->col0( 1 );
-
-    pls->stransform( NULL, NULL );
-}
-
-// Vector plot of the gradient of a shielded potential (see example 9)
-void
-x22::potential()
-{
-    const int nper   = 100;
-    const int nlevel = 10;
-
-    int       i, j, nr, ntheta;
-    PLFLT     eps, q1, d1, q1i, d1i, q2, d2, q2i, d2i;
-    PLFLT     div1, div1i, div2, div2i;
-    PLFLT     **z, r, theta, x, y, dz;
-    PLFLT     xmin, xmax, ymin, ymax, rmax, zmax, zmin;
-    PLFLT     px[nper], py[nper], clevel[nlevel];
-
-    nr     = nx;
-    ntheta = ny;
-
-    // Create data to be plotted
-    pls->Alloc2dGrid( &z, nr, ntheta );
-
-    // Potential inside a conducting cylinder (or sphere) by method of images.
-    // Charge 1 is placed at (d1, d1), with image charge at (d2, d2).
-    // Charge 2 is placed at (d1, -d1), with image charge at (d2, -d2).
-    // Also put in smoothing term at small distances.
-
-    rmax = (PLFLT) nr;
-
-    eps = 2.;
-
-    q1 = 1.;
-    d1 = rmax / 4.;
-
-    q1i = -q1 * rmax / d1;
-    d1i = pow( rmax, 2. ) / d1;
-
-    q2 = -1.;
-    d2 = rmax / 4.;
-
-    q2i = -q2 * rmax / d2;
-    d2i = pow( rmax, 2. ) / d2;
-
-    for ( i = 0; i < nr; i++ )
-    {
-        r = 0.5 + (PLFLT) i;
-        for ( j = 0; j < ntheta; j++ )
-        {
-            theta           = 2. * M_PI / ( ntheta - 1 ) * ( 0.5 + (PLFLT) j );
-            x               = r * cos( theta );
-            y               = r * sin( theta );
-            cgrid2.xg[i][j] = x;
-            cgrid2.yg[i][j] = y;
-            div1            = sqrt( pow( ( x - d1 ), 2. ) + pow( ( y - d1 ), 2. ) + pow( eps, 2. ) );
-            div1i           = sqrt( pow( ( x - d1i ), 2. ) + pow( ( y - d1i ), 2. ) + pow( eps, 2. ) );
-            div2            = sqrt( pow( ( x - d2 ), 2. ) + pow( ( y + d2 ), 2. ) + pow( eps, 2. ) );
-            div2i           = sqrt( pow( ( x - d2i ), 2. ) + pow( ( y + d2i ), 2. ) + pow( eps, 2. ) );
-            z[i][j]         = q1 / div1 + q1i / div1i + q2 / div2 + q2i / div2i;
-            u[i][j]         = -q1 * ( x - d1 ) / pow( div1, 3. ) - q1i * ( x - d1i ) / pow( div1i, 3.0 )
-                              - q2 * ( x - d2 ) / pow( div2, 3. ) - q2i * ( x - d2i ) / pow( div2i, 3. );
-            v[i][j] = -q1 * ( y - d1 ) / pow( div1, 3. ) - q1i * ( y - d1i ) / pow( div1i, 3.0 )
-                      - q2 * ( y + d2 ) / pow( div2, 3. ) - q2i * ( y + d2i ) / pow( div2i, 3. );
-        }
-    }
-
-    f2mnmx( cgrid2.xg, nr, ntheta, &xmin, &xmax );
-    f2mnmx( cgrid2.yg, nr, ntheta, &ymin, &ymax );
-    f2mnmx( z, nr, ntheta, &zmin, &zmax );
-
-    pls->env( xmin, xmax, ymin, ymax, 0, 0 );
-    pls->lab( "(x)", "(y)", "#frPLplot Example 22 - potential gradient vector plot" );
-    // Plot contours of the potential
-    dz = ( zmax - zmin ) / (PLFLT) nlevel;
-    for ( i = 0; i < nlevel; i++ )
-    {
-        clevel[i] = zmin + ( (PLFLT) i + 0.5 ) * dz;
-    }
-    pls->col0( 3 );
-    pls->lsty( 2 );
-    pls->cont( z, nr, ntheta, 1, nr, 1, ntheta, clevel, nlevel, plcallback::tr2, (void *) &cgrid2 );
-    pls->lsty( 1 );
-    pls->col0( 1 );
-
-    // Plot the vectors of the gradient of the potential
-    pls->col0( 2 );
-    pls->vect( u, v, nr, ntheta, 25.0, plcallback::tr2, (void *) &cgrid2 );
-    pls->col0( 1 );
-
-    // Plot the perimeter of the cylinder
-    for ( i = 0; i < nper; i++ )
-    {
-        theta = ( 2. * M_PI / ( nper - 1 ) ) * (PLFLT) i;
-        px[i] = rmax * cos( theta );
-        py[i] = rmax * sin( theta );
-    }
-    pls->line( nper, px, py );
-
-    pls->Free2dGrid( z, nr, ntheta );
-}
-
-void
-x22::f2mnmx( PLFLT **f, PLINT nx, PLINT ny, PLFLT *fmin, PLFLT *fmax )
-{
-    int i, j;
-
-    *fmax = f[0][0];
-    *fmin = *fmax;
-
-    for ( i = 0; i < nx; i++ )
-    {
-        for ( j = 0; j < ny; j++ )
-        {
-            *fmax = MAX( *fmax, f[i][j] );
-            *fmin = MIN( *fmin, f[i][j] );
-        }
-    }
-}
-
-
-x22::x22( int argc, char ** argv )
-{
-    PLINT narr;
-    bool  fill;
-
-    // Set of points making a polygon to use as the arrow
-    PLFLT arrow_x[6]  = { -0.5, 0.5, 0.3, 0.5, 0.3, 0.5 };
-    PLFLT arrow_y[6]  = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
-    PLFLT arrow2_x[6] = { -0.5, 0.3, 0.3, 0.5, 0.3, 0.3 };
-    PLFLT arrow2_y[6] = { 0.0, 0.0, 0.2, 0.0, -0.2, 0.0 };
-
-    // Create new plstream
-    pls = new plstream();
-
-    // Parse and process command line arguments
-
-    pls->parseopts( &argc, argv, PL_PARSE_FULL );
-
-    // Initialize plplot
-
-    pls->init();
-
-    nx   = 20;
-    ny   = 20;
-    nc   = 11;
-    nseg = 20;
-
-    // Allocate arrays
-    pls->Alloc2dGrid( &cgrid2.xg, nx, ny );
-    pls->Alloc2dGrid( &cgrid2.yg, nx, ny );
-    pls->Alloc2dGrid( &u, nx, ny );
-    pls->Alloc2dGrid( &v, nx, ny );
-
-    cgrid2.nx = nx;
-    cgrid2.ny = ny;
-
-    circulation();
-
-    narr = 6;
-    fill = false;
-
-    // Set arrow style using arrow_x and arrow_y then
-    // plot using these arrows.
-    pls->svect( arrow_x, arrow_y, narr, fill );
-    constriction( 1 );
-
-    // Set arrow style using arrow2_x and arrow2_y then
-    // plot using these filled arrows.
-    fill = true;
-    pls->svect( arrow2_x, arrow2_y, narr, fill );
-    constriction( 2 );
-
-    constriction2();
-
-    // Reset arrow style to the default by passing two
-    // NULL arrays (this are the default arguments)
-    pls->svect( );
-
-    potential();
-
-    pls->Free2dGrid( cgrid2.xg, nx, ny );
-    pls->Free2dGrid( cgrid2.yg, nx, ny );
-    pls->Free2dGrid( u, nx, ny );
-    pls->Free2dGrid( v, nx, ny );
-
-    delete pls;
-}
-
-int main( int argc, char ** argv )
-{
-    x22 *x = new x22( argc, argv );
-    delete x;
+    plcol0( 4 );
+    plline( 60, x, y );
+    plflush();
 }
 
 
 //--------------------------------------------------------------------------
-//                              End of x22.cc
+
+void
+plot2( void )
+{
+    int i;
+
+// Set up the viewport and window using PLENV. The range in X is -2.0 to
+//     10.0, and the range in Y is -0.4 to 2.0. The axes are scaled separately
+//     (just = 0), and we draw a box with axes (axis = 1).
+
+    plcol0( 1 );
+    plenv( -2.0, 10.0, -0.4, 1.2, 0, 1 );
+    plcol0( 2 );
+    pllab( "(x)", "sin(x)/x", "#frPLplot Example 1 - Sinc Function" );
+
+// Fill up the arrays
+
+    for ( i = 0; i < 100; i++ )
+    {
+        x[i] = ( i - 19.0 ) / 6.0;
+        y[i] = 1.0;
+        if ( x[i] != 0.0 )
+            y[i] = sin( x[i] ) / x[i];
+    }
+
+// Draw the line
+
+    plcol0( 3 );
+    plline( 100, x, y );
+    plflush();
+}
+
 //--------------------------------------------------------------------------
+
+void
+plot3( void )
+{
+    int i;
+
+// For the final graph we wish to override the default tick intervals, and
+//     so do not use PLENV
+
+    pladv( 0 );
+
+// Use standard viewport, and define X range from 0 to 360 degrees, Y range
+//     from -1.2 to 1.2.
+
+    plvsta();
+    plwind( 0.0, 360.0, -1.2, 1.2 );
+
+    // Draw a box with ticks spaced 60 degrees apart in X, and 0.2 in Y.
+
+    plcol0( 1 );
+    plbox( "bcnst", 60.0, 2, "bcnstv", 0.2, 2 );
+
+    // Superimpose a dashed line grid, with 1.5 mm marks and spaces. plstyl
+    // expects a pointer!!
+
+    plstyl( 1, &mark1, &space1 );
+    plcol0( 2 );
+    plbox( "g", 30.0, 0, "g", 0.2, 0 );
+    plstyl( 0, &mark0, &space0 );
+
+    plcol0( 3 );
+    pllab( "Angle (degrees)", "sine", "#frPLplot Example 1 - Sine function" );
+
+    for ( i = 0; i < 101; i++ )
+    {
+        x[i] = 3.6 * i;
+        y[i] = sin( x[i] * M_PI / 180.0 );
+    }
+
+    plcol0( 4 );
+    plline( 101, x, y );
+    plflush();
+}
+
+//--------------------------------------------------------------------------
+
+void
+plot4( void )
+{
+    int   i, j;
+    PLFLT dtr, theta, dx, dy, r;
+    char  text[4];
+    PLFLT x0[361], y0[361];
+    PLFLT x1[361], y1[361];
+
+    dtr = M_PI / 180.0;
+    for ( i = 0; i <= 360; i++ )
+    {
+        x0[i] = cos( dtr * i );
+        y0[i] = sin( dtr * i );
+    }
+
+// Set up viewport and window, but do not draw box
+
+    plenv( -1.3, 1.3, -1.3, 1.3, 1, -2 );
+    for ( i = 1; i <= 10; i++ )
+    {
+        for ( j = 0; j <= 360; j++ )
+        {
+            x1[j] = 0.1 * i * x0[j];
+            y1[j] = 0.1 * i * y0[j];
+        }
+
+// Draw circles for polar grid
+
+        plline( 361, x1, y1 );
+    }
+
+    plcol0( 2 );
+    for ( i = 0; i <= 11; i++ )
+    {
+        theta = 30.0 * i;
+        dx    = cos( dtr * theta );
+        dy    = sin( dtr * theta );
+
+// Draw radial spokes for polar grid
+
+        pljoin( 0.0, 0.0, dx, dy );
+        sprintf( text, "%d", ROUND( theta ) );
+
+// Write labels for angle
+
+// Slightly off zero to avoid floating point logic flips at 90 and 270 deg.
+        if ( dx >= -0.00001 )
+            plptex( dx, dy, dx, dy, -0.15, text );
+        else
+            plptex( dx, dy, -dx, -dy, 1.15, text );
+    }
+
+// Draw the graph
+
+    for ( i = 0; i <= 360; i++ )
+    {
+        r     = sin( dtr * ( 5 * i ) );
+        x1[i] = x0[i] * r;
+        y1[i] = y0[i] * r;
+    }
+    plcol0( 3 );
+    plline( 361, x1, y1 );
+
+    plcol0( 4 );
+    plmtex( "t", 2.0, 0.5, 0.5,
+        "#frPLplot Example 3 - r(#gh)=sin 5#gh" );
+    plflush();
+}
+
+//--------------------------------------------------------------------------
+
+// Demonstration of contour plotting
+
+#define XPTS    35
+#define YPTS    46
+#define XSPA    2. / ( XPTS - 1 )
+#define YSPA    2. / ( YPTS - 1 )
+
+PLFLT tr[6] =
+{ XSPA, 0.0, -1.0, 0.0, YSPA, -1.0 };
+
+// pltr_data argument is unused so mark it with the PL_UNUSED macro
+void
+mypltr( PLFLT xx, PLFLT yy, PLFLT *tx, PLFLT *ty, void * PL_UNUSED( pltr_data ) )
+{
+    *tx = tr[0] * xx + tr[1] * yy + tr[2];
+    *ty = tr[3] * xx + tr[4] * yy + tr[5];
+}
+
+static PLFLT clevel[11] =
+{ -1., -.8, -.6, -.4, -.2, 0, .2, .4, .6, .8, 1. };
+
+void
+plot5( void )
+{
+    int          i, j;
+    PLFLT        xx, yy;
+    PLFLT        **z, **w;
+    static PLINT mark = 1500, space = 1500;
+
+// Set up function arrays
+
+    plAlloc2dGrid( &z, XPTS, YPTS );
+    plAlloc2dGrid( &w, XPTS, YPTS );
+
+    for ( i = 0; i < XPTS; i++ )
+    {
+        xx = (PLFLT) ( i - ( XPTS / 2 ) ) / (PLFLT) ( XPTS / 2 );
+        for ( j = 0; j < YPTS; j++ )
+        {
+            yy      = (PLFLT) ( j - ( YPTS / 2 ) ) / (PLFLT) ( YPTS / 2 ) - 1.0;
+            z[i][j] = xx * xx - yy * yy;
+            w[i][j] = 2 * xx * yy;
+        }
+    }
+
+    plenv( -1.0, 1.0, -1.0, 1.0, 0, 0 );
+    plcol0( 2 );
+    plcont( (PLFLT_MATRIX) z, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    plstyl( 1, &mark, &space );
+    plcol0( 3 );
+    plcont( (PLFLT_MATRIX) w, XPTS, YPTS, 1, XPTS, 1, YPTS, clevel, 11, mypltr, NULL );
+    plcol0( 1 );
+    pllab( "X Coordinate", "Y Coordinate", "Streamlines of flow" );
+    plflush();
+
+// Clean up
+    plFree2dGrid( z, XPTS, YPTS );
+    plFree2dGrid( w, XPTS, YPTS );
+}
