@@ -11,7 +11,8 @@
 #include "geomplotter.hpp"
 #include "config.h"
 #include <tuple>
-
+#include <dxf_solid.hpp>
+#include <mydxfinsert.hpp>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -35,6 +36,7 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Cairo.H>
 #include <FL/Fl_Cairo_Window.H>
+#include <FL/Fl_Simple_Counter.H>
 
 #include <unistd.h>
 
@@ -90,8 +92,8 @@ const int X_DIAGNOSTIC_COUNT = ((MESH_X-GRID_SIZE)/(DIAGNOSTIC_X_INTERVAL));
 #define BUTTON_Y 30
 #define BUTTON_WIDTH 100
 
-#define WINDOW_X_SIZE 500
-#define WINDOW_Y_SIZE 500
+#define WINDOW_X_SIZE 700
+#define WINDOW_Y_SIZE 700
 
 #define PL_PNG_OFFSET -200
 
@@ -118,6 +120,7 @@ int run_id = 1;
 //and https://groups.google.com/forum/#!msg/fltkgeneral/7ncncZH7qRg/6iIYqmoRBwAJ
 
 int current_solid = 0;
+int currently_selected_solid = 0;
 int number_of_features = 1;
 float feature_voltages[100];
 Magick::Image image;
@@ -127,15 +130,19 @@ int image_w;
 int image_h;
 int image_range;
 
-bool is_in_solid( double x, double y, double z )
-{
-  int row = (y/GRID_SIZE);
-  int column = (x/GRID_SIZE);
-  Magick::Color color = pixels[image_w * row + column];
-  // printf("color: %f\n", (color.redQuantum() / image_range));
-  // return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_Y));
-  return ((color.redQuantum()/256) == current_solid);
-}
+// int solids_counter = 0;
+// bool is_in_solid( double x, double y, double z )
+// {
+//   int row = (y/GRID_SIZE);
+//   int column = (x/GRID_SIZE);
+//   Magick::Color color = pixels[image_w * row + column];
+//   // printf("color: %f\n", (color.redQuantum() / image_range));
+//   // return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_Y));
+//   // if((color.redQuantum())){
+//   //   printf("%i,%i\n",color.redQuantum()/256,current_solid);
+//   // }
+//   return ((int)(color.redQuantum()/256));
+// }
 
 Fl_PNG_Image* beam_envelope;
 Fl_PNG_Image* IBSimu_plot;
@@ -147,6 +154,9 @@ double particle_x_coords[X_DIAGNOSTIC_COUNT];
 double particle_y_coords[NUMBER_OF_PARTICLES];
 
 
+// void feature_select_callback(Fl_Widget *w) {
+//   feature_voltages[i];
+// }
 
 void simu( int *argc, char ** argv )
 {
@@ -164,10 +174,17 @@ void simu( int *argc, char ** argv )
     // box->labeltype(FL_SHADOW_LABEL);
 
     // Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
-    Fl_Value_Slider *feature_voltage_slider = new Fl_Value_Slider(30,30,60,400, "Selected feature voltage");
+    Fl_Value_Slider *feature_voltage_slider = new Fl_Value_Slider(30,30,60,400, "Selected feature \nvoltage");
     feature_voltage_slider->bounds(-5000.0,5000.0);
-    Fl_Simple_Counter *feature_counter = new Fl_Value_Slider(30,30,60,400, "Selected feature voltage");
-    feature_voltage_slider->bounds(-5000.0,5000.0);
+    Fl_Value_Slider *beam_radius_slider = new Fl_Value_Slider(400,30,60,400, "Beam radius (m)");
+    beam_radius_slider->bounds(0.0001,0.004);
+    beam_radius_slider->step(0.0001);
+    Fl_Simple_Counter *feature_counter = new Fl_Simple_Counter(200,30,100,60, "Selected feature");
+    feature_counter->bounds(0,100.0);
+    feature_counter->step(1);
+    Fl_Simple_Counter *feature_number = new Fl_Simple_Counter(100,30,100,60, "Total features");
+    feature_number->bounds(0,100.0);
+    feature_number->step(1);
     // Fl_Float_Input *beam_current_input = new Fl_Float_Input(100,600,100,100);
     Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_Y*2-20,
                                                                                 BUTTON_WIDTH*2,BUTTON_Y*2, "Heavy beam current (amps)");
@@ -190,20 +207,25 @@ void simu( int *argc, char ** argv )
     while(1){
 
       while(Fl::check()){
+        feature_voltages[currently_selected_solid] = feature_voltage_slider->value()+1;
+        number_of_features = feature_number->value();
         if(refresh_sim->value()){
           break;
         }
+
         beam_current = beam_current_input->value();
-        feature_voltage_slider
+        if(feature_counter->value() != currently_selected_solid){
+          currently_selected_solid = feature_counter->value();
+          feature_voltage_slider->scrollvalue(feature_voltages[currently_selected_solid],10,-5000.0,10000);
+        }
       }
 
-
-      Magick::InitializeMagick(*argv);
-      image.read("solid.png");
-      image_w = image.columns();
-      image_h = image.rows();
-      image_range = pow(2, image.modulusDepth());
-      pixels = image.getPixels(0, 0, image_w, image_h);
+      // Magick::InitializeMagick(*argv);
+      // image.read("solid.png");
+      // image_w = image.columns();
+      // image_h = image.rows();
+      // image_range = pow(2, image.modulusDepth());
+      // pixels = image.getPixels(0, 0, image_w, image_h);
 
 
       clock_t start = clock();
@@ -216,14 +238,17 @@ void simu( int *argc, char ** argv )
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
 
+      MyDXFFile *dxffile = new MyDXFFile( "solid.dxf" );
       for(int i = 0; i < number_of_features; i++) {
-        current_solid = (i+1);
-        Solid *s1 = new FuncSolid( is_in_solid );
+        stringstream solid_file_prefix;
+        solid_file_prefix << i+1;
+        DXFSolid *s1 = new DXFSolid( dxffile,solid_file_prefix.str());
+        // s1->define_2x3_mapping( DXFSolid::rotz );
         geom.set_solid(i+7, s1 );
         geom.set_boundary(i+7, Bound(BOUND_DIRICHLET,  feature_voltages[i]) );
       }
-
       geom.build_mesh();
+
 
       EpotUMFPACKSolver solver( geom );
       //EpotBiCGSTABSolver solver( geom );
@@ -445,8 +470,9 @@ void simu( int *argc, char ** argv )
         }
         beam_diagnostic_positions[x_pos] = x_pos*DIAGNOSTIC_X_INTERVAL;
       }
-      if(x_pos > X_DIAGNOSTIC_COUNT-2){
+      if(x_pos > X_DIAGNOSTIC_COUNT-3){
         final_particles_remaining=diag_energy.size();
+        printf("");
         for(uint32_t i = 0; i < diag_energy.size(); i+=1) {
           final_particle_energies[i] = diag_energy(i);
           final_particle_energies_x[i] = i;
@@ -464,6 +490,7 @@ void simu( int *argc, char ** argv )
     ///setup plotter
 
     //plot beam exit energy
+    if(final_particles_remaining > 0){
     plcol0( 1 );
     pls->env(0.0,final_particles_remaining, 0.0,
                   *std::max_element(std::begin(final_particle_energies), std::begin(final_particle_energies)+final_particles_remaining)*1.2, 0, 0 );
@@ -474,7 +501,7 @@ void simu( int *argc, char ** argv )
 
     //plot beam velocity vectors
     plcol0( 1 );
-
+    }
     // pls->env(0.0, MESH_X, 0.0, NUMBER_OF_PARTICLES, 0, 0);
     pls->lab( "particle no.", "eV","Beam exit energy");
 
