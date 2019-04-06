@@ -1815,6 +1815,18 @@ has formulae for n>=3.
 
 Aha! The electrode material is important!
 
+Spent an insane amount of time trying to get a GUI going for IBSimu so that I could play around with solutions live. Used imagemagick to import an image that defines electrodes, then realized that IBSimu already comes with DXF import stock. Dammit :(
+
+Anyhow, it's working. This really doesn't speed things up very much, however. I'm an idiot.
+
+
+
+I need an analytic solution.
+
+And I think I've got one. All we're really interested in is that the E-field along each cross-section of the cylindrical beam is equal or greater than the cross section. Maybe I can step along the Y axis...Let's see if I can work something out.
+
+
+
 ## Quick notes
 
 
