@@ -1825,6 +1825,16 @@ I need an analytic solution.
 
 And I think I've got one. All we're really interested in is that the E-field along each cross-section of the cylindrical beam is equal or greater than the cross section. Maybe I can step along the Y axis...Let's see if I can work something out.
 
+Ah, but this will ignore the all-important transverse acceleration component. What if I approximate that with a cylinder of charge in front and behind the particle.
+
+Here's what's really bothering me, though: I don't have any intuition as to where the energy is *coming* from - a massive, blatant oversight indeed, but *Fundamentals* doesn't seem to discuss it, nor does Feynman. Also concerning is the terrifically high charge assembly power. I'm very skeptical of that value, however, cheifly because I derived the equation, and also because charge assembly isn't the limiting factor in ion drives, which have approximately similar beam currents and total areas.
+
+
+
+I should assemble a quick ionization test without regard to focussing: just throw a bunch of electrons at a pair of plates. 
+
+OH! For testing, the faraday cup can be part of the ion optics
+
 
 
 ## Quick notes
