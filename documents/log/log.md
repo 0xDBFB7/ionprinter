@@ -1834,6 +1834,29 @@ Here's what's really bothering me, though: I don't have any intuition as to wher
 I should assemble a quick ionization test without regard to focussing: just throw a bunch of electrons at a pair of plates. 
 
 OH! For testing, the faraday cup can be part of the ion optics
+$$
+$$ U=\left(\frac{I*C}{2}\right) $$
+$$
+
+
+
+
+"A measurement of the ionization cross-section
+of helium ions by electron impact"
+
+> "...did not gain sufficient momentum to scatter them from the beam"
+
+We may not have to worry about the e-beam's effect!
+
+Quick back-of-the-envelope momentum transfer yielded 100m/s transverse deltaV on the heavy ions with a 100eV e-Beam - totally acceptable, I think. Might increase beam emissivity a bit. We'll have to see.
+
+hoooly F*** perhaps we can filter out charge that way! That angle can deflect particles through an aperture of some sort.
+
+Perhaps not - the beam will spread out massively as soon as the collision occurs. We'll see how it works out.
+
+
+
+
 
 
 
