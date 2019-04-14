@@ -121,3 +121,9 @@ Hit 5x10^-4 mBar.
 Two days later, hit 2.37x10^-5 millibar, even with a few things in the chamber. 
 
 ![second_pulldown](../../data/second_pulldown.png)
+
+Some discussion on the Vacuum Hackers discord led me to believe that the pump was almost definitely going to fly away, what with the minimal clamping force provided
+
+Printed out a 122mm bolt circle, disassembled everything, drilled three holes into the table, and re-assembled everything. The pump is now very rigidly affixed via the M6 bolt pattern on the bottom. 
+
+ 

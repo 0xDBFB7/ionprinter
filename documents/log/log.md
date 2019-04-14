@@ -1856,7 +1856,20 @@ Perhaps not - the beam will spread out massively as soon as the collision occurs
 
 
 
+Microfluidic cast bowtie with shrinky-dink
 
+
+
+"Recoil-Ion Momentum Distributions for Single and Double Ionization
+of Helium in Strong Laser Fields" - electron collisions with atomic core are possible, and can lead to a loss of momentum transfer
+
+By relativity, it would seem that there should be no energetic difference between a 100eV ion hitting a 1eV recombination electron, or a 100eV electron hitting a 1 eV neutral. The ions will presumably have to be slowed considerably before recombination will occur.
+
+
+
+oxygen is diatomic.
+
+Second molecular beams, like oxygen, can be simply a nozzle pointed in the right general direction.
 
 
 

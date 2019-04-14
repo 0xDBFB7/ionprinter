@@ -16,5 +16,25 @@ Bandcamp-like price for consumables?
 
 
 
+Muskrat Nihilism
+
+I saw a muskrat today, sifting timidly among some bushes.
+
+This has been a strange year for me, full of things without apparent purpose - that 
+
+But what meaning has the Muskrat to continue with its toil? What internal logic does it compute to justify its foraging? Has it even the neural complexity to know why it scampers away at the twitch of a leaf - to understand that it is merely another cog in the billion-year-old clock we call life?
+
+Answers are not forthcoming from the muskrat.
+
+So my new-year's resolution is to think more like the muskrat. 
+
+
+
+If at some point your line of reasoning strays near "because people are stupid", you are not going to solve your problem. People aren't stupid. Average people are of average intelligence. 
+
+I've often been of the mind that when two options are presented, one should choose the third. Innovation creates that third path.
+
+
+
 # Automation
 

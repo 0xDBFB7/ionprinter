@@ -26,3 +26,16 @@ Then built mathgl normally.
 
 
 
+Refbase:
+
+Installed php, php extensions, bib extensions , moved everything to /var/www/html/
+
+`mysql_connect has been removed from php 7. Installed php5.6.`
+
+had to reset sql password with 
+
+```update user set plugin='mysql_native_password' where User='root';```
+
+also needed
+
+`sudo sed -i 's/TYPE=/ENGINE=/g' install.sql`
