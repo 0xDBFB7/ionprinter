@@ -76,7 +76,8 @@ Here's the current simulation breakdown:
 - [x] ElmerFEM -> graphite+ceramic bowtie thermal sim, possibly effective for plasmas (see D. Bordenko)
 - [x] FEMM -> Magnetostatics, very effective
 - [x] IBSimu -> first-order beam simulation without collision or anything fancy
-- [x] SPARTA -> DSMC low-pressure bowtie nozzle design, full collision and reaction modelling, very computationally intensive. PIZZA.py used for postprocessing.
+- [x] SPARTA -> DSMC low-pressure bowtie nozzle design, full collision and reaction modelling, quite computationally intensive. PIZZA.py used for postprocessing.
+- [ ] SfePy -> may be useful for bowtie sim
 - [ ] sparselizard -> 
 - [ ] AlaDyn and Piccante -> Ionization, no recombination, no DSMC
 - [ ] Pic-Las -> DSMC + PiC, ionization, species reaction can be input
@@ -85,7 +86,6 @@ Here's the current simulation breakdown:
 - [ ] QuickPIC -> 
 - [ ] WARP -> 
 - [ ] Starfish -> still in development at the moment. Fluids only in paid version. Java-based.
-
 - [ ] fbpic - cannot be used for this purpose due to femtosecond timestep limitations, but really impressive postprocessing
 - [ ] XOOPIC -> segfaults constantly, but hundreds of physics modules implemented
 - [ ] NASA MOCNozzle -> Broken 

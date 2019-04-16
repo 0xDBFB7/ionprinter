@@ -12,6 +12,8 @@ We have to design our own, of course, since even used COTS diffusion pumps cost 
 
 The design parameters of diffusion pump nozzles have some similarities with rocket engine bells. A series of de Laval nozzles are used to accelerate a gas jet to extreme velocities. The pump will need to operate over a significant range of pressures (naturally); startup will probably occur at around 66 Pa (500 microns), and the system should continue pumping efficiently well past 0.01 mPa.
 
+A solenoid on the nozzle could adjust the profile based on the pressure to increase pumping speed. We'll see.
+
 ### Boiler
 
 The working fluid (DC or ECO 702 silicone oil, in our case [3]) is heated to its boiling point in the lower chambers of the pump, pressurizing the nozzle tree.

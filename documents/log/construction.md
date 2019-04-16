@@ -126,4 +126,4 @@ Some discussion on the Vacuum Hackers discord led me to believe that the pump wa
 
 Printed out a 122mm bolt circle, disassembled everything, drilled three holes into the table, and re-assembled everything. The pump is now very rigidly affixed via the M6 bolt pattern on the bottom. 
 
- 
+ Planning on swapping out the buna-n gaskets for viton. Very expensive, but whatever.

@@ -145,8 +145,8 @@ This may allow us to accept different gauges of wire.
 There are some difficulties in using ICP for this application - namely,
 
 - Ambiguity in output particle energy spectrum
-- Time-varying components leading to excessively complex simulations
-- Less controlled magnetic field - shielding from recombination current will likely be required
+- Time-varying components leading to excessively complex simulations. Full analysis requires both small-scale timesteps to model collisions, and large-scale timesteps to model "butterfly" ion trajectories.
+- Uncontrolled magnetic field - shielding from recombination current will likely be required
 
 The main reason why I considered it in the first place was to obviate the need for a heavy and dangerous high-power, high-voltage transformer. 
 
@@ -163,6 +163,26 @@ Lotz, Wolfgang. "Electron-impact ionization cross-sections for atoms up to Z= 10
 , simple transverse-electron impact might be a simpler route.
 
 
+```
+
+```
+The ion and recombination beams must be precisely matched for recombination to occur - see relativistic argument. 
+
+The e-beam can be bent into alignment by a small magnetic field:
+
+| / - wasted recomb. electrons
+|(  - recombination point
+| \ - e-beam gun
+
+This would allow precise control over the recombination position - essential for accurate deposition.
+
+This also allows the recombination beam energy to be varied independently, as the B-field will not affect the heavy beam.
+
+\ | /
+ )|(
+/ | \
+
+An axial field may also aid in recombination.
 ```
 
 

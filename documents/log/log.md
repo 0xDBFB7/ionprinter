@@ -1265,7 +1265,6 @@ http://erps.spacegrant.org/uploads/images/images/iepc_articledownload_1988-2007/
 Oh, ion drive neutralizers aren't interested in the recombination of the downstream gas per se - they only care that the spacecraft isn't gradually charged. The neutralizer voltage is therefore not particularly important.
 
 <hr>
-
 http://www.usp.br/massa/2014/qfl2144/pdf/Capitulo6_WatsonSparkman.pdf 
 Mass spectrometers use a similar 
 
@@ -1398,7 +1397,7 @@ Page 148 of Fundamentals has some really amazing info. I think I can pipe some F
 
 First, we move the bowtie stack off the feedthroughs. This reduces the paralleism requirements and allows us to use standards spark plugs for the high current connections.
 
-Aluminium joints were previously unattainable - however, I've recently learned of the existance of aluminium brazing flux - available at McMaster! TIG is of course also an option - though it has the disadvantage of being rather more permanent than a simple braze.
+Aluminium joints were previously unattainable - however, I've recently learned of the existence of aluminium brazing flux - available at McMaster! TIG is of course also an option - though it has the disadvantage of being rather more permanent than a simple braze.
 
 http://home.earthlink.net/~jimlux/hv/sparkplug.htm
 
@@ -1869,7 +1868,21 @@ By relativity, it would seem that there should be no energetic difference betwee
 
 oxygen is diatomic.
 
-Second molecular beams, like oxygen, can be simply a nozzle pointed in the right general direction.
+Secondary molecular beams, like oxygen, can be simply a nozzle pointed in the right general direction.
+
+
+
+
+
+
+
+
+
+<https://en.wikipedia.org/wiki/Bourbaki_dangerous_bend_symbol>
+
+
+
+I wonder if we could filter *again* after recombination - that is, deflect the particles that retained a charge towards a dump.
 
 
 

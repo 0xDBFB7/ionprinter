@@ -10,6 +10,40 @@ Uh... we've got a device that can produce arbitrary geometries out of almost any
 
 
 
+[closeup, ceramic pcb blinking with STM32]
+
+This is a printed circuit board.
+
+If you look closely, you might notice a few unusual properties.
+
+64 layers, 
+
+[microscope shot]
+
+alumina ceramic substrate.
+
+For one thing, there's no solder; the copper merges with the components - almost as if the board had been built around the ICs somehow. The traces are all thinner and thicker, this one is a vertical smiley face, this switch is actually a DNA double helix, this one just turned into iron,  [gradually more absurd geometries]
+
+also,
+
+[zoom out rapidly, board still blinking]
+
+it's twisted into a mobius strip.
+
+[Hammer smashes it to demonstrate that it is still ceramic]
+
+It's fine, let me make a new one.
+
+[button pressed, printer closeups, timelapse, window visible to show time]
+
+Overlay: 26 minute print: $3.4.
+
+Here's a Borromean teacup. The cup is ceramic lined with copper, and the handle is pure iron.
+
+
+
+
+
 Dialog: "Today I have to make a thermionic cathode out of rat poison, nail polish, and vape wire. Perhaps unsurprisingly, this process has not been well described in the literature."
 
 
@@ -68,4 +102,7 @@ One of the videos captured recently shows the turbo controller smoking. To make 
 
 
 
-"Still alive-style" ASCII outro with credits.
+"Still alive-style" ASCII outro with credits - 3d isometric?
+
+
+
