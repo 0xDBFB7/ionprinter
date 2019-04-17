@@ -75,6 +75,8 @@ def circular_distribution(position,direction,energy,inner_radius,outer_radius,ax
         axial_a = math.sqrt((constants.Boltzmann*axial_temperature)/mass) #Maxwell-Boltzmann scale parameter
         axial_r = maxwell.rvs(loc=axial_v,scale=axial_a) #then add the axial temperature
 
+        #todo: add radial temperature here!
+
         vx = axial_v*direction[X]
         vy = axial_v*direction[Y]
         vz = axial_v*direction[Z]
@@ -86,24 +88,26 @@ def circular_distribution(position,direction,energy,inner_radius,outer_radius,ax
 def compute_particles_axis(particles,center):
     '''
     Cross, norm, then average particle vectors pairwise to determine a central axis
-    This may not correspond to the particle's motion.
+    This may be perpendicular to the particle's motion.
+    Needed to determine which way the ring should point.
     '''
 
     if(not particles): #sanity checking
         return center
 
     average_direction = [0,0,0]
-    for idx,particle in enumerate(particles[0:-2]):
-        v1 = np.subtract(center,particle[idx][0:3]) #get vector from center to point 1
+    for idx,particle in enumerate(particles[0:-1]):
+        v1 = np.subtract(center,particles[idx][0:3]) #get vector from center to point 1
         v2 = np.subtract(center,particles[idx+1][0:3]) # vector from center to point 2
-        cross = np.linalg.norm(np.cross(v1,v2), axis=0)
+        cross = np.cross(v1,v2)
         average_direction = np.add(average_direction,cross)
-
-    return np.divide(average_direction,len(particles))
+    average_direction = np.divide(average_direction,len(particles))
+    return np.divide(average_direction,np.linalg.norm(average_direction)) #convert to unit vector
 
 def compute_particles_center(particles):
     '''
-    https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    Simple center-of-mass computation
+    3-vector or particles
     '''
     center = [0,0,0]
 
@@ -121,14 +125,37 @@ def compute_particles_center(particles):
 
     return center
 
+def projected_radial_distance(vector_origin, vector_direction, point):
+    '''
+    Given a vector position, direction, and a point, determine the "radial" distance
+    All are 3-vectors, not particles.
+    https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
+    x=a+tn
+    ((a-p) dot n)n
+    '''
+    #compute the vector projection to determine "radial" distance
+    # return np.linalg.norm(np.subtract(i,np.multiply(np.dot(i,vector_direction),vector_direction)))
+    point = np.subtract(point,vector_origin)
+    distance = np.linalg.norm(np.subtract(point,(np.multiply(np.dot(point,vector_direction),vector_direction))))
+    return distance
+
+def projected_axial_distance(vector_origin, vector_direction, point):
+    '''
+    Given a vector position, direction, and a point, determine the "axial" distance.
+    All are 3-vectors, not particles.
+    '''
+    i = np.subtract(point,vector_origin)
+    return np.linalg.norm(np.multiply(np.dot(i,vector_direction),vector_direction))
+
+
 def beam_envelope(particles,direction,position):
     '''
-    Determines inner_radius and outer_radius of beam along a certain axis via projected distance
+    Determines inner_radius and outer_radius of beam along a certain axis
     Returns all zeros if no particles are given.
+    Direction and position are 3-vectors.
     '''
-
     if(not particles): #sanity checking
-        return center, 0, 0
+        return 0, 0
 
     outer_radius = 0
     inner_radius = 0
@@ -137,6 +164,7 @@ def beam_envelope(particles,direction,position):
     #     #no use doing an expensive vector projection for particles that are nearby
     #     #sort based on simple euclidean distance from center
     #     #one of the first few items should be the furthest
+    #     #
     #     #turns out that this only saves us 0.0016-0.00153995 = 0.11 ms, since sorting is also costly
     #     #oh well
     #     euclid_distances = [math.sqrt(x[0]**2.0 + x[1]**2.0 + x[2]**2.0) for x in particles]
@@ -145,23 +173,14 @@ def beam_envelope(particles,direction,position):
     # else:
     #     #if there aren't many particles, we don't want to sort them
     #     sorted_particles = particles
-    sorted_particles = particles
+    # sorted_particles = particles
 
-    for particle in sorted_particles:
-        #compute the vector projection to determine radial distance
-        i = np.subtract(center,particle[0:3])
-        new_radius = np.linalg.norm(i-(i*direction)*direction)
+    for particle in particles:
+        new_radius = projected_radial_distance(position,direction,particle[0:3])
         if(new_radius > outer_radius):
             outer_radius = new_radius
         if(new_radius < inner_radius or inner_radius == 0):
             inner_radius = new_radius
-
-    #might be more accurate to work this backward, determining the central axis for the particles
-    #and then producing rings that correspond to that axis, rather than the fixed original beam axis
-    #definitely a good addition.
-
-    #we could technically do this for the
-
 
     return inner_radius, outer_radius
 
@@ -234,6 +253,44 @@ class TestAll(unittest.TestCase):
 
         # self.assertAlmostEqual(p[X],, places=3)
 
+    def test_compute_particles_axis(self):
+            p = [[0.25,1,0],[1,0.25,0]] #zero offset
+            axis = compute_particles_axis(p,(0,0,0))
+            self.assertTrue(axis[X] == 0.0)
+            self.assertTrue(axis[Y] == 0.0)
+            self.assertTrue(axis[Z] == 1.0 or axis[Z] == -1.0)
+
+            p = [] #empty list
+            axis = compute_particles_axis(p,(0,0,0))
+
+            p = [[0.25,1,1],[1,0.25,1]] #with offset
+            axis = compute_particles_axis(p,(0,0,1))
+            self.assertTrue(axis[X] == 0.0)
+            self.assertTrue(axis[Y] == 0.0)
+            self.assertTrue(axis[Z] == 1.0 or axis[Z] == -1.0)
+
+    def test_compute_particles_center(self):
+            p = [[0,0,0],[1,1,1]]
+            axis = compute_particles_center(p)
+            self.assertTrue(axis[X] == 0.5)
+            self.assertTrue(axis[Y] == 0.5)
+            self.assertTrue(axis[Z] == 0.5)
+
+    def test_projected_radial_distance(self):
+            c = [0.0,0.0,0.0]
+            v = [0.0,0.0,1.0]
+            p = [0.0,0.5,0.0]
+            d = projected_radial_distance(c,v,p)
+            self.assertAlmostEqual(d,0.5,places=2)
+
+    def test_projected_axial_distance(self): #might be something wrong with this. double check.
+            c = [0.0,0.0,0.0]
+            v = [0.0,0.0,1.0]
+            p = [0.0,0.5,0.0]
+            d = projected_axial_distance(c,v,p)
+            self.assertAlmostEqual(d,0.0,places=2)
+
+
     def test_beam_envelope(self):
         p = circular_distribution((0,0,0), #position
                                     (0,0,1), #direction
@@ -245,34 +302,35 @@ class TestAll(unittest.TestCase):
                                     100, #1 particle
                                     1.0*constants.e,29.0*amu)
 
-        center, inner_radius, outer_radius, direction = beam_envelope(p, (0,0,1))
+        center = compute_particles_center(p)
+        axis = compute_particles_axis(p,center)
+        inner_radius, outer_radius = beam_envelope(p,axis,center)
         #Test the center-finding routine - should be close to zero
         self.assertTrue(center[X] < 0.3)
         self.assertTrue(center[Y] < 0.3)
         self.assertTrue(center[Z] < 0.3)
-
         self.assertTrue(outer_radius < 2.0)
         self.assertTrue(outer_radius > 0.5)
         self.assertTrue(inner_radius < 0.5)
-
-    def test_beam_envelope_zero(self):
-        #see how it handles an empty particle list
-        center, inner_radius, outer_radius = beam_envelope([], (0,0,1))
-
-    def test_benchmark_beam_envelope(self):
-        p = circular_distribution((0,0,0), #position
-                                    (0,0,1), #direction
-                                    10 #energy, eV
-                                    ,0.0 #inner radius, 0 meters
-                                    ,1.0, #outer radius, 1 meter
-                                    2000, #2000 Kelvin
-                                    100,
-                                    100, #1 particle
-                                    1.0*constants.e,29.0*amu)
-        start = time.time()
-        center, inner_radius, outer_radius = beam_envelope(p, (0,0,1))
-        end = time.time()
-        print("Beam envelope, 100 particles: %g seconds" % (end-start))
+    #
+    # def test_beam_envelope_zero(self):
+    #     #see how it handles an empty particle list
+    #     center, inner_radius, outer_radius = beam_envelope([], (0,0,1))
+    #
+    # def test_benchmark_beam_envelope(self):
+    #     p = circular_distribution((0,0,0), #position
+    #                                 (0,0,1), #direction
+    #                                 10 #energy, eV
+    #                                 ,0.0 #inner radius, 0 meters
+    #                                 ,1.0, #outer radius, 1 meter
+    #                                 2000, #2000 Kelvin
+    #                                 100,
+    #                                 100, #1 particle
+    #                                 1.0*constants.e,29.0*amu)
+    #     start = time.time()
+    #     center, inner_radius, outer_radius = beam_envelope(p, (0,0,1))
+    #     end = time.time()
+    #     print("Beam envelope, 100 particles: %g seconds" % (end-start))
     # def test_compute_beam(self):
 
 
