@@ -83,35 +83,52 @@ def circular_distribution(position,direction,energy,inner_radius,outer_radius,ax
 
     return particles
 
-def beam_envelope(particles,direction=None,position=None):
+def compute_particles_axis(particles,center):
     '''
-    Determines center, inner_radius, and outer_radius of beam along a certain axis
-    If center position isn't given, average position of particles are used
-    via projected distance
-    If direction isn't given,
-    https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-    Returns all zeros if no particles are given.
+    Cross, norm, then average particle vectors pairwise to determine a central axis
+    This may not correspond to the particle's motion.
+    '''
 
+    if(not particles): #sanity checking
+        return center
+
+    average_direction = [0,0,0]
+    for idx,particle in enumerate(particles[0:-2]):
+        v1 = np.subtract(center,particle[idx][0:3]) #get vector from center to point 1
+        v2 = np.subtract(center,particles[idx+1][0:3]) # vector from center to point 2
+        cross = np.linalg.norm(np.cross(v1,v2), axis=0)
+        average_direction = np.add(average_direction,cross)
+
+    return np.divide(average_direction,len(particles))
+
+def compute_particles_center(particles):
+    '''
+    https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
     '''
     center = [0,0,0]
 
     if(not particles): #sanity checking
+        return center
+
+    for particle in particles:
+        center[X] += particle[X]
+        center[Y] += particle[Y]
+        center[Z] += particle[Z]
+
+    center[X] /= len(particles)
+    center[Y] /= len(particles)
+    center[Z] /= len(particles)
+
+    return center
+
+def beam_envelope(particles,direction,position):
+    '''
+    Determines inner_radius and outer_radius of beam along a certain axis via projected distance
+    Returns all zeros if no particles are given.
+    '''
+
+    if(not particles): #sanity checking
         return center, 0, 0
-
-
-    if(not position): # average particle positions to find center of mass
-                      #replace with numpy.mean?
-        for particle in particles:
-            center[X] += particle[X]
-            center[Y] += particle[Y]
-            center[Z] += particle[Z]
-
-        center[X] /= len(particles)
-        center[Y] /= len(particles)
-        center[Z] /= len(particles)
-    else: #alternately (and perhaps inaccurately), use the beam center given
-        center = position
-
 
     outer_radius = 0
     inner_radius = 0
@@ -128,11 +145,10 @@ def beam_envelope(particles,direction=None,position=None):
     # else:
     #     #if there aren't many particles, we don't want to sort them
     #     sorted_particles = particles
-
     sorted_particles = particles
 
     for particle in sorted_particles:
-        #compute the vector projection
+        #compute the vector projection to determine radial distance
         i = np.subtract(center,particle[0:3])
         new_radius = np.linalg.norm(i-(i*direction)*direction)
         if(new_radius > outer_radius):
@@ -146,7 +162,8 @@ def beam_envelope(particles,direction=None,position=None):
 
     #we could technically do this for the
 
-    return center, inner_radius, outer_radius
+
+    return inner_radius, outer_radius
 
 def compute_ring_charge(ring,rings,timestep,radius):
     '''
@@ -228,7 +245,7 @@ class TestAll(unittest.TestCase):
                                     100, #1 particle
                                     1.0*constants.e,29.0*amu)
 
-        center, inner_radius, outer_radius = beam_envelope(p, (0,0,1))
+        center, inner_radius, outer_radius, direction = beam_envelope(p, (0,0,1))
         #Test the center-finding routine - should be close to zero
         self.assertTrue(center[X] < 0.3)
         self.assertTrue(center[Y] < 0.3)
