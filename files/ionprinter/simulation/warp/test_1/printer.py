@@ -52,8 +52,8 @@ diode_voltage = 0.01*kV
 # --- Setup simulation species
 #ah, that's the key! how many particles would be in the thin slice of time that we've just added?
 
-beam = Species(type=Potassium, charge_state=1, weight=1, name='beam')
-elec = Species(type=Electron, name='electrons')
+beam = Species(type=Aluminium, charge_state=1, weight=1, name='beam')
+elec = Species(type=Electron, charge_state=1, weight=1, name='electrons')
 
 physical_beam_current = 0.0005
 
@@ -62,18 +62,22 @@ beam.a0       = 0.01 #not actually used - the beam profile is set by sparta.
 beam.b0       = 0.01 #Defines where the 1 npinject particle goes.
 beam.ap0      = .0e0
 beam.bp0      = .0e0
-beam.ibeam    = physical_beam_current #total_beam_current* npinject/ actual particles? something like that?
-# beam.vthz     = sqrt(source_temperature*jperev/beam.mass)
-# beam.vthperp  = sqrt(source_temperature*jperev/beam.mass)
+beam.ibeam    = 0.0005 #total_beam_current* npinject/ actual particles? something like that?
+
+
+elec.a0       = 0.001 #beam width in x
+elec.b0       = 0.001 #beam width in y
+elec.ap0      = .0e0
+elec.bp0      = .0e0
+elec.ibeam    = 0.01
+
+
+
 derivqty()
+
 
 # --- Length of simulation box
 runlen = 0.2
-
-
-# --- Variables to set symmetry, when using 3D
-#w3d.l4symtry = true
-#w3d.l2symtry = false
 
 
 sim_x_dim = 0.001
@@ -90,6 +94,7 @@ w3d.boundxy = neumann
 
 top.pbound0 = absorb
 top.pboundnz = absorb
+
 
 w3d.xmmin = 0
 w3d.xmmax = 0.002
@@ -125,6 +130,11 @@ def neutral_inject():
                         [x[5] for x in sparta_particles])
 
 installparticleloader(neutral_inject)
+
+def injectelectrons():
+    elec.add_uniform_cylinder(1000,0.001,0.001,0.002,vthz=100.0)
+
+installparticleloader(injectelectrons)
 
 
 ICP_field_period = 1e-6 #seconds

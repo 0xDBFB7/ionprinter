@@ -38,6 +38,8 @@ def e_field_ring_of_charge(charge,radial_distance,axial_distance,ring_radius):
     Electric field radial and axial components for the off-axis electric field of
     a infinitesimally thick ring of charge.
     '''
+    if(axial_distance == 0):
+        axial_distance = 1e-10
     little_q = ((radial_distance**2.0) + (ring_radius**2.0) + (axial_distance**2.0) + (2.0*radial_distance*ring_radius))
     mu = (4.0*radial_distance*ring_radius)/little_q
     s = (charge/(4.0*math.pi*constants.epsilon_0))*(2.0/(math.pi*(little_q**(3.0/2.0))*(1.0-mu)))
@@ -201,7 +203,7 @@ def compute_ring_charge(beam_current, particle_average_charge, particle_average_
     return ring_charge
 
 def average_particle_velocity(particles):
-    return sum([np.linalg.norm(x[VX],x[VY],x[VZ]) for x in particles])/len(particles)
+    return sum([np.linalg.norm([x[VX],x[VY],x[VZ]]) for x in particles])/len(particles)
 
 def average_particle_charge(particles):
     return np.sum([x[CHARGE] for x in particles])/len(particles)
@@ -223,54 +225,80 @@ def particle_acceleration(particle,ring):
 
     return axial_acceleration
 
-def move_particles(particles,rings,ring_axial_step):
+#
+# def demo_compute(convergence_number, beam_steps, ring_radial_step):
+#     beams = [] #particle histories [], rings []
+#     plt.ion()
+#     plt.show()
+#     ring_radial_step = 0.0001
+#     ring_axial_step = 0.001
+#     beam_steps = 10
+#     #rings use:
+#     #[x,y,z,dirx,diry,dirz,radius,charge]
+#     #pretty stupid (concatenated vectors? inane), but I didn't want to deal with multidimensional vectors in C++
+#     heavy_beam = circular_distribution((0,0,0), #position
+#                             (0,1,0), #direction
+#                             10.0 #energy, eV
+#                             ,0.0 #inner radius, 0 meters
+#                             ,1.0,#outer radius, 1 meter
+#                             2000, #2000 Kelvin
+#                             100,
+#                             100, #1 particle
+#                             1.0*constants.e,26.0*amu)
+#
+#     beams.append([[heavy_beam],[],0.001]) #particle cloud list, ring list, current.
+#
+#     for convergence_step in range(0,convergence_number):
+#         for beam_step in range(0,beam_steps):
+#             # charge = compute_ring_charge(beam_current)
+#             for beam in beams:
+#                 move_particles(beam[0][beam_step],beam[1],ring_axial_step,beams[2]) #figure out how to make rings global
+#
+
+
+def particle_acceleration(particle,ring):
+    axial_distance = projected_axial_distance(ring[0:3],ring[3:6],particle[0:3])
+    radial_distance = projected_radial_distance(ring[0:3],ring[3:6],particle[0:3])
+    radial_electric_field, axial_electric_field = e_field_ring_of_charge(ring[RING_CHARGE],radial_distance,axial_distance,ring[6])
+    #F=Eq
+    radial_acceleration = (radial_electric_field*particle[CHARGE])/particle[MASS] # radial and axial w.r.t. ring axis
+
+    axial_acceleration = (axial_electric_field*particle[CHARGE])/particle[MASS] #this is easy - axial must be along ring[3:6].
+
+    #
+    axial_vector = np.multiply(ring[3:6],axial_acceleration)
+
+    # but radial is the vector through the ring origin and the particle
+    radial_vector = np.subtract(particle[0:3],ring[0:3])
+    #
+    radial_vector = np.subtract(radial_vector,np.multiply(np.dot(radial_vector,ring[3:6]),ring[3:6]))
+    radial_vector = radial_vector/(np.linalg.norm(radial_vector)) #we want a unit radial vector
+
+    radial_vector = np.multiply(radial_vector,radial_acceleration)
+    # print(radial_vector)
+    # print(axial_vector)
+    # #
+
+    return np.add(radial_vector,axial_vector) #fixme! currently relative to direction
+
+def total_particle_acceleration(particle,rings):
     '''
     Computes new positions and velocities of particles
     given current particle cloud and ring positions
     '''
-    for particle in particles:
-        total_acceleration = [0,0,0]
-        for ring in rings:
-            particle_acceleration(particle,ring)
+    total_acceleration = [0,0,0]
+    for concentric_rings in rings:
+        for ring in concentric_rings:
+            total_acceleration = np.add(total_acceleration,particle_acceleration(particle,ring))
         #collision probability functions can go here
+    return total_acceleration
 
-
-def demo_compute(convergence_number, beam_steps, ring_radial_step):
-    beams = [] #particle histories [], rings []
-    plt.ion()
-    plt.show()
-    ring_radial_step = 0.0001
-    ring_axial_step = 0.001
-    beam_steps = 10
-    #rings use:
-    #[x,y,z,dirx,diry,dirz,radius,charge]
-    #pretty stupid (concatenated vectors? inane), but I didn't want to deal with multidimensional vectors in C++
-    heavy_beam = circular_distribution((0,0,0), #position
-                            (0,1,0), #direction
-                            10.0 #energy, eV
-                            ,0.0 #inner radius, 0 meters
-                            ,1.0,#outer radius, 1 meter
-                            2000, #2000 Kelvin
-                            100,
-                            100, #1 particle
-                            1.0*constants.e,26.0*amu)
-
-    beams.append([[heavy_beam],[],0.001]) #particle cloud list, ring list, current.
-
-    for convergence_step in range(0,convergence_number):
-        for beam_step in range(0,beam_steps):
-            # charge = compute_ring_charge(beam_current)
-            for beam in beams:
-                move_particles(beam[0][beam_step],beam[1],ring_axial_step,beams[2]) #figure out how to make rings global
-
-
-
-def plot_beam(beams):
-        fig = plt.figure()
-        ax = Axes3D(fig)
-        p = Circle((5, 5), 3)
-        ax.add_patch(p)
-        # art3d.pathpatch_2d_to_3d(p, z=0, zdir="x")
+def move_particles(particles,rings,timestep):
+    for idx,particle in enumerate(particles):
+        accel = total_particle_acceleration(particle,rings)
+        particles[idx][0:3] = np.add(np.multiply(particles[idx][3:6], timestep),particles[idx][0:3])
+        particles[idx][3:6] = np.add(np.multiply(accel, timestep),particles[idx][3:6]) #add deltav to v
+    return particles
 
 class TestAll(unittest.TestCase):
 
@@ -373,11 +401,23 @@ class TestAll(unittest.TestCase):
         q = compute_ring_charge(10, 1.0, 1500, 0.0001, 0.0005,0.001) #A
         print(q)
 
-    def test_compute_particles(self):
-        #particles,rings,ring_axial_step
-        #[x,y,z,dirx,diry,dirz,radius,charge]
-        []
-        move_particles()
+    def test_particle_acceleration(self):
+        ring = [1,1,1,0.5774,0.5774,0.5774,1e-20,constants.elementary_charge] #approximate point charge
+        #(1.732)
+        particle = [2,2,2,0,0,0,constants.elementary_charge,constants.electron_mass]
+        accel = particle_acceleration(particle,ring)
+
+        ring = [0,0,0,0,0,1,1e-20,constants.elementary_charge] #approximate point charge
+        #(1.732)
+        particle = [2,2,0,0,0,0,constants.elementary_charge,constants.electron_mass]
+        accel = particle_acceleration(particle,ring)
+        print(np.linalg.norm(accel))
+
+    # def test_compute_particles(self):
+    #     #particles,rings,ring_axial_step
+    #     #[x,y,z,dirx,diry,dirz,radius,charge]
+    #     []
+    #     move_particles()
     #
     # def test_beam_envelope_zero(self):
     #     #see how it handles an empty particle list
@@ -401,5 +441,67 @@ class TestAll(unittest.TestCase):
 
 
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()
+#
+
+
+
+beams = [] #particle histories [], rings []
+plt.ion()
+plt.show()
+ring_radial_step = 0.0002
+ring_axial_step = 0.001
+beam_length = 0.01
+beam_steps = int(beam_length/ring_axial_step)
+convergence_number = 10
+#rings use:
+#[x,y,z,dirx,diry,dirz,radius,charge]
+#pretty stupid (concatenated vectors? inane), but I didn't want to deal with multidimensional vectors in C++
+position = (0,0,0)
+direction = (0,0,1)
+beam_current = 0.002
+heavy_beam = circular_distribution(position, #position
+                        direction, #direction
+                        10.0 #energy, eV
+                        ,0.0 #inner radius, 0 meters
+                        ,0.001,#outer radius, 1 meter
+                        2000, #2000 Kelvin
+                        100,
+                        100, #1 particle
+                        1.0*constants.e,26.0*amu)
+particles = [[]]*beam_steps
+particles[0]=heavy_beam
+rings = [[]]*beam_steps
+for convergence_step in range(0,3):
+    for beam_step in range(0,beam_steps-1):
+
+        inner_radius, outer_radius = beam_envelope(particles[beam_step],direction,position)
+
+        rings[beam_step] = [] # remove all rings
+        new_ring_position = np.add(position,np.multiply(direction,beam_step))
+        cloud_average_charge = average_particle_charge(particles[beam_step])
+        cloud_average_velocity = average_particle_velocity(particles[beam_step])
+
+        for concentric_ring_radius in np.arange(inner_radius,outer_radius,ring_radial_step): #move outward
+            new_ring_charge = compute_ring_charge(beam_current,cloud_average_charge,cloud_average_velocity,ring_radial_step,ring_axial_step,concentric_ring_radius)
+            new_ring = np.append(np.append(np.append(new_ring_position,direction),[concentric_ring_radius]),[new_ring_charge])
+            rings[beam_step].append(new_ring)
+
+        timestep = ring_radial_step / cloud_average_velocity
+        particles[beam_step+1] = move_particles(particles[beam_step], rings,timestep)
+        print(beam_step/beam_steps)
+
+    # fig = plt.figure()
+    # ax = Axes3D(fig)
+    # p = Circle((5, 5), 3)
+    # ax.add_patch(p)
+    # art3d.pathpatch_2d_to_3d(p, z=0, zdir="x")
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+for beam_step in range(0,beam_steps-1):
+    for particle in particles[beam_step+1]:
+        ax.scatter(particle[0], particle[1], particle[2])
+plt.show()
+plt.pause(10)

@@ -25,7 +25,7 @@ using namespace std;
 #define BEAM_RADIUS 0.0005
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.02 //A 35
+#define BEAM_CURRENT 0.0005 //A 35
 #define BEAM_ENERGY 0.2 //eV
 
 #define ION_CURTAIN_ENERGY 10
@@ -169,27 +169,27 @@ void simu( int *argc, char ***argv )
     while(iteration < 1){
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
-
-      Solid *s1 = new FuncSolid( accelerate );
-      geom.set_solid( 7, s1 );
+      //
+      // Solid *s1 = new FuncSolid( accelerate );
+      // geom.set_solid( 7, s1 );
 
       // Solid *s2 = new FuncSolid( accelerate2 );
       // geom.set_solid( 8, s2 );
 
-      // Solid *s1 = new FuncSolid( einzel_1 );
-      // geom.set_solid( 7, s1 );
-      // Solid *s2 = new FuncSolid( einzel_2 );
-      // geom.set_solid( 8, s2 );
-      // Solid *s3 = new FuncSolid( einzel_3 );
-      // geom.set_solid( 9, s3 );
+      Solid *s1 = new FuncSolid( einzel_1 );
+      geom.set_solid( 7, s1 );
+      Solid *s2 = new FuncSolid( einzel_2 );
+      geom.set_solid( 8, s2 );
+      Solid *s3 = new FuncSolid( einzel_3 );
+      geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       // geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0000.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  30000.0) );
-      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
-      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  1000.0) );
+      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
+      geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
 
       geom.build_mesh();
 

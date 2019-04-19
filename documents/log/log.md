@@ -1894,6 +1894,41 @@ Found a paper that discusses beam neutralization directly.
 
 Adding a "compensation" NSCCB
 
+
+
+Tried myriad warp, IBSimu sims. Been working on my own little sim, but
+
+Oh hey cool! I independently figured out the ring thing!
+
+>  Another technique is the charge ring method [14–17].
+
+
+
+@ vallette2010analytical
+
+> When
+> the electrons were ejected along the parallel direction
+> with respect to the ion beam axis, the increase of the
+> ion current was not large; the integrated current at z =
+> 730 mm was only 0.14 mA. 
+>
+> Although the electron
+> current was increased, the transported ion current
+> was saturated. As the direction of the electron
+> ejection declined, the neutralization became more
+> effective. At the angle of 600 and 90o the transported ion current became the same value with that obtained
+> by the thermionic filaments, as shown in Figure 2.
+> The electron currents necessary to neutralize the ion
+> beam were 80 μA and 5 μA for the cases of 60o and 90o incidence. 
+
+Fascinating and completely against all my analysis! 
+
+
+
+
+
+
+
 ## Quick notes
 
 

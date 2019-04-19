@@ -221,184 +221,71 @@ def particle_acceleration(particle,ring):
     radial_vector = radial_vector/(np.linalg.norm(radial_vector)) #we want a unit radial vector
     radial_vector = np.multiply(radial_vector,radial_acceleration)
 
-    return axial_acceleration
 
-def move_particles(particles,rings,ring_axial_step):
+
+    return [,axial_acceleration] #fixme! currently relative to direction
+
+def cloud_acceleration(particles,rings):
     '''
     Computes new positions and velocities of particles
     given current particle cloud and ring positions
     '''
     for particle in particles:
         total_acceleration = [0,0,0]
-        for ring in rings:
-            particle_acceleration(particle,ring)
+        for concentric_rings in rings:
+            for ring in concentric_rings:
+                total_acceleration = np.add(total_acceleration,particle_acceleration(particle,concentric_rings))
         #collision probability functions can go here
 
 
-def demo_compute(convergence_number, beam_steps, ring_radial_step):
-    beams = [] #particle histories [], rings []
-    plt.ion()
-    plt.show()
-    ring_radial_step = 0.0001
-    ring_axial_step = 0.001
-    beam_steps = 10
-    #rings use:
-    #[x,y,z,dirx,diry,dirz,radius,charge]
-    #pretty stupid (concatenated vectors? inane), but I didn't want to deal with multidimensional vectors in C++
-    heavy_beam = circular_distribution((0,0,0), #position
-                            (0,1,0), #direction
-                            10.0 #energy, eV
-                            ,0.0 #inner radius, 0 meters
-                            ,1.0,#outer radius, 1 meter
-                            2000, #2000 Kelvin
-                            100,
-                            100, #1 particle
-                            1.0*constants.e,26.0*amu)
+beams = [] #particle histories [], rings []
+plt.ion()
+plt.show()
+ring_radial_step = 0.0001
+ring_axial_step = 0.001
+beam_length = 0.05
+beam_steps = int(beam_length/ring_axial_step)
+convergence_number = 10
+#rings use:
+#[x,y,z,dirx,diry,dirz,radius,charge]
+#pretty stupid (concatenated vectors? inane), but I didn't want to deal with multidimensional vectors in C++
+position = (0,0,0)
+direction = (0,0,1)
+beam_current = 0.002
+heavy_beam = circular_distribution(position, #position
+                        direction, #direction
+                        10.0 #energy, eV
+                        ,0.0 #inner radius, 0 meters
+                        ,1.0,#outer radius, 1 meter
+                        2000, #2000 Kelvin
+                        100,
+                        100, #1 particle
+                        1.0*constants.e,26.0*amu)
+particles = [[]]*beam_steps
+particles[0]=heavy_beam
+rings = [[]]*beam_steps
+for convergence_step in range(0,convergence_number):
+    for beam_step in range(0,beam_steps-1):
 
-    particles = [heavy_beam]
+        inner_radius, outer_radius = beam_envelope(particles[beam_step],direction,position)
 
-    for convergence_step in range(0,convergence_number):
-        for beam_step in range(0,beam_steps):
-            # charge = compute_ring_charge(beam_current)
-            move_particles(beam[0][beam_step],beam[1],ring_axial_step,beams[2]) #figure out how to make rings global
+        rings[beam_step] = [] # remove all rings
+        new_ring_position = np.add(position,np.multiply(direction,beam_step))
+        cloud_average_charge = average_particle_charge(particles[beam_step])
+        cloud_average_velocity = average_particle_velocity(particles[beam_step])
 
-
-
-def plot_beam(beams):
-        fig = plt.figure()
-        ax = Axes3D(fig)
-        p = Circle((5, 5), 3)
-        ax.add_patch(p)
-        # art3d.pathpatch_2d_to_3d(p, z=0, zdir="x")
-
-class TestAll(unittest.TestCase):
-
-    def test_e_field_ring_of_charge(self):
-
-        #Compare to point charge at sufficient axial distance
-        self.assertAlmostEqual(e_field_ring_of_charge(1e10,0,1e10,1e-10)[AXIAL],((8.987551878368e9)*1e10)/((1e10)**2.0), places=3)
-        #Compare to point charge at sufficient radial distance
-        self.assertAlmostEqual(e_field_ring_of_charge(1e10,1e10,0,1e-10)[RADIAL],((8.987551878368e9)*1e10)/((1e10)**2.0), places=3)
-
-    def test_circular_distribution(self):
-        p = circular_distribution((0,0,0), #position
-                                    (0,0,1), #direction
-                                    10 #energy, eV
-                                    ,0.0 #inner radius, 0 meters
-                                    ,1.0,
-                                    2000, #2000 Kelvin
-                                    100,
-                                    100, #1 particle
-                                    1.0*constants.e,29.0*amu)
-
-        for i in p:
-            #particle position checks
-            self.assertTrue(i[X] >= -1)
-            self.assertTrue(i[X] <= 1)
-            self.assertTrue(i[X] != 0)
-            self.assertTrue(i[Y] >= -1)
-            self.assertTrue(i[Y] <= 1)
-            self.assertTrue(i[Y] != 0)
-            self.assertTrue(i[Z] == 0)
-            #particle velocity checks
-            self.assertTrue(i[VX] == 0)
-            self.assertTrue(i[VY] == 0)
-            self.assertTrue(i[VZ] > 0)
-
-        # self.assertAlmostEqual(p[X],, places=3)
-
-    def test_compute_particles_axis(self):
-            p = [[0.25,1,0],[1,0.25,0]] #zero offset
-            axis = compute_particles_axis(p,(0,0,0))
-            self.assertTrue(axis[X] == 0.0)
-            self.assertTrue(axis[Y] == 0.0)
-            self.assertTrue(axis[Z] == 1.0 or axis[Z] == -1.0)
-
-            p = [] #empty list
-            axis = compute_particles_axis(p,(0,0,0))
-
-            p = [[0.25,1,1],[1,0.25,1]] #with offset
-            axis = compute_particles_axis(p,(0,0,1))
-            self.assertTrue(axis[X] == 0.0)
-            self.assertTrue(axis[Y] == 0.0)
-            self.assertTrue(axis[Z] == 1.0 or axis[Z] == -1.0)
-
-    def test_compute_particles_center(self):
-            p = [[0,0,0],[1,1,1]]
-            axis = compute_particles_center(p)
-            self.assertTrue(axis[X] == 0.5)
-            self.assertTrue(axis[Y] == 0.5)
-            self.assertTrue(axis[Z] == 0.5)
-
-    def test_projected_radial_distance(self):
-            c = [0.0,0.0,0.0]
-            v = [0.0,0.0,1.0]
-            p = [0.0,0.5,0.0]
-            d = projected_radial_distance(c,v,p)
-            self.assertAlmostEqual(d,0.5,places=2)
-
-    def test_projected_axial_distance(self):
-            c = [0.0,0.0,0.0]
-            v = [0.0,0.0,1.0]
-            p = [0.0,0.5,0.0]
-            d = projected_axial_distance(c,v,p)
-            self.assertAlmostEqual(d,0.0,places=2)
+        for concentric_ring_radius in np.arange(inner_radius,outer_radius,ring_radial_step): #move outward
+            new_ring_charge = compute_ring_charge(beam_current,cloud_average_charge,cloud_average_velocity,ring_radial_step,ring_axial_step,concentric_ring_radius)
+            new_ring = new_ring_position + direction + [concentric_ring_radius] + [new_ring_charge]
+            rings[beam_step].append(new_ring)
 
 
-    def test_beam_envelope(self):
-        p = circular_distribution((0,0,0), #position
-                                    (0,0,1), #direction
-                                    10 #energy, eV
-                                    ,0.0 #inner radius, 0 meters
-                                    ,1.0, #outer radius, 1 meter
-                                    2000, #2000 Kelvin
-                                    100,
-                                    100, #1 particle
-                                    1.0*constants.e,29.0*amu)
-
-        center = compute_particles_center(p)
-        axis = compute_particles_axis(p,center)
-        inner_radius, outer_radius = beam_envelope(p,axis,center)
-        #Test the center-finding routine - should be close to zero
-        self.assertTrue(center[X] < 0.3)
-        self.assertTrue(center[Y] < 0.3)
-        self.assertTrue(center[Z] < 0.3)
-        self.assertTrue(outer_radius < 2.0)
-        self.assertTrue(outer_radius > 0.5)
-        self.assertTrue(inner_radius < 0.5)
-
-    def test_compute_ring_charge(self):
-        #beam_current, particle_average_charge, particle_average_velocity, ring_radial_step, ring_axial_step, ring_radius):
-        q = compute_ring_charge(10, 1.0, 1500, 0.0001, 0.0005,0.001) #A
-        print(q)
-
-    def test_compute_particles(self):
-        #particles,rings,ring_axial_step
-        #[x,y,z,dirx,diry,dirz,radius,charge]
-        []
-        move_particles()
-    #
-    # def test_beam_envelope_zero(self):
-    #     #see how it handles an empty particle list
-    #     inner_radius, outer_radius = beam_envelope([], (0,0,1))
-    #
-    # def test_benchmark_beam_envelope(self):
-    #     p = circular_distribution((0,0,0), #position
-    #                                 (0,0,1), #direction
-    #                                 10 #energy, eV
-    #                                 ,0.0 #inner radius, 0 meters
-    #                                 ,1.0, #outer radius, 1 meter
-    #                                 2000, #2000 Kelvin
-    #                                 100,
-    #                                 100, #1 particle
-    #                                 1.0*constants.e,29.0*amu)
-    #     start = time.time()
-    #     center, inner_radius, outer_radius = beam_envelope(p, (0,0,1))
-    #     end = time.time()
-    #     print("Beam envelope, 100 particles: %g seconds" % (end-start))
-    # def test_compute_beam(self):
+        cloud_acceleration = particle_acceleration()
 
 
 
-if __name__ == '__main__':
-    unittest.main()
+    fig = plt.figure()
+    ax = Axes3D(fig)
+    # p = Circle((5, 5), 3)
+    # ax.add_patch(p)
+    # art3d.pathpatch_2d_to_3d(p, z=0, zdir="x")
