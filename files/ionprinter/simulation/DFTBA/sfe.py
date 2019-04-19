@@ -59,7 +59,7 @@ RING_RADIUS = 1
 
 fig = plt.figure()
 
-for c in np.linspace(0,1000000000000*constants.e,10):
+for c in np.linspace(0,100000000000*constants.e,10):
 
 
     beam_radius = 0.005
@@ -88,7 +88,13 @@ for c in np.linspace(0,1000000000000*constants.e,10):
 
     rings = []#x,radius,charge
 
-    for x in np.linspace(0.002,0.005,30):
+    for x in np.linspace(0.002,0.003,10):
+        rings.append([x,0.01,c])
+
+    # for x in np.linspace(0.004,0.005,10):
+    #     rings.append([x,0.01,-c])
+
+    for x in np.linspace(0.006,0.007,10):
         rings.append([x,0.01,c])
 
     while(particle_position[0] < sim_length):
@@ -133,6 +139,9 @@ for c in np.linspace(0,1000000000000*constants.e,10):
     plt.plot(position_history_x,position_history_y)
     for ring in rings:
         plt.scatter([ring[RING_X]],[ring[RING_RADIUS]], s=2)
+
+    plt.xlim(0,sim_length)
+    plt.ylim(0, sim_length)
 
     plt.subplot(2, 2, 2)
     plt.plot(position_history_x,force_history_y)
