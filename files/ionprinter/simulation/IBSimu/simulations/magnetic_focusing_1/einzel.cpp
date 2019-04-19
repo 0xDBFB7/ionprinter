@@ -34,7 +34,7 @@ using namespace std;
 
 #define GRID_SIZE 0.00003 //m
 
-#define MESH_LENGTH 0.01
+#define MESH_LENGTH 0.03
 #define MESH_WIDTH 0.01
 
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
@@ -88,7 +88,7 @@ int iteration = 0;
 bool accelerate( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-   return((x >= 0.001 && x <= 0.001+0.0003) && (y >= 0.002 && y <= 0.004));
+   return((x >= 0.001 && x <= 0.001+0.0003) && (y >= 0.0015 && y <= 0.008));
   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
   // return ((x >= 0.001 && x <= 0.0013) && )
 }
@@ -96,7 +96,7 @@ bool accelerate( double x, double y, double z )
 bool accelerate2( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-   return((x >= 0.002 && x <= 0.0023) && (y >= 0.003 && y <= 0.005));
+   return((x >= 0.002 && x <= 0.0023) && (y >= 0.003 && y <= 0.008));
   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
   // return ((x >= 0.001 && x <= 0.0013) && )
 }
@@ -170,9 +170,9 @@ void simu( int *argc, char ***argv )
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
-      // Solid *s1 = new FuncSolid( accelerate );
-      // geom.set_solid( 7, s1 );
-      //
+      Solid *s1 = new FuncSolid( accelerate );
+      geom.set_solid( 7, s1 );
+
       // Solid *s2 = new FuncSolid( accelerate2 );
       // geom.set_solid( 8, s2 );
 
@@ -187,7 +187,7 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       // geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0000.0) );
-      // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  -2000.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  40000.0) );
       // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
 
@@ -229,23 +229,23 @@ void simu( int *argc, char ***argv )
                                               0.0005/beam_area, //beam current density
                                               1.0, //charge per particle
                                               26, //amu 26
-                                              1000, //eV
-                                              0.0,//Normal temperature
-                                              0.0,
-                                              0.0001,BEAM_IR+(BEAM_RADIUS)+0.002, //point 1
-                                              0.0001,BEAM_IR+(BEAM_RADIUS)*2.0+0.002 //point 2
-                                              );
-      	pdb.add_2d_beam_with_energy(
-                                              1000, //number of particles
-                                              1/beam_area, //beam current density
-                                              -1.0, //charge per particle
-                                              0.000548, //amu 26
                                               100, //eV
                                               0.0,//Normal temperature
                                               0.0,
                                               0.0001,BEAM_IR, //point 1
                                               0.0001,BEAM_IR+BEAM_RADIUS //point 2
                                               );
+      	// pdb.add_2d_beam_with_energy(
+        //                                       1000, //number of particles
+        //                                       5/beam_area, //beam current density
+        //                                       -1.0, //charge per particle
+        //                                       0.000548, //amu 26
+        //                                       100, //eV
+        //                                       0.0,//Normal temperature
+        //                                       0.0,
+        //                                       0.0001,BEAM_IR, //point 1
+        //                                       0.0001,BEAM_IR+BEAM_RADIUS //point 2
+        //                                       );
 
 
 
