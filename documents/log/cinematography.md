@@ -92,6 +92,22 @@ rotate,
 
 
 
+get nassault to go over the video 
+
+
+
+use lightswitch trick from nassault's new seeds video
+
+
+
+"it's even portable!"
+
+[ picnic in middle of the clearing, blanket, wicker basket, bright sun, wide shot, printer beside ]
+
+"er... nice day"
+
+
+
 
 
 Wright pub scene style rapid vacuum hiss, part removed from chamber 
