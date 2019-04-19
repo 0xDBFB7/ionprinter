@@ -22,20 +22,20 @@ using namespace std;
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.0035
+#define BEAM_RADIUS 0.001
 #define BEAM_IR 0
 
-#define BEAM_CURRENT 0.001 //A 35
-#define BEAM_ENERGY 100 //eV
+#define BEAM_CURRENT 0.02 //A 35
+#define BEAM_ENERGY 0.2 //eV
 
-#define ION_CURTAIN_ENERGY 0.1
+#define ION_CURTAIN_ENERGY 10
 #define ION_CURTAIN_WIRE_RADIUS 0.001
 #define ION_CURTAIN_WIRE_WIDTH 0.0005
 
 #define GRID_SIZE 0.00003 //m
 
-#define MESH_LENGTH 0.005
-#define MESH_WIDTH 0.005
+#define MESH_LENGTH 0.01
+#define MESH_WIDTH 0.01
 
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
 #define MESH_Y_SIZE MESH_WIDTH/GRID_SIZE
@@ -60,7 +60,7 @@ float recombination_point = 0.1;
 
 int iteration = 0;
 
-#define RECOMBINATION_POINT 0.004
+#define RECOMBINATION_POINT 0.01
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
@@ -68,42 +68,57 @@ int iteration = 0;
 
 
 
-#define EINZEL_1_X 0.001
+#define EINZEL_1_X 0.002
 #define EINZEL_1_THICKNESS 0.0011
 #define EINZEL_1_HEIGHT 0.0002
-#define EINZEL_1_Y 0.003
+#define EINZEL_1_Y 0.0025
 
-#define EINZEL_GAP 0.0003
+#define EINZEL_GAP 0.0005
 
 #define EINZEL_2_X EINZEL_1_X+EINZEL_GAP
 #define EINZEL_2_THICKNESS 0.001
 #define EINZEL_2_HEIGHT 0.0002
-#define EINZEL_2_Y 0.003
+#define EINZEL_2_Y 0.0025
 
 #define EINZEL_3_X EINZEL_2_X+EINZEL_2_THICKNESS+EINZEL_GAP
-#define EINZEL_3_THICKNESS 0.0011
+#define EINZEL_3_THICKNESS 0.001
 #define EINZEL_3_HEIGHT 0.0002
-#define EINZEL_3_Y 0.003
+#define EINZEL_3_Y 0.0025
 
-
-bool einzel_1( double x, double y, double z )
+bool accelerate( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-   return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+   return((x >= 0.001 && x <= 0.001+0.0003) && (y >= 0.002 && y <= 0.004));
   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
   // return ((x >= 0.001 && x <= 0.0013) && )
 }
 
-bool einzel_2( double x, double y, double z )
-{
-  return((x >= EINZEL_2_X && x <= EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= EINZEL_2_Y && y <= EINZEL_2_Y+EINZEL_2_HEIGHT));
-}
-//
-bool einzel_3( double x, double y, double z )
+bool accelerate2( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-  return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
+   return((x >= 0.002 && x <= 0.0023) && (y >= 0.003 && y <= 0.005));
+  // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+  // return ((x >= 0.001 && x <= 0.0013) && )
 }
+//
+// bool einzel_1( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//    return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+//   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+//   // return ((x >= 0.001 && x <= 0.0013) && )
+// }
+//
+// bool einzel_2( double x, double y, double z )
+// {
+//   return((x >= EINZEL_2_X && x <= EINZEL_2_X+EINZEL_2_THICKNESS) && (y >= EINZEL_2_Y && y <= EINZEL_2_Y+EINZEL_2_HEIGHT));
+// }
+// //
+// bool einzel_3( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//   return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_HEIGHT));
+// }
 
 
 std::tuple <float, float> lowest_radial_v_pos(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
@@ -155,20 +170,26 @@ void simu( int *argc, char ***argv )
 
       Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
 
-      Solid *s1 = new FuncSolid( einzel_1 );
-      geom.set_solid( 7, s1 );
-      Solid *s2 = new FuncSolid( einzel_2 );
-      geom.set_solid( 8, s2 );
-      Solid *s3 = new FuncSolid( einzel_3 );
-      geom.set_solid( 9, s3 );
+      // Solid *s1 = new FuncSolid( accelerate );
+      // geom.set_solid( 7, s1 );
+      //
+      // Solid *s2 = new FuncSolid( accelerate2 );
+      // geom.set_solid( 8, s2 );
+
+      // Solid *s1 = new FuncSolid( einzel_1 );
+      // geom.set_solid( 7, s1 );
+      // Solid *s2 = new FuncSolid( einzel_2 );
+      // geom.set_solid( 8, s2 );
+      // Solid *s3 = new FuncSolid( einzel_3 );
+      // geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
-      geom.set_boundary( 4, Bound(BOUND_NEUMANN,     2000.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  0.0) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  2000.0) );
-      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  -100.0) );
+      // geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0000.0) );
+      // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  -2000.0) );
+      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
 
       geom.build_mesh();
 
@@ -202,23 +223,37 @@ void simu( int *argc, char ***argv )
 
         float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
         printf("Beam_area: %f",beam_area);
-      	pdb.add_2d_beam_with_energy(
+
+        pdb.add_2d_beam_with_energy(
                                               1000, //number of particles
-                                              BEAM_CURRENT/beam_area, //beam current density
+                                              0.0005/beam_area, //beam current density
                                               1.0, //charge per particle
-                                              26, //amu
-                                              BEAM_ENERGY, //eV
+                                              26, //amu 26
+                                              1000, //eV
                                               0.0,//Normal temperature
                                               0.0,
-                                              0.001,BEAM_IR, //point 1
-                                              0.001,BEAM_IR+BEAM_RADIUS //point 2
+                                              0.0001,BEAM_IR+(BEAM_RADIUS)+0.002, //point 1
+                                              0.0001,BEAM_IR+(BEAM_RADIUS)*2.0+0.002 //point 2
+                                              );
+      	pdb.add_2d_beam_with_energy(
+                                              1000, //number of particles
+                                              1/beam_area, //beam current density
+                                              -1.0, //charge per particle
+                                              0.000548, //amu 26
+                                              100, //eV
+                                              0.0,//Normal temperature
+                                              0.0,
+                                              0.0001,BEAM_IR, //point 1
+                                              0.0001,BEAM_IR+BEAM_RADIUS //point 2
                                               );
 
-        float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
 
+
+        float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
+        //
         // pdb.add_2d_beam_with_energy(
         //                                       1000, //number of particles
-        //                                       BEAM_CURRENT/beam_area, //beam current density
+        //                                       10/beam_area, //beam current density
         //                                       -1.0, //charge per particle
         //                                       0.000548, //amu
         //                                       ION_CURTAIN_ENERGY, //eV
@@ -227,7 +262,7 @@ void simu( int *argc, char ***argv )
         //                                       0.0015+ION_CURTAIN_WIRE_WIDTH,ION_CURTAIN_WIRE_RADIUS, //point 1
         //                                       0.0015,ION_CURTAIN_WIRE_RADIUS //point 2
         //                                       );
-        //
+
       	pdb.iterate_trajectories( scharge, efield, bfield );
 
         //Make a histogram of particle energies

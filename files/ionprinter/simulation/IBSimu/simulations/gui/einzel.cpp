@@ -203,7 +203,6 @@ void simu( int *argc, char ** argv )
 
     window->show();
 
-
     while(1){
 
       while(Fl::check()){

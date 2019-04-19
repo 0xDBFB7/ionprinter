@@ -255,13 +255,12 @@ def demo_compute(convergence_number, beam_steps, ring_radial_step):
                             100, #1 particle
                             1.0*constants.e,26.0*amu)
 
-    beams.append([[heavy_beam],[],0.001]) #particle cloud list, ring list, current.
+    particles = [heavy_beam]
 
     for convergence_step in range(0,convergence_number):
         for beam_step in range(0,beam_steps):
             # charge = compute_ring_charge(beam_current)
-            for beam in beams:
-                move_particles(beam[0][beam_step],beam[1],ring_axial_step,beams[2]) #figure out how to make rings global
+            move_particles(beam[0][beam_step],beam[1],ring_axial_step,beams[2]) #figure out how to make rings global
 
 
 

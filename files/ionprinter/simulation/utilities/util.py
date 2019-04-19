@@ -13,7 +13,7 @@ def scharge_efield(beam_current,beam_velocity,beam_radius,sample_radius=None):
     Beam velocity is in m/s
     """
     if(sample_radius == None):
-        beam_radius=sample_radius
+        sample_radius=beam_radius
     return ((beam_current/(2.0*(math.pi)*epsilon*beam_velocity)) * (sample_radius/(beam_radius**2.0)))
 
 def scharge_force(beam_current,beam_velocity,beam_radius):
