@@ -73,30 +73,30 @@ float feature_1_Y_len = 0.0003;
 float feature_1_gap = 0.0001;
 
 
-float feature_2_X = feature_1_X+feature_1_X_len+feature_1_gap;
-float feature_2_Y = 0.003;
-float feature_2_X_len = 0.0011;
-float feature_2_Y_len = 0.0003;
-float feature_2_gap = 0.0001;
-
-
-float feature_3_X = feature_2_X+feature_2_X_len+feature_2_gap;
-float feature_3_Y = 0.003;
-float feature_3_X_len = 0.0011;
-float feature_3_Y_len = 0.0003;
-float feature_3_gap = 0.0001;
+// float feature_2_X = feature_1_X+feature_1_X_len+feature_1_gap;
+// float feature_2_Y = 0.003;
+// float feature_2_X_len = 0.0011;
+// float feature_2_Y_len = 0.0003;
+// float feature_2_gap = 0.0001;
+//
+//
+// float feature_3_X = feature_2_X+feature_2_X_len+feature_2_gap;
+// float feature_3_Y = 0.003;
+// float feature_3_X_len = 0.0011;
+// float feature_3_Y_len = 0.0003;
+// float feature_3_gap = 0.0001;
 
 bool feature_1( double x, double y, double z ){
    return((x >= feature_1_X && x <= feature_1_X+feature_1_X_len) && (y >= feature_1_Y && y <= feature_1_Y+feature_1_Y_len));
 }
 
-bool feature_2( double x, double y, double z ){
-   return((x >= feature_2_X && x <= feature_2_X+feature_2_X_len) && (y >= feature_2_Y && y <= feature_2_Y+feature_2_Y_len));
-}
-
-bool feature_3( double x, double y, double z ){
-   return((x >= feature_3_X && x <= feature_3_X+feature_3_X_len) && (y >= feature_3_Y && y <= feature_3_Y+feature_3_Y_len));
-}
+// bool feature_2( double x, double y, double z ){
+//    return((x >= feature_2_X && x <= feature_2_X+feature_2_X_len) && (y >= feature_2_Y && y <= feature_2_Y+feature_2_Y_len));
+// }
+//
+// bool feature_3( double x, double y, double z ){
+//    return((x >= feature_3_X && x <= feature_3_X+feature_3_X_len) && (y >= feature_3_Y && y <= feature_3_Y+feature_3_Y_len));
+// }
 
 void dump_particles(ParticleDataBaseCyl pdb){ //could be used to determine recombination point?
 
@@ -273,18 +273,18 @@ void simu( int *argc, char ** argv )
 
       Solid *s1 = new FuncSolid( feature_1 );
       geom.set_solid( 7, s1 );
-      Solid *s2 = new FuncSolid( feature_2 );
-      geom.set_solid( 8, s2 );
-      Solid *s3 = new FuncSolid( feature_3 );
-      geom.set_solid( 9, s3 );
+      // Solid *s2 = new FuncSolid( feature_2 );
+      // geom.set_solid( 8, s2 );
+      // Solid *s3 = new FuncSolid( feature_3 );
+      // geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
       geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  feature_1_voltage) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
-      geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
+      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  feature_2_voltage) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  feature_3_voltage) );
 
       geom.build_mesh();
 
@@ -332,7 +332,7 @@ void simu( int *argc, char ** argv )
                                               beam_x_position,0+beam_radius //point 2
                                               );
 
-        float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
+        // float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
 
         // pdb.add_2d_beam_with_energy(
         //                                       1000, //number of particles

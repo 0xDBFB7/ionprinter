@@ -22,7 +22,7 @@ using namespace std;
 #include "gtkplotter.hpp"
 #endif
 
-#define BEAM_RADIUS 0.001
+#define BEAM_RADIUS 0.0005
 #define BEAM_IR 0
 
 #define BEAM_CURRENT 0.02 //A 35
@@ -88,18 +88,18 @@ int iteration = 0;
 bool accelerate( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-   return((x >= 0.0005 && x <= 0.0005+0.0003) && (y >= 0.0015 && y <= 0.008));
+   return((x >= 0.0004 && x <= 0.0004+0.00015) && (y >= 0.002 && y <= 0.008));
   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
   // return ((x >= 0.001 && x <= 0.0013) && )
 }
 
-bool accelerate2( double x, double y, double z )
-{
-  //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-   return((x >= 0.002 && x <= 0.0023) && (y >= 0.003 && y <= 0.008));
-  // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
-  // return ((x >= 0.001 && x <= 0.0013) && )
-}
+// bool accelerate2( double x, double y, double z )
+// {
+//   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
+//    return((x >= 0.002 && x <= 0.0023) && (y >= 0.003 && y <= 0.008));
+//   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
+//   // return ((x >= 0.001 && x <= 0.0013) && )
+// }
 //
 // bool einzel_1( double x, double y, double z )
 // {
@@ -187,7 +187,7 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       // geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0000.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  60000.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  30000.0) );
       // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
 
@@ -230,8 +230,8 @@ void simu( int *argc, char ***argv )
                                               1.0, //charge per particle
                                               26, //amu 26
                                               BEAM_ENERGY, //eV
-                                              0.0,//Normal temperature
-                                              0.0,
+                                              0.1,//Normal temperature
+                                              0.1,
                                               0.0001,BEAM_IR, //point 1
                                               0.0001,BEAM_IR+BEAM_RADIUS //point 2
                                               );

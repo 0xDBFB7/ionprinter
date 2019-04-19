@@ -55,7 +55,7 @@ diode_voltage = 0.01*kV
 beam = Species(type=Potassium, charge_state=1, weight=1, name='beam')
 elec = Species(type=Electron, name='electrons')
 
-physical_beam_current = 0.000776
+physical_beam_current = 0.0005
 
 # --- Set basic beam parameters
 beam.a0       = 0.01 #not actually used - the beam profile is set by sparta.
@@ -138,7 +138,7 @@ addnewsolenoid(zi=0.00,
                ri=0.003,
                maxbz=0.01,func=getfielddata)
 
-beam_collision = LangevinCollisions(beam)
+# beam_collision = LangevinCollisions(beam)
 
 # def plotsolenoids():
 #     cc = array([10],dtype=ubyte)

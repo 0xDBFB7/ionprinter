@@ -1886,6 +1886,14 @@ I wonder if we could filter *again* after recombination - that is, deflect the p
 
 Liquid-ring pump
 
+
+
+Ah! What if we try to do scharge compensation with electrons, rather than just pure recombination?
+
+Found a paper that discusses beam neutralization directly. 
+
+Adding a "compensation" NSCCB
+
 ## Quick notes
 
 
