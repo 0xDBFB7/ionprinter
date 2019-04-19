@@ -187,7 +187,7 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       // geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0000.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  40000.0) );
+      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  60000.0) );
       // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
       // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
 
@@ -229,7 +229,7 @@ void simu( int *argc, char ***argv )
                                               0.0005/beam_area, //beam current density
                                               1.0, //charge per particle
                                               26, //amu 26
-                                              100, //eV
+                                              BEAM_ENERGY, //eV
                                               0.0,//Normal temperature
                                               0.0,
                                               0.0001,BEAM_IR, //point 1
