@@ -35,7 +35,7 @@ using namespace std;
 #define GRID_SIZE 0.00003 //m
 
 #define MESH_LENGTH 0.03
-#define MESH_WIDTH 0.01
+#define MESH_WIDTH 0.006
 
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
 #define MESH_Y_SIZE MESH_WIDTH/GRID_SIZE
@@ -60,7 +60,7 @@ float recombination_point = 0.1;
 
 int iteration = 0;
 
-#define RECOMBINATION_POINT 0.01
+#define RECOMBINATION_POINT 0.05
 // bool einzel_1( double x, double y, double z )
 // {
 //   return(x < ACCEL_ELECTRODE_X && (y >= ACCEL_ELECTRODE_HOLE_RADIUS));
@@ -88,7 +88,7 @@ int iteration = 0;
 bool accelerate( double x, double y, double z )
 {
   //return(x < 0.001 && (y >= 0.0115 || y <= 0.0095));
-   return((x >= 0.001 && x <= 0.001+0.0003) && (y >= 0.0015 && y <= 0.008));
+   return((x >= 0.0005 && x <= 0.0005+0.0003) && (y >= 0.0015 && y <= 0.008));
   // return((x >= EINZEL_1_X-EINZEL_1_THICKNESS && x <= EINZEL_1_X) && (y >= EINZEL_1_Y && y <= EINZEL_1_Y+EINZEL_1_HEIGHT));
   // return ((x >= 0.001 && x <= 0.0013) && )
 }
@@ -243,8 +243,8 @@ void simu( int *argc, char ***argv )
         //                                       100, //eV
         //                                       0.0,//Normal temperature
         //                                       0.0,
-        //                                       0.0001,BEAM_IR, //point 1
-        //                                       0.0001,BEAM_IR+BEAM_RADIUS //point 2
+        //                                       0.002,BEAM_IR+BEAM_RADIUS, //point 1
+        //                                       0.002,BEAM_IR //point 2
         //                                       );
 
 
