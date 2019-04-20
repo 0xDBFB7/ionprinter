@@ -14,8 +14,11 @@ BC[10,10] = 1
 BC[20,10] = 1
 
 convergence = 0
-while(math.fabs(convergence-potentials[10,40])):
-    convergence = potentials[10,40]
+sum = 0
+previous_potentials = 0
+while(math.fabs(sum-previous_potentials) > 0.01 or abs(previous_potentials) < 0.02):
+    previous_potentials = sum
+    sum = 0
     for x in range(1,mesh_x-1):
         for y in range(1,mesh_x-1):
             if(not BC[x,y]):
@@ -24,7 +27,8 @@ while(math.fabs(convergence-potentials[10,40])):
                                     potentials[x,y-1] + \
                                     potentials[x,y+1]
                 potentials[x,y] /= 4.0
-    print(potentials[10,40], potentials[10,40]-convergence)
-
+                sum += potentials[x,y]
+    sum = sum/(mesh_x*mesh_y)
+    print(sum)
 plt.imshow(potentials)
 plt.show()
