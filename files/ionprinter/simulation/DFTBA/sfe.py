@@ -74,6 +74,7 @@ initial_velocity = math.sqrt((2.0*initial_energy*constants.electron_volt)/(parti
 particle_velocity = [initial_velocity,0.0]
 
 beam_sim_length = 0.01
+e_sim_length = 0.05
 
 timestep = (beam_sim_length/500.0)/initial_velocity
 
@@ -89,19 +90,20 @@ history_energy = []
 # history_ax_distance = []
 
 
-w3d.xmmin = 0
-w3d.xmmax = 0.002
-w3d.ymmin = 0
-w3d.ymmax = 0.002
+w3d.xmmin = -0.02
+w3d.xmmax = 0.02
+w3d.ymmin = -0.02
+w3d.ymmax = 0.02
 w3d.zmmin = 0.0
-w3d.zmmax = 0.01
+w3d.zmmax = e_sim_length
 
-w3d.nx = w3d.ny = 100
-w3d.nz = 100
-solver = MultiGrid3D()
+w3d.nx = w3d.ny = 50
+w3d.nz = 50
+
+solver = MultiGrid2D()
 registersolver(solver)
 
-zz = ZCylinder(radius=0.01,zlower=0,zupper=0.01,voltage=10.*kV)
+zz = Box(xsize,ysize,zsize,voltage,xcent,ycent,zcent)
 installconductor(zz)
 
 package("w3d")
@@ -139,7 +141,8 @@ while(particle_position[0] < beam_sim_length):
     # electric_field_x /= len(rings)
     # electric_field_y /= len(rings)
 
-    warp_fields = getappliedfields([particle_position[Y]],[0],[particle_position[X]])
+    # warp_fields = getappliedfieldsongrid([particle_position[Y]],[0],[particle_position[X]])
+    warp_fields = getappliedfieldsongrid()
     print(warp_fields)
     electric_field_x = warp_fields[2]
     electric_field_y = warp_fields[0]

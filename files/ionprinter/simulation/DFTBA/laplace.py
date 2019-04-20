@@ -1,55 +1,30 @@
-import matplotlib
+import numpy
 import matplotlib.pyplot as plt
-import numpy as np
-import time
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib import cm
+import math
+mesh_x = 50
+mesh_y = 50
 
+potentials = numpy.zeros(shape=(mesh_x,mesh_y))
+BC = numpy.zeros(shape=(mesh_x,mesh_y))
 
-plt.ion()
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.set_zlim(-1.01, 1.01)
+potentials[10,10] = 100.0
+potentials[20,10] = -100.0
 
+BC[10,10] = 1
+BC[20,10] = 1
 
-def draw_plot(x, y, U):
-    ax.clear()
-    ax.set_zlim(-1.01, 1.01)
-    ax.plot_surface(x, y, U, rstride=1, cstride=1, cmap=cm.coolwarm,
-                    linewidth=0, antialiased=True)
-    plt.pause(1e-5)
+convergence = 0
+while(math.fabs(convergence-potentials[10,40])):
+    convergence = potentials[10,40]
+    for x in range(1,mesh_x-1):
+        for y in range(1,mesh_x-1):
+            if(not BC[x,y]):
+                potentials[x,y] = potentials[x-1,y] + \
+                                    potentials[x+1,y] + \
+                                    potentials[x,y-1] + \
+                                    potentials[x,y+1]
+                potentials[x,y] /= 4.0
+    print(potentials[10,40], potentials[10,40]-convergence)
 
-
-# Create 21x21 mesh grid
-m = 21
-mesh_range = np.arange(-1, 1, 2/(m-1))
-x, y = np.meshgrid(mesh_range, mesh_range)
-
-# Initial condition
-U = np.exp(-5 * (x**2 + y**2))
-
-draw_plot(x, y, U)
-
-n = list(range(1, m-1)) + [m-2]
-e = n
-s = [0] + list(range(0, m-2))
-w = s
-
-
-def pde_step(U):
-    """ PDE calculation at a single time step t  """
-    return (U[n, :]+U[:, e]+U[s, :]+U[:, w])/4.
-
-
-k = 5
-U_step = U
-
-for it in range(500):
-    U_step = pde_step(U_step)
-
-    # Every k steps, draw the graphics
-    if it % k == 0:
-        draw_plot(x, y, U_step)
-
-while True:
-    plt.pause(1e-5)
+plt.imshow(potentials)
+plt.show()
