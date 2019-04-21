@@ -37,13 +37,13 @@ Y=1
 beam_radius = 0.002
 
 particle_mass = 26.0*amu
-initial_energy = 1000 #eV
+initial_energy = 100 #eV
 initial_velocity = math.sqrt((2.0*initial_energy*constants.electron_volt)/(particle_mass))
 
 beam_sim_length = 0.01
 
 e_field_sim_height = 0.005
-e_field_sim_length = 0.005
+e_field_sim_length = 0.01
 
 mesh_x = 50
 mesh_y = 50
@@ -53,7 +53,7 @@ mesh_scale_y = mesh_y/e_field_sim_height
 
 timestep = (beam_sim_length/500.0)/initial_velocity
 
-beam_current = 0.001
+beam_current = 0.01
 
 beam_count = 5
 # def box(x1,y1,x2,y2):
@@ -61,8 +61,6 @@ beam_count = 5
 #         for y in range(1,mesh_x-1):
 #             if()
 #
-
-start = time.time()
 
 def create_boundary(potentials):
     '''
@@ -93,17 +91,19 @@ def jacobi_relax_laplace(potentials,BC,tolerance):
         iterations += 1
     return potentials
 
-
+start = time.time()
 
 potentials = np.zeros(shape=(mesh_x,mesh_y))
-potentials[10,10] = 1000.0
+potentials[40,10] = 1000.0
 
 BC = create_boundary(potentials)
 potentials = jacobi_relax_laplace(potentials,BC.copy(),1.0)
 
+stop = time.time()
+print("Relaxation took {} seconds".format(stop-start))
+
 diagnostic_count = 7
 #
-diagnostics = [([[]]*diagnostic_count)]*beam_count #beam count, variable
 # #variable can be
 X_POSITIONS = 0
 Y_POSITIONS = 1
@@ -113,91 +113,98 @@ E_X = 4
 E_Y = 5
 COLLISION = 6
 
-# for beam_index, current_beam_radius in enumerate(np.linspace(beam_radius,beam_radius/beam_count,beam_count)):
-current_beam_radius = beam_radius
-beam_index = 0
-beam_iteration = 0
-particle_position = [0.0,current_beam_radius]
-print(timestep)
-particle_velocity = [initial_velocity,0.0]
-
-while(particle_position[0] < beam_sim_length):
-
-    particle_position = np.add(particle_position,np.multiply(particle_velocity,timestep))
-
-    diagnostics[beam_index][X_POSITIONS].append(particle_position[0])
-    diagnostics[beam_index][Y_POSITIONS].append(particle_position[1])
-
-    diagnostics[beam_index][COLLISION].append(False)
-
-    if((particle_position[X]*mesh_scale_x)+1 < mesh_x and (particle_position[Y]*mesh_scale_y)+1 < mesh_y):#make sure that we're within the e-field region
-
-        #extract a 2x2 array around the particle
-        sub_array = potentials[int(particle_position[X]*mesh_scale_x):int(particle_position[X]*mesh_scale_x)+2,
-                                int(particle_position[Y]*mesh_scale_y):int(particle_position[Y]*mesh_scale_y)+2]
-
-        grad = np.gradient(sub_array)[0]
-        electric_field_x = grad[0][0]*mesh_scale_x #convert to volts/meter
-        electric_field_y = grad[1][0]*mesh_scale_y
-
-        #check between bottom of plot and current beam envelope
-        if(BC[int(particle_position[X]*mesh_scale_x),0:int(particle_position[Y]*mesh_scale_y)].any()):
-            diagnostics[beam_index][COLLISION][diagnostic_count] = True
-    else:
-        electric_field_x = 0
-        electric_field_y = 0
+diagnostics = []
 
 
-    initial_beam_radius = diagnostics[0][Y_POSITIONS][beam_iteration] #fails if first particle doesn't travel as far? Can't really happen
-    scharge_efield_y = scharge_efield(beam_current,particle_velocity[X],initial_beam_radius,particle_position[Y])
-    acceleration_y = ((electric_field_y + scharge_efield_y)*constants.e)/particle_mass
-    acceleration_x = (electric_field_x*constants.e)/particle_mass
+for beam_index, current_beam_radius in enumerate(np.linspace(beam_radius,beam_radius/beam_count,beam_count)):
+    beam_iteration = 0
+    particle_position = [0.0,current_beam_radius]
+    particle_velocity = [initial_velocity,0.0]
 
-    acceleration_y = 0
-    acceleration_x = 0
+    beam_diagnostics = [[],[],[],[],[],[],[]] #beam count, variable
 
-    particle_velocity[X] += acceleration_x*timestep
-    particle_velocity[Y] += acceleration_y*timestep
+    start = time.time()
+
+    while(particle_position[0] < beam_sim_length):
+
+        particle_position = np.add(particle_position,np.multiply(particle_velocity,timestep))
+        beam_diagnostics[X_POSITIONS].append(particle_position[0])
+        beam_diagnostics[Y_POSITIONS].append(particle_position[1])
+
+        beam_diagnostics[COLLISION].append(False)
+
+        if((particle_position[X]*mesh_scale_x)+1 < mesh_x and (particle_position[Y]*mesh_scale_y)+1 < mesh_y):#make sure that we're within the e-field region
+
+            #extract a 2x2 array around the particle
+            sub_array = potentials[int(particle_position[X]*mesh_scale_x):int(particle_position[X]*mesh_scale_x)+2,
+                                    int(particle_position[Y]*mesh_scale_y):int(particle_position[Y]*mesh_scale_y)+2]
+
+            grad = np.gradient(sub_array)[0]
+            electric_field_x = grad[0][0]*mesh_scale_x #convert to volts/meter
+            electric_field_y = grad[1][0]*mesh_scale_y
+
+            #check between bottom of plot and current beam envelope
+            if(BC[int(particle_position[X]*mesh_scale_x),0:int(particle_position[Y]*mesh_scale_y)].any()):
+                beam_diagnostics[COLLISION][diagnostic_count] = True
+        else:
+            electric_field_x = 0
+            electric_field_y = 0
+
+        if(beam_index):
+            #not accurate if beam velocities diverge significantly!
+            #Fixme!
+            initial_beam_radius = diagnostics[0][Y_POSITIONS][beam_iteration] #fails if first particle doesn't travel as far? Can't really happen
+        else:
+            initial_beam_radius = particle_position[Y]
+
+        scharge_efield_y = scharge_efield(beam_current,particle_velocity[X],initial_beam_radius,particle_position[Y])
+        acceleration_y = ((electric_field_y + scharge_efield_y)*constants.e)/particle_mass
+        acceleration_x = (electric_field_x*constants.e)/particle_mass
 
 
-    diagnostics[beam_index][SPACE_CHARGE].append(scharge_efield_y)
-    diagnostics[beam_index][E_X].append(electric_field_x)
-    diagnostics[beam_index][E_Y].append(electric_field_y)
+        particle_velocity[X] += acceleration_x*timestep
+        particle_velocity[Y] += acceleration_y*timestep
 
-    particle_energy = (0.5*particle_mass*(np.linalg.norm(particle_velocity)**2.0))/constants.electron_volt
-    diagnostics[beam_index][ENERGY].append(particle_energy)
+        beam_diagnostics[SPACE_CHARGE].append(scharge_efield_y)
+        beam_diagnostics[E_X].append(electric_field_x)
+        beam_diagnostics[E_Y].append(electric_field_y)
 
+        particle_energy = (0.5*particle_mass*(np.linalg.norm(particle_velocity)**2.0))/constants.electron_volt
+        beam_diagnostics[ENERGY].append(particle_energy)
 
+        beam_iteration += 1
 
-stop = time.time()
-print(stop-start)
+    diagnostics.append(beam_diagnostics)
 
-labels = (beam_index == 0)
-plt.subplot(4, 4, 1)
-plt.title('Beam envelope')
-plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][Y_POSITIONS])
-# plt.scatter(diagnostic_collision,[0.0025]*len(diagnostic_collision))
+    stop = time.time()
+    print("Single beam sim took {} seconds".format(stop-start))
 
-plt.ylim((0,0.005))
-plt.subplot(4, 4, 2)
-plt.title('Electric field')
-plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][E_X], label='Ex' if labels else "")
-plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][E_Y], label='Ey' if labels else "")
-plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][SPACE_CHARGE], label='Scharge')
-plt.legend()
+    labels = (beam_index == 0)
+    plt.subplot(4, 4, 1)
+    plt.title('Beam envelope')
+    plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][Y_POSITIONS])
+    # plt.scatter(diagnostic_collision,[0.0025]*len(diagnostic_collision))
 
-plt.subplot(4, 4, 3)
-plt.title('Particle energy')
-plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][ENERGY], label='energy')
-# plt.plot(position_history_x,history_ax_distance, label='Ax')
-plt.legend()
-plt.subplot(4, 4, 5)
-plt.title('Electrode potential')
-plt.imshow(potentials,origin='lower')
+    plt.ylim((0,0.005))
+    plt.subplot(4, 4, 2)
+    plt.title('Electric field')
+    plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][E_X], label='Ex' if labels else "")
+    plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][E_Y], label='Ey' if labels else "")
+    plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][SPACE_CHARGE], label='Scharge' if labels else "")
+    plt.legend()
+
+    plt.subplot(4, 4, 3)
+    plt.title('Particle energy')
+    plt.plot(diagnostics[beam_index][X_POSITIONS],diagnostics[beam_index][ENERGY], label='energy' if labels else "")
+    # plt.plot(position_history_x,history_ax_distance, label='Ax')
+    plt.legend()
+    plt.subplot(4, 4, 5)
+    plt.title('Electrode potential')
+    plt.imshow(potentials,origin='lower')
 
     # plt.scatter(position_history_x,position_history_y)
     # ax = fig.add_subplot(224, projection='3d')
     # plt.show()
-plt.pause(0.05)
+    plt.pause(0.05)
 
 plt.show()
