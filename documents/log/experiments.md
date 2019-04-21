@@ -22,5 +22,5 @@ I attempted to use a ring approximation method to simulate beam space charge. Ho
 
 On a whim, I tried using a simple analytic space charge function for the beam profile. This worked very well, providing a good fit to IBSimu solutions in a fraction of the time. 
 
-Determining the electric field 
+Warp was used to determining the electrode field; however, this was slow and 	 
 
