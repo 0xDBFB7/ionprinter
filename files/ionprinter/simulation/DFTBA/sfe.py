@@ -15,6 +15,11 @@ import time
 from scipy import special
 from scipy.stats import maxwell
 from scipy.interpolate import griddata
+from scipy import ndimage
+from scipy.signal import convolve2d
+from scipy.ndimage import convolve
+import findiff
+
 
 def scharge_efield(beam_current,beam_velocity,beam_radius,sample_radius=None):
     """Calculate the electric field at the edge of a beam
@@ -39,7 +44,7 @@ RING_X = 0
 RING_RADIUS = 1
 
 
-beam_radius = 0.0025
+beam_radius = 0.002
 particle_position = [0.0,beam_radius]
 
 particle_mass = 26.0*amu
@@ -57,20 +62,21 @@ mesh_x = 50
 mesh_y = 50
 
 potentials = np.zeros(shape=(mesh_x,mesh_y))
-BC = np.zeros(shape=(mesh_x,mesh_y))
+BC = np.zeros(shape=(mesh_x,mesh_y), dtype=bool)
 
-potentials[10,10] = 60000.0
+potentials[10,10] = 1000.0
 # potentials[20,10] = -60000.0
 
 mesh_scale_x = mesh_x/e_field_sim_length
 mesh_scale_y = mesh_y/e_field_sim_height
 
-BC[10,10] = 1
-# BC[20,10] = 1
+BC[10,10] = True
+
+BC[:,0] = BC[:,-1] = BC[0,:] = BC[-1,:] = True #thanks uhoh! https://physics.stackexchange.com/a/363868/101785
 
 timestep = (beam_sim_length/500.0)/initial_velocity
 
-beam_current = 0.001
+beam_current = 0.01
 
 position_history_x = []
 position_history_y = []
@@ -79,26 +85,29 @@ history_electric_field_x = []
 history_electric_field_y = []
 history_energy = []
 
+# def box(x1,y1,x2,y2):
+#     for x in range(1,mesh_x-1):
+#         for y in range(1,mesh_x-1):
+#             if()
+#
+
+start = time.time()
+
+BC_inv = np.invert(BC)
+kernel = 0.25*np.array([[0, 1, 0], [1, 0, 1], [0, 1, 0]], dtype=float)
 convergence = 0
-sum = 0
-previous_potentials = 0
-for i in range(0,1000):
-    previous_potentials = sum
-    sum = 0
-    for x in range(1,mesh_x-1):
-        for y in range(1,mesh_x-1):
-            if(not BC[x,y]):
-                potentials[x,y] = potentials[x-1,y] + \
-                                    potentials[x+1,y] + \
-                                    potentials[x,y-1] + \
-                                    potentials[x,y+1]
-                potentials[x,y] /= 4.0
-                sum += potentials[x,y]
-    sum = sum/(mesh_x*mesh_y)
+iterations = 0
+while(True):
+    potentials[BC_inv] = convolve(potentials, kernel)[BC_inv]
+    new_convergence = np.sum(np.absolute(potentials))
+    if(math.fabs(convergence-new_convergence) < 1.0):
+        break
+    convergence = new_convergence
+    iterations += 1
+print(iterations)
 
-radius_history = []
+for beam_index in range(0,5):
 
-for beam_index in range(0,10):
     while(particle_position[0] < beam_sim_length):
 
         particle_position = np.add(particle_position,np.multiply(particle_velocity,timestep))
@@ -142,7 +151,8 @@ for beam_index in range(0,10):
         particle_energy = (0.5*particle_mass*(np.linalg.norm(particle_velocity)**2.0))/constants.electron_volt
         history_energy.append(particle_energy)
 
-
+    stop = time.time()
+    print(stop-start)
 
     plt.subplot(4, 4, 1)
     plt.title('Beam envelope')
