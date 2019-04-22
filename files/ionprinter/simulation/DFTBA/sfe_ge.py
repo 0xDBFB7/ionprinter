@@ -106,48 +106,19 @@ einzel_2_voltage = 0
 einzel_3_voltage = 0
 
 drift_distance = 0.3
-#
-# def beam_waist(diagnostics):
-#     '''
-#     Find the slice where the vertical velocity is lowest,
-#     and make sure were recombination to occur the beam would
-#     '''
-#
-#     for beam in diagnostics:
-#         beamval = True
-#         for idx,Vy in enumerate(beam[V_Y]):
-#             required_drift_velocity = -beam[Y_POSITIONS][idx]/drift_distance
-#             # print(required_drift_velocity)
-#             if(beam[V_Y][idx] < required_drift_velocity and beam[V_X][idx] > 0):
-#                 beamval = True
-#                 break
-#         if(not beamval):
-#             return False
-#
-#     return True
 
 
 def beam_waist(diagnostics):
     '''
-    Find the slice where the vertical velocity is lowest,
-    and make sure were recombination to occur the beam would
+
     '''
 
-    # min_indexes = np.argwhere(diagnostics[0][V_Y] < )
-    # for beam in diagnostics:
+    idx = np.argmin(diagnostics[0][V_Y])
+    Vy = 0
+    for beam in diagnostics:
+        Vy += math.fabs(beam[Y_POSITIONS][idx]/drift_distance + beam[V_Y][idx])
 
-    for idx,Vy in enumerate(diagnostics[0][V_Y]):
-        required_drift_velocity = -diagnostics[0][Y_POSITIONS][idx]/drift_distance
-        if(diagnostics[0][V_Y][idx] < required_drift_velocity and diagnostics[0][V_X][idx] > 0):
-            beamval = True
-            for beam in diagnostics:
-                if(idx >= len(beam[V_Y]) or not (beam[V_Y][idx] < (-beam[Y_POSITIONS][idx]/drift_distance) and beam[V_X][idx] > 0)):
-                    beamval = False
-                    break
-            if(beamval):
-                return True
-
-    return False
+    return Vy
 
 def velocity_always_positive(diagnostics):
     for beam in diagnostics:
@@ -155,20 +126,19 @@ def velocity_always_positive(diagnostics):
             return False
     return True
 
-def max_final_energy(diagnostics):
+def final_energy(diagnostics):
     # minimum_energy = 0
     # minimum_energy
     # for beam in diagnostics:
     #     for idx,Vy in enumerate(beam[V_Y]):
     #
-
+    energies = []
     for beam in diagnostics:
+        energies.append(np.argmin(beam[ENERGY][np.argmin(beam[V_Y])]))
 
-        if(np.argmin(beam[ENERGY][np.argmin(beam[V_Y])]) > 200):
-            return False
+    return np.sum(energies)
 
-    return True
-
+def fitness
 
 root_iteration = 0
 
