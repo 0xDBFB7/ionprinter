@@ -36,9 +36,9 @@ def scharge_efield(beam_current,beam_velocity,beam_radius,sample_radius=None):
 X=0
 Y=1
 
-beam_radius = 0.003
+beam_radius = 0.0005
 
-particle_mass = 0.005*amu#26.0*amu
+particle_mass = 26*amu#26.0*amu
 initial_energy = 100 #eV
 initial_velocity = math.sqrt((2.0*initial_energy*constants.electron_volt)/(particle_mass))
 
@@ -106,48 +106,20 @@ einzel_2_voltage = 0
 einzel_3_voltage = 0
 
 drift_distance = 0.3
-#
-# def beam_waist(diagnostics):
-#     '''
-#     Find the slice where the vertical velocity is lowest,
-#     and make sure were recombination to occur the beam would
-#     '''
-#
-#     for beam in diagnostics:
-#         beamval = True
-#         for idx,Vy in enumerate(beam[V_Y]):
-#             required_drift_velocity = -beam[Y_POSITIONS][idx]/drift_distance
-#             # print(required_drift_velocity)
-#             if(beam[V_Y][idx] < required_drift_velocity and beam[V_X][idx] > 0):
-#                 beamval = True
-#                 break
-#         if(not beamval):
-#             return False
-#
-#     return True
 
 
 def beam_waist(diagnostics):
-    '''
-    Find the slice where the vertical velocity is lowest,
-    and make sure were recombination to occur the beam would
-    '''
+    shortest = len(diagnostics[0][V_Y])
+    for beam in diagnostics:
+        if(len(beam[V_Y]) < shortest):
+            shortest = len(beam[V_Y])
 
-    # min_indexes = np.argwhere(diagnostics[0][V_Y] < )
-    # for beam in diagnostics:
+    idx = np.argmin(diagnostics[0][V_Y][0:shortest])
+    Vy = 0
+    for beam in diagnostics:
+        Vy += math.fabs(beam[Y_POSITIONS][idx]/drift_distance + beam[V_Y][idx])
 
-    for idx,Vy in enumerate(diagnostics[0][V_Y]):
-        required_drift_velocity = -diagnostics[0][Y_POSITIONS][idx]/drift_distance
-        if(diagnostics[0][V_Y][idx] < required_drift_velocity and diagnostics[0][V_X][idx] > 0):
-            beamval = True
-            for beam in diagnostics:
-                if(idx >= len(beam[V_Y]) or not (beam[V_Y][idx] < (-beam[Y_POSITIONS][idx]/drift_distance) and beam[V_X][idx] > 0)):
-                    beamval = False
-                    break
-            if(beamval):
-                return True
-
-    return False
+    return Vy
 
 def velocity_always_positive(diagnostics):
     for beam in diagnostics:
@@ -155,42 +127,41 @@ def velocity_always_positive(diagnostics):
             return False
     return True
 
-def max_final_energy(diagnostics):
+def final_energy(diagnostics):
     # minimum_energy = 0
     # minimum_energy
     # for beam in diagnostics:
     #     for idx,Vy in enumerate(beam[V_Y]):
     #
-
+    energies = []
     for beam in diagnostics:
+        energies.append(np.argmin(beam[ENERGY][np.argmin(beam[V_Y])]))
 
-        if(np.argmin(beam[ENERGY][np.argmin(beam[V_Y])]) > 200):
-            return False
-
-    return True
+    return np.sum(energies)
 
 
 root_iteration = 0
 
 # for beam_current in np.linspace(0.001,0.02,10):
-graph = 1
+graph = 0
 
 while(True):
     start = time.time()
 
     potentials = np.zeros(shape=(mesh_x,mesh_y))
 
-    # beam_radius = random.uniform(0.002, 0.006)
+    beam_radius = random.uniform(0.0005, 0.001)
 
-    # y = random.randint(int(beam_radius*mesh_scale_y),mesh_y)
-    # x_initial = random.randint(0,10)
-    # length = random.randint(1,20)
-    # height = random.randint(1,10)
-    # gap1 = random.randint(1,5)
-    # gap2 = random.randint(1,20)
-    # v1 = random.randint(-40000,40000)
-    # v2 = random.randint(-40000,40000)
-    # v3 = random.randint(-40000,40000)
+    y = random.randint(int(beam_radius*mesh_scale_y),mesh_y)
+    x_initial = random.randint(0,10)
+    length = random.randint(1,20)
+    height = random.randint(1,10)
+    gap1 = random.randint(1,5)
+    gap2 = random.randint(1,20)
+    v1 = random.randint(-40000,40000)
+    v2 = random.randint(-40000,40000)
+    v3 = random.randint(-40000,40000)
+
     # 0.0034333921296351095 20 6 13 5 4 12 -27300 24767 -31576
     # beam_radius = 0.00343339212
     # y=20
@@ -214,18 +185,18 @@ while(True):
     #     v2 = float(sys.argv[9])
     #     v3 = float(sys.argv[10])
     #     graph=1
-    # print(beam_radius,y,x_initial,length,height,gap1,gap2,v1,v2,v3)
-    # potentials[y:y+height,x_initial:x_initial+length] = v1
-    # potentials[y:y+height,x_initial+length+gap1:x_initial+(length*2)+gap1] = v2
-    # potentials[y:y+height,x_initial+(length*2)+(gap1+gap2):x_initial+(length*3)+(gap1+gap2)] = v3
+    print(beam_radius,y,x_initial,length,height,gap1,gap2,v1,v2,v3)
+    potentials[y:y+height,x_initial:x_initial+length] = v1
+    potentials[y:y+height,x_initial+length+gap1:x_initial+(length*2)+gap1] = v2
+    potentials[y:y+height,x_initial+(length*2)+(gap1+gap2):x_initial+(length*3)+(gap1+gap2)] = v3
 
-    potentials[10:11,0:1] = 200
-
-    potentials[10:11,3:4] = 1
-
-    potentials[10:11,7:8] = 1
-
-    potentials[10:11,8:9] = 100
+    # potentials[10:11,0:1] = 10000
+    #
+    # potentials[10:11,3:4] = 1
+    #
+    # potentials[10:11,7:8] = 1
+    #
+    # potentials[10:11,8:9] = 1000
 
     BC = create_boundary(potentials)
     potentials = jacobi_relax_laplace(potentials,BC.copy(),1.0)
@@ -360,12 +331,12 @@ while(True):
             # plt.show()
             plt.pause(0.05)
 
-    if(beam_waist(diagnostics) and max_final_energy(diagnostics) and velocity_always_positive(diagnostics) and not collision):
+    if(not collision and beam_waist(diagnostics) < 100 and final_energy(diagnostics) < 100 and velocity_always_positive(diagnostics)):
         print("Success!")
         pickle.dump(potentials,root_iteration + ".dump")
         break
     print(root_iteration)
     root_iteration += 1
 
-    if(graph):
-        plt.show()
+    # if(graph):
+    #     plt.show()

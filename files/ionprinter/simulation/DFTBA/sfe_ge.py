@@ -18,10 +18,13 @@ from scipy.interpolate import griddata
 from scipy import ndimage
 from scipy.signal import convolve2d
 from scipy.ndimage import convolve
-import findiff
 from time import sleep
 import pickle
 import random
+
+from deap import base
+from deap import creator
+from deap import tools
 
 def scharge_efield(beam_current,beam_velocity,beam_radius,sample_radius=None):
     """Calculate the electric field at the edge of a beam
@@ -109,10 +112,6 @@ drift_distance = 0.3
 
 
 def beam_waist(diagnostics):
-    '''
-
-    '''
-
     idx = np.argmin(diagnostics[0][V_Y])
     Vy = 0
     for beam in diagnostics:
@@ -138,7 +137,8 @@ def final_energy(diagnostics):
 
     return np.sum(energies)
 
-def fitness
+def evaluate():
+
 
 root_iteration = 0
 

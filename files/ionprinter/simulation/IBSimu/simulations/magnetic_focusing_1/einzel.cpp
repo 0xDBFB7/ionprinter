@@ -172,16 +172,16 @@ void simu( int *argc, char ***argv )
       //
       // Solid *s1 = new FuncSolid( accelerate );
       // geom.set_solid( 7, s1 );
-
+      //
       // Solid *s2 = new FuncSolid( accelerate2 );
       // geom.set_solid( 8, s2 );
-
-      Solid *s1 = new FuncSolid( einzel_1 );
-      geom.set_solid( 7, s1 );
-      Solid *s2 = new FuncSolid( einzel_2 );
-      geom.set_solid( 8, s2 );
-      Solid *s3 = new FuncSolid( einzel_3 );
-      geom.set_solid( 9, s3 );
+      // 
+      // Solid *s1 = new FuncSolid( einzel_1 );
+      // geom.set_solid( 7, s1 );
+      // Solid *s2 = new FuncSolid( einzel_2 );
+      // geom.set_solid( 8, s2 );
+      // Solid *s3 = new FuncSolid( einzel_3 );
+      // geom.set_solid( 9, s3 );
 
       geom.set_boundary( 1, Bound(BOUND_NEUMANN,     0.0 ) );
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );

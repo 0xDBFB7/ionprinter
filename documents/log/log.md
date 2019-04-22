@@ -1925,13 +1925,17 @@ Fascinating and completely against all my analysis!
 
 
 
+I just can't get it to focus. Somehow the whole thing is invariant to beam current?
 
 
 
+
+
+I'm not physics-ing correctly. Sure, I've got this laplace sim and everything, but there are things going on here that I don't quite understand - base essentials like where the energy is coming from and how the potential fields work.. 
 
 ## Quick notes
 
-
+printed he-ne laser - very simple
 
   O. Tange (2011): GNU Parallel - The Command-Line Power Tool,
   ;login: The USENIX Magazine, February 2011:42-47.

@@ -68,7 +68,7 @@ using namespace std;
 
 #define GRID_SIZE 0.00005 //m
 
-#define MESH_X 0.004
+#define MESH_X 0.01
 #define MESH_Y 0.004
 
 #define IBSIMU_PLOT_RESOLUTION 125000
@@ -175,10 +175,13 @@ void simu( int *argc, char ** argv )
 
     // Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
     Fl_Value_Slider *feature_voltage_slider = new Fl_Value_Slider(30,30,60,400, "Selected feature \nvoltage");
-    feature_voltage_slider->bounds(-5000.0,5000.0);
+    feature_voltage_slider->bounds(-20000.0,20000.0);
     Fl_Value_Slider *beam_radius_slider = new Fl_Value_Slider(400,30,60,400, "Beam radius (m)");
     beam_radius_slider->bounds(0.0001,0.004);
     beam_radius_slider->step(0.0001);
+    Fl_Value_Slider *x_position_slider = new Fl_Value_Slider(600,30,60,400, "X position (m)");
+    x_position_slider->bounds(0.0,0.002);
+    x_position_slider->step(0.0001);
     Fl_Simple_Counter *feature_counter = new Fl_Simple_Counter(200,30,100,60, "Selected feature");
     feature_counter->bounds(0,100.0);
     feature_counter->step(1);
@@ -188,7 +191,7 @@ void simu( int *argc, char ** argv )
     // Fl_Float_Input *beam_current_input = new Fl_Float_Input(100,600,100,100);
     Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_Y*2-20,
                                                                                 BUTTON_WIDTH*2,BUTTON_Y*2, "Heavy beam current (amps)");
-    beam_current_input->step(0.0001,0.001);
+    beam_current_input->step(0.00001,0.001);
     // Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
     // avg_energy->value(100.0);
 
@@ -217,6 +220,8 @@ void simu( int *argc, char ** argv )
           currently_selected_solid = feature_counter->value();
           feature_voltage_slider->scrollvalue(feature_voltages[currently_selected_solid],10,-5000.0,10000);
         }
+        beam_x_position = x_position_slider->value();
+        beam_radius = beam_radius_slider->value();
       }
 
       // Magick::InitializeMagick(*argv);
@@ -517,10 +522,10 @@ void simu( int *argc, char ** argv )
     // pls->env(0.0, MESH_X, 0.0, NUMBER_OF_PARTICLES, 0, 0);
     pls->lab( "x position (m)", "m/s","Max radial velocity");
 
-
-
-    pls->Free2dGrid(particle_x_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
-    pls->Free2dGrid(particle_y_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
+    //
+    //
+    // pls->Free2dGrid(particle_x_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
+    // pls->Free2dGrid(particle_y_velocities, ((MESH_X-GRID_SIZE)/DIAGNOSTIC_X_INTERVAL), NUMBER_OF_PARTICLES );
 
     plend();
     // delete[] x;

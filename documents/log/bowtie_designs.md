@@ -120,7 +120,7 @@ O] ----- ----- [O   - precise C-L-defined gap for ionization, +100v or so
 	   | |		    - bowtie nozzle extension
  ======_O_======
  
- Entire structure can be heated to prevent deposition and avoid 
+ Entire structure can be heated to prevent deposition
 ```
 
 ```
@@ -183,6 +183,24 @@ This also allows the recombination beam energy to be varied independently, as th
 / | \
 
 An axial field may also aid in recombination.
+```
+
+
+
+```
+Low-energy design 1
+
+After many months were spent attempting to design a focusing lens capable of 
+
+Each bowtie is ~1mm in radius and carries 0.04 milliamps of beam current. Somewhere around 250,000 bowties will be required.
+
+|   |   |   |   - focus and 
+--o---o---o--
+
+
+The bowties are arranged in concentric rings. Each ring has a different focus voltage applied passively through a resistor divider, a'la PMT electrodes.
+
+
 ```
 
 
