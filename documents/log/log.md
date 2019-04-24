@@ -1931,7 +1931,11 @@ I just can't get it to focus. Somehow the whole thing is invariant to beam curre
 
 
 
-I'm not physics-ing correctly. Sure, I've got this laplace sim and everything, but there are things going on here that I don't quite understand - base essentials like where the energy is coming from and how the potential fields work.. 
+I'm not physics-ing correctly. Sure, I've got this laplace sim and everything, but there are things going on here that I don't quite understand - base essentials like where precisely the extraction energy is coming from. Fucking idiot. Anyways, I'm going to build it now.
+
+The best I've gotten so far is this:
+
+ 
 
 ## Quick notes
 

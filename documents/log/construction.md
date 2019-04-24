@@ -130,3 +130,56 @@ Planning on swapping out the buna-n gaskets for viton. Very expensive, but whate
 
 Planning on using a few CER-4 standoffs from digikey for the bowtie. These are made of STEATITE C220, with a maximum temperature of 1700c.
 
+Milling graphite; used MeshCAM to generate the features. Went quite well, most broke but one survived. needed G64P.001 to prevent linuxcnc from rounding corners.
+
+Assembled the bowtie module - I'm not actually sure why I'm doing all this, but it went really well in any case.
+
+<hr>
+
+#### E-beam test 1:
+
+4.7 milliamps of e-beam current was drawn with a white-hot 0.1mm tungsten hairpin and a nickel flag at 20v bias. Initial tests with 100v bias were unsuccessful; however, it is believed that this was due to reversed polarity.  
+
+Pressures were stable at 1x10^-5 mbar. 
+
+Some tungsten was deposited on surfaces on the chamber; it is assumed that this is due to the unregulated temperature of the filament. As expected, the emission peaked at a certain input power and did not increase further with additional current. The current was increased regardless, and the filament vaporized in a satisfactory manner.
+
+An aluminum baffle was used to prevent debris ingress into the pump.
+
+The pump was accidentally dumped to atmosphere while at operating speed; this does not appear to have caused any damage.
+
+It was expected that beam alignment could be performed manually, by viewing the ion trail left by the electron beam; however, the thermionic cathode produced too much light for this to be possible.
+
+<hr>
+
+A precise reading of the bowtie temperature is now required in order to set the vapor pressure. The resistance of the graphite is an excellent indicator, but the temperature forms a gradient between the center and the mounting points. This gradient has been simulated via ElmerFEM, but ultimately depends on the ceramic interface thermal conductivity etc. 
+
+The temperature could also be inferred backwards from the beam current, or by measuring light output. 
+
+A thermistor could be used to determine the mount temperature in-situ for a series of power levels, but the thermal mass of a thermistor is likely greater than that of the mount.
+
+Some thermocouple wire was cut to 
+
+<hr>
+
+The precise secondary electron energy was at this point unknown. A crude momentum analysis showed a beam deflection angle of some 20 degrees - but this effect is significantly affected by secondary electron energy. 
+
+It was decided that a SPARTA simulation would be used to determine the beam deflection; however, DSMC VSS and VHS parameters are required for an accurate picture, and can only be found in 
+
+**(Bird94)** G. A. Bird, Molecular Gas Dynamics and the Direct Simulation of Gas Flows, Clarendon Press, Oxford (1994).
+
+A copy of Bird94 was not available online (save for a few pages on Google Books), and a hard copy would cost more than this entire vacuum system. Substituting 
+
+<hr>
+
+#### E-beam test 2:
+
+A tungsten filament was produced by wrapping 5 0.1mm tungsten wires around each other. The filament was visually aligned with the bowtie.
+
+This filament consumed a whopping 44 watts - while emitting the same 4 milliamps of beam current. Certainly a far cry from the 17w/A figure described in the literature.
+
+As with the last test, this filament saturated my high-voltage power supply. A 31v bias was used instead.
+
+The base pressure attained was significantly higher than in the previous test; this was attributed to the increased clutter within the chamber. Some flux had also splattered.
+
+Very curiously

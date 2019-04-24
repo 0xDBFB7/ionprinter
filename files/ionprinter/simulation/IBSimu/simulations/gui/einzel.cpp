@@ -290,7 +290,7 @@ void simu( int *argc, char ** argv )
                                               NUMBER_OF_PARTICLES, //number of particles
                                               beam_current/beam_area, //beam current density
                                               1.0, //charge per particle
-                                              29, //amu
+                                              0.000548, //amu
                                               beam_input_energy, //eV
                                               0.1,//Normal temperature
                                               0.1,
