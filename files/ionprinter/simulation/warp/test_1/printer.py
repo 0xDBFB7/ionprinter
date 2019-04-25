@@ -55,7 +55,7 @@ diode_voltage = 0.01*kV
 beam = Species(type=Aluminium, charge_state=1, weight=1, name='beam')
 elec = Species(type=Electron, charge_state=1, weight=1, name='electrons')
 
-physical_beam_current = 0.0005
+physical_beam_current = 0.001
 
 # --- Set basic beam parameters
 beam.a0       = 0.01 #not actually used - the beam profile is set by sparta.

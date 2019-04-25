@@ -172,14 +172,35 @@ A copy of Bird94 was not available online (save for a few pages on Google Books)
 
 <hr>
 
-#### E-beam test 2:
+#### E-beam test 2
 
 A tungsten filament was produced by wrapping 5 0.1mm tungsten wires around each other. The filament was visually aligned with the bowtie.
 
 This filament consumed a whopping 44 watts - while emitting the same 4 milliamps of beam current. Certainly a far cry from the 17w/A figure described in the literature.
 
-As with the last test, this filament saturated my high-voltage power supply. A 31v bias was used instead.
+As with the last test, this filament saturated the high-voltage power supply. A 31v bias was used instead.
 
-The base pressure attained was significantly higher than in the previous test; this was attributed to the increased clutter within the chamber. Some flux had also splattered.
+The base pressure attained was significantly higher (2x10T-5 millibar) than in the previous test; this was attributed to the increased clutter within the chamber. Some flux had also splattered.
 
-Very curiously
+The charge on the bowtie was measured to determine focusing. Very curiously, the charge increased when the e-beam was activated, but dropped rapidly. This may be an artifact of the relative nature of the measurement, or a symptom of a greater electron-deflection problem.
+
+<hr>
+
+#### ElmerFEM simulations of bowtie prototype 1
+
+Now 
+
+The .sif files had been overwritten somehow - reverting to a previous commit fixed the problem.
+
+ElmerFEM requires a .step input. This was meshed with Max h. 0.025 and Min h. 0.001. The enthalpy heat flux was set to zero. Convergence was not well behaved.
+
+#### Bowtie test 1, 2 and 3
+
+The chamber was pumped down and 10 A was applied across the bowtie. The bowtie glowed a dim red, but not nearly sufficient for deposition. The resistance of the entire assembly was only approximately 0.25 ohms, a significant discrepancy from the predicted 4 ohms. 
+
+The "300-1200v" HV e-beam bias power supply was supplied with 12v, and output 2 kilovolts. A replacement NCH6100HV was purchased. 
+
+The bowtie was connected to the 20v-45A supply, and 20a was briefly supplied. Aluminum was readily deposited, and no degradation of the bowtie nozzle was found. The deposited coating was not 
+
+One of the bowtie connection wires melted. 
+
