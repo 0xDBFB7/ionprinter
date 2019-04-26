@@ -298,6 +298,18 @@ void simu( int *argc, char ** argv )
                                               beam_x_position,0+beam_radius //point 2
                                               );
 
+        // pdb.add_2d_beam_with_energy(
+        //                                       NUMBER_OF_PARTICLES, //number of particles
+        //                                       beam_current/beam_area, //beam current density
+        //                                       1.0, //charge per particle
+        //                                       0.000548, //amu
+        //                                       beam_input_energy, //eV
+        //                                       0.1,//Normal temperature
+        //                                       0.1,
+        //                                       beam_x_position,0+beam_radius, //point 1
+        //                                       beam_x_position,0 //point 2
+        //                                       );
+
         float ion_curtain_area = 2*M_PI*ION_CURTAIN_WIRE_RADIUS*ION_CURTAIN_WIRE_WIDTH;
 
         // pdb.add_2d_beam_with_energy(

@@ -56,9 +56,57 @@ def jacobi_relax_laplace(potentials,BC,tolerance):
     iterations = 0
     while(True):
         potentials[BC_inv] = convolve(potentials, kernel)[BC_inv]
-        new_convergence = np.sum(np.absolute(potentials)) #
+        new_convergence = np.sum(np.absolute(potentials)) #could be sped up by only checking convergence every 100 or so operations
         if(math.fabs(convergence-new_convergence) < tolerance):
             break
         convergence = new_convergence
         iterations += 1
     return potentials
+
+mesh_x = 20
+mesh_y = 20
+
+desired_potentials = np.zeros(shape=(mesh_x,mesh_y))
+
+desired_potentials[3,3] = 10
+desired_potentials[7,7] = -10
+
+desired_BC = np.zeros_like(desired_potentials, dtype=bool)
+desired_BC[3,3] = True
+desired_potentials[7,7] = True
+
+#total potential difference integral
+# while(True):
+test_potential = 30
+
+#start with coarse mesh, then refine gradually?
+
+found_potentials = []
+
+lowest = 0
+lowest_point = [0,0]
+for x in range(0,mesh_x):
+    for y in range(0,mesh_y):
+        if(desired_BC[y,x]):
+            continue
+        potentials = np.zeros(shape=(mesh_x,mesh_y))
+        potentials[y,x] = test_potential
+        BC = create_boundary(potentials)
+        jacobi_relax_laplace(potentials,BC,5)
+
+        # sub_array = potentials[int(particle_position[Y]*mesh_scale_y):int(particle_position[Y]*mesh_scale_y)+2,
+        #                         int(particle_position[X]*mesh_scale_x):int(particle_position[X]*mesh_scale_x)+2]
+        #
+        # grad = np.gradient(sub_array)[0]
+        # electric_field_x = grad[0][0]*mesh_scale_x #convert to volts/meter
+        # electric_field_y = grad[1][0]*mesh_scale_y
+
+        difference = np.sum(np.absolute(np.subtract(potentials[desired_BC],desired_potentials[desired_BC])))
+        if(not lowest or difference < lowest):
+            lowest = difference
+            lowest_point = [y,x]
+        # plt.clf()
+        # plt.imshow(potentials,origin='lower')
+        # plt.pause(0.05)
+print(lowest)
+print(lowest_point)

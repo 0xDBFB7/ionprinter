@@ -204,3 +204,7 @@ The bowtie was connected to the 20v-45A supply, and 20a was briefly supplied. Al
 
 One of the bowtie connection wires melted. 
 
+#### IBSimu simulations of entire column 
+
+A 3 by 3 by 6 mm 3D simulation was created. Unfortunately, an accurate measurement of space charge requires about 10 grid points across the beam - a mesh of 0.00003mm. This is not reasonable to compute in a short period of time. A mesh of 0.0001 
+

@@ -32,11 +32,11 @@ using namespace std;
 #define ION_CURTAIN_WIRE_RADIUS 0.001
 #define ION_CURTAIN_WIRE_WIDTH 0.0005
 
-#define GRID_SIZE 0.00003 //m
+#define GRID_SIZE 0.00005 //m
 
-#define MESH_LENGTH 0.03
-#define MESH_WIDTH 0.006
-
+#define MESH_X 0.004
+#define MESH_Y 0.002
+#define MESH_Z
 #define MESH_X_SIZE MESH_LENGTH/GRID_SIZE
 #define MESH_Y_SIZE MESH_WIDTH/GRID_SIZE
 
@@ -168,14 +168,14 @@ void simu( int *argc, char ***argv )
 {
     while(iteration < 1){
 
-      Geometry geom( MODE_CYL, Int3D(MESH_LENGTH/GRID_SIZE,MESH_WIDTH/GRID_SIZE,1), Vec3D(0,0,0), GRID_SIZE );
+      Geometry geom( MODE_3D, Int3D(MESH_X/GRID_SIZE,MESH_Y/GRID_SIZE,MESH_Z/GRID_SIZE), Vec3D(0,0,0), GRID_SIZE );
       //
       // Solid *s1 = new FuncSolid( accelerate );
       // geom.set_solid( 7, s1 );
       //
       // Solid *s2 = new FuncSolid( accelerate2 );
       // geom.set_solid( 8, s2 );
-      // 
+      //
       // Solid *s1 = new FuncSolid( einzel_1 );
       // geom.set_solid( 7, s1 );
       // Solid *s2 = new FuncSolid( einzel_2 );
@@ -187,9 +187,9 @@ void simu( int *argc, char ***argv )
       geom.set_boundary( 2, Bound(BOUND_DIRICHLET,  0.0) );
       geom.set_boundary( 3, Bound(BOUND_NEUMANN,     0.0) );
       // geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0000.0) );
-      geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  1000.0) );
-      geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
-      geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
+      // geom.set_boundary( 7, Bound(BOUND_DIRICHLET,  1000.0) );
+      // geom.set_boundary( 8, Bound(BOUND_DIRICHLET,  1000.0) );
+      // geom.set_boundary( 9, Bound(BOUND_DIRICHLET,  000.0) );
 
       geom.build_mesh();
 
@@ -205,7 +205,7 @@ void simu( int *argc, char ***argv )
         FIELD_EXTRAPOLATE, FIELD_EXTRAPOLATE };
       efield.set_extrapolation( efldextrpl );
 
-      ParticleDataBaseCyl pdb( geom );
+      ParticleDataBase3D pdb( geom );
       pdb.set_thread_count(10);
       bool pmirror[6] = { false, false, false, false, false, false };
       pdb.set_mirror( pmirror );
@@ -224,7 +224,7 @@ void simu( int *argc, char ***argv )
         float beam_area = (M_PI*pow(BEAM_IR+BEAM_RADIUS,2))-(M_PI*pow(BEAM_IR,2));
         printf("Beam_area: %f",beam_area);
 
-        pdb.add_2d_beam_with_energy(
+        pdb.add_cylindrical_beam_with_energy(
                                               1000, //number of particles
                                               0.0005/beam_area, //beam current density
                                               1.0, //charge per particle
