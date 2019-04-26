@@ -16,6 +16,8 @@ using namespace std::chrono;
 #define MESH_SCALE_X 0.0001 //0.00
 #define MESH_SCALE_Y 0.0001
 
+#define X 0
+#define Y 1
 
 // double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
 //     //Calculate the electric field at the edge of a beam
@@ -107,23 +109,64 @@ void clear_screen(){
   printf("\033[2J\033[1;1H");
 }
 
-int main(){
-
-  float desired_gradients[E_MESH_X][E_MESH_Y] = {};
-  bool desired_gradient_positions[E_MESH_X][E_MESH_Y] = {};
-
-  float potentials[E_MESH_X][E_MESH_Y] = {};
-  bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
-  // potentials[25][25] = 100.0;
-  // potentials[40][40] = 100.0;
-  boundary_conditions[25][25] = 1;
-  // boundary_conditions[40][40] = 1;
-
-  relax_laplace_potentials(potentials,boundary_conditions,0.1);
-
-  for(int y = 0; y < E_MESH_Y; y++){
-    x_electric_field_at_position(potentials,25,y)
-    y_electric_field_at_position(potentials,25,y)
+float gradient_difference(float desired_gradients[2][E_MESH_X][E_MESH_Y], bool desired_gradient_positions[E_MESH_X][E_MESH_Y], float potentials[E_MESH_X][E_MESH_Y]){
+  float sum = 0;
+  for(int y = 1; y < E_MESH_Y-1; y++){
+    for(int x = 1; x < E_MESH_X-1; x++){
+      if(desired_gradient_positions[x][y]){
+        sum += std::abs(desired_gradients[X][x][y]-x_electric_field_at_position(potentials,x,y));
+        sum += std::abs(desired_gradients[Y][x][y]-y_electric_field_at_position(potentials,x,y));
+      }
+    }
   }
-  display_potentials(potentials);
+  return sum;
+}
+
+
+
+int main(){
+  float desired_gradients[2][E_MESH_X][E_MESH_Y] = {};
+  desired_gradients[X][25][25] = 1000;
+  desired_gradients[Y][25][25] = -1000;
+
+  bool desired_gradient_positions[E_MESH_X][E_MESH_Y] = {};
+  desired_gradient_positions[25][25] = 1;
+
+  int lowest_points[E_MESH_X][3] = {}; //x,y,voltage
+
+  for(int x = 0; x < E_MESH_X; x++){
+    float lowest_diff = 0.0;
+
+    for(int y = 0; y < E_MESH_Y; y++){
+      for(int v = -200; v < 200; v+=50){
+        float potentials[E_MESH_X][E_MESH_Y] = {};
+        bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
+
+        for(int i = 0; i < x; i++){
+          potentials[lowest_points[i][X]][lowest_points[i][Y]] = lowest_points[i][2];
+          boundary_conditions[lowest_points[i][X]][lowest_points[i][Y]] = 1;
+        }
+
+        potentials[x][y] = v;
+        boundary_conditions[x][y] = 1;
+
+        relax_laplace_potentials(potentials,boundary_conditions,0.1);
+
+        float diff = gradient_difference(desired_gradients,desired_gradient_positions,potentials);
+        if(diff < lowest_diff || !lowest_diff){
+          lowest_points[x][X] = x;
+          lowest_points[x][Y] = y;
+          lowest_points[x][2] = v;
+          lowest_diff = diff;
+        }
+        // printf(lowest_diff)
+        // printf("%i%% complete\n",(int) (y/E_MESH_Y)*100);
+        clear_screen();
+        printf("%f,%f,%f\n",lowest_diff,x_electric_field_at_position(potentials,25,25),x_electric_field_at_position(potentials,25,25));
+        display_potentials(potentials);
+      }
+    }
+    // display_potentials(potentials);
+  }
+  // display_potentials(potentials);
 }
