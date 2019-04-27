@@ -10,7 +10,7 @@ using namespace std::chrono;
 
 #define EPSILON_0 8.854187e-12
 
-#define E_MESH_X 50
+#define E_MESH_X 100
 #define E_MESH_Y 50
 
 #define MESH_SCALE_X 0.0001 //0.00
@@ -122,10 +122,7 @@ float gradient_difference(float desired_gradients[2][E_MESH_X][E_MESH_Y], bool d
   return sum;
 }
 
-void electrode_primitives(x,y,gap,voltage_1,voltage_2,voltage_3){
-  
-}
-
+void erdman_zipf_electrode
 
 int main(){
   float desired_gradients[2][E_MESH_X][E_MESH_Y] = {}; // the X and Y components of the electric field at each point
