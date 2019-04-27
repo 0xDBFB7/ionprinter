@@ -66,9 +66,9 @@ using namespace std;
 #define ION_CURTAIN_WIRE_RADIUS 0.001
 #define ION_CURTAIN_WIRE_WIDTH 0.0005
 
-#define GRID_SIZE 0.00005 //m
+#define GRID_SIZE 0.0003 //m
 
-#define MESH_X 0.01
+#define MESH_X 0.04
 #define MESH_Y 0.006
 
 #define IBSIMU_PLOT_RESOLUTION 125000
@@ -99,8 +99,8 @@ const int X_DIAGNOSTIC_COUNT = ((MESH_X-GRID_SIZE)/(DIAGNOSTIC_X_INTERVAL));
 
 double beam_input_energy = 0.25; //eV
 double beam_current = 0.0005;
-float beam_radius = 0.002;
-float beam_x_position = 0.001;
+float beam_radius = 0.0001;
+float beam_x_position = 0.0018;
 float feature_1_voltage = 200;
 float feature_2_voltage = 0;
 float feature_3_voltage = 200;
@@ -122,7 +122,7 @@ int run_id = 1;
 int current_solid = 0;
 int currently_selected_solid = 0;
 int number_of_features = 1;
-float feature_voltages[100];
+float feature_voltages[100] = {-100,-70,400,0,400,0};
 Magick::Image image;
 Magick::PixelPacket *pixels;
 
@@ -162,67 +162,67 @@ void simu( int *argc, char ** argv )
 {
 
 
+    //
+    // //////////////////////////graphics initialization///////////////////////////
+    // Fl_Window *window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
+    // // Fl_Window *plot_window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
+    //
+    // // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
+    // // box->box(FL_UP_BOX);
+    // // box->labelfont(FL_BOLD+FL_ITALIC);
+    // // box->labelsize(36);
+    // // box->labeltype(FL_SHADOW_LABEL);
+    //
+    // // Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
+    // Fl_Value_Slider *feature_voltage_slider = new Fl_Value_Slider(30,30,60,400, "Selected feature \nvoltage");
+    // feature_voltage_slider->bounds(-20000.0,20000.0);
+    // Fl_Value_Slider *beam_radius_slider = new Fl_Value_Slider(400,30,60,400, "Beam radius (m)");
+    // beam_radius_slider->bounds(0.0001,0.004);
+    // beam_radius_slider->step(0.0001);
+    // Fl_Value_Slider *x_position_slider = new Fl_Value_Slider(600,30,60,400, "X position (m)");
+    // x_position_slider->bounds(0.0,0.002);
+    // x_position_slider->step(0.0001);
+    // Fl_Simple_Counter *feature_counter = new Fl_Simple_Counter(200,30,100,60, "Selected feature");
+    // feature_counter->bounds(0,100.0);
+    // feature_counter->step(1);
+    // Fl_Simple_Counter *feature_number = new Fl_Simple_Counter(100,30,100,60, "Total features");
+    // feature_number->bounds(0,100.0);
+    // feature_number->step(1);
+    // // Fl_Float_Input *beam_current_input = new Fl_Float_Input(100,600,100,100);
+    // Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_Y*2-20,
+    //                                                                             BUTTON_WIDTH*2,BUTTON_Y*2, "Heavy beam current (amps)");
+    // beam_current_input->step(0.00001,0.001);
+    // // Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
+    // // avg_energy->value(100.0);
+    //
+    // // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_Y, "Refresh Sim");
+    // Fl_Return_Button *refresh_sim = new Fl_Return_Button(WINDOW_X_SIZE-BUTTON_WIDTH*2, WINDOW_Y_SIZE-BUTTON_Y*2-20,
+    //                                           BUTTON_WIDTH*2, BUTTON_Y*2, "@refresh  Refresh Sim");
+    // // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
+    // // Fl_Box *IBSimu_plot_box = new Fl_Box(10,0,500,500);
+    // // Fl_Box *beam_envelope_box = new Fl_Box(500,0,1000,1000);
+    // // Fl_Group beam_plot_group = new Fl_Group();
+    // // beam_plot_group->add(beam_plot_box)
+    //
+    // window->show();
 
-    //////////////////////////graphics initialization///////////////////////////
-    Fl_Window *window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
-    // Fl_Window *plot_window = new Fl_Window(WINDOW_X_SIZE,WINDOW_Y_SIZE);
-
-    // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
-    // box->box(FL_UP_BOX);
-    // box->labelfont(FL_BOLD+FL_ITALIC);
-    // box->labelsize(36);
-    // box->labeltype(FL_SHADOW_LABEL);
-
-    // Fl_Chart *particle_chart = new Fl_Chart(10,10,100,100);
-    Fl_Value_Slider *feature_voltage_slider = new Fl_Value_Slider(30,30,60,400, "Selected feature \nvoltage");
-    feature_voltage_slider->bounds(-20000.0,20000.0);
-    Fl_Value_Slider *beam_radius_slider = new Fl_Value_Slider(400,30,60,400, "Beam radius (m)");
-    beam_radius_slider->bounds(0.0001,0.004);
-    beam_radius_slider->step(0.0001);
-    Fl_Value_Slider *x_position_slider = new Fl_Value_Slider(600,30,60,400, "X position (m)");
-    x_position_slider->bounds(0.0,0.002);
-    x_position_slider->step(0.0001);
-    Fl_Simple_Counter *feature_counter = new Fl_Simple_Counter(200,30,100,60, "Selected feature");
-    feature_counter->bounds(0,100.0);
-    feature_counter->step(1);
-    Fl_Simple_Counter *feature_number = new Fl_Simple_Counter(100,30,100,60, "Total features");
-    feature_number->bounds(0,100.0);
-    feature_number->step(1);
-    // Fl_Float_Input *beam_current_input = new Fl_Float_Input(100,600,100,100);
-    Fl_Counter *beam_current_input = new Fl_Counter(WINDOW_X_SIZE-BUTTON_WIDTH*4,WINDOW_Y_SIZE-BUTTON_Y*2-20,
-                                                                                BUTTON_WIDTH*2,BUTTON_Y*2, "Heavy beam current (amps)");
-    beam_current_input->step(0.00001,0.001);
-    // Fl_Value_Output *avg_energy = new Fl_Value_Output(50,50,BUTTON_WIDTH,BUTTON_WIDTH,"test");
-    // avg_energy->value(100.0);
-
-    // Fl_Button *refresh_sim = new Fl_Button(10, 10, BUTTON_WIDTH, BUTTON_Y, "Refresh Sim");
-    Fl_Return_Button *refresh_sim = new Fl_Return_Button(WINDOW_X_SIZE-BUTTON_WIDTH*2, WINDOW_Y_SIZE-BUTTON_Y*2-20,
-                                              BUTTON_WIDTH*2, BUTTON_Y*2, "@refresh  Refresh Sim");
-    // Fl_Box *box = new Fl_Box(20,40,300,100,"Hello, World!");
-    // Fl_Box *IBSimu_plot_box = new Fl_Box(10,0,500,500);
-    // Fl_Box *beam_envelope_box = new Fl_Box(500,0,1000,1000);
-    // Fl_Group beam_plot_group = new Fl_Group();
-    // beam_plot_group->add(beam_plot_box)
-
-    window->show();
-
-    while(1){
-
-      while(Fl::check()){
-        feature_voltages[currently_selected_solid] = feature_voltage_slider->value()+1;
-        number_of_features = feature_number->value();
-        if(refresh_sim->value()){
-          break;
-        }
-
-        beam_current = beam_current_input->value();
-        if(feature_counter->value() != currently_selected_solid){
-          currently_selected_solid = feature_counter->value();
-          feature_voltage_slider->scrollvalue(feature_voltages[currently_selected_solid],10,-5000.0,10000);
-        }
-        beam_x_position = x_position_slider->value();
-        beam_radius = beam_radius_slider->value();
-      }
+    // while(1){
+      //
+      // while(Fl::check()){
+      //   feature_voltages[currently_selected_solid] = feature_voltage_slider->value()+1;
+      //   number_of_features = feature_number->value();
+      //   if(refresh_sim->value()){
+      //     break;
+      //   }
+      //
+      //   beam_current = beam_current_input->value();
+      //   if(feature_counter->value() != currently_selected_solid){
+      //     currently_selected_solid = feature_counter->value();
+      //     feature_voltage_slider->scrollvalue(feature_voltages[currently_selected_solid],10,-5000.0,10000);
+      //   }
+      //   beam_x_position = x_position_slider->value();
+      //   beam_radius = beam_radius_slider->value();
+      // }
 
       // Magick::InitializeMagick(*argv);
       // image.read("solid.png");
@@ -243,7 +243,8 @@ void simu( int *argc, char ** argv )
       geom.set_boundary( 4, Bound(BOUND_NEUMANN,     0.0) );
 
       MyDXFFile *dxffile = new MyDXFFile( "solid.dxf" );
-      for(int i = 0; i < number_of_features; i++) {
+
+      for(int i = 0; i < 6; i++) {
         stringstream solid_file_prefix;
         solid_file_prefix << i+1;
         DXFSolid *s1 = new DXFSolid( dxffile,solid_file_prefix.str());
@@ -289,7 +290,7 @@ void simu( int *argc, char ** argv )
       	pdb.add_2d_beam_with_energy(
                                               NUMBER_OF_PARTICLES, //number of particles
                                               beam_current/beam_area, //beam current density
-                                              1.0, //charge per particle
+                                              -1.0, //charge per particle
                                               0.000548, //amu
                                               beam_input_energy, //eV
                                               0.1,//Normal temperature
@@ -554,9 +555,9 @@ void simu( int *argc, char ** argv )
     clock_t end = clock();
     float sim_duration = (float)(end - start) / CLOCKS_PER_SEC;
 
-    window->redraw();
+    // window->redraw();
 
-  }
+  // }
 }
 // from examples/fltk_example.cpp
 

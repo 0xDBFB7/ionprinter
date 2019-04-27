@@ -19,13 +19,15 @@ using namespace std::chrono;
 #define X 0
 #define Y 1
 
-
-
 double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
     //Calculate the electric field at the edge of a beam
     //Eq. 44 at https://arxiv.org/pdf/1401.3951.pdf
     //returns one value: V/m
     //Beam velocity is in m/s
+
+    if(!sample_radius){
+        sample_radius=beam_radius;
+    }
 
     return ((beam_current/(2.0*(M_PI)*EPSILON_0*beam_velocity)) * (sample_radius/pow(beam_radius,2.0)));
 }
@@ -122,9 +124,7 @@ float gradient_difference(float desired_gradients[2][E_MESH_X][E_MESH_Y], bool d
   return sum;
 }
 
-void electrode_primitives(x,y,gap,voltage_1,voltage_2,voltage_3){
-  
-}
+
 
 
 int main(){

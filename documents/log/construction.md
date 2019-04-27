@@ -188,15 +188,15 @@ The charge on the bowtie was measured to determine focusing. Very curiously, the
 
 #### ElmerFEM simulations of bowtie prototype 1
 
-Now 
-
 The .sif files had been overwritten somehow - reverting to a previous commit fixed the problem.
 
 ElmerFEM requires a .step input. This was meshed with Max h. 0.025 and Min h. 0.001. The enthalpy heat flux was set to zero. Convergence was not well behaved.
 
+The simulation potential was set to 20v, and an ideal temperature of approximately 2000 K was attained. The bowtie drew approximately 100w.
+
 #### Bowtie test 1, 2 and 3
 
-The chamber was pumped down and 10 A was applied across the bowtie. The bowtie glowed a dim red, but not nearly sufficient for deposition. The resistance of the entire assembly was only approximately 0.25 ohms, a significant discrepancy from the predicted 4 ohms. 
+The chamber was pumped down and 10 A was applied across the bowtie. The bowtie glowed a dim red, but not nearly sufficient for deposition. The resistance of the entire assembly was only approximately 0.334 ohms, a significant discrepancy from the predicted 4 ohms. Clearly the graphite resistivity value set in the Elmer sim was incorrect.
 
 The "300-1200v" HV e-beam bias power supply was supplied with 12v, and output 2 kilovolts. A replacement NCH6100HV was purchased. 
 
@@ -206,5 +206,98 @@ One of the bowtie connection wires melted.
 
 #### IBSimu simulations of entire column 
 
-A 3 by 3 by 6 mm 3D simulation was created. Unfortunately, an accurate measurement of space charge requires about 10 grid points across the beam - a mesh of 0.00003mm. This is not reasonable to compute in a short period of time. A mesh of 0.0001 
+A 3 by 3 by 6 mm 3D simulation was created. Unfortunately, an accurate measurement of space charge requires about 10 grid points across the beam - a mesh of 0.00003mm. This is not reasonable to compute in a short period of time. 
 
+However, human factors were encountered - that is, the designer was filled with abject boredom. An automatic solution is required.
+
+#### Beam solver, trial 5
+
+After the modest successes over the previous week, more effort was put into an automatic beam solver.
+
+This was based on the following premise:
+
+1. I am too stupid to design a lens of this sort.
+2. I know something about software.
+3. Software can design a lens of this sort.
+
+QED.
+
+A mesh of 50x50 pixels over the entire beam would seem to be reasonable. 
+
+- 3d "Slice" solver 
+  - analytic function for slices was not found
+- 3d Analytic concentric infinitesimal ring space charge solver, with automatic beam envelope
+  - poorly implemented in Python, unusably slow
+  - horrific write-only blob of vectors and linear algebra
+  - There is precedent for this beam slicing technique, likely quite valuable if correctly implemented
+- Brief diversion: an attempt to use TRACE-3D and TRANSPORT to fit the beam
+  - miserable failure
+  - what 
+  - what even
+  - There's a delicate balance between the not-invented-here fallacy and 
+- 2d simplified analytic concentric ring space charge solver, predefined beam envelope, rings also used for electrode field
+  - Almost usable
+  - on the order of a few seconds per iteration in Python
+- 2d Laplace + Jacobi relaxation solver for electrode e-field, cylindrical beam scharge using analytic equation from @ Kalvas
+  - Simple array operations in Python: 1-2 seconds
+  - Numpy convolution: ~0.15 seconds
+  - Pretty diagnostics with matplotlib
+  - Random search ineffective, genetic algorithm considered with DEAP 
+- Wonderfully fast C++ Laplace solver
+  - 24 ms per iteration!
+  - aww yis
+
+The search space of possible lens arrangements spans a triple-digit exponent of combinations, so an exhaustive search is clearly not possible. However, seeding the system with some common extraction and focusing arrangements (Pierce, Wehnelt, Einzel, etc) greatly reduces the complexity of the problem.
+
+
+
+#### Low-voltage, high-current electron gun, Peter W. Erdman and Edward C. Zipf 
+
+and
+
+#### Design of Low Voltage Electron Guns, J. AROL SIMPSON AND C. E. KUYATT
+
+This is the breakthrough I've been hoping for. An e-beam gun capable of ~1-3 mA at 100 eV.
+
+Moreover, simulations (and, indeed, basic Child-Langmuir expressions) have shown that a comparatively high extraction voltage is required to form a reasonable beam. I previously dismissed this technique; my malformed intuition 
+
+> There is a general technique which can be used to circumvent these limits on unipotential guns. The technique is to multistage the gun; i.e., utilize a higher voltage to overcome the space charge in front of the cathode and then decelerate to the required final energy. 
+>
+> This technique seems to have first been arrived at on empirical grounds.
+>
+> Once the advantages of multiple staging are recognized,
+> the problem of low voltage gun design breaks easily into
+> two parts: the extraction stage and the deceleration stage.
+> These designs can be done almost independently and can
+> make use of time-proven electron optical elements. 
+
+Amazing.
+
+I still haven't been able to fully wrap my head around the energy dynamics of these devices. 
+
+Let's draw a diagram.
+
+```
+E-beam:
+
+~0.2 eV Emission 														  /\
+----------------							100 eV Exit    			  'o  |
+				\						--------------              -----   
+				  \					  /  								Hapless victim
+				  	\			 ___/   									Tree
+				  	  \--------/
+			~500 eV Extraction	   Focussing, Deceleration
+
+```
+
+That seems quite sensible. If one were to roll a ball down this mount improbable, an observer by the tree would only be struck with 100 eV. 
+
+Intuition still rejects this, however. Consider the following: if the second half of the electron gun vanishes, the thoughtful vacuum scientist will have at hand only a 500 eV beam and a shocked expression. If a small plate is surreptitiously inserted centrally, will it not be heated by 0.003 mA * 500 eV = 1.5 W ?  
+
+But then intuition is but a manifestation of a poorly adapted primate, and can only guide one so far in matters of science. I am missing something critical.
+
+In any case, I simulated this arrangement with IBSimu. Worked admirably - some minor tweaking required, but nothing serious.
+
+![beam](../../files/ionprinter/simulation/IBSimu/simulations/legun/success/paper/beam.png)
+
+![diags](../../files/ionprinter/simulation/IBSimu/simulations/legun/success/paper/diags.png)
