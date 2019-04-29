@@ -296,8 +296,106 @@ Intuition still rejects this, however. Consider the following: if the second hal
 
 But then intuition is but a manifestation of a poorly adapted primate, and can only guide one so far in matters of science. I am missing something critical.
 
-In any case, I simulated this arrangement with IBSimu. Worked admirably - some minor tweaking required, but nothing serious.
+In any case, I then simulated this arrangement with IBSimu. Worked admirably - some minor tweaking required, but nothing serious.
 
 ![beam](../../files/ionprinter/simulation/IBSimu/simulations/legun/success/paper/beam.png)
 
 ![diags](../../files/ionprinter/simulation/IBSimu/simulations/legun/success/paper/diags.png)
+
+
+
+#### Erdman-Zipf gun construction
+
+A 1/4" end mill was used to drill the central features - a slight discrepancy from Erdman and Zipf's design, but simulations did not show any effect.
+
+As the mini-lathe used did not have an adjustable tool post, a parting tool holder was ground down to fit. 
+
+Machining from a 1/2" stock of copper was attempted; however, the lathe in question (or, more likely, the technique of the machinist) was not capable of machining to any reasonable surface. One particularly aggressive parting operation even caused the fuse to blow. 
+
+The copper was exchanged for 360 free-machining brass, and the parts were turned to within ~0.3 mm tolerances. Mill-turning using the CNC would be ideal for rapid prototyping and iteration.
+
+The zinc content of the brass was quite worrying, especially since the extractor will sit ~0.2 mm away from a tungsten wire at some 2000 K. Nickel was therefore electroplated onto the electrodes. The solution drew between 0.05 and 0.1a. 
+
+Discussion on Vacuum Hackers indicated that outgassing would be excessive. This idea was abandoned.
+
+12L14 was found to machine quite well on this lathe; however, lead outgassing may be a concern.
+
+Brief diversion to ceramics: On a whim, tried pressing alumina with crude graphite dies. Not effective. Applying small amount of pure alumina to graphite also not effective. Mixed some gelatine and alumina in some random ratio, and applied to tungsten on a whim. Heated with propane torch. The gel-cast bakeoff was very clear and visible - really amazing. 
+
+The 12L14 die corroded almost immediately. This effect has been referenced previously as one of the main shortcomings of leaded 
+
+Graphite can be electroplated with copper.
+
+After ~6 months and likely several thousand tests, I can say the following with uncharacteristic confidence:
+
+Al2O3 is a BASTARD. It lures you hither with tales of insulating properties, of wonderous high temperatures
+
+There is aluminum dust everywhere
+
+#### The hunt
+
+A search was carried out in an attempt to find an insulating coating or electrodeposition technique that could be used for a few purposes:
+
+- as insulator for electrostatic lens elements, required immediately
+- to decrease bowtie emissivity (and, potentially, reactivity) without switching to EDM tungsten
+- 
+
+Anodized aluminum could be used - many vacuum tubes have cathodes insulated by aluminum oxide. However, this is slow.
+
+Water glass may also be an option
+
+Things I know how to do:
+
+- electroplate with copper
+- electroplate with nickel
+
+Can nickel be passivated?
+
+Some nitride? Nickel nitride?
+
+Silica coating graphite seems to exist
+
+Iron/steel passivation or pickling could be used
+
+Anodization of aluminum with mere vinegar has been mentioned once or twice. 
+
+We know that graphite can be 
+
+
+
+US4418097A
+
+> The present invention comprises a process for reducing high temperature oxidation of graphite electrodes by coating the electrodes with a siloxane fluid.
+
+Cool
+
+> Dimethylpolysiloxane, having 100 centistokes viscosity, was sprayed on a graphite electrode while the electrode was at ambient temperature. The electrode was then heated to 1400° F. for eight hours. Weight loss was 6.8%.
+
+Oh wait! That's silicone oil - PMDS!
+
+Titanium can easily be anodized with cola. 
+
+A bootstrap paradox is found here. All of these techniques will be trivial when the ion printer is functional, but it can't be built without one.
+
+#### Graphite SiO 
+
+A small sample of graphite was accidentally dropped into a test tube containing a small quantity of ECO-702 silicone fluid. This coupon was then heated with a propane torch. The fluid burst into flames, and produced a bluish deposit on the graphite which immediately flaked off. An inert atmosphere may be required.
+
+One face of the graphite was cleaned, then heated cherry-red and dropped into the siloxane. Some momentary bubbling was observed. The sample appeared to change texture somewhat, and emerged perfectly clean. The sample was still conductive.
+
+Promising method, however. 
+
+Silicon Carbide has an emissivity close to that of graphite.
+
+See @ blocher1957carbide for a comprehensive treatment of this treatment.
+
+#### Alumina Cataphoresis
+
+### Cataphoretic Coating
+
+<https://www.thevalvepage.com/valvetek/heater/heater.htm>
+
+> Cataphoresis or electrophoresis is defined as "the migration of coloidal particles under the influence of an electrical potential". Cataphoresis, as applied to heater coatings, is the process by which positively charged alumina particles are deposited on a negatively charged tungsten heater wire. The alumina used in the suspension consists of very fine particles, usually in the one-to-five micron size range. An increased number of ionised groups on the alumina surface results when the particles are surface charged by the addition of small amounts of selected soluble inorganic salts, such as aluminum nitrate.
+
+> After the heater is coated, it is sintered at 1600C for a short time in a hydrogen-atmosphere furnace.
+

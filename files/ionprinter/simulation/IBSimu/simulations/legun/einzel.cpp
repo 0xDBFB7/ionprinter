@@ -98,9 +98,9 @@ const int X_DIAGNOSTIC_COUNT = ((MESH_X-GRID_SIZE)/(DIAGNOSTIC_X_INTERVAL));
 #define PL_PNG_OFFSET -200
 
 double beam_input_energy = 0.25; //eV
-double beam_current = 0.0005;
+double beam_current = 0.001;
 float beam_radius = 0.0001;
-float beam_x_position = 0.0018;
+float beam_x_position = 0.0019;
 float feature_1_voltage = 200;
 float feature_2_voltage = 0;
 float feature_3_voltage = 200;
@@ -130,19 +130,6 @@ int image_w;
 int image_h;
 int image_range;
 
-// int solids_counter = 0;
-// bool is_in_solid( double x, double y, double z )
-// {
-//   int row = (y/GRID_SIZE);
-//   int column = (x/GRID_SIZE);
-//   Magick::Color color = pixels[image_w * row + column];
-//   // printf("color: %f\n", (color.redQuantum() / image_range));
-//   // return((x >= EINZEL_3_X && x <= EINZEL_3_X+EINZEL_3_THICKNESS) && (y >= EINZEL_3_Y && y <= EINZEL_3_Y+EINZEL_3_Y));
-//   // if((color.redQuantum())){
-//   //   printf("%i,%i\n",color.redQuantum()/256,current_solid);
-//   // }
-//   return ((int)(color.redQuantum()/256));
-// }
 
 Fl_PNG_Image* beam_envelope;
 Fl_PNG_Image* IBSimu_plot;
@@ -153,10 +140,6 @@ plstream *pls;
 double particle_x_coords[X_DIAGNOSTIC_COUNT];
 double particle_y_coords[NUMBER_OF_PARTICLES];
 
-
-// void feature_select_callback(Fl_Widget *w) {
-//   feature_voltages[i];
-// }
 
 void simu( int *argc, char ** argv )
 {

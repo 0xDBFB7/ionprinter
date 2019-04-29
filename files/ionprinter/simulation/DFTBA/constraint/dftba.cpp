@@ -7,6 +7,7 @@
 using namespace std::chrono;
 
 #define BEAM_COUNT 5
+#define BEAM_STEPS 100
 
 #define EPSILON_0 8.854187e-12
 
@@ -122,70 +123,44 @@ float gradient_difference(float desired_gradients[2][E_MESH_X][E_MESH_Y], bool d
   return sum;
 }
 
-void erdman_zipf_electrode
+void erdman_zipf_electrode(){
+
+}
 
 int main(){
-  float desired_gradients[2][E_MESH_X][E_MESH_Y] = {}; // the X and Y components of the electric field at each point
-  bool desired_gradient_positions[2][E_MESH_X][E_MESH_Y] = {}; // where the electric field is specified
-  bool electrode_keepout[E_MESH_X][E_MESH_Y] = {};
+  float beam_diagnostics[BEAM_COUNT][10][] = {};
 
-  desired_gradients[X][25][25] = 100;
-  desired_gradients[Y][25][25] = -100;
-  desired_gradient_positions[X][25][25] = 1;
-  desired_gradient_positions[Y][25][25] = 1;
 
-  desired_gradients[X][40][40] = 100;
-  desired_gradients[Y][40][40] = -100;
-  desired_gradient_positions[X][40][40] = 1;
-  desired_gradient_positions[Y][40][40] = 1;
-  // electrode_keepout = 0
-  int lowest_points[E_MESH_X][3] = {}; //x,y,voltage
 
-  for(int x = 0; x < E_MESH_X; x+=2){
-    float lowest_diff = 0.0;
+  float potentials[E_MESH_X][E_MESH_Y] = {};
+  bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
 
-    for(int y = 0; y < E_MESH_Y; y+=2){
+  potentials[x][y] = v;
+  boundary_conditions[x][y] = 1;
+  auto start = high_resolution_clock::now();
 
-      if(desired_gradient_positions[X][x][y] || desired_gradient_positions[Y][x][y] || electrode_keepout[x][y]){ // we can't overwrite the beam, silly
-        continue;
-      }
+  relax_laplace_potentials(potentials,boundary_conditions,0.1);
 
-      for(float v = -200; v < 200; v+=50){
+  auto stop = high_resolution_clock::now();
+  auto duration = duration_cast<microseconds>(stop - start);
 
-        float potentials[E_MESH_X][E_MESH_Y] = {};
-        bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
+  particle_position[2] = {0,0};
+  particle_velocity[2] = {2000,0};
 
-        for(int i = 0; i < x; i++){
-          potentials[lowest_points[i][X]][lowest_points[i][Y]] = lowest_points[i][2];
-          boundary_conditions[lowest_points[i][X]][lowest_points[i][Y]] = 1;
-        }
+  for(int beam_index = 0; beam_index < BEAM_COUNT; beam_index++){
+    for(int beam_step = 0; beam_step < BEAM_STEPS; beam_step++){
 
-        potentials[x][y] = v;
-        boundary_conditions[x][y] = 1;
-        auto start = high_resolution_clock::now();
-
-        relax_laplace_potentials(potentials,boundary_conditions,0.1);
-
-        float diff = gradient_difference(desired_gradients,desired_gradient_positions,potentials);
-        if(diff < lowest_diff || !lowest_diff){
-          lowest_points[x][X] = x;
-          lowest_points[x][Y] = y;
-          lowest_points[x][2] = v;
-          lowest_diff = diff;
-        }
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-
-        // printf(lowest_diff)
-        // printf("%i%% complete\n",(int) (y/E_MESH_Y)*100);
-        clear_screen();
-        printf("\x1b[38;2;255;255;0mDan's Hyper Beam Solver\n");
-        printf("\x1b[38;2;255;255;255mcur: %f, lowest: %f, v: %f x: %i y: %i\n",diff,lowest_diff,v,x,y);
-        std::cout << "Time taken by function: " << duration.count() << " microseconds\n";
-        // display_potentials(potentials);
-      }
     }
-    // display_potentials(potentials);
   }
+  // printf(lowest_diff)
+  // printf("%i%% complete\n",(int) (y/E_MESH_Y)*100);
+  clear_screen();
+  printf("\x1b[38;2;255;255;0mDan's Hyper Beam Solver\n");
+  printf("\x1b[38;2;255;255;255mcur: %f, lowest: %f, v: %f x: %i y: %i\n",diff,lowest_diff,v,x,y);
+  std::cout << "Time taken by function: " << duration.count() << " microseconds\n";
+
+
+    // display_potentials(potentials);
+    // display_potentials(potentials);
   // display_potentials(potentials);
 }
