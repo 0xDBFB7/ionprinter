@@ -1937,6 +1937,22 @@ The best I've gotten so far is this:
 
  
 
+
+
+
+
+Use boro microscope slides as mount, with small threaded set-screws to fix.
+
+
+
+Titanium can easily be anodized with cola. 
+
+
+
+ICP should be reconsidered now that we have the advantage of high acceleration voltages.
+
+
+
 ## Quick notes
 
 printed he-ne laser - very simple

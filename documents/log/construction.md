@@ -4,9 +4,27 @@ Log starts at gauge.
 
 Need to drill 8.80mm or 11/32 holes in some aluminum and weld with brazing rod.
 
-Brazed. See Brazing.md.
+### Brazing aluminum
 
-Seemed like one of the crush gaskets didn't fully seal on one of the spark plug feedthroughs - but in fact the brazing was porus.
+Aluminum brazing rod: seems like pre-heating is important. Someone on youtube uses a barbecue to great effect.
+
+Purchased some Benzomatic AL-3 aluminum soldering rods from Canadian Tire. Encountered some difficulty in attaining the required temperature. Melted my jacket in the process.
+
+Tried preheating with an electric stovetop element. The element itself got to nearly 500c, but the aluminum only got to around 300c - below the ~400c required for the AL-3 rods.
+
+Tried oxy-acetalyne, not sufficiently warm. 
+
+Tried a 100,000 btu/hr flamethrower: sufficiently warm.
+
+Many voids were found in the final braze - it was not in any way airtight. This may be due to the fact that it was not clamped properly. Re-brazed several times.
+
+Standard table salt is apparently effective as a flux. AvE recommends using a glass rod to remove dross.
+
+Electrochemical weld cleaning
+
+Looks like I put a bit too much heat on the feedthroughs - porosity
+
+Seemed like one of the crush gaskets didn't fully seal on one of the spark plug feedthroughs - but in fact the brazing was porous.
 
 # Mk3-5
 
@@ -122,7 +140,7 @@ Two days later, hit 2.37x10^-5 millibar, even with a few things in the chamber.
 
 ![second_pulldown](../../data/second_pulldown.png)
 
-Some discussion on the Vacuum Hackers discord led me to believe that the pump was almost definitely going to fly away, what with the minimal clamping force provided
+Some discussion on the Vacuum Hackers discord led me to believe that the pump was almost definitely going to fly away, what with the minimal clamping force provided. 
 
 Printed out a 122mm bolt circle, disassembled everything, drilled three holes into the table, and re-assembled everything. The pump is now very rigidly affixed via the M6 bolt pattern on the bottom. 
 
@@ -180,7 +198,7 @@ This filament consumed a whopping 44 watts - while emitting the same 4 milliamps
 
 As with the last test, this filament saturated the high-voltage power supply. A 31v bias was used instead.
 
-The base pressure attained was significantly higher (2x10T-5 millibar) than in the previous test; this was attributed to the increased clutter within the chamber. Some flux had also splattered.
+The base pressure attained was significantly higher (2x10^-5 millibar) than in the previous test; this was attributed to the increased clutter within the chamber. Some flux had also splattered.
 
 The charge on the bowtie was measured to determine focusing. Very curiously, the charge increased when the e-beam was activated, but dropped rapidly. This may be an artifact of the relative nature of the measurement, or a symptom of a greater electron-deflection problem.
 
@@ -196,11 +214,11 @@ The simulation potential was set to 20v, and an ideal temperature of approximate
 
 #### Bowtie test 1, 2 and 3
 
-The chamber was pumped down and 10 A was applied across the bowtie. The bowtie glowed a dim red, but not nearly sufficient for deposition. The resistance of the entire assembly was only approximately 0.334 ohms, a significant discrepancy from the predicted 4 ohms. Clearly the graphite resistivity value set in the Elmer sim was incorrect.
+The chamber was pumped down and 10 A was applied across the bowtie. The bowtie glowed a dim red,  not nearly sufficient for deposition. The resistance of the entire assembly was only approximately 0.33 ohms, a significant discrepancy from the predicted 4 ohms. Clearly the graphite resistivity value set in the Elmer sim was incorrect.
 
 The "300-1200v" HV e-beam bias power supply was supplied with 12v, and output 2 kilovolts. A replacement NCH6100HV was purchased. 
 
-The bowtie was connected to the 20v-45A supply, and 20a was briefly supplied. Aluminum was readily deposited, and no degradation of the bowtie nozzle was found. The deposited coating was not 
+The bowtie was connected to the 20v-45A supply, and 20a was briefly supplied. Aluminum was readily deposited, and no degradation of the bowtie nozzle was found. The deposited coating was quite easily wiped off the witness microscope slide.
 
 One of the bowtie connection wires melted. 
 
@@ -234,7 +252,6 @@ A mesh of 50x50 pixels over the entire beam would seem to be reasonable.
   - miserable failure
   - what 
   - what even
-  - There's a delicate balance between the not-invented-here fallacy and 
 - 2d simplified analytic concentric ring space charge solver, predefined beam envelope, rings also used for electrode field
   - Almost usable
   - on the order of a few seconds per iteration in Python
@@ -324,8 +341,6 @@ Brief diversion to ceramics: On a whim, tried pressing alumina with crude graphi
 
 The 12L14 die corroded almost immediately. This effect has been referenced previously as one of the main shortcomings of leaded 
 
-Graphite can be electroplated with copper.
-
 After ~6 months and likely several thousand tests, I can say the following with uncharacteristic confidence:
 
 Al2O3 is a BASTARD. It lures you hither with tales of insulating properties, of wonderous high temperatures
@@ -338,7 +353,6 @@ A search was carried out in an attempt to find an insulating coating or electrod
 
 - as insulator for electrostatic lens elements, required immediately
 - to decrease bowtie emissivity (and, potentially, reactivity) without switching to EDM tungsten
-- 
 
 Anodized aluminum could be used - many vacuum tubes have cathodes insulated by aluminum oxide. However, this is slow.
 
@@ -349,35 +363,40 @@ Things I know how to do:
 - electroplate with copper
 - electroplate with nickel
 
-Can nickel be passivated?
-
-Some nitride? Nickel nitride?
-
-Silica coating graphite seems to exist
-
-Iron/steel passivation or pickling could be used
-
-Anodization of aluminum with mere vinegar has been mentioned once or twice. 
-
-We know that graphite can be 
 
 
+- Can nickel be passivated?
+
+- Some nitride? Nickel nitride?
+
+- Silica coating graphite seems to exist
+
+- Iron/steel passivation or pickling could be used
+
+- Anodization of aluminum with mere vinegar has been mentioned once or twice. 
+
+- Graphite can be copper plated.
+- Copper can be "calorized" - a layer of alumina is applied, which then reacts to form copper aluminate and a coating of alumina. Promising method. Little can be found in the literature about this.
+
+<http://tallmantechnologies.ca/iron-making.php>
+
+> Calorizing is a pack diffusion process where the copper tuyere is placed in a sealed retort containing aluminum powder. The casting is heated and aluminum is diffused into the surface, creating a copper aluminide inner layer and an aluminum oxide outer layer.
+>
+> Calorizing creates a protective layer on the copper tuyere that preventing liquid iron drips from penetrating the surface. The calorizing process is performed at the final stage of production after the tuyere is finished machined and hardfacing alloys are applied. Calorizing eliminates the need to use refractory materials on the top surface of the tuyere.
+
+- io9 on twitter (thanks!) informed me of the the field-assisted sintering technique, which greatly reduces alumina sintering temperature requirements. 
 
 US4418097A
 
 > The present invention comprises a process for reducing high temperature oxidation of graphite electrodes by coating the electrodes with a siloxane fluid.
 
-Cool
-
 > Dimethylpolysiloxane, having 100 centistokes viscosity, was sprayed on a graphite electrode while the electrode was at ambient temperature. The electrode was then heated to 1400° F. for eight hours. Weight loss was 6.8%.
 
 Oh wait! That's silicone oil - PMDS!
 
-Titanium can easily be anodized with cola. 
-
 A bootstrap paradox is found here. All of these techniques will be trivial when the ion printer is functional, but it can't be built without one.
 
-#### Graphite SiO 
+#### SiC Graphite / SiO2
 
 A small sample of graphite was accidentally dropped into a test tube containing a small quantity of ECO-702 silicone fluid. This coupon was then heated with a propane torch. The fluid burst into flames, and produced a bluish deposit on the graphite which immediately flaked off. An inert atmosphere may be required.
 
@@ -385,13 +404,11 @@ One face of the graphite was cleaned, then heated cherry-red and dropped into th
 
 Promising method, however. 
 
-Silicon Carbide has an emissivity close to that of graphite.
+Silicon Carbide has an emissivity close to that of graphite, so this technique will be useless for decreasing power consumption.
 
 See @ blocher1957carbide for a comprehensive treatment of this treatment.
 
 #### Alumina Cataphoresis
-
-### Cataphoretic Coating
 
 <https://www.thevalvepage.com/valvetek/heater/heater.htm>
 
@@ -399,3 +416,52 @@ See @ blocher1957carbide for a comprehensive treatment of this treatment.
 
 > After the heater is coated, it is sintered at 1600C for a short time in a hydrogen-atmosphere furnace.
 
+This process was attempted with graphite at 20v, no effect. Experiment was repeated at 500v, no effect. Solution was very dilute - agitation likely required. See @ lazic2004influence for parameters.
+
+#### Bowtie temperature measurement
+
+Precise print speed measurement (that is, atoms deposited per second) is essential to the accuracy of this concept. 
+
+There exist some thermocouples A program called LPUWS was found. <https://lpuws.scot.sk/> The endoscope from the PnP machine was removed and connected to a pocket spectrometer; however, the resolution was inadequate. A source of a reference calibration spectrum is unknown. A laser or LED of a specified wavelength may be effective.
+
+The bowtie temperature would be useful to determine the vapor pressure (and thus atoms emitted) of the deposition species. On second thought, the pressure in the nozzle depends on a choked-flow parameter, since the external pressure is essentially zero. Relying on temperature to determine print speed.
+
+However, there are many options for print speed feedback. Trace light emissions from ionization, e-beam current attenuation, etc.
+
+#### Aluminum anodizing
+
+<http://www.observationsblog.com/sciencetechnologyexperiments/anodizing-and-dying-aluminum-without-battery-acid>
+
+"Hard" or "type 3" anodization appears to be desirable for high-voltage applications. 
+
+See @ mielke1987 for the breakdown voltages of various thicknesses - >2500v appears to be difficult to achieve.
+
+Bath is generally refrigerated.
+
+<https://www.precisioncoating.com/hardcoat-anodizing-type-iii/>
+
+> "Sanford Low Voltage" process
+>
+> High voltage rectification normally requires > 30 Amps per square foot current density.
+>
+>  Dielectric barrier usually > 1000 < 2000 Volt DC.
+>
+> Hard coat applications require up to 75 V at 24–40 asf. 
+
+A suitable boost converter was purchased.
+
+#### 
+
+The Steacie Library at York U has a shelf (QC 702 onward) with plasma physics books. 
+
+"The Physics and Technology of Ion Sources" was particularly helpful.
+
+#### 
+
+It may pay to re-evaluate the reasoning behind the use of wire stock. Intuition says granular jamming will be a concern, but perhaps some sort of ultrasonic vibratory system could be used to prevent sticktion.
+
+#### Emissivity difficulty
+
+It was discovered that the emissivity of tungsten varies significantly with temperature, starting from 0.05 at 250 K to approximately 0.16 at 1500 K. With 2048 bowties, the 
+
+An aluminum reflector could be used - however, thermal heating is a little counterintuitive. For instance, an isolated, completely enclosed object will eventually reach precisely the same temperature as its surroundings. Some simulations are in order to determine what reflector arrangement will be effective.
