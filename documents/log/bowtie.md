@@ -10,7 +10,7 @@ The original prototype of this element bore a close resemblance to a bow-tie:
 <img src="https://github.com/0xDBFB7/ionprinter/blob/master/img/original_bowtie.png" alt="alt text" width="300">
 
 
-Bow-ties are cool, and I love me some whimsical industry-specific jargon (c.f. [salad-bowl](http://projects.astec.ac.uk/ERLPManual/index.php/Photo_Cathode_Heat_Cleaning), Schlooping) - but I'm sure there's some accepted industry-standard name for this kind of thing, so call it whatever you want.
+Bowties are cool, and I love me some whimsical industry-specific jargon (c.f. [salad-bowl](http://projects.astec.ac.uk/ERLPManual/index.php/Photo_Cathode_Heat_Cleaning), Schlooping). "Filament" is ambiguous - there are at least three other filaments in use. I'm sure there's some accepted industry-standard name for this kind of thing, so call it whatever you want.
 
 ### Wait, isn't this already a solved problem?
 

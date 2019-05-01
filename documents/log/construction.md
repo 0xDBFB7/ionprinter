@@ -514,4 +514,68 @@ It was found that the Diffuse Gray change had disabled radiation loss. Enabling 
 
 ![reflector_real](../../files/ionprinter/simulation/CAELinux/thermal_test_8/images/reflector_real.png)
 
-The difference between the two at 20v ~110 W is now 2518-2372 K - notably different from the previous non-diffuse-gray tests.
+The difference between the two at 20v and 110 W is now 2518-2372 K - notably different from the previous non-diffuse-gray tests. The reflector is quite hot. 
+
+At 60 watts, peak temp was 1657 K.
+
+With an emissivity of only 0.16, peak temperature was 1682 K. Clearly, we are in the thermal-conduction-limited regime, where the fixed mounting temperature is the dominant force. This can easily be alleviated.
+
+The input to the bowties can either be powder, wire, liquid, or gas. 
+
+Gas will deposit on the plumbing, so power consumption will be largely the same as liquid.
+
+#### Beam tracking
+
+This is the fun part: feedback.
+
+As previously discussed, the precise space charge of the beam is highly dependent on many physical factors, such as compensation by background gas, trace electrons, etc. Furthermore, each print species will behave completely differently. 
+
+Rather than design a single lens geometry capable of these features, a system that adapts in real-time to the actual beam profile may be a useful approach. This would require accurate particle position data.
+
+- beam self-induced magnetic field
+  - Fiber optic / Faraday field sensors
+  - Beam optics with built-in Hall geometries
+    - microvolts!
+- beam space charge e-field sensing
+  - ????
+- Inductive or capacitive sensing
+  - Quickly pulsing beam elements relative to each other may yield a measure of the gas dielectric constant. Calibration will be tricky. Pulses will have to be sufficiently fast as to avoid affecting the particle trajectories.
+- Optical sensing
+  - Background gas ionization / recombination light detection
+  - Light transmittance / polarization /
+
+- Beam loss feedback from lens elements
+  - A small current on a lens element will indicate deposition and beam loss.
+- Mechanical means
+  - Faraday probes, wire scanners, witness plates, etc
+- NMR?
+
+Lens element beam loss detection should be quite simple to implement, and won't require calibration.
+
+Beam position detectors on accelerators seem to be of the Cerenkov, silicon drift, or scintillator type, which will be ineffective for this application - see @ akiba2012charged.
+
+
+
+@ currell1996new
+
+
+
+> The purpose of this paper is to review the properties of non-intercepting,
+> electromagnetic beam position monitors used in particle accelerators and beamlines, and
+> the types of signal processing used to recover beam position information from the
+> beam-induced signals.
+
+@ shafer1992beam
+
+> There are many other possible methods of measuring beam position, both
+> interceptive and non-interceptive. These include synchrotron radiation, interceptive wire
+> scanners (both stepping- and flying-wire scanners), residual gas ionization and
+> fluorescence, optical transition radiation, beamstrahlung, and laser probes to name a
+> few. Discussion of these techniques can be found elsewhere in the literature, and in
+> general review papers. 
+
+Got it to a one!
+
+#### Fluid tracking
+
+The resistance of the bowtie will change when it is filled with conductive molten metal. That might be one of the coolest statements I've ever made.
