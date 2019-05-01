@@ -465,3 +465,53 @@ It may pay to re-evaluate the reasoning behind the use of wire stock. Intuition 
 It was discovered that the emissivity of tungsten varies significantly with temperature, starting from 0.05 at 250 K to approximately 0.16 at 1500 K. With 2048 bowties, the 
 
 An aluminum reflector could be used - however, thermal heating is a little counterintuitive. For instance, an isolated, completely enclosed object will eventually reach precisely the same temperature as its surroundings. Some simulations are in order to determine what reflector arrangement will be effective.
+
+<http://web.mit.edu/16.unified/www/FALL/thermodynamics/notes/node134.html>
+
+<http://hedhme.com/content_map/?link_id=22144&article_id=530>
+
+<https://nvlpubs.nist.gov/nistpubs/bulletin/14/nbsbulletinv14n1p115_A2b.pdf>
+
+Describes in fascinating detail how the inner surfaces of a tungsten helix filament is significantly hotter than the outer.
+
+A bowtie with a reflector was designed and imported into Elmer; however, the elmer mesh generator doesn't currently support multiple bodies.
+
+gmsh was used to mesh the combined part.
+
+`ElmerGrid 14 2`
+
+was used to import the combined mesh (14 is the gmsh format and 2 is elmersolver mesh output) - however, the reflector was not imported. Elmer also crashed. ElmerGrid -autoclean resolved the error.
+
+Apparently only the gmsh "netgen" command can be used with multiple bodies.
+
+The final workflow was as follows:
+
+```
+Copy .sif file
+ElmerGUI -> Import project (overwrites .sif)
+Revert .sif
+Export each body to seperate .step files
+Import .step files into gmsh, mesh -> 3D, refine (netgen) -> save
+ElmerGrid 14 2 bowtie_prototype_1_cut.msh bowtie -autoclean -bulktype 1 1 1
+ElmerGrid 14 2 bowtie_prototype_1_reflector.msh reflector -autoclean -bulktype 1 1 2
+ElmerGrid 2 2 bowtie_prototype_1_reflector -in bowtie_prototype_1_cut -out finalmesh -unite -merge 1.0e-10
+ElmerGUI -> import mesh
+Set body numbers using the shell script (and set count in brackets!)
+Run
+...
+Profit!
+```
+
+If something in viewfactors.dat breaks, it may be helpful to delete the file. This was required when switching to diffuse gray.
+
+
+
+![reflector](../../files/ionprinter/simulation/CAELinux/thermal_test_8/images/reflector.png)
+
+With an 800 K difference, it seems that the reflector is extremely effective. 
+
+It was found that the Diffuse Gray change had disabled radiation loss. Enabling diffuse gray on all surfaces caused an unacceptable slowdown, so only the thin bowtie section was activated. With an "external temperature" field, got "solution trivially zero". Removed external temperature.
+
+![reflector_real](../../files/ionprinter/simulation/CAELinux/thermal_test_8/images/reflector_real.png)
+
+The difference between the two at 20v ~110 W is now 2518-2372 K - notably different from the previous non-diffuse-gray tests.

@@ -151,6 +151,7 @@ Material 1
   Density = 1700.0
   Poisson ratio = 0.35
   Youngs modulus = 70.0e9
+  Emissivity = 0.98
 End
 
 Material 2
@@ -167,6 +168,7 @@ Material 2
   Density = 2700.0
   Poisson ratio = 0.35
   Youngs modulus = 70.0e9
+  Emissivity = 0.04
 End
 
 Body Force 1
@@ -175,22 +177,20 @@ Body Force 1
 End
 
 Boundary Condition 1
-  Target Boundaries(59) = 2 3 5 6 7 8 9 10 11 12 13 14 15 17 18 19 20 21 22 23 24 25 26 28 29 30 31 32 33 34 35 36 37 38 39 41 42 43 44 45 46 47 49 50 51 53 54 55 56 57 58 59 60 61 62 63 64 65 66
+  Target Boundaries(6) = 36 51 21 23 33 20
   Name = "Radiation"
   Radiation Boundary Open = True
   Radiation = Diffuse Gray
   Radiation Target Body = -1
-  External Temperature = 300
   Emissivity = 0.98
 End
 
-Boundary Condition 1
+Boundary Condition 2
   Target Boundaries(2) = 1 4
   Name = "Radiation"
   Radiation Boundary Open = True
   Radiation = Diffuse Gray
   Radiation Target Body = -1
-  External Temperature = 300
   Emissivity = 0.04
 End
 
@@ -198,11 +198,10 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 16
   Name = "Anode"
-  Potential = 20
+  Potential = 15
   Radiation Boundary Open = True
   Radiation = Diffuse Gray
   Radiation Target Body = -1
-  External Temperature = 300
   Emissivity = 0.98
 End
 
@@ -213,7 +212,6 @@ Boundary Condition 3
   Radiation Boundary Open = True
   Radiation = Diffuse Gray
   Radiation Target Body = -1
-  External Temperature = 300
   Emissivity = 0.98
 End
 
