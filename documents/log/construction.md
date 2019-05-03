@@ -560,12 +560,12 @@ Beam position detectors on accelerators seem to be of the Cerenkov, silicon drif
 
 
 
+@ shafer1992beam - another amazing reference
+
 > The purpose of this paper is to review the properties of non-intercepting,
 > electromagnetic beam position monitors used in particle accelerators and beamlines, and
 > the types of signal processing used to recover beam position information from the
 > beam-induced signals.
-
-@ shafer1992beam
 
 > There are many other possible methods of measuring beam position, both
 > interceptive and non-interceptive. These include synchrotron radiation, interceptive wire
@@ -576,6 +576,78 @@ Beam position detectors on accelerators seem to be of the Cerenkov, silicon drif
 
 Got it to a one!
 
+> Small loop couplers 16 (often called B-dot loops, meaning dBIdt) are simply small
+> shorted antennas that couple to the azimuthal magnetic field of the passing beam and
+> can be quite directional. 
+
+> After the pickup construction and assembly is complete, the electrode assembly is
+> normally first "mapped" with an Rf-excited taut wire or antenna stretched through the
+> pickup. The electrical response for various wire-displacement values of x and y
+> determines the electrical center and the displacement sensitivities, as well as the
+> nonlinearities. 13 The pickup is then installed and aligned mechanically with the other
+> beamline components. An optional alternative for the final alignment is to place a taut
+> wire along the magnetic axis of the beamline magnetic optics after the pickup is
+> mechanically mounted, excite the wire with an rf signal, and measure the electrical
+> offset (decibels of output signal unbalance) relative to the magnetic, rather than the
+> mechanical, axis of the beam optics. 42 The electrical offset and the displacement
+> sensitivity are then put into the computer database for correction to the beam position
+> data as it is read out. The nonlinearities, as shown in Fig. 12, can be corrected in a
+> look-up table at this time.
+> In the taut-wire measurement, the signal on the wire is by definition a TEM
+> (principal) wave with no longitudinal electric or magnetic component, which travels at
+> the velocity of light and emulates highly relativistic particles. The signals associated
+> with slow particles, as discussed above and illustrated in Fig. 10, are very difficult to
+> generate on wires. As shown above, because the pickup response depends on the
+> particle velocity, this effect must be considered in analyzing the wire measurements.
+
+Clever! We can try different geometries and positions to build a regression.
+
+Beam-modulated capacitive sensors seem to be ideal to get us the charged particles. How about the uncharged ones? I guess we'll deal with that later. 
+
+Select lens elements could be split into quadrants and measured differentially, even with a potential applied.
+
+Sorry, "window-frame"? Yeah, bowtie is probably an acceptable transgression.
+
+Modulated beam capacitive coupling - equation 6.4 @ shafer1992beam:
+$$
+V_c = \frac{WL}{2\pi C} \frac{I_b(t)}{v_b}
+$$
+(v originally stated as beta_b * speed of light).
+
+Some approximate numbers: if the capacitance is on the order of 10 pF, the plate is 2 mm by 2 mm, the current varies by 0.001 a in 10 us, and the beam velocity is 18 Mm/s (1000 eV, corresponding to maximum focus voltage), the plate voltage will be changed by 
+
+```
+0.353 v
+```
+
+!!! Perfect!
+
+Note that no voltage is produced at steady-state. This means that no power is transfered from plates to beam. It also means that the bowtie temperature will have to be modulated. This could be accomplished via a sawtooth wave; a slow cooling and commensurate decrease in power, followed by a large pulse of current.
+
+Distinguishing between beam-plate collision and a beam signal proper might be a bit tricky. Oh, no it won't - the collision will be steady-state, whereas the modulation will be in-phase with the beam pulsing.
+
+If the heavy beam alternates around 0.1 milliamp in 1/100th of a second, and speeds past at 40 km/s, 
+
+```
+0.0159 v
+```
+
+
+
 #### Fluid tracking
 
 The resistance of the bowtie will change when it is filled with conductive molten metal. That might be one of the coolest statements I've ever made.
+
+
+
+#### Amplifiers
+
+The cheapest 600v MOSFET or IGBT on Digikey seems to be ~\$0.10 at 3000-of pricing. With the minimum 5 plates and 2048 bowties, this would cost over $1000. Clearly, the amplifiers will have to be vertically integrated. 
+
+> Nickel is used mainly because is has high resistivity which makes is easy to weld. 
+
+AhI I had assumed that there was an electrostatic reason. Surface contamination is a significant concern, as Erdman & Zipf described (haha EZ lens!).
+
+Since there is no "blanking" feature on the ion printer, the beam is always present; therefore, the slew rate of the plates must be quite high to prevent material from being deposited between positions. 
+
+Given a 2 milliamp triode and a 300 pF plate capacitance, 
