@@ -1,3 +1,5 @@
+
+
 # Mk3
 
 Log starts at gauge.
@@ -260,6 +262,7 @@ A mesh of 50x50 pixels over the entire beam would seem to be reasonable.
   - Numpy convolution: ~0.15 seconds
   - Pretty diagnostics with matplotlib
   - Random search ineffective, genetic algorithm considered with DEAP 
+  - An attempt was made at adding charge incrementally to obtain a specified gradient - successful for a single point, but not beyond
 - Wonderfully fast C++ Laplace solver
   - 24 ms per iteration!
   - aww yis
@@ -646,8 +649,83 @@ The cheapest 600v MOSFET or IGBT on Digikey seems to be ~\$0.10 at 3000-of prici
 
 > Nickel is used mainly because is has high resistivity which makes is easy to weld. 
 
-AhI I had assumed that there was an electrostatic reason. Surface contamination is a significant concern, as Erdman & Zipf described (haha EZ lens!).
+Ah! I had assumed that there was an electrostatic reason. Surface contamination is a significant concern, as Erdman & Zipf described (haha EZ lens!).
 
 Since there is no "blanking" feature on the ion printer, the beam is always present; therefore, the slew rate of the plates must be quite high to prevent material from being deposited between positions. 
 
-Given a 2 milliamp triode and a 300 pF plate capacitance, 
+Given a triode with a 500k anode resistance, and a plate capacitance of 300 pF, a time constant of ~200 us can be expected. 
+
+To decrease power consumption, the bowtie could serve double-duty as the amp cathode heater. The reflector shield could be coated with barium oxide paste, serving as an indirectly heated hot cathode.
+
+
+
+Simulations will have to be performed to determine the ideal 
+
+#### Electrophoresis test 2
+
+Graphite and 12L14 were used as the cathode with an aluminum anode. Voltages of 40 to 120v were attempted. 0.04 a were drawn. No deposited layer was observed. PVA binder was added to the mixture. No deposited layer was observed.
+
+#### Anodization test 1
+
+Two pure aluminum wires were inserted into a room-temperature bath containing 20g of sodium bisulfate dissolved in 100g of tap water. Stirring was maintained throughout. 40v was applied, and the electrode began drawing 0.3a. The anode effervesced profusely.  The anode was removed after ~5 minutes, when the current had dropped to 0.1a. 
+
+Lungs were found to tickle slightly. The anode had been very effectively anodized, and had taken a dull gray lustre. The coating was reasonably scratch-resistant, requiring a fine point to break the surface. The wire was hardened significantly. The resistance was above ~100 Mohm. Breakdown voltage tests were not run.
+
+Graphite can be used as an electrode for anodizing clear.
+
+I do not believe I will anodize again; the sulfuric acid mists created by the type-3 process are really spicy, and it was a little hard to breathe last night. My sinuses were visibly swollen. My hood is clearly insufficient to protect me.
+
+#### Vacuum induction furnace test 1
+
+A 1kw liquid-cooled induction heater was used to heat a piece of graphite inside an evacuated test tube. Failure.
+
+#### High-current transformer graphite test 1
+
+A transformer constructed of 6 ga wire, known to produce peak currents of >100A, was connected across a small graphite 
+
+#### Graphite resistivity
+
+The prototype bowtie was 0.75x0.6x10mm, and had a resistance of 0.33 R. 
+$$
+RA/L = p
+$$
+Graphite therefore has a resistivity of approx. 14.9 uOhm-meters, or 67110 S/m. The value used for the Elmer sim was 3500 S/m - this explains the discrepancy. 
+
+The sim value was obtained from @ lutcov1970thermal.
+
+Appending my notes from the .sif file:
+
+> ! Graphite value is a rough approximation to the data provided in
+> ! Lutcov, A. ., Volga, V. ., & Dymov, B. . (1970).
+> ! Thermal conductivity, electric resistivity and specific heat of dense graphites.
+>
+> ! Specific heat data is from Thermal Properties of G-348 Graphite
+> ! Donald M. McEligot, W. David Swank, David L. Cottle, Francisco I. Valentin
+> ! Mr. Swank, you've got a cool name.
+>
+> !I've confirmed that the volume resistance values returned are sane for Aluminum.
+>
+> !For comparison, using
+> !graphite data directly from McMaster-Carr,
+> !(dividing ohms/sq by the thickness of the sheet, which is horrifically inaccurate)
+> !I get 0.00001397 ohm-meters
+> !or 71582 S/m.
+>
+> !Screw this.
+> !I just put my block of graphite across my bench supply,
+> !and obtained a value of 0.66 ohms,
+> !1968.5 S/m.
+>
+> !Using my bench meter in Kelvin-probe mode, I obtained a value of
+> !0.221 ohms,
+> !5873.9 S/m.
+
+
+
+The observed value matches the value from McMaster-Carr to exceptional accuracy. All other values are ridiculous. The new value has been substituted.
+
+
+
+#### Anodization test 2
+
+Diluted the anodize bath significantly. The rest was violently neutralized with sodium bicarbonate. Tests conducted at various voltages still yielded great anodizing power even at ~50x dilution.

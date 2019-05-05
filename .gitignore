@@ -12,3 +12,4 @@ references/
 *.avi
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
+.fcstd1

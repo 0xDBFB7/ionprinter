@@ -101,7 +101,7 @@ End
 Solver 3 ! Set the correct solver number here.
               ! Usually you want to use the highest number so the results are saved at the end of a timestep.
   Exec Solver = String "after timestep"
-  exec interval = 1
+  exec interval = 1is
   Equation = String "ResultOutput"
   Procedure = File "ResultOutputSolve" "ResultOutputSolver"
   Output File Name = String "paraver." !or any other output file name of your choice
@@ -114,37 +114,12 @@ Equation 1
   Active Solvers(2) = 1 2
 End
 
-! Graphite value are a rough approximation to the data provided in
-! Lutcov, A. ., Volga, V. ., & Dymov, B. . (1970).
-! Thermal conductivity, electric resistivity and specific heat of dense graphites.
-
-! Specific heat data is from Thermal Properties of G-348 Graphite
-! Donald M. McEligot, W. David Swank, David L. Cottle, Francisco I. Valentin
-! Mr. Swank, you've got a cool name.
-
-!I've confirmed that the volume resistance values returned are sane for Aluminum.
-
-!For comparison, using
-!graphite data directly from McMaster-Carr,
-!(dividing ohms/sq by the thickness of the sheet, which is horrifically inaccurate)
-!I get 0.00001397 ohm-meters
-!or 71582 S/m.
-
-!Screw this.
-!I just put my block of graphite across my bench supply,
-!and obtained a value of 0.66 ohms,
-!1968.5 S/m.
-
-!Using my bench meter in Kelvin-probe mode, I obtained a value of
-!0.221 ohms,
-!5873.9 S/m.
-
-!The thermal conductivity of
+!See construction.md/graphite.
 
 Material 1
   Name = "Graphite (generic)"
   Porosity Model = van Genuchten
-  Electric Conductivity = 3500 !Siemens per meter
+  Electric Conductivity = 71582 !Siemens per meter
   Heat Conductivity = 80
   Heat Capacity = 1500 !J/(kg*K)
   Mesh Poisson ratio = 0.35
