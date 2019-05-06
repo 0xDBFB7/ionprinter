@@ -641,8 +641,6 @@ If the heavy beam alternates around 0.1 milliamp in 1/100th of a second, and spe
 
 The resistance of the bowtie will change when it is filled with conductive molten metal. That might be one of the coolest statements I've ever made.
 
-
-
 #### Amplifiers
 
 The cheapest 600v MOSFET or IGBT on Digikey seems to be ~\$0.10 at 3000-of pricing. With the minimum 5 plates and 2048 bowties, this would cost over $1000. Clearly, the amplifiers will have to be vertically integrated. 
@@ -681,7 +679,7 @@ A 1kw liquid-cooled induction heater was used to heat a piece of graphite inside
 
 #### High-current transformer graphite test 1
 
-A transformer constructed of 6 ga wire, known to produce peak currents of >100A, was connected across a small graphite 
+A transformer constructed of 6 ga wire, known to produce peak currents of >100A, was connected across a small graphite mold. The mold was not heated appreciably.
 
 #### Graphite resistivity
 
@@ -720,12 +718,52 @@ Appending my notes from the .sif file:
 > !0.221 ohms,
 > !5873.9 S/m.
 
-
-
-The observed value matches the value from McMaster-Carr to exceptional accuracy. All other values are ridiculous. The new value has been substituted.
-
-
+The observed value matches the value from McMaster-Carr to exceptional accuracy. All other values are ridiculous. The new value has been substituted. 
 
 #### Anodization test 2
 
-Diluted the anodize bath significantly. The rest was violently neutralized with sodium bicarbonate. Tests conducted at various voltages still yielded great anodizing power even at ~50x dilution.
+Diluted the anodize bath significantly. The rest was violently neutralized with sodium bicarbonate. Tests conducted at various voltages still yielded great anodizing power even at ~50x dilution. The anodization far more porous and pitted.
+
+#### "Dirty" chamber 
+
+Some 3" OD x 1/8" wall lexan tubing was found. 
+$$
+
+$$
+
+#### Hot Surface Igniters
+
+These are essentially miniature versions of the SiC heating elements used on commercial high-temperature kilns. The SiC ones are quite delicate, but there are Silicon Nitride sandwich versions which are apparently much stronger. The SiNi ones seem to have a lower peak temperature, however. 
+
+Thinking of building a real high-temp furnace with these. Kind of tired of messing about with torches etc. At ~4 A each, we can only run 4 on a standard 1800 W circuit.
+
+Silicon Nitride decomposes at ~1850 C. The SiC elements may be more optimal for this application.
+
+SILICON-CARBIDE/BORON-CONTAINING COATINGS FOR THE OXIDATION PROTECTION OF GRAPHITE - it seems that SiC layers on graphite tend to crack. Addition of boron can solve this issue.
+
+MoSi elements are also available.
+
+However, I have a lot of graphite, and I already know that graphite is easily capable of these temperatures - it's a high TRL heater here. If I make a graphite plate 70x25 mm, with 7 runs of 1.5x2.5mm cross section, I will obtain a resistance of 1.947 R, a cool 25 a at 48V. 
+
+#### FAST/SPS ceramics / Polymer Derived ceramics
+
+Spark Plasma Sintering seems an achievable technique for production purposes.
+
+#### Faster Laplace computation
+
+<https://people.eecs.berkeley.edu/~demmel/cs267-1995/lecture24/lecture24.html>
+
+> On a realistic parallel machine, one would simply assign grid point (i,j) to processors in a block fashion as shown below, and have each processor update the values of U(i,j,m+1) at the grid point it owns. This requires U values on the boundary of the blocks to be communicated to neighboring processors. When n >> p, so that each processor owns a large number n^2/p of grid points, the amount of data communicated, n/p words with each neighbor, will be relatively small.
+
+<https://github.com/NVIDIA/AMGX> is also an option if these methods are insufficient.
+
+> At least a grid dependency study
+> must be carried out to verify whether the solution basically remains the same
+> when the computational grid is refined.
+
+[http://ftp.feq.ufu.br/Luis_Claudio/Books/E-Books/Food/Food%20process%20modelling/35652_04.pdf](http://ftp.feq.ufu.br/Luis_Claudio/Books/E-Books/Food/Food process modelling/35652_04.pdf)
+
+
+
+@ demmel1995
+
