@@ -767,3 +767,8 @@ Spark Plasma Sintering seems an achievable technique for production purposes.
 
 @ demmel1995
 
+@ nagel2011solving 
+
+See @ yavuzturk2005assessment 4.3, (2) for heat flux and transient thermal modelling.
+
+dirchlet conditions 

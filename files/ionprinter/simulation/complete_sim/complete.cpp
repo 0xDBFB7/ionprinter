@@ -13,7 +13,7 @@ using namespace std::chrono;
 
 #define E_MESH_X 100
 #define E_MESH_Y 100
-#define E_MESH_Z 50
+#define E_MESH_Z 100
 
 #define MESH_SCALE_X 0.0001 //0.00
 #define MESH_SCALE_Y 0.0001
@@ -130,8 +130,6 @@ void erdman_zipf_electrode(){
 
 int main(){
   float beam_diagnostics[BEAM_COUNT][10][] = {};
-
-
 
   float potentials[E_MESH_X][E_MESH_Y] = {};
   bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
