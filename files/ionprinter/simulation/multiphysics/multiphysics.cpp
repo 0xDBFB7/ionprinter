@@ -124,9 +124,6 @@ float gradient_difference(float desired_gradients[2][E_MESH_X][E_MESH_Y], bool d
   return sum;
 }
 
-void erdman_zipf_electrode(){
-
-}
 
 int main(){
   float beam_diagnostics[BEAM_COUNT][10][] = {};
