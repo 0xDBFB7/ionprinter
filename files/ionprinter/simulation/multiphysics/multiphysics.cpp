@@ -4,6 +4,27 @@
 #include <ctime>
 #include <iostream>
 #include <chrono>
+#include "QUnit.hpp"
+
+// #include "tiny_obj_loader.h"
+#include <vtkVersion.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkCubeSource.h>
+#include <vtkSmartPointer.h>
+#include <vtkSelectEnclosedPoints.h>
+#include <vtkIntArray.h>
+#include <vtkDataArray.h>
+#include <vtkVertexGlyphFilter.h>
+#include <vtkProperty.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkVertexGlyphFilter.h>
+
+
 using namespace std::chrono;
 
 #define BEAM_COUNT 5
@@ -124,36 +145,44 @@ float gradient_difference(float desired_gradients[2][E_MESH_X][E_MESH_Y], bool d
   return sum;
 }
 
+void import_mesh(float desired_gradients[E_MESH_X][E_MESH_Y][E_MESH_Z]){
+
+}
 
 int main(){
-  float beam_diagnostics[BEAM_COUNT][10][] = {};
 
-  float potentials[E_MESH_X][E_MESH_Y] = {};
-  bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
 
-  potentials[x][y] = v;
-  boundary_conditions[x][y] = 1;
-  auto start = high_resolution_clock::now();
 
-  relax_laplace_potentials(potentials,boundary_conditions,0.1);
-
-  auto stop = high_resolution_clock::now();
-  auto duration = duration_cast<microseconds>(stop - start);
-
-  particle_position[2] = {0,0};
-  particle_velocity[2] = {2000,0};
-
-  for(int beam_index = 0; beam_index < BEAM_COUNT; beam_index++){
-    for(int beam_step = 0; beam_step < BEAM_STEPS; beam_step++){
-
-    }
-  }
-  // printf(lowest_diff)
-  // printf("%i%% complete\n",(int) (y/E_MESH_Y)*100);
-  clear_screen();
-  printf("\x1b[38;2;255;255;0mDan's Hyper Beam Solver\n");
-  printf("\x1b[38;2;255;255;255mcur: %f, lowest: %f, v: %f x: %i y: %i\n",diff,lowest_diff,v,x,y);
-  std::cout << "Time taken by function: " << duration.count() << " microseconds\n";
+  //
+  // float beam_diagnostics[BEAM_COUNT][10][] = {};
+  //
+  // float potentials[E_MESH_X][E_MESH_Y] = {};
+  // bool boundary_conditions[E_MESH_X][E_MESH_Y] = {};
+  //
+  //
+  // potentials[x][y] = v;
+  // boundary_conditions[x][y] = 1;
+  // auto start = high_resolution_clock::now();
+  //
+  // relax_laplace_potentials(potentials,boundary_conditions,0.1);
+  //
+  // auto stop = high_resolution_clock::now();
+  // auto duration = duration_cast<microseconds>(stop - start);
+  //
+  // particle_position[2] = {0,0};
+  // particle_velocity[2] = {2000,0};
+  //
+  // for(int beam_index = 0; beam_index < BEAM_COUNT; beam_index++){
+  //   for(int beam_step = 0; beam_step < BEAM_STEPS; beam_step++){
+  //
+  //   }
+  // }
+  // // printf(lowest_diff)
+  // // printf("%i%% complete\n",(int) (y/E_MESH_Y)*100);
+  // clear_screen();
+  // printf("\x1b[38;2;255;255;0mDan's Hyper Beam Solver\n");
+  // printf("\x1b[38;2;255;255;255mcur: %f, lowest: %f, v: %f x: %i y: %i\n",diff,lowest_diff,v,x,y);
+  // std::cout << "Time taken by function: " << duration.count() << " microseconds\n";
 
 
     // display_potentials(potentials);
