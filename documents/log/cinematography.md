@@ -122,3 +122,44 @@ One of the videos captured recently shows the turbo controller smoking. To make 
 
 
 
+
+
+All future improvements will remain open-source. Ideally, any upgrades that are made as the technology progresses will be printable on the device itself, though this may not be possible in some cases.
+
+#### Limitations
+
+
+
+There will likely be a few consumables; these print modules will probably require replacement every few thousand hours, or about every 10 kg printed; but there will never be any kind of DRM on those, so other vendors will probably appear. The business model is not predicated on profiting from parts wearing out or planned obsolescence, since that's a dick move; rather, we're selling the device for a reasonable price and then trying to support it as well as possible.
+
+If we profit significantly from replacement parts, there is no motivation for us to improve the reliability of our product. This would be a sad state of affairs.
+
+There will never be any sort of planned obsolescence.
+
+
+
+
+
+The D in DRM stands for Douchebag
+
+
+
+# Focus stack, but nonlinear
+
+Capture many images at different focus positions, and only stack the furthest and closest, for instance.
+
+Fancy bokeh
+
+Split focus
+
+Brenizer Method
+
+wear hat outside at portable
+
+
+
+The original Short Circuit intro (<https://www.youtube.com/watch?v=pUQIKnrZVTM>) is entirely close-up macro shots. The camera never moves, it's just a series of jump cuts of motion. The sound is prominent over the music.  The action sequence is 2 minutes long. 
+
+Nobody is visible; hands are gloved, everything visible is mechanical.
+
+Everything must be third-person scientific; no "I", we, etc.

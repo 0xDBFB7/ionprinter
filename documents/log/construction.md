@@ -772,3 +772,58 @@ Spark Plasma Sintering seems an achievable technique for production purposes.
 See @ yavuzturk2005assessment 4.3, (2) for heat flux and transient thermal modelling.
 
 dirchlet conditions 
+
+
+
+#### Beam diagnostics at scale
+
+The cheapest comparator (required for a successive-approximation ADC) at 10000-of pricing is ~\$0.14 / 4 elements, which would cost >300 for a 2048-element printer. 
+
+A single NPN transistor is only $0.03, however, and a standard long-tailed pair only requires two transistors. We're not concerned about linearity or really any aspect of dif
+
+A 16-channel analog switch (the CD74HC4067M96, for instance) is $0.52. If 8 channels are required per beam, this comes to \$520. 
+
+Digital muxes cost 
+
+A grid matrix AND system could be arranged, requiring only two transistors per output. 
+
+Some sort of VCO could also be designed.
+
+#### Hybrid probe
+
+Theoretically calculating precise energy/momentum balance and ionization percentages in electron-beam ionization appears to be almost impossible. Coefficients for heavy atoms like aluminum and iron are scarce, and the underlying theory is highly quantum mechanical. VSS/VHS parameters alone will likely be insufficient. 
+
+Accuracy of ~1 percent is important - even a small amount of misdirected material will destroy both the printed object and the assembly.
+
+For this reason, we are going to harness the most powerful simulator ever: the universe itself.
+
+Previously, I was going to determine the deposited mass using a combination capacitive spring balance and Kelvin cup. However, given the small mass, the capacitance change will likely be infinitesimal. 
+
+Deposition thickness measurement is usually done by determining the change in frequency or Q factor of a quartz resonator. 
+
+I experimented with using a small 3-wire feedback piezo sensor; however, these are constructed from brass and resin insulation, neither of which I would like to have present in the high heat flux surrounding the bowtie.
+
+To simplify measurement, 
+
+I was also planning on making the microbalance and Kelvin cup one and the same; however, this would require an electrode mounted to the quartz resonator, making the setup somewhat more complex.
+
+A pair of plates perpendicular to the Kelvin cup entrance can be used to preferentially deflect electrons.
+
+The beam calorimeter can be calibrated by dissipating a known power into an integrated SMD resistor.
+
+
+
+The Teensy 
+
+A stepper motor and counterbalance will be used to 
+
+
+
+Effects that will have to be calibrated out:
+
+- Radiated heat from the bowtie
+- Change in emissivity as 
+
+Silicone wire
+
+#### 
