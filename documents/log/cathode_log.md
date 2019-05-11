@@ -15,3 +15,4 @@ Two of the coils were dipped in the solution. Two remained uncoated to act as co
 <hr>
 
 Another strike against barium oxide cathodes: the temperature-resistivity curve for nichrome is pretty funky and surjective, whereas tungsten's curve is quite well-behaved.
+

@@ -157,26 +157,10 @@ void clear_screen(){
   printf("\033[2J\033[1;1H");
 }
 
-float gradient_difference(float desired_gradients[2][ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y], bool desired_gradient_positions[2][ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y], float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
-  float sum = 0;
-  for(int y = 1; y < ELECTRODE_FIELD_MESH_Y-1; y++){
-    for(int x = 1; x < ELECTRODE_FIELD_MESH_X-1; x++){
-      if(desired_gradient_positions[X][x][y]){
-        sum += std::abs(desired_gradients[X][x][y]-x_electric_field_at_position(potentials,x,y));
-      }
-      if(desired_gradient_positions[Y][x][y]){ //perhaps the Y field can be free while the X field is fixed
-        sum += std::abs(desired_gradients[Y][x][y]-y_electric_field_at_position(potentials,x,y));
-      }
-    }
-  }
-  return sum;
-}
-
-
-void import_mesh(bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z]){
+void import_mesh(const char* filename, bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z], float translate_x, float translate_y, float translate_z){
 
     vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
-    reader->SetFileName("test.stl");
+    reader->SetFileName();
     reader->Update();
 
     vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
@@ -206,30 +190,9 @@ void import_mesh(bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][T
           pointsPolydata->SetPoints(points);
           selectEnclosedPoints->Update();
           mesh_present[x][y][z] = selectEnclosedPoints->IsInside(0);
-          // printf("");
-          // printf("x%i,y%i\n",x,y);
         }
       }
     }
-    //
-
-    //
-    // double bounds[6];
-    // pointsPolydata->GetBounds(bounds);
-    // std::cout  << "xmin: " << bounds[0] << " "
-    //            << "xmax: " << bounds[1] << std::endl
-    //            << "ymin: " << bounds[2] << " "
-    //            << "ymax: " << bounds[3] << std::endl
-    //            << "zmin: " << bounds[4] << " "
-    //            << "zmax: " << bounds[5] << std::endl;
-    //
-    // for(int x = 0; x < bounds[0]; x++){
-    //   for(int y = 0; y < bounds[0]; y++){
-    //     for(int z = 0; z < bounds[0]; z++){
-    //
-    //     }
-    //   }
-    // }
 }
 
 int main(){

@@ -163,3 +163,14 @@ The original Short Circuit intro (<https://www.youtube.com/watch?v=pUQIKnrZVTM>)
 Nobody is visible; hands are gloved, everything visible is mechanical.
 
 Everything must be third-person scientific; no "I", we, etc.
+
+databending/databending - perhaps with ASCII readout of printer startup?
+
+moviepy compositing
+
+<https://gist.github.com/NeuroWinter/e557bfc555118ed68df88e8e51f03177>
+
+
+
+There's a scene in 20180111_195750.mp4 where a Q-tip gets sucked into the CNC
+

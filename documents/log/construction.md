@@ -801,7 +801,7 @@ Previously, I was going to determine the deposited mass using a combination capa
 
 Deposition thickness measurement is usually done by determining the change in frequency or Q factor of a quartz resonator. 
 
-I experimented with using a small 3-wire feedback piezo sensor; however, these are constructed from brass and resin insulation, neither of which I would like to have present in the high heat flux surrounding the bowtie.
+I experimented with using a small 3-wire feedback piezo sensor; however, these are constructed from brass and resin insulation, neither of which I would like to have present in the high heat flux immediately surrounding the bowtie. Standard quartz oscillators seem to be constructed from vacuum-safe materials. 
 
 To simplify measurement, 
 
@@ -822,8 +822,34 @@ A stepper motor and counterbalance will be used to
 Effects that will have to be calibrated out:
 
 - Radiated heat from the bowtie
-- Change in emissivity as 
+- Change in emissivity as material is deposited
 
-Silicone wire
 
-#### 
+
+Purchased 5 Abracon ACO1847 1 MHz oscillators. One was sacrificed to determine the position of the internal quartz element. It appears to be less than 0.6mm from the top of the casing and 8.13 mm in diameter, with 6 mm safe distance between the mounting supports). Looking at the oscillator upright, with the text readable, the first mounting peg is 8.8 mm from the right side (measuring from the body, not the flange) and 6.58mm from the bottom. 
+
+The second mounting peg is 16.14mm from the right and 2.15mm from the bottom.
+
+The crystal element is 0.208mm thick.
+
+@ mueller1968direct
+
+> This latter situation is the usual
+> one, since the total loading of the crystals should be
+> limited to 1% of the mass of the crystal.
+
+
+
+Things which should be mounted to the measurement head:
+
+- Oscillator
+  - 
+- Kelvin cup
+  - Calibration resistor
+  - Temperature
+
+<http://www.stabitech.nl/Quartz.htm>
+
+#### Cascoding
+
+HV Cascoding is a powerful technique, though it is not without idiosyncracies. Amplifying the ~5 KV extraction supply would require 3 or 4 HV mosfets per emitter.
