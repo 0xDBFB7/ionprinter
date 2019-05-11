@@ -4,7 +4,6 @@
 #include <ctime>
 #include <iostream>
 #include <chrono>
-#include "QUnit.hpp"
 
 // #include "tiny_obj_loader.h"
 #include <vtkVersion.h>
@@ -160,7 +159,7 @@ void clear_screen(){
 void import_mesh(const char* filename, bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z], float translate_x, float translate_y, float translate_z){
 
     vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
-    reader->SetFileName();
+    reader->SetFileName(filename);
     reader->Update();
 
     vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
@@ -196,7 +195,7 @@ void import_mesh(const char* filename, bool mesh_present[THERMAL_FIELD_MESH_X][T
 }
 
 int main(){
-  import_mesh(mesh_present);
+  import_mesh("10x10x10_cube.stl",mesh_present,0,0,0);
 
   //
   // float beam_diagnostics[BEAM_COUNT][10][] = {};
