@@ -867,15 +867,3 @@ The assembly was left to dry for several hours.
 The igniter body appeared to be made out of steatite C220, not alumina; therefore, a ~7mm firebrick gap was added to insulate the low-temperature side of the igniter. This was probably not necessary; Steatite has a maximum temp of 1700 C, likely higher than the furnace will ever attain.
 
 Firebrick cuts very easily; mounting on the CNC may have been possible.
-
-#### Predicament
-
-I need to build the calorimeter to obtain the beam data. First, however, I need to build the e-beam gun. To do this, I need a few alumina insulators. I can't fire alumina because the furnace is missing a few screws. However, my parents will hear the drill, and will scream at me. They have requested that I work on the SafeSump, which is tens of thousands in debt and is a dismal failure. The only solution is an operating ionprinter. Kesti might go out of business any moment. I must also finish my university assignments.
-
-I am currently doing none of these things. I'm writing a self-indulgent pity-party into this document. I'm so, so lonely, I can't even function properly
-
-just a spoiled fucking asshole 
-
-I have opportunities that others could only dream of, time to spare, 
-
-I heard ABBA's "Honey, Honey" this morning, broke my brain again
