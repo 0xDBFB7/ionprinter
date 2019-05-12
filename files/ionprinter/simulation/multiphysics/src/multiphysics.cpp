@@ -5,6 +5,8 @@
 #include <iostream>
 #include <chrono>
 
+#include "src/multiphysics.hpp"
+
 // #include "tiny_obj_loader.h"
 #include <vtkVersion.h>
 #include <vtkPolyData.h>

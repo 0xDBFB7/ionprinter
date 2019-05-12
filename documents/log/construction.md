@@ -852,4 +852,30 @@ Things which should be mounted to the measurement head:
 
 #### Cascoding
 
-HV Cascoding is a powerful technique, though it is not without idiosyncracies. Amplifying the ~5 KV extraction supply would require 3 or 4 HV mosfets per emitter.
+HV Cascoding is a powerful technique, though it is not without idiosyncrasies. Amplifying the ~5 KV extraction supply would require 3 or 4 HV mosfets per emitter.
+
+#### SiC furnace construction
+
+An Emerson 767A-372 Carbide hot surface igniter and an Amaco 28035N 9" x 4-1/2" x 2-1/2" firebrick were purchased. 
+
+The firebrick was cut in twain with a wet diamond tile saw, a 27mm slice was rended from one of the halves, and a pocket was made in the remnant.
+
+Holes for the igniter were drilled into the slice using a standard drill bit. The igniter was mounted using 1460c high-temp cement. The cement had dried considerably, and was not able to adhere to the wet-cut surface.
+
+The assembly was left to dry for several hours. 
+
+The igniter body appeared to be made out of steatite C220, not alumina; therefore, a ~7mm firebrick gap was added to insulate the low-temperature side of the igniter. This was probably not necessary; Steatite has a maximum temp of 1700 C, likely higher than the furnace will ever attain.
+
+Firebrick cuts very easily; mounting on the CNC may have been possible.
+
+#### Predicament
+
+I need to build the calorimeter to obtain the beam data. First, however, I need to build the e-beam gun. To do this, I need a few alumina insulators. I can't fire alumina because the furnace is missing a few screws. However, my parents will hear the drill, and will scream at me. They have requested that I work on the SafeSump, which is tens of thousands in debt and is a dismal failure. The only solution is an operating ionprinter. Kesti might go out of business any moment. I must also finish my university assignments.
+
+I am currently doing none of these things. I'm writing a self-indulgent pity-party into this document. I'm so, so lonely, I can't even function properly
+
+just a spoiled fucking asshole 
+
+I have opportunities that others could only dream of, time to spare, 
+
+I heard ABBA's "Honey, Honey" this morning, broke my brain again
