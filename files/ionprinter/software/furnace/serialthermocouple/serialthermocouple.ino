@@ -34,8 +34,15 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 //#define MAXCS   10
 //Adafruit_MAX31855 thermocouple(MAXCS);
 
-int integral = 0;
-float target = 300;
+#define P 1
+#define I 1
+#define D 4
+
+double integral = 0;
+double previous_error = 0;
+float target = 900;
+
+
 void setup() {
   while (!Serial); // wait for Serial on Leonardo/Zero, etc
   
@@ -48,17 +55,22 @@ void setup() {
 
 
 void loop() {
-   double c = thermocouple.readCelsius();
-   if(c < target){
-      integral++;
+   double current_temp = 0;
+   for(int i=0;i < 5;i++){
+      current_temp += thermocouple.readCelsius();
+      delay(100); 
    }
-   else{
-      integral--;
-   }
-   integral = constrain(integral,0,255);
-   analogWrite(13,integral);
-//  digitalWrite(13,HIGH);
-   Serial.println(String(c) + "," + String(integral));
-   delay(100);
+   current_temp /= 5;
+   double error = target-current_temp;
+   integral += error*0.5; //100 ms
+   double derivative = error-previous_error;
+   integral = constrain(integral,-300,300);
+   
+   double output = P * error + integral*I + D*derivative;
+   output = constrain(output,0,255);
+   previous_error = error;
+   analogWrite(13,output);
+   Serial.println(String(current_temp) + ", P: " + String(P*error) + " I: " + String(integral) 
+                                  + " D: " +  String(derivative) + " O:" + String(output));
    
 }

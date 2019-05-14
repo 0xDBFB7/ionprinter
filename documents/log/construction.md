@@ -888,5 +888,9 @@ The kiln was brought to 1300c for ~5 minutes. This required ~130v.
 
 The part had broken, but was composed of the most wonderful hard alumina. A few more minutes at temperature would probably be in order. Some residue was deposited onto the surface of the SiC element.
 
+#### Furnace PID
+
+A new SSR was purchased, and a little rubbish PID algorithm was written to control the kiln. 1,1,4 with integral bounds of -300 and 300 was effective - oscillations of +-20C, no problemo.
+
 
 
