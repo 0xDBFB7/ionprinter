@@ -867,3 +867,26 @@ The assembly was left to dry for several hours.
 The igniter body appeared to be made out of steatite C220, not alumina; therefore, a ~7mm firebrick gap was added to insulate the low-temperature side of the igniter. This was probably not necessary; Steatite has a maximum temp of 1700 C, likely higher than the furnace will ever attain.
 
 Firebrick cuts very easily; mounting on the CNC may have been possible.
+
+#### Firing
+
+Fired up the new crucible. It performs beyond my wildest dreams. Measured the internal temperature with a small thermocouple stripped of insulation. It hit 500c at a mere ~50v (of 140), 700c at ~80v. The temp was maintained at 400c for ~30 minutes to bake off any residual moisture; some slight hissing was heard. 
+
+The outside is still cold to the touch.
+
+120v rapidly drove the kiln past 1000c.
+
+#### Alumina + Kaolin test 2, new furnace
+
+A digital control system was set up to drive the new kiln; however, the only SSR available was apparently burned out.
+
+A 70% Alumina / 30% Kaolin / 19% water solution was made. This was far too liquid.
+
+Impatience caused the temperature to rise to ~200c far too quickly. Distressing popping noises were heard.
+
+The kiln was brought to 1300c for ~5 minutes. This required ~130v. 
+
+The part had broken, but was composed of the most wonderful hard alumina. A few more minutes at temperature would probably be in order. Some residue was deposited onto the surface of the SiC element.
+
+
+

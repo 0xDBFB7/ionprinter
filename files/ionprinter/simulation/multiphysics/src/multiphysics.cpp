@@ -5,7 +5,7 @@
 #include <iostream>
 #include <chrono>
 
-#include "src/multiphysics.hpp"
+#include "multiphysics.hpp"
 
 // #include "tiny_obj_loader.h"
 #include <vtkVersion.h>
