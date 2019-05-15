@@ -890,7 +890,19 @@ The part had broken, but was composed of the most wonderful hard alumina. A few 
 
 #### Furnace PID
 
-A new SSR was purchased, and a little rubbish PID algorithm was written to control the kiln. 1,1,4 with integral bounds of -300 and 300 was effective - oscillations of +-20C, no problemo.
+A new SSR was purchased, and a little rubbish PID algorithm was written to control the kiln. 1,1,4 with integral bounds of -300 and 300 was effective - oscillations of +-20C, no problemo. 
+
+Thermocouple melted.
+
+Various tests were performed with different mixture viscosities.
+
+Alumina-dipped graphite was very effective; it seemed to bond well to the surface of the graphite. The graphite degraded significantly, however; it had lost almost all structural integrity after two sintering tests.
+
+
+
+
+
+
 
 
 

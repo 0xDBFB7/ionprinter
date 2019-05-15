@@ -40,7 +40,7 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
 double integral = 0;
 double previous_error = 0;
-float target = 900;
+float target = 1300;
 
 
 void setup() {
@@ -61,6 +61,9 @@ void loop() {
       delay(100); 
    }
    current_temp /= 5;
+   if(current_temp != current_temp){
+      return; //continue
+   }
    double error = target-current_temp;
    integral += error*0.5; //100 ms
    double derivative = error-previous_error;
