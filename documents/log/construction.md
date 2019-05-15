@@ -898,6 +898,10 @@ Various tests were performed with different mixture viscosities.
 
 Alumina-dipped graphite was very effective; it seemed to bond well to the surface of the graphite. The graphite degraded significantly, however; it had lost almost all structural integrity after two sintering tests.
 
+parents are almost certainly going to divorce! The conventional wisdom is not to go into business with friends or family, but I thought I had an abnormally strong relationship with my parents. Nope! I have destroyed their marriage. Totally, 100%, without a doubt my fault. They said they wanted to help - they're really amazing people, and wanted to see me succeed. But they've already worked really hard to provide an easy life, and now I've ruined their fun years.
+
+It's interesting.
+
 
 
 
