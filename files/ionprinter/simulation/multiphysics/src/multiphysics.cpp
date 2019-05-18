@@ -69,8 +69,6 @@ using namespace std::chrono;
 #define Y 1
 #define Z 2
 
-bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z] = {};
-
 
 double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
     //Calculate the electric field at the edge of a beam
@@ -126,78 +124,83 @@ void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE
   }
 }
 
-float x_electric_field_at_position(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y],int x,int y){
-  return (((potentials[x][y]-potentials[x-1][y])+(potentials[x+1][y]-potentials[x][y]))/2.0)/ELECTRODE_MESH_SCALE_X; //determine gradient along x, divide by world scale
-}
+// float electric_field_at_position(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y],int x,int y){
+//   return (((potentials[x][y]-potentials[x-1][y])+(potentials[x+1][y]-potentials[x][y]))/2.0)/ELECTRODE_MESH_SCALE_X; //determine gradient along x, divide by world scale
+// }
 
-float y_electric_field_at_position(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y],int x,int y){
-  return (((potentials[x][y]-potentials[x][y-1])+(potentials[x][y+1]-potentials[x][y]))/2.0)/ELECTRODE_MESH_SCALE_Y; //determine gradient along y, divide by world scale
-}
+//
+// void display_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
+//   float max = float_array_max(potentials);
+//   float min = float_array_min(potentials);
+//
+//   for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
+//     for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
+//       int r = 0;
+//       int g = 0;
+//       int b = 0;
+//       if(max-min != 0){
+//         r = (potentials[x][y]/((max-min)/2.0))*255.0 * (float)(potentials[x][y] > 0);
+//         g = (potentials[x][y]/((max-min)/2.0))*-255.0 * (float)(potentials[x][y] < 0);
+//         b = 0;
+//       }
+//       printf("\x1b[38;2;%i;%i;%im# ",r,g,b);
+//     }
+//     printf("\n");
+//   }
+// }
 
-void display_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
-  float max = float_array_max(potentials);
-  float min = float_array_min(potentials);
+// void clear_screen(){
+//   printf("\033[2J\033[1;1H");
+// }
 
-  for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
-    for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
-      int r = 0;
-      int g = 0;
-      int b = 0;
-      if(max-min != 0){
-        r = (potentials[x][y]/((max-min)/2.0))*255.0 * (float)(potentials[x][y] > 0);
-        g = (potentials[x][y]/((max-min)/2.0))*-255.0 * (float)(potentials[x][y] < 0);
-        b = 0;
-      }
-      printf("\x1b[38;2;%i;%i;%im# ",r,g,b);
-    }
-    printf("\n");
-  }
-}
+int index(x,y,z,x_len,y_len,z_len){
 
-void clear_screen(){
-  printf("\033[2J\033[1;1H");
 }
 
 void import_mesh(const char* filename, bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z], float translate_x, float translate_y, float translate_z){
+  /*
+  Deposit a mesh onto a uniform grid.
+  */
+  vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
+  reader->SetFileName(filename);
+  reader->Update();
 
-    vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
-    reader->SetFileName(filename);
-    reader->Update();
+  vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
+  double bounds[6];
+  reader->GetOutput()->GetBounds(bounds);
 
-    vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
-    double bounds[6];
-    reader->GetOutput()->GetBounds(bounds);
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
+  //Points inside test
+  vtkSmartPointer<vtkSelectEnclosedPoints> selectEnclosedPoints =
+    vtkSmartPointer<vtkSelectEnclosedPoints>::New();
+  selectEnclosedPoints->SetInputData(pointsPolydata);
+  selectEnclosedPoints->SetSurfaceConnection(reader->GetOutputPort());
 
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
-    //Points inside test
-    vtkSmartPointer<vtkSelectEnclosedPoints> selectEnclosedPoints =
-      vtkSmartPointer<vtkSelectEnclosedPoints>::New();
-    selectEnclosedPoints->SetInputData(pointsPolydata);
-    selectEnclosedPoints->SetSurfaceConnection(reader->GetOutputPort());
+  double point[3] = {0, 0.0, 0.0};
+  points->InsertNextPoint(point);
+  printf("bounds: %f, %f\n",bounds[0],bounds[1]);
+  printf("bounds: %f, %f\n",std::max((bounds[0]/1000.0)/THERMAL_MESH_SCALE_X,0.0),std::min(((bounds[1]/1000.0)/THERMAL_MESH_SCALE_X),MESH_X/THERMAL_MESH_SCALE_X));
 
-    double point[3] = {0, 0.0, 0.0};
-    points->InsertNextPoint(point);
-    printf("bounds: %f, %f\n",bounds[0],bounds[1]);
-    printf("bounds: %f, %f\n",std::max((bounds[0]/1000.0)/THERMAL_MESH_SCALE_X,0.0),std::min(((bounds[1]/1000.0)/THERMAL_MESH_SCALE_X),MESH_X/THERMAL_MESH_SCALE_X));
-
-    for(int x = std::max((bounds[0]/1000.0)/THERMAL_MESH_SCALE_X,0.0); x < std::min(((bounds[1]/1000.0)/THERMAL_MESH_SCALE_X),MESH_X/THERMAL_MESH_SCALE_X); x++){
-      for(int y = std::max((bounds[2]/1000.0)/THERMAL_MESH_SCALE_Y,0.0); y < std::min(((bounds[3]/1000.0)/THERMAL_MESH_SCALE_Y),MESH_Y/THERMAL_MESH_SCALE_Y); y++){
-        for(int z = std::max((bounds[4]/1000.0)/THERMAL_MESH_SCALE_Z,0.0); z < std::min(((bounds[5]/1000.0)/THERMAL_MESH_SCALE_Z),MESH_Z/THERMAL_MESH_SCALE_Z); z++){
-          point[X] = (x*THERMAL_MESH_SCALE_X)*1000.0; //multiply by world mesh scale, multiply by 1000.
-          point[Y] = (y*THERMAL_MESH_SCALE_Y)*1000.0;
-          point[Z] = (z*THERMAL_MESH_SCALE_Z)*1000.0;
-          points->SetPoint(0,point);
-          pointsPolydata->SetPoints(points);
-          selectEnclosedPoints->Update();
-          mesh_present[x][y][z] = selectEnclosedPoints->IsInside(0);
-        }
+  for(int x = std::max((bounds[0]/1000.0)/THERMAL_MESH_SCALE_X,0.0); x < std::min(((bounds[1]/1000.0)/THERMAL_MESH_SCALE_X),MESH_X/THERMAL_MESH_SCALE_X); x++){
+    for(int y = std::max((bounds[2]/1000.0)/THERMAL_MESH_SCALE_Y,0.0); y < std::min(((bounds[3]/1000.0)/THERMAL_MESH_SCALE_Y),MESH_Y/THERMAL_MESH_SCALE_Y); y++){
+      for(int z = std::max((bounds[4]/1000.0)/THERMAL_MESH_SCALE_Z,0.0); z < std::min(((bounds[5]/1000.0)/THERMAL_MESH_SCALE_Z),MESH_Z/THERMAL_MESH_SCALE_Z); z++){
+        point[X] = (x*THERMAL_MESH_SCALE_X)*1000.0; //multiply by world mesh scale, multiply by 1000.
+        point[Y] = (y*THERMAL_MESH_SCALE_Y)*1000.0; //since world scale is in meters, and STL is assumed to be in mm
+        point[Z] = (z*THERMAL_MESH_SCALE_Z)*1000.0;
+        points->SetPoint(0,point);
+        pointsPolydata->SetPoints(points);
+        selectEnclosedPoints->Update();
+        mesh_present[x][y][z] = selectEnclosedPoints->IsInside(0);
       }
     }
+  }
 }
 
 int main(){
   import_mesh("10x10x10_cube.stl",mesh_present,0,0,0);
+
+  bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z] = {};
 
   //
   // float beam_diagnostics[BEAM_COUNT][10][] = {};

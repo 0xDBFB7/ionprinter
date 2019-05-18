@@ -843,10 +843,13 @@ The crystal element is 0.208mm thick.
 Things which should be mounted to the measurement head:
 
 - Oscillator
-  - 
+  - Sensing either via oscilloscope or Teensy
 - Kelvin cup
   - Calibration resistor
-  - Temperature
+  - Thermistor
+  - 
+- Bowtie mosfet
+- 
 
 <http://www.stabitech.nl/Quartz.htm>
 
@@ -890,7 +893,7 @@ The part had broken, but was composed of the most wonderful hard alumina. A few 
 
 #### Furnace PID
 
-A new SSR was purchased, and a little rubbish PID algorithm was written to control the kiln. 1,1,4 with integral bounds of -300 and 300 was effective - oscillations of +-20C, no problemo. 
+A new SSR was purchased, and a little rubbish PID algorithm was written to control the kiln. 1,1,4 with integral bounds of -300 and 300 was effective - oscillations of +-20C, no problemo. The element draws a consistent 3.7A throughout the the temperature range.
 
 Thermocouple melted.
 
@@ -898,11 +901,76 @@ Various tests were performed with different mixture viscosities.
 
 Alumina-dipped graphite was very effective; it seemed to bond well to the surface of the graphite. The graphite degraded significantly, however; it had lost almost all structural integrity after two sintering tests.
 
+I was planning on making a spectroscope pyrometer; however, I realized that this wouldn't give me any measurements at low temperatures - required for furnace bakeout. 
+
+Tried measuring how tungsten wire degrades in atmosphere; used a lighter to heat a 0.1mmx20mm piece red hot while measuring its resistance with the bench meter. Resistance went from 2.630r to ~3.35r when hot, but returned to 2.54 after one cycle, then 2.4 after the next, etc. Not a reliable thermistor.
+
+Err, the above effect may have been a contact resistance problem. 
+
+Tried 100r divider with a length of nichrome in the furnace. Reading unchanged over temperature range. 
+
+Used proper kiln thermocouple from other kiln. Worked as expected - small temperature offset at maximum temperatures.
+
+#### Delrin alumina casting
+
+A one-sided mold was cut from 1/4" delrin, and clamped to a flat piece of delrin. A 70/30 alumina mix was made. 
+
+This was left to dry for ~30 minutes, and then opened. The alumina had not yet dried.
+
+#### Aluminum graphite coating
+
+An aluminum coupon was dipped into 70/30 alumina, forming a thin insulating layer. A blowtorch was used to sinter. The aluminum melted slightly.
+
+I don't have any steel. Sucks.
+
+The problem no longer seems to be related to the alumina sintering; with kaolin, this is easily effected. 
+
+#### Delrin alumina casting with PVA binder
+
+Following the advice of @ chabert2008cross, a solution was made containing a small amount of PVA binder. This contained 1.5g kaolin, 3.5g alumina, and 0.2g PVA wood glue (solids percentage ~0.4-0.7). Less than 1.5g of water was added until the mixture was very stiff and clay-like. This was added to a syringe and injected with some difficulty into a delrin mold until clay was emitted from the sprues. The mold was immediately disassembled, and it was found that the clay had fully permeated through the channels in the mold.
 
 
 
+Interesting: photolithography works on clay <https://ceramicartsnetwork.org/daily/ceramic-supplies/ceramic-colorants/photo-lithography-on-clay-a-surprisingly-simple-way-to-print-images-on-clay/>
 
 
 
+#### Green machining 
+
+oh it's a green machine
+
+very green
+
+penny lane - 
 
 
+
+The previous mixture could not be released from the mold; it was too brittle, and snapped immediately. The ejector pins functioned admirably. Some shrinkage was observed. 
+
+One of the scrap pieces was taped gently to a piece of delrin on the CNC bed. This was then milled at 24krpm, 65 mm/min, and ~0.7mm stepdown. This worked admirably.
+
+> synergistic interaction among locust bean, carrageenan, and
+> xanthan gum
+
+bahahaha
+
+I'm missing the DHF cross-linker that was mentioned in the study.
+
+> Thegreen components were fired at between 1350 and 1450C for 2
+> h after a 30-min hold at 3501C for PVA burnout
+
+
+
+Perhaps using mold release would have been helpful.
+
+
+
+#### Green cookie-cutting
+
+Another mixture was created with 1.5g kaolin, 3.5g alumina, 0.2g PVA wood glue. Sufficient water was added until a putty-like texture was attained. This was spread out on a delrin sheet, and a delrin "cookie cutter" mold was pressed onto it with great force. The mold was then removed. The part stayed cleanly attached to the delrin sheet - occasionally, some distortion would be encountered; mold release may solve that issue. This was left to dry for ~3 hours, then transferred to the kiln. The green was strong enough to be handled. 
+
+The kiln was inadvertently preheated to 100c, then brought to ~350c over the course of 5 minutes. This temperature was maintained for 20 minutes, and then the temperature spiked to 1300c.
+
+The part was extremely hard and strong, though it shattered when sprue was removed; crack in the green propagated.
+
+The temperature reading of 1100 was far below the previously observed temperature of 1300-1400; this was almost certainly an offset due to the new high-thermal-mass thermocouple.

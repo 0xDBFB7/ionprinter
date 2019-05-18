@@ -33,15 +33,19 @@ Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 // on a given CS pin.
 //#define MAXCS   10
 //Adafruit_MAX31855 thermocouple(MAXCS);
+//small thermocouple
+//#define P 1
+//#define I 1
+//#define D 4
 
-#define P 1
-#define I 1
-#define D 4
+
+#define P 0.75
+#define I 0.5
+#define D 6
 
 double integral = 0;
 double previous_error = 0;
-float target = 1300;
-
+float target = 0;
 
 void setup() {
   while (!Serial); // wait for Serial on Leonardo/Zero, etc
@@ -52,9 +56,30 @@ void setup() {
   delay(500);
 }
 
+#define RAMP_1_TIME 300.0
+#define RAMP_1_TEMP 350.0
+#define HOLD_1_TIME (20.0*60.0)
+#define RAMP_2_TIME (10.0*60.0)
+#define RAMP_2_TEMP 1300.0
+#define HOLD_2_TIME (60.0*60.0)
 
-
-void loop() {
+void loop() { 
+   int current_time = millis()/1000UL;
+   if(current_time < RAMP_1_TIME){ // ramp to 350 in 5 minutes
+    target = (RAMP_1_TEMP*(current_time/RAMP_1_TIME));
+   }
+   else if((current_time-RAMP_1_TIME) < HOLD_1_TIME){
+    target = RAMP_1_TEMP;
+   }
+   else if((current_time-RAMP_1_TIME-HOLD_1_TIME) < RAMP_2_TIME){
+    target = (RAMP_2_TEMP*((current_time-(RAMP_1_TIME+HOLD_1_TIME))/RAMP_2_TIME));
+   }
+   else if((current_time-RAMP_1_TIME-HOLD_1_TIME-RAMP_2_TIME) < HOLD_2_TIME){
+    target = RAMP_2_TEMP;
+   }
+   else{
+    target = 0;
+   }
    double current_temp = 0;
    for(int i=0;i < 5;i++){
       current_temp += thermocouple.readCelsius();
@@ -73,7 +98,7 @@ void loop() {
    output = constrain(output,0,255);
    previous_error = error;
    analogWrite(13,output);
-   Serial.println(String(current_temp) + ", P: " + String(P*error) + " I: " + String(integral) 
-                                  + " D: " +  String(derivative) + " O:" + String(output));
+   Serial.println(String(current_time) + "," + String(target) + "," + String(current_temp) + "," + String(P*error) + "," + String(integral) 
+                                  + "," +  String(derivative) + "," + String(output));
    
 }
