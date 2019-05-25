@@ -971,6 +971,64 @@ Another mixture was created with 1.5g kaolin, 3.5g alumina, 0.2g PVA wood glue. 
 
 The kiln was inadvertently preheated to 100c, then brought to ~350c over the course of 5 minutes. This temperature was maintained for 20 minutes, and then the temperature spiked to 1300c.
 
+This process was conservative for this part, however; even the highest temperature ramp rate from cold yielded no ill effects.
+
 The part was extremely hard and strong, though it shattered when sprue was removed; crack in the green propagated.
 
 The temperature reading of 1100 was far below the previously observed temperature of 1300-1400; this was almost certainly an offset due to the new high-thermal-mass thermocouple.
+
+silicon carbide; it's also very pretty!
+
+
+
+Heat stress-testing with propane torch caused the part to both crack locally, and become very weak globally.
+
+
+
+#### More ways of measuring liquid
+
+The bowtie plates can be vibrated to determine their contents, or - perhaps an easier method; their thermal mass can be measured!
+
+#### Stepper motor 
+
+> \1. RATED VOLTAGE :                                  3.3 V DC
+>
+> 2 .COIL RESISTANCE :                                 20 Ω±10%
+>
+> \3. NO. OF PHASES :                                     2 PHASES
+>
+> \4. STEP ANGLE :                                         18°/ STEP
+>
+> \5. MAX. STARTING FREQUENCY :               800 PPS min. (AT 3.3 V DC)
+>
+> \6. MAX. SLEWING FREQUENCY :                2000 PPS min. (AT 3.3 V DC)
+>
+> 7.PULL IN  TORQUE :                                   1.5 gf-cm max. (AT 500 PPS  3.3 V DC)
+>
+> 8.PULL  OUT TORQUE :                                2.0 gf-cm min. (AT 500 PPS,  3.3 V DC)
+>
+> INSULATION CLASS :                                CLASS E FOR COILS
+>
+> INSULATION STRENGTH :                       100 V AC FOR ONE SECOND (3mA MAX)
+>
+> INSULATION RESISTANCE :                    1.0 MΩ (DC 100 V)  
+>
+> OPERATING TEMPERATURE RANGE :   -10 ~+60 ℃
+
+Let's say mine can do 1 gf-cm.
+
+#### SiC element bubbling
+
+The SiC element in my kiln produced some massive bubbles! An explanation for these can be found in @raj2015.
+
+#### 90% alumina
+
+90% alumina for 40min at 140v works well.
+
+#### Ceramic ingot 
+
+Merely molding ceramics into a rough shape is not sufficient; bubbles and porosity is apparent.
+
+A large delrin die was made to press into a suitable ingot; this worked reasonably well, though there were some imperfections on the bottom of the ingot.
+
+If the mold or press does not work, the material can be recovered; adding some clay functioned perfectly.

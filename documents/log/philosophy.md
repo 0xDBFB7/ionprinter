@@ -115,7 +115,7 @@ Emotion: on/off with dry/wet prose.
 
 I do not concern myself with patent or copyright. I do not feel society can be bettered by my obtaining either.
 
-First, I must be deferential to the giants who ultimately bear my weight. The books describing every nook, crevice, and handhold in theory itself, the thousands of research papers whose facts and figures have been cast into the very soul of this device, the videos and blogs describing the nuances of obscure techniques; the discussion forums where many a fact has been distilled from opinion; all made possible purely by those who put pen to paper and disseminated what they learned for the benefit of the public[1]. I am proud to have the opportunity to join their ranks.
+First, I must be deferential to the giants who ultimately bear my weight. The books describing every nook, crevice, and handhold in theory itself, the thousands of research papers whose facts and figures have been cast into the very soul of this device, the videos and blogs describing the nuances of obscure techniques; the discussion forums where many a fact has been distilled from opinion; all made possible purely by those who put pen to paper and disseminated what they learned for the benefit of the public[1]. I am proud to have been given the opportunity to join their ranks.
 
 In addition, this device is *simple*. The fundamental physical concepts behind this device have been known for more than a century. Heavy ion beams were created way back in the Manhattan project. Feynman discussed ion-beam printers in his 1969 lecture, "Plenty of Room At The Bottom."[2a,b], and they have been used for decades in the industry. The only two aspects that I can even remotely be given any possible credit for are the recombination of a previously-directed beam to work around charge-density limitations, and the lowering of cost by an order of magnitude by way of copious vertical integration. The first, even, is dubious; the second is obvious.
 
@@ -158,3 +158,34 @@ Patents are also supremely negative for society as a whole. First, they don’t 
 
 If a society is going to have a useful patent system, it must scientifically verify that an invention is practical and useful, and require that the applicant describe **very precisely how it was made and how it works,** without “plurality” nonsense; it must be easily replicable with minimal effort by someone knowledgeable in the field; essentially, it should be a journal paper from academia. I believe that effectively implementing such a system is impossible.
 
+
+
+This project should not have worked. I made several grievous errors in the scientific methods used; I delayed running analyses because I was afraid of the results; I really *needed* it to work. This is contrary to the interests of good science, and it is truly only by luck that it has progressed this far.
+
+
+
+
+
+#### External funding
+
+However, I believe it is possible to conduct a substantial amount of research purely via internal, self-funded enterprises. 
+
+The requirements of low-budget R&D align very closely with the optimizations required for ; simplified designs. Monetarily limited development must often be more rigorous and theoretical, with simulations, 
+
+A series of very subtle changes in behavior occur when you involve another party monetarily. For instance, my previous project (the SafeSump) was attached early on to a partner company. For a variety of reasons, the emphasis shifted from obtaining a finished, polished product to obtaining a functioning prototype to demonstrate. 
+
+Rather than slowly and methodically working through each issue, characterizing, specifying, and optimizing each unit of the product, bug fixes were tacked onto designs and manufactured immediately. This led to a perverted cycle of rushed testing, crude prototype assembly, and hasty revision. Breadboarding of new solutions was not done; untested modules were appended and invariably underperformed.
+
+Even unit testing was forfeited in favor of manual testing, ostensibly to save time. 
+
+"top-down" and "bottom-up" approaches to development are both equally legitimate, and an argument could be made for both in this circumstance; but this was a bastardized version of neither.
+
+This was *entirely* my fault; nobody else is to blame, and I am wrong if I ever think the opposite.
+
+
+
+I have found time and again that it is very worthwhile to conduct a sort of "basic research", the kind that business abhors. When one pursues curiosity down an uncharted path, one is bound to find new techniques and . Unfortunately, management structures, production metrics, and oversight seem to be actively  
+
+
+
+There are no absolutes in engineering, and
