@@ -170,7 +170,9 @@ This project should not have worked. I made several grievous errors in the scien
 
 However, I believe it is possible to conduct a substantial amount of research purely via internal, self-funded enterprises. 
 
-The requirements of low-budget R&D align very closely with the optimizations required for ; simplified designs. Monetarily limited development must often be more rigorous and theoretical, with simulations, 
+The requirements of low-budget R&D align very closely with the optimizations required for efficient production; simplified designs, 
+
+Cost efficiency is also improved when budgets are tight; designs must be backed by rigorous theory and  simulations before they can be built and effective.
 
 A series of very subtle changes in behavior occur when you involve another party monetarily. For instance, my previous project (the SafeSump) was attached early on to a partner company. For a variety of reasons, the emphasis shifted from obtaining a finished, polished product to obtaining a functioning prototype to demonstrate. 
 
@@ -189,3 +191,11 @@ I have found time and again that it is very worthwhile to conduct a sort of "bas
 
 
 There are no absolutes in engineering, and
+
+
+
+More directly, filling out grant applications and conforming to government requirements takes valuable time which could be better spent on the science itself.
+
+
+
+There is one exception to these concepts, however. 

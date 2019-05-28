@@ -1027,8 +1027,15 @@ The SiC element in my kiln produced some massive bubbles! An explanation for the
 
 #### Ceramic ingot 
 
-Merely molding ceramics into a rough shape is not sufficient; bubbles and porosity is apparent.
+Merely molding ceramics into a rough shape is not sufficient; bubbles and porosity are apparent.
 
 A large delrin die was made to press into a suitable ingot; this worked reasonably well, though there were some imperfections on the bottom of the ingot.
 
 If the mold or press does not work, the material can be recovered; adding some clay functioned perfectly.
+
+#### Momentum balance
+
+We're trying to find the momentum balance of collisional ionization. The device uses a quartz microbalance, and is balanced precisely.
+
+It's a balanced balance-balance.
+
