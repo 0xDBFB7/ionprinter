@@ -199,3 +199,11 @@ More directly, filling out grant applications and conforming to government requi
 
 
 There is one exception to these concepts, however. 
+
+
+
+
+
+
+
+"time is money" is true; however, I think that means that you should spend more time.

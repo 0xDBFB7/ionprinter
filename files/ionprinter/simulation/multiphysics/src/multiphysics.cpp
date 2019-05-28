@@ -157,7 +157,7 @@ int index(x,y,z,x_len,y_len,z_len){
 
 }
 
-void import_mesh(const char* filename, bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z], float translate_x, float translate_y, float translate_z){
+void import_mesh(const char* filename, std::vector<Bool> &mesh_present){
   /*
   Deposit a mesh onto a uniform grid.
   */
@@ -198,9 +198,9 @@ void import_mesh(const char* filename, bool mesh_present[THERMAL_FIELD_MESH_X][T
 }
 
 int main(){
-  import_mesh("10x10x10_cube.stl",mesh_present,0,0,0);
-
-  bool mesh_present[THERMAL_FIELD_MESH_X][THERMAL_FIELD_MESH_Y][THERMAL_FIELD_MESH_Z] = {};
+  mesh_present_width =
+  vector<bool> mesh_present();
+  import_mesh("10x10x10_cube.stl",mesh_present);
 
   //
   // float beam_diagnostics[BEAM_COUNT][10][] = {};
