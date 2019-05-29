@@ -12,6 +12,9 @@ link_directories(../src/)
 
 target_link_libraries(multiphysics_test ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} multiphysics_lib)
 
+target_link_libraries(multiphysics_test CppUTest )
+target_link_libraries(multiphysics_test CppUTestExt )
+
 target_compile_options(multiphysics_test PRIVATE -Wall -Wextra -pedantic -Werror)
 
 if(VTK_LIBRARIES)
