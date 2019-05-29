@@ -36,7 +36,6 @@
 #include <GL/glext.h>
 
 // using namespace std::chrono;
-using namespace std;
 
 #define BEAM_COUNT 5
 #define BEAM_STEPS 100
@@ -125,7 +124,9 @@ void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE
         }
       }
     }
+    if(tolerance > 0){
 
+    }
     //new convergence algo:
     //euclidean norm of (this matrix - previous matrix ) / norm of this matrix   < tol
     // new_convergence = std::abs(potentials[x][y]);
@@ -164,7 +165,7 @@ void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE
 int f_idx(float x, float y, float z,int mesh_geometry[3], float mesh_scale[3]){
   /* Helper function to obtain 1D mesh index from 3D position
   */
-  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
+  return (mesh_geometry[X]*mesh_geometry[Y]*(z/mesh_scale[Z])) + (mesh_geometry[X]*(y/mesh_scale[Y])) + x/mesh_scale[X];
 }
 
 
@@ -190,7 +191,9 @@ void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh
 
   vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
   reader->GetOutput()->GetBounds(bounds);
-  for(i = 0; i < 6; i++) bounds[i] /= 1000.0; //convert mm to m
+  for(int i = 0; i < 6; i++) bounds[i] /= 1000.0; //convert mm to m
+  for(int i = 0; i < 3; i++) bounds[i] += translate[i]; //convert mm to m
+  for(int i = 3; i < 6; i++) bounds[i] += translate[i-3]; //convert mm to m
 
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
@@ -203,12 +206,12 @@ void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh
   double point[3] = {0, 0.0, 0.0};
   points->InsertNextPoint(point);
 
-  for(int x = std::max(bounds[0]/mesh_scale[X],0.0); x < std::min((bounds[1]/mesh_scale[X]),mesh_geometry[X]); x++){
-    for(int y = std::max(bounds[2]/mesh_scale[Y],0.0); y < std::min((bounds[3]/mesh_scale[Y]),mesh_geometry[Y]); y++){
-      for(int z = std::max(bounds[4]/mesh_scale[Z],0.0); z < std::min((bounds[5]/mesh_scale[Z]),mesh_geometry[Z]); z++){
-        point[X] = (x*mesh_scale[X]);
-        point[Y] = (y*mesh_scale[Y]);
-        point[Z] = (z*mesh_scale[Z]);
+  for(int x = std::max(bounds[0]/mesh_scale[X],0.0); x < std::min((int)(bounds[1]/mesh_scale[X]),mesh_geometry[X]); x++){
+    for(int y = std::max(bounds[2]/mesh_scale[Y],0.0); y < std::min((int)(bounds[3]/mesh_scale[Y]),mesh_geometry[Y]); y++){
+      for(int z = std::max(bounds[4]/mesh_scale[Z],0.0); z < std::min((int)(bounds[5]/mesh_scale[Z]),mesh_geometry[Z]); z++){
+        point[X] = (x*mesh_scale[X])-translate[X];
+        point[Y] = (y*mesh_scale[Y])-translate[Y];
+        point[Z] = (z*mesh_scale[Z])-translate[Z];
         points->SetPoint(0,point);
         pointsPolydata->SetPoints(points);
         selectEnclosedPoints->Update();
@@ -216,49 +219,4 @@ void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh
       }
     }
   }
-}
-
-int main(){
-  vector<bool> mesh_present(10000);
-  double bounds[6];
-  int mesh_geometry[3];
-  float mesh_scale[3];
-  float translate[3] = {0};
-  import_mesh("../10x10x10_cube.stl",mesh_present,mesh_geometry,mesh_scale,bounds,translate);
-
-  //
-  // float beam_diagnostics[BEAM_COUNT][10][] = {};
-  //
-  // float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y] = {};
-  // bool boundary_conditions[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y] = {};
-  //
-  //
-  // potentials[x][y] = v;
-  // boundary_conditions[x][y] = 1;
-  // auto start = high_resolution_clock::now();
-  //
-  // relax_laplace_potentials(potentials,boundary_conditions,0.1);
-  //
-  // auto stop = high_resolution_clock::now();
-  // auto duration = duration_cast<microseconds>(stop - start);
-  //
-  // particle_position[2] = {0,0};
-  // particle_velocity[2] = {2000,0};
-  //
-  // for(int beam_index = 0; beam_index < BEAM_COUNT; beam_index++){
-  //   for(int beam_step = 0; beam_step < BEAM_STEPS; beam_step++){
-  //
-  //   }
-  // }
-  // // printf(lowest_diff)
-  // // printf("%i%% complete\n",(int) (y/ELECTRODE_FIELD_MESH_Y)*100);
-  // clear_screen();
-  // printf("\x1b[38;2;255;255;0mDan's Hyper Beam Solver\n");
-  // printf("\x1b[38;2;255;255;255mcur: %f, lowest: %f, v: %f x: %i y: %i\n",diff,lowest_diff,v,x,y);
-  // std::cout << "Time taken by function: " << duration.count() << " microseconds\n";
-
-
-    // display_potentials(potentials);
-    // display_potentials(potentials);
-  // display_potentials(potentials);
 }

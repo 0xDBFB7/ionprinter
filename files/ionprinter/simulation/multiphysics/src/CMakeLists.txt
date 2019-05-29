@@ -5,14 +5,14 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} )
 
-add_executable(multiphysics multiphysics.cpp)
+add_executable(multiphysics main.cpp)
 
-target_link_libraries(multiphysics ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+add_library (multiphysics_lib multiphysics.cpp multiphysics.hpp)
 
 target_compile_options(multiphysics PRIVATE -Wall -Wextra -pedantic -Werror)
 
 if(VTK_LIBRARIES)
-  target_link_libraries(multiphysics ${VTK_LIBRARIES})
+  target_link_libraries(multiphysics ${VTK_LIBRARIES} multiphysics_lib)
 else()
-  target_link_libraries(multiphysics vtkHybrid vtkWidgets)
+  target_link_libraries(multiphysics vtkHybrid vtkWidgets multiphysics_lib)
 endif()
