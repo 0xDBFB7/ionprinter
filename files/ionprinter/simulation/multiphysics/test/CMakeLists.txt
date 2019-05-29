@@ -5,9 +5,12 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ../src/)
 
+
 add_executable (multiphysics_test multiphysics_test.cpp)
 
 target_link_libraries(multiphysics_test ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
+
+target_compile_options(multiphysics_test PRIVATE -Wall -Wextra -pedantic -Werror)
 
 if(VTK_LIBRARIES)
 target_link_libraries(multiphysics_test ${VTK_LIBRARIES})

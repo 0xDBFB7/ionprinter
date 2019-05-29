@@ -4,6 +4,7 @@
 #include <ctime>
 #include <iostream>
 #include <chrono>
+#include <vector>
 
 #include "multiphysics.hpp"
 
@@ -34,7 +35,8 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
-using namespace std::chrono;
+// using namespace std::chrono;
+using namespace std;
 
 #define BEAM_COUNT 5
 #define BEAM_STEPS 100
@@ -104,6 +106,9 @@ float float_array_min(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y
 }
 
 void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y], bool boundary_conditions[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y], float tolerance){
+  /*
+  For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
+  */
   // int convergence_index_x = 0;//Find a point to sample for convergence
   // int convergence_index_y = 0;
 
@@ -120,6 +125,9 @@ void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE
         }
       }
     }
+
+    //new convergence algo:
+    //euclidean norm of (this matrix - previous matrix ) / norm of this matrix   < tol
     // new_convergence = std::abs(potentials[x][y]);
   }
 }
@@ -153,21 +161,36 @@ void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE
 //   printf("\033[2J\033[1;1H");
 // }
 
-int index(x,y,z,x_len,y_len,z_len){
-
+int f_idx(float x, float y, float z,int mesh_geometry[3], float mesh_scale[3]){
+  /* Helper function to obtain 1D mesh index from 3D position
+  */
+  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
 }
 
-void import_mesh(const char* filename, std::vector<Bool> &mesh_present){
+
+int i_idx(int x, int y, int z, int mesh_geometry[3]){
+  /* Helper function to obtain 1D mesh index from 3D position
+  */
+  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
+}
+
+void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6], float translate[3]){
   /*
   Deposit a mesh onto a uniform grid.
+  Inputs are filename c_string, a 1-D mesh with length
+
+  The convoluted mesh_geometry setup is used because 3d vectors have large overhead in C++
+  mesh_geometry stores the dimensions of the mesh in indices, mesh scale stores grid to world scale in meters
+
+  Outputs bounds of imported mesh.
   */
   vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
   reader->SetFileName(filename);
   reader->Update();
 
   vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
-  double bounds[6];
   reader->GetOutput()->GetBounds(bounds);
+  for(i = 0; i < 6; i++) bounds[i] /= 1000.0; //convert mm to m
 
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
@@ -179,28 +202,29 @@ void import_mesh(const char* filename, std::vector<Bool> &mesh_present){
 
   double point[3] = {0, 0.0, 0.0};
   points->InsertNextPoint(point);
-  printf("bounds: %f, %f\n",bounds[0],bounds[1]);
-  printf("bounds: %f, %f\n",std::max((bounds[0]/1000.0)/THERMAL_MESH_SCALE_X,0.0),std::min(((bounds[1]/1000.0)/THERMAL_MESH_SCALE_X),MESH_X/THERMAL_MESH_SCALE_X));
 
-  for(int x = std::max((bounds[0]/1000.0)/THERMAL_MESH_SCALE_X,0.0); x < std::min(((bounds[1]/1000.0)/THERMAL_MESH_SCALE_X),MESH_X/THERMAL_MESH_SCALE_X); x++){
-    for(int y = std::max((bounds[2]/1000.0)/THERMAL_MESH_SCALE_Y,0.0); y < std::min(((bounds[3]/1000.0)/THERMAL_MESH_SCALE_Y),MESH_Y/THERMAL_MESH_SCALE_Y); y++){
-      for(int z = std::max((bounds[4]/1000.0)/THERMAL_MESH_SCALE_Z,0.0); z < std::min(((bounds[5]/1000.0)/THERMAL_MESH_SCALE_Z),MESH_Z/THERMAL_MESH_SCALE_Z); z++){
-        point[X] = (x*THERMAL_MESH_SCALE_X)*1000.0; //multiply by world mesh scale, multiply by 1000.
-        point[Y] = (y*THERMAL_MESH_SCALE_Y)*1000.0; //since world scale is in meters, and STL is assumed to be in mm
-        point[Z] = (z*THERMAL_MESH_SCALE_Z)*1000.0;
+  for(int x = std::max(bounds[0]/mesh_scale[X],0.0); x < std::min((bounds[1]/mesh_scale[X]),mesh_geometry[X]); x++){
+    for(int y = std::max(bounds[2]/mesh_scale[Y],0.0); y < std::min((bounds[3]/mesh_scale[Y]),mesh_geometry[Y]); y++){
+      for(int z = std::max(bounds[4]/mesh_scale[Z],0.0); z < std::min((bounds[5]/mesh_scale[Z]),mesh_geometry[Z]); z++){
+        point[X] = (x*mesh_scale[X]);
+        point[Y] = (y*mesh_scale[Y]);
+        point[Z] = (z*mesh_scale[Z]);
         points->SetPoint(0,point);
         pointsPolydata->SetPoints(points);
         selectEnclosedPoints->Update();
-        mesh_present[x][y][z] = selectEnclosedPoints->IsInside(0);
+        mesh_present[i_idx(x,y,z,mesh_geometry)] = selectEnclosedPoints->IsInside(0);
       }
     }
   }
 }
 
 int main(){
-  mesh_present_width =
-  vector<bool> mesh_present();
-  import_mesh("10x10x10_cube.stl",mesh_present);
+  vector<bool> mesh_present(10000);
+  double bounds[6];
+  int mesh_geometry[3];
+  float mesh_scale[3];
+  float translate[3] = {0};
+  import_mesh("../10x10x10_cube.stl",mesh_present,mesh_geometry,mesh_scale,bounds,translate);
 
   //
   // float beam_diagnostics[BEAM_COUNT][10][] = {};

@@ -9,6 +9,8 @@ add_executable(multiphysics multiphysics.cpp)
 
 target_link_libraries(multiphysics ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} )
 
+target_compile_options(multiphysics PRIVATE -Wall -Wextra -pedantic -Werror)
+
 if(VTK_LIBRARIES)
   target_link_libraries(multiphysics ${VTK_LIBRARIES})
 else()
