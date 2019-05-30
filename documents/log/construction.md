@@ -1039,3 +1039,13 @@ We're trying to find the momentum balance of collisional ionization. The device 
 
 It's a balanced balance-balance.
 
+#### Green machining 2
+
+Tried machining some 90/10 alumina. First attempt was at some 1000mm/min, reasonable surface finish on some areas but fine details just cracked.
+
+Second attempt was at 100 mm/min, same deal.
+
+Acetone dissolves polystyrene, but not PVA. Might be an interesting mold technique.
+
+Unfortunately, acetone also seems to dissolve the green rapidly - possibly due to water contamination in the acetone.
+
