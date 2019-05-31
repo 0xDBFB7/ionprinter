@@ -196,7 +196,7 @@ void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh
   reader->GetOutput()->GetBounds(bounds);
   for(int i = 0; i < 6; i++) bounds[i] /= 1000.0; //convert mm to m
 
-  for(int i = 0; i < 6; i++){bounds[i] += translate[i/2];}; //translate
+  // for(int i = 0; i < 6; i++){bounds[i] += translate[i/2];}; //translate
 
   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
   vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();

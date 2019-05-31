@@ -1049,3 +1049,7 @@ Acetone dissolves polystyrene, but not PVA. Might be an interesting mold techniq
 
 Unfortunately, acetone also seems to dissolve the green rapidly - possibly due to water contamination in the acetone.
 
+#### Nitinol vacuum actuator
+
+The gear and stepper system was causing some consternation; first, the torque is extremely low, only ~1g. I was reminded of SMA muscle wire, which is often used for this exact application.
+
