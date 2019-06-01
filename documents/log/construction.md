@@ -1053,3 +1053,6 @@ Unfortunately, acetone also seems to dissolve the green rapidly - possibly due t
 
 The gear and stepper system was causing some consternation; first, the torque is extremely low, only ~1g. I was reminded of SMA muscle wire, which is often used for this exact application.
 
+#### 
+
+Almost broke my hand on the wall just now! Went outside for a nice little bike ride. I'm not focusing hard enough on this project. Very interesting mental state ATM.
