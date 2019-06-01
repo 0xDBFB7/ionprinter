@@ -15,8 +15,8 @@ int main(){
   double bounds[6];
   int mesh_geometry[3];
   float mesh_scale[3];
-  float translate[3] = {0};
-  import_mesh("../10x10x10_cube.stl",mesh_present,mesh_geometry,mesh_scale,bounds,translate);
+  // float translate[3] = {0};
+  import_mesh("../10x10x10_cube.stl",mesh_present,mesh_geometry,mesh_scale,bounds);
 
   //
   // float beam_diagnostics[BEAM_COUNT][10][] = {};

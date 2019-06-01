@@ -28,6 +28,35 @@
 #include <vtkPolyData.h>
 #include <vtkXMLImageDataWriter.h>
 
+#include <vtkVersion.h>
+#include <vtkSmartPointer.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkCellArray.h>
+#include <vtkUnsignedCharArray.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderer.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkVertexGlyphFilter.h>
+#include <vtkProperty.h>
+
+#include <vtkCellArray.h>
+#include <vtkPoints.h>
+#include <vtkXMLPolyDataWriter.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkPolyData.h>
+#include <vtkPointData.h>
+#include <vtkFloatArray.h>
+#include <vtkDoubleArray.h>
+#include <vtkIntArray.h>
+
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
@@ -178,7 +207,7 @@ int i_idx(int x, int y, int z, int mesh_geometry[3]){
   return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
 }
 
-void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6], float translate[3]){
+void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
   /*
   Deposit a mesh onto a uniform grid.
   Inputs are filename c_string, a 1-D mesh with length
@@ -215,9 +244,9 @@ void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh
   for(int x = std::max(bounds[0]/mesh_scale[X],0.0); x < std::min((int)(bounds[1]/mesh_scale[X]),mesh_geometry[X]); x++){
     for(int y = std::max(bounds[2]/mesh_scale[Y],0.0); y < std::min((int)(bounds[3]/mesh_scale[Y]),mesh_geometry[Y]); y++){
       for(int z = std::max(bounds[4]/mesh_scale[Z],0.0); z < std::min((int)(bounds[5]/mesh_scale[Z]),mesh_geometry[Z]); z++){
-        point[X] = (x*mesh_scale[X])-translate[X];
-        point[Y] = (y*mesh_scale[Y])-translate[Y];
-        point[Z] = (z*mesh_scale[Z])-translate[Z];
+        point[X] = (x*mesh_scale[X]);
+        point[Y] = (y*mesh_scale[Y]);
+        point[Z] = (z*mesh_scale[Z]);
         points->SetPoint(0,point);
         pointsPolydata->SetPoints(points);
         selectEnclosedPoints->Update();
@@ -225,4 +254,41 @@ void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh
       }
     }
   }
+}
+
+
+
+void write_structured_grid_vtu(const char* filename, std::vector<bool> mesh, int mesh_geometry[3], float mesh_scale[3]){
+
+  vtkSmartPointer<vtkPoints> points =
+    vtkSmartPointer<vtkPoints>::New();
+  points->InsertNextPoint (0.0, 0.0, 0.0);
+  points->InsertNextPoint (1.0, 0.0, 0.0);
+  points->InsertNextPoint (0.0, 1.0, 0.0);
+
+  for ( unsigned int i = 0; i < 10; ++i )
+  {
+    points->InsertNextPoint ( i, i, i );
+  }
+
+  vtkSmartPointer<vtkFloatArray> floats =
+    vtkSmartPointer<vtkFloatArray>::New();
+  floats->SetName("Temperature");
+  floats->SetNumberOfComponents(1);
+  for(int i = 0; i < mesh.size(); i++){
+    floats->InsertValue(i,(float) mesh[i]);
+  }
+
+  vtkSmartPointer<vtkPolyData> polydata =
+    vtkSmartPointer<vtkPolyData>::New();
+  polydata->SetPoints(points);
+
+  polydata->GetPointData()->AddArray(floats);
+
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer =
+  vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetFileName(filename);
+  writer->SetInputData(polydata);
+  writer->Write();
+
 }
