@@ -1049,10 +1049,36 @@ Acetone dissolves polystyrene, but not PVA. Might be an interesting mold techniq
 
 Unfortunately, acetone also seems to dissolve the green rapidly - possibly due to water contamination in the acetone.
 
+Ordered some nice machinable wax that's supposed to burn off cleanly; some variation of wax burnoff while drying the green may work. The tricky bit is getting within that hysteresis between part contraction and cracking, part too wet and weak to support itself stably, etc.
+
 #### Nitinol vacuum actuator
 
 The gear and stepper system was causing some consternation; first, the torque is extremely low, only ~1g. I was reminded of SMA muscle wire, which is often used for this exact application.
 
-#### 
+A torsion spring or counterweight is required to tension the wire.
 
-Almost broke my hand on the wall just now! Went outside for a nice little bike ride. I'm not focusing hard enough on this project. Very interesting mental state ATM.
+#### Grid beam position monitor
+
+
+
+
+
+#### Capacitance simulation
+
+<https://physics.stackexchange.com/questions/24072/calculating-capacitance-of-arbitrary-plate-shape-and-arrangement>
+
+> You make a grid, place your shapes on the grid, and solve Laplace's equation with a zero potential at infinity, and some potential on the grid. This will give you an electric field intensity at every point (the gradient of the potential), and you sum up the implied charge. The ratio Q/V is the capacitance.
+>
+> This is mathematically optimal, and the only improvement is to use non-grid approximations, like expansion in harmonics at large distances, and superior higher-order methods in the interior of the grid. For Laplace's equation on modern computers, there is no issue--- even the worst algorithm will give you an answer to 1% accuracy on an arbitrary shape within a reasonable time.
+
+Okay, so I think I've got it.
+
+First, we figure out the capacitance of the electrodes in the simulation. Next, for each time step, we determine the charge added to the plate via this method, compute the current through the shunt resistor and the new potential, and deposit that potential onto the plates.
+
+The only question now is: what precisely did Ron mean by "sum up the implied charge"? Time to hit the Gauss. 
+
+#### "open boundaries"
+
+I was planning on making the Laplace simulator ignore the edges of the boundary, rather than making them zero in the five-point star. However, this is nonsense.
+
+Replacing the boundary condition bools with an element ID might be helpful.

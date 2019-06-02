@@ -50,8 +50,11 @@ TEST(mesh_tests,mesh_import_test_1){
   CHECK_EQUAL(true, mesh_present[f_idx(0.008,0,0,mesh_geometry,mesh_scale)]);
   CHECK_EQUAL(true, mesh_present[f_idx(0,0,0,mesh_geometry,mesh_scale)]);
   CHECK_EQUAL(false, mesh_present[f_idx(0.011,0,0,mesh_geometry,mesh_scale)]);
-
 }
+
+
+
+
 //
 // TEST(mesh_tests,mesh_import_test_2){
 //

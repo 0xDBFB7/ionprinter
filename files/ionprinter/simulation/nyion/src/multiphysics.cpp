@@ -7,6 +7,9 @@
 #include <vector>
 
 #include "multiphysics.hpp"
+#include <numeric>
+
+#include <stdexcept>
 
 // #include "tiny_obj_loader.h"
 #include <vtkVersion.h>
@@ -133,33 +136,71 @@ float float_array_min(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y
   return min;
 }
 
-void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y], bool boundary_conditions[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y], float tolerance){
+float interpolated_field(x,y,z,potential,){
+
+}
+
+void relax_laplace_potentials(std::vector<float> potentials, std::vector<bool> boundary_conditions, std::vector<bool> active,
+                                                                                              int mesh_geometry[3], float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
+
+  Jacobi is a bit slower, but allows parallel processing.
+
+  Boundary conditions are included in the five-point star, but aren't modified.
+
+
+
+  All input vectors must have the same dimensions.
+
   */
-  // int convergence_index_x = 0;//Find a point to sample for convergence
-  // int convergence_index_y = 0;
 
-  // for(int x = 1; x < ELECTRODE_FIELD_MESH_X-1; x++){
-  //   for(int y = 1; y < ELECTRODE_FIELD_MESH_Y-1; y++){
-  //     if(boundary_conditions[x][y]){
+  // MPI_Send(&tosend[0], tosend_size, MPI_INT, 0, 777, MPI_COMM_WORLD); //vector mpi
+  // results_and_rank.resize(results_rank_size);
+  // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
-  for(int i = 0; i < 3000; i++){
-    for(int x = 1; x < ELECTRODE_FIELD_MESH_X-1; x++){
-      for(int y = 1; y < ELECTRODE_FIELD_MESH_Y-1; y++){
-        if(!boundary_conditions[x][y]){
-          potentials[x][y] = (potentials[x-1][y]+potentials[x+1][y]+potentials[x][y+1]+potentials[x][y-1])/4.0;
-          // printf("%f\n",potentials[x][y]);
+  if(potentials.size() != boundary_conditions.size() || boundary_conditions.size() != active.size()){
+    throw std::invalid_argument( "received negative value" );
+  }
+
+  float previous_convergence = 0;
+  for(int i = 0; i < 100000; i++){
+    for(int x = 0; x < mesh_geometry[X]; x++){
+      for(int y = 0; y < mesh_geometry[Y]; y++){
+        for(int z = 0; z < mesh_geometry[Z]; z++){
+          if(!boundary_conditions[i_idx(x,y,z,mesh_geometry)] && active[i_idx(x,y,z,mesh_geometry)]){ //check if the middle of the five-point star is a BC
+            float potential_sum = 0;
+            float potential_average_count = 0;
+            if(x > 0 && active[i_idx(x-1,y,z,mesh_geometry)]){  //edge of domain or open edge of active region
+                                                      //this sort of graceful edge handling is really slow
+                                                          //it may be worthwhile to perform this checking in advance somehow
+                potential_sum+=potentials[x-1];
+                potential_average_count++;
+            }
+            if(x <  && active[i_idx(x-1,y,z,mesh_geometry)]){ //each point in the star is treated seperately
+                                                                //which is pretty stupid but whatever
+                potential_sum+=potentials[x+1];
+                potential_average_count++;
+            }
+            if(x > 0 && active[i_idx(x-1,y,z,mesh_geometry)]){
+                potential_sum+=potentials[x+1];
+                potential_average_count++;
+            }
+          }
         }
       }
     }
-    if(tolerance > 0){
 
+    new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 )/potentials.size());
+
+    if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
+      return;
     }
-    //new convergence algo:
-    //euclidean norm of (this matrix - previous matrix ) / norm of this matrix   < tol
-    // new_convergence = std::abs(potentials[x][y]);
+
+    previous_convergence = new_convergence;
+
   }
+  throw std::runtime_error("Laplace did not converge!");
 }
 
 // float electric_field_at_position(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y],int x,int y){
@@ -192,7 +233,9 @@ void relax_laplace_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE
 // }
 
 int f_idx(float x, float y, float z,int mesh_geometry[3], float mesh_scale[3]){
-  /* Helper function to obtain 1D mesh index from 3D position
+  /*
+  Helper function to obtain 1D mesh index from float 3D world position
+  sanity checking should be done in caller for performance reasons
   */
   // if(x > mesh_geometry[X]){
   //   throw std::invalid_argument( "received negative value" );
@@ -202,7 +245,9 @@ int f_idx(float x, float y, float z,int mesh_geometry[3], float mesh_scale[3]){
 
 
 int i_idx(int x, int y, int z, int mesh_geometry[3]){
-  /* Helper function to obtain 1D mesh index from 3D position
+  /*
+  Helper function to obtain 1D mesh index from int 3D mesh position
+  sanity checking should be done in caller for performance reasons
   */
   return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
 }
