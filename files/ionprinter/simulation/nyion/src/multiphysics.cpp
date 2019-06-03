@@ -140,7 +140,7 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 //
 // }
 
-void relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &boundary_conditions, std::vector<bool> &active,
+int relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
@@ -165,10 +165,10 @@ void relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &
 
   int num_active_points = std::count(active.begin(), active.end(), true);
   if(num_active_points <= 0){
-    return;
+    return -1;
   }
 
-  float previous_convergence = 0;
+  float previous_convergence = 1e6;
 
   for(int i = 0; i < 100000; i++){
     for(int x = 1; x < mesh_geometry[X]-1; x++){ //the edges must be grounded.
@@ -187,14 +187,15 @@ void relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &
       }
     }
 
-    if(i % 100 == 0){
-      float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 )/(num_active_points));
+    if(i % 20 == 0 && i != 0){
+      float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ))/(num_active_points);
+      printf("%f,%f\n",previous_convergence, std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ));
+      printf("%f\n",fabs(new_convergence-previous_convergence));
       if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
-        return;
+        return i;
       }
       previous_convergence = new_convergence;
     }
-
   }
   throw std::runtime_error("Laplace did not converge!");
 }
@@ -203,15 +204,21 @@ void relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &
 void electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
   /*
   Basic 3d field gradient computation.pa
-  Returns 0 if position is too close to an .
+  Returns 0 if position is too close to an edge.
   */
-  gradient[X] = (potentials[i_idx(x+1,y,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[X]; //unsymmetric field measurement; I don't think this matters.
-  gradient[Y] = (potentials[i_idx(x,y+1,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Y];
-  gradient[Z] = (potentials[i_idx(x,y,z+1,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Z];
-  return 0;
+  if(x > mesh_geometry[X]-1 || y > mesh_geometry[Y]-1 || y > mesh_geometry[Y]-1){
+    gradient[X] = 0;
+    gradient[Y] = 0;
+    gradient[Z] = 0;
+  }
+  else{
+    gradient[X] = (potentials[i_idx(x+1,y,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[X]; //unsymmetric field measurement; I don't think this matters.
+    gradient[Y] = (potentials[i_idx(x,y+1,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Y];
+    gradient[Z] = (potentials[i_idx(x,y,z+1,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Z];
+  }
 }
 
-float electric_field(std::vector<float> &potentials, int x,int y, float mesh_scale[3]){
+void interpolated_electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
 
 }
 
