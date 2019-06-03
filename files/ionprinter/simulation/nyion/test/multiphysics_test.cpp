@@ -2,8 +2,6 @@
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 
-// #include "QUnit.hpp"
-#include <iostream>
 
 
 TEST_GROUP(idx_tests){};
@@ -45,15 +43,37 @@ TEST(mesh_tests,mesh_import_test_1){
   DOUBLES_EQUAL(0,bounds[4],1e-6);
   DOUBLES_EQUAL(0.01,bounds[5],1e-6);
 
-
-
   CHECK_EQUAL(true, mesh_present[f_idx(0.008,0,0,mesh_geometry,mesh_scale)]);
   CHECK_EQUAL(true, mesh_present[f_idx(0,0,0,mesh_geometry,mesh_scale)]);
   CHECK_EQUAL(false, mesh_present[f_idx(0.011,0,0,mesh_geometry,mesh_scale)]);
 }
 
+TEST_GROUP(laplace_tests){};
 
+TEST(laplace_tests,laplace_tests_1){
+  int mesh_geometry[3] = {20,3,3};
+  std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
+  std::vector<bool> active(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
+  std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
 
+  potentials[i_idx(1,1,1,mesh_geometry)] = 10;
+  boundaries[i_idx(1,1,1,mesh_geometry)] = 10;
+
+  potentials[i_idx(5,1,1,mesh_geometry)] = 10;
+  boundaries[i_idx(5,1,1,mesh_geometry)] = 10;
+
+  active[i_idx(1,1,1,mesh_geometry)] = true;
+  active[i_idx(2,1,1,mesh_geometry)] = true;
+  active[i_idx(3,1,1,mesh_geometry)] = true;
+  active[i_idx(4,1,1,mesh_geometry)] = true;
+  active[i_idx(5,1,1,mesh_geometry)] = true;
+
+  relax_laplace_potentials(potentials, boundaries, active, mesh_geometry, 0.01);
+
+  // std::copy(potentials.begin(), potentials.end(), std::ostream_iterator<float>(std::cout, " "));
+
+  DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)],1e-3);
+}
 
 //
 // TEST(mesh_tests,mesh_import_test_2){

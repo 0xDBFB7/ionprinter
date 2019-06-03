@@ -1,12 +1,5 @@
 
 #include "multiphysics.hpp"
-#include <algorithm>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
-#include <chrono>
-#include <vector>
 
 
 

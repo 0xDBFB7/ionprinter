@@ -112,35 +112,35 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
     return ((beam_current/(2.0*(M_PI)*EPSILON_0*beam_velocity)) * (sample_radius/pow(beam_radius,2.0)));
 }
 
-float float_array_max(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
-  float max = 0;
-  for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
-    for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
-      if(array[x][y] > max){
-        max = array[x][y];
-      }
-    }
-  }
-  return max;
-}
+// float float_array_max(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
+//   float max = 0;
+//   for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
+//     for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
+//       if(array[x][y] > max){
+//         max = array[x][y];
+//       }
+//     }
+//   }
+//   return max;
+// }
+//
+// float float_array_min(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
+//   float min = 0;
+//   for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
+//     for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
+//         if(array[x][y] < min){
+//           min = array[x][y];
+//       }
+//     }
+//   }
+//   return min;
+// }
 
-float float_array_min(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
-  float min = 0;
-  for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
-    for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
-        if(array[x][y] < min){
-          min = array[x][y];
-      }
-    }
-  }
-  return min;
-}
+// float interpolated_field(x,y,z,potential,){
+//
+// }
 
-float interpolated_field(x,y,z,potential,){
-
-}
-
-void relax_laplace_potentials(std::vector<float> potentials, std::vector<bool> boundary_conditions, std::vector<bool> active,
+void relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
@@ -163,49 +163,57 @@ void relax_laplace_potentials(std::vector<float> potentials, std::vector<bool> b
     throw std::invalid_argument( "received negative value" );
   }
 
+  int num_active_points = std::count(active.begin(), active.end(), true);
+  if(num_active_points <= 0){
+    return;
+  }
+
   float previous_convergence = 0;
+
   for(int i = 0; i < 100000; i++){
-    for(int x = 0; x < mesh_geometry[X]; x++){
-      for(int y = 0; y < mesh_geometry[Y]; y++){
-        for(int z = 0; z < mesh_geometry[Z]; z++){
-          if(!boundary_conditions[i_idx(x,y,z,mesh_geometry)] && active[i_idx(x,y,z,mesh_geometry)]){ //check if the middle of the five-point star is a BC
-            float potential_sum = 0;
-            float potential_average_count = 0;
-            if(x > 0 && active[i_idx(x-1,y,z,mesh_geometry)]){  //edge of domain or open edge of active region
-                                                      //this sort of graceful edge handling is really slow
-                                                          //it may be worthwhile to perform this checking in advance somehow
-                potential_sum+=potentials[x-1];
-                potential_average_count++;
-            }
-            if(x <  && active[i_idx(x-1,y,z,mesh_geometry)]){ //each point in the star is treated seperately
-                                                                //which is pretty stupid but whatever
-                potential_sum+=potentials[x+1];
-                potential_average_count++;
-            }
-            if(x > 0 && active[i_idx(x-1,y,z,mesh_geometry)]){
-                potential_sum+=potentials[x+1];
-                potential_average_count++;
-            }
+    for(int x = 1; x < mesh_geometry[X]-1; x++){ //the edges must be grounded.
+      for(int y = 1; y < mesh_geometry[Y]-1; y++){
+        for(int z = 1; z < mesh_geometry[Z]-1; z++){
+          if(!boundary_conditions[i_idx(x,y,z,mesh_geometry)] && active[i_idx(x,y,z,mesh_geometry)]){ //todo: adaptive mesh of some type
+            potentials[i_idx(x,y,z,mesh_geometry)] = (potentials[i_idx(x-1,y,z,mesh_geometry)] +
+                                                     potentials[i_idx(x+1,y,z,mesh_geometry)] +
+                                                     potentials[i_idx(x,y-1,z,mesh_geometry)] +
+                                                     potentials[i_idx(x,y+1,z,mesh_geometry)] +
+                                                     potentials[i_idx(x,y,z+1,mesh_geometry)] +
+                                                     potentials[i_idx(x,y,z-1,mesh_geometry)])/6.0;
+            //wonder how many cycles will be lost via i_idx calls vs a 3d vector.
           }
         }
       }
     }
 
-    new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 )/potentials.size());
-
-    if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
-      return;
+    if(i % 100 == 0){
+      float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 )/(num_active_points));
+      if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
+        return;
+      }
+      previous_convergence = new_convergence;
     }
-
-    previous_convergence = new_convergence;
 
   }
   throw std::runtime_error("Laplace did not converge!");
 }
 
-// float electric_field_at_position(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y],int x,int y){
-//   return (((potentials[x][y]-potentials[x-1][y])+(potentials[x+1][y]-potentials[x][y]))/2.0)/ELECTRODE_MESH_SCALE_X; //determine gradient along x, divide by world scale
-// }
+
+void electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
+  /*
+  Basic 3d field gradient computation.pa
+  Returns 0 if position is too close to an .
+  */
+  gradient[X] = (potentials[i_idx(x+1,y,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[X]; //unsymmetric field measurement; I don't think this matters.
+  gradient[Y] = (potentials[i_idx(x,y+1,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Y];
+  gradient[Z] = (potentials[i_idx(x,y,z+1,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Z];
+  return 0;
+}
+
+float electric_field(std::vector<float> &potentials, int x,int y, float mesh_scale[3]){
+
+}
 
 //
 // void display_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
