@@ -1082,3 +1082,20 @@ The only question now is: what precisely did Ron mean by "sum up the implied cha
 I was planning on making the Laplace simulator ignore the edges of the boundary, rather than making them zero in the five-point star. However, this is nonsense.
 
 Replacing the boundary condition bools with an element ID might be helpful.
+
+
+
+I think I should leave the house. I do nothing but constantly hurt those I love; I don't deserve this placid luxury.
+
+#### Mesh refinement
+
+A conservative simulation might require a 5x5x5 cm world, including regions with 0.05 mm resolution. A dumb uniform mesh would take
+
+This took a bit of head-scratching, but I think this is feasible with only a few minor changes to the mesh data structure; while reads and writes will take a few more cycles, this cost should be outweighed by the smaller number of mesh points.
+
+
+
+![Screenshot from 2019-06-04 00-29-52](assets/Screenshot from 2019-06-04 00-29-52.png)
+
+Gotcha!
+

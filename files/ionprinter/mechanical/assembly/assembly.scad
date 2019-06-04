@@ -9,8 +9,23 @@ module round_square(x,y,z,r){
         }
     }
 }
+module square_hole_pattern(dist,radius,height){
+    translate([dist,0,0]) cylinder(h=height,d=radius);
+    translate([-dist,0,0]) cylinder(h=height,d=radius);
+    translate([dist,0,0]) cylinder(h=height,d=radius);
+    translate([dist,0,0]) cylinder(h=height,d=radius);
+
+}
 
 
-round_square(25,12,4,5);
+front_plate_height = 4.0;
+rod_hole_pattern = 20;
+rod_hole_edge_distance = 3;
+rod_hole_diameter = 0.1120*25.4;
+chamfer_radius = 5;
 
+difference(){
+    round_square(25,12,front_plate_height,chamfer_radius);
+
+}
 

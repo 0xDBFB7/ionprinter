@@ -247,7 +247,7 @@ void interpolated_electric_field(std::vector<float> &potentials, int x, int y, i
 //   printf("\033[2J\033[1;1H");
 // }
 
-int f_idx(float x, float y, float z,int mesh_geometry[3], float mesh_scale[3]){
+int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]){
   /*
   Helper function to obtain 1D mesh index from float 3D world position
   sanity checking should be done in caller for performance reasons
@@ -255,16 +255,26 @@ int f_idx(float x, float y, float z,int mesh_geometry[3], float mesh_scale[3]){
   // if(x > mesh_geometry[X]){
   //   throw std::invalid_argument( "received negative value" );
   // }
+
   return (mesh_geometry[X]*mesh_geometry[Y]*(z/mesh_scale[Z])) + (mesh_geometry[X]*(y/mesh_scale[Y])) + x/mesh_scale[X];
 }
 
 
-int i_idx(int x, int y, int z, int mesh_geometry[3]){
+int i_idx(int x, int y, int z, vector<vector<int>> &mesh_geometry){
   /*
   Helper function to obtain 1D mesh index from int 3D mesh position
   sanity checking should be done in caller for performance reasons
   */
-  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
+  int array_index = 0;
+  for(int grid_index = 0; i < grid_index.size() ; grid_index++){
+    if(x > mesh_geometry[x1] && ){
+      return
+    }
+    else{
+      array_index += (mesh_geometry[X]*mesh_geometry[Y]*mesh z) + (mesh_geometry[X]*y) + x
+    }
+  }
+  return 0;
 }
 
 void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
