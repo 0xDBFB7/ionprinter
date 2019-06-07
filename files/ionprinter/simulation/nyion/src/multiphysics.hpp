@@ -18,6 +18,16 @@
 #define Y 1
 #define Z 2
 
+#define X1 0
+#define X2 1
+#define Y1 2
+#define Y2 3
+#define Z1 4
+#define Z2 5
+#define X_LEN 6 //using an integer count takes a few more cycles:
+#define Y_LEN 7 //bounds/len will have to be computed every time the scale is required.
+#define Z_LEN 8 //not sure if that's a big deal.
+
 int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]);
 int i_idx(int x, int y, int z, int mesh_geometry[3]);
 void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);

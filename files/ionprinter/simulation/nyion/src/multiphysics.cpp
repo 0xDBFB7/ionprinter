@@ -98,9 +98,6 @@
 #define THERMAL_MESH_SCALE_Z (MESH_Z/THERMAL_FIELD_MESH_Z)
 
 
-#define X 0
-#define Y 1
-#define Z 2
 
 
 double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
@@ -189,8 +186,8 @@ int relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &b
 
     if(i % 20 == 0 && i != 0){
       float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ))/(num_active_points);
-      printf("%f,%f\n",previous_convergence, std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ));
-      printf("%f\n",fabs(new_convergence-previous_convergence));
+      // printf("%f,%f\n",previous_convergence, std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ));
+      // printf("%f\n",fabs(new_convergence-previous_convergence));
       if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
         return i;
       }
@@ -262,16 +259,20 @@ int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]){
 
 int i_idx(int x, int y, int z, vector<vector<int>> &mesh_geometry){
   /*
-  Helper function to obtain 1D mesh index from int 3D mesh position
-  sanity checking should be done in caller for performance reasons
+  This function chooses
+
   */
   int array_index = 0;
-  for(int grid_index = 0; i < grid_index.size() ; grid_index++){
-    if(x > mesh_geometry[x1] && ){
-      return
+  for(int grid_index = 0; grid_index < mesh_geometry.size(); grid_index++){
+    if(x >= mesh_geometry[grid_index][X1] && x < mesh_geometry[grid_index][X2] &&
+       y >= mesh_geometry[grid_index][Y1] && y < mesh_geometry[grid_index][Y2] &&
+       z >= mesh_geometry[grid_index][Z1] && z < mesh_geometry[grid_index][Z2]    ){ //if point is within the specified grid bounds
+
+      array_index += ((mesh_geometry[X]*mesh_geometry[Y]*()) + (mesh_geometry[X]*y) + x);
+      return array_index;
     }
     else{
-      array_index += (mesh_geometry[X]*mesh_geometry[Y]*mesh z) + (mesh_geometry[X]*y) + x
+      array_index += ((mesh_geometry[grid_index][X_LEN]*mesh_geometry[grid_index][Y_LEN]*mesh_geometry[grid_index][Z_LEN]) + (mesh_geometry[X]*y) + x)
     }
   }
   return 0;

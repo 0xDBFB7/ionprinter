@@ -1085,17 +1085,37 @@ Replacing the boundary condition bools with an element ID might be helpful.
 
 
 
-I think I should leave the house. I do nothing but constantly hurt those I love; I don't deserve this placid luxury.
-
 #### Mesh refinement
 
-A conservative simulation might require a 5x5x5 cm world, including regions with 0.05 mm resolution. A dumb uniform mesh would take
+A conservative simulation might require a 5x5x5 cm world, including regions with 0.05 mm resolution. A dumb uniform bool mesh of that size would take up almost 1Gb in memory, which is clearly unacceptable.
+
+We don't need an adaptive mesh, but a certain level of refinement is essential.
 
 This took a bit of head-scratching, but I think this is feasible with only a few minor changes to the mesh data structure; while reads and writes will take a few more cycles, this cost should be outweighed by the smaller number of mesh points.
+
+Additionally, implementing a multigrid solver should be trivial.
 
 
 
 ![Screenshot from 2019-06-04 00-29-52](assets/Screenshot from 2019-06-04 00-29-52.png)
 
 Gotcha!
+
+
+
+#### Thinly sliced/halbach ion optics
+
+
+
+#### FPGA 
+
+An FPGA with 200 I/O can be had for ~$10, in case some high-speed logic is required. Per-I/O prices of FPGAs vs microcontrollers are surprisingly similar.
+
+#### Ultrasonic bowtie excitation
+
+Bunching of the beam for diagnostics can be facilitated by mechanical vibration of the bowtie nozzle.
+
+#### Diffusion pump vapor superheat post-boiling - more efficient pumpdown with lower power consumption?
+
+#### Diffusion pump - activated alumina beads for backstreaming absorption
 

@@ -162,7 +162,13 @@ The original Short Circuit intro (<https://www.youtube.com/watch?v=pUQIKnrZVTM>)
 
 Nobody is visible; hands are gloved, everything visible is mechanical.
 
-Everything must be third-person scientific; no "I", we, etc.
+Everything must be third-person scientific; no "I", we, etc
+
+
+
+Everything's slow and methodical; it's clearly distinct from a ssimple 
+
+
 
 databending/databending - perhaps with ASCII readout of printer startup?
 
@@ -174,3 +180,14 @@ moviepy compositing
 
 There's a scene in 20180111_195750.mp4 where a Q-tip gets sucked into the CNC
 
+
+
+
+
+
+
+So, I've run up against a bit of a stumbling block. I need to know the electron impact momentum balance of aluminum and copper; that is, when an electron and an aluminum particle get in a fiery wreck, which way do each fly off. So I tried to find the predictive theory that governs this, only to find that - to the embarrassment of physicists - it doesn't appear to have been developed yet. How about empirical equations? The best ones available 
+
+Somewhat surprisingly, the only experimental data I can find is on electron impact cross section from the 1960s; it seems nobody enjoys putting boiling aluminum into their particle accelerators - *I can't imagine why*. 
+
+So the only course of action seems to be building a device that can take these measurements. This is a hybrid quartz crystal microbalance, Kelvin cup, and beam calorimeter, all on a rotary servo. Since plastics, oils, bearings, etc can't be put in a vacuum, we have to 
