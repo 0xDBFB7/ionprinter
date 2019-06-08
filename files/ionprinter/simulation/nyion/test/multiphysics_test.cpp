@@ -86,10 +86,10 @@ TEST(laplace_tests,laplace_timing_1){
   potentials[i_idx(5,1,1,mesh_geometry)] = 10;
   boundaries[i_idx(5,1,1,mesh_geometry)] = 10;
 
-  auto t1 = std::chrono::high_resolution_clock::now();
+  // auto t1 = std::chrono::high_resolution_clock::now();
   relax_laplace_potentials(potentials, boundaries, active, mesh_geometry, 0.01);
 
-  auto t2 = std::chrono::high_resolution_clock::now();
+  // auto t2 = std::chrono::high_resolution_clock::now();
   // std::cout << "f() took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << iterations << "\n";
 
   // std::copy(potentials.begin(), potentials.end(), std::ostream_iterator<float>(std::cout, " "));

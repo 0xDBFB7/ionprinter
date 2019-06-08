@@ -67,6 +67,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+
 // using namespace std::chrono;
 
 #define BEAM_COUNT 5
@@ -137,7 +138,9 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 //
 // }
 
-float potentials[200][200][200];
+// volatile float potentials[200*200*200];
+
+std::array<float, (200*200*200)> potentials;
 
 int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance){
@@ -169,22 +172,38 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
 
   float previous_convergence = 1e6;
 
+  // std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
   // std::vector<std::vector<std::vector<float>>> potentials(200, std::vector<std::vector<float>>(200, std::vector<float>(200)));
+
+
+  int x_len = mesh_geometry[X];
+  int y_len = mesh_geometry[Y];
+  int z_len = mesh_geometry[Z];
+
+  int xy_len = x_len*y_len;
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  potentials[1][1][1] = 10;
+  // potentials[1][1][1] = 10;
+
   for(int i = 0; i < 10; i++){
     for(int x = 1; x < mesh_geometry[X]-1; x++){ //the edges must be grounded.
       for(int y = 1; y < mesh_geometry[Y]-1; y++){
         for(int z = 1; z < mesh_geometry[Z]-1; z++){
           // if(0){ //todo: adaptive mesh of some type
-            potentials[x][y][z] = (potentials[x-1][y][z] +
-                                                     potentials[x+1][y][z] +
-                                                     potentials[x][y-1][z] +
-                                                     potentials[x][y+1][z] +
-                                                     potentials[x][y][z-1] +
-                                                     potentials[x][y][z+1])/6.0;
+            // potentials[x][y][z] = (potentials[x-1][y][z] +
+            //                                          potentials[x+1][y][z] +
+            //                                          potentials[x][y-1][z] +
+            //                                          potentials[x][y+1][z] +
+            //                                          potentials[x][y][z-1] +
+            //                                          potentials[x][y][z+1])/6.0;
+
+          potentials[(x_len*y_len*z) + (x_len*y) + x] = (potentials[(x_len*y_len*z) + (x_len*y) + x] +
+                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
+                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
+                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
+                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
+                                       potentials[(x_len*y_len*z) + (x_len*y) + x])/6.0;
           // }
         }
       }
@@ -206,12 +225,16 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << "\n";
 
   t1 = std::chrono::high_resolution_clock::now();
-  i_idx(10,10,10,mesh_geometry);
+  for(volatile int i = 0; i < 200; i++){
+
+    volatile int test = potentials[0];
+    asm("");
+  }
   t2 = std::chrono::high_resolution_clock::now();
 
-  std::cout << "idx took " << (std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/10.0 << " us" << "\n";
+  std::cout << "idx took " << (std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count())/200 << " us" << "\n";
 
-  return potentials[0][0][0];
+  return potentials[0];
   //throw std::runtime_error("Laplace did not converge!");
 }
 
@@ -272,6 +295,14 @@ int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]){
   // }
 
   return (mesh_geometry[X]*mesh_geometry[Y]*(z/mesh_scale[Z])) + (mesh_geometry[X]*(y/mesh_scale[Y])) + x/mesh_scale[X];
+}
+
+int i_idx_2(int x, int y, int z, int x_len, int y_len, int z_len){
+  /*
+  Helper function to obtain 1D mesh index from int 3D mesh position
+  sanity checking should be done in caller for performance reasons
+  */
+  return (x_len*y_len*z) + (x_len*y) + x;
 }
 
 int i_idx(int x, int y, int z, int mesh_geometry[3]){

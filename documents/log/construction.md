@@ -1147,19 +1147,94 @@ For the hell of it, I swapped out the 1d C++ vectors for a simple 3d array on th
 
 Okay, so I guess we're still CPU limited - those ~10 index lookups were probably killer.
 
-Man, I'm really acutely lonely right now, but it's offset by just how much fun hand-optimization is! Also, got midterms.
+
+
+Time for some testing!
+
+```
+relax_laplace(){ 
+ auto t1 = std::chrono::high_resolution_clock::now();
+  potentials[1][1][1] = 10;
+  for(int i = 0; i < 10; i++){
+    for(int x = 1; x < mesh_geometry[X]-1; x++){
+      for(int y = 1; y < mesh_geometry[Y]-1; y++){
+        for(int z = 1; z < mesh_geometry[Z]-1; z++){
+            potentials[x][y][z] = (potentials[x-1][y][z] +
+                                                     potentials[x+1][y][z] +
+                                                     potentials[x][y-1][z] +
+                                                     potentials[x][y+1][z] +
+                                                     potentials[x][y][z-1] +
+                                                     potentials[x][y][z+1])/6.0;
+        }
+      }
+    }
+  }
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << "\n";
+  return potentials[0][0][0];
+}
+
+time_lookup(){
+    t1 = std::chrono::high_resolution_clock::now();
+      for(volatile int i = 0; i < 100; i++){
+        volatile int test = potentials[i][i][i];
+        asm(""); //prevent this loop from being optimized out
+      }
+      t2 = std::chrono::high_resolution_clock::now();
+
+      std::cout << "idx took " << (std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count())/100 << " us" << "\n";
+}
+
+int i_idx_arg(int x, int y, int z, int x_len, int y_len, int z_len){
+  return (x_len*y_len*z) + (x_len*y) + x;
+}
+int i_idx_geom(int x, int y, int z, int mesh_geometry[3]){
+  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
+}
 
 
 
-|                                                      |         |      |      |      |
-| ---------------------------------------------------- | ------- | ---- | ---- | ---- |
-| 1d std::vector + int idx lookups through mesh_geom[] | 1700 ms |      |      |      |
-| 3d std::vector                                       | 440 ms  |      |      |      |
-|                                                      |         |      |      |      |
-|                                                      |         |      |      |      |
-|                                                      |         |      |      |      |
+std::vector<float> potentials((200*200*200),0);
 
 
+std::vector<std::vector<std::vector<float>>> potentials(200, std::vector<std::vector<float>>(200, std::vector<float>(200)));
 
 
+1d C-style
+volatile float potentials[200*200*200];
 
+1d std::array
+std::array<float, (200*200*200)> potentials;
+
+
+```
+
+​	
+
+| 200x200x200 array, -O3 for all                               | CPU Time, +/-3ms |
+| :----------------------------------------------------------- | ---------------- |
+| 1d std::vector + i_idx_geom();                               | 1700 ms          |
+| 3d std::vector                                               | 440 ms           |
+| 3d C-style array                                             | 100.4 ms         |
+| i_idx_geom();                                                | 110 ns           |
+| i_idx_arg();                                                 | 60 ns            |
+| Single lookup with 3d C-style array (potentials\[0\]\[0\]\[0\]) | -- ns??          |
+| 3d std::array [nb: defaults to stack, segfault]              | 903.8 ms         |
+| 1d std::vector + i_idx_geom();                               | 438.6 ms         |
+| 1d std::vector + inline math (potentials[(x_len\*y_len\*z) + (x_len\*y) + x]) | 285.4 ms         |
+| 1d std::vector + less stupid inline math (potentials[(xy_len\*z) + (x_len\*y) + x]) | 279.3 ms         |
+| 1d C-style array + less stupid inline math                   | 147.8 ms         |
+| 1d std::array + less stupid inline math                      | 426.0 ms         |
+|                                                              |                  |
+|                                                              |                  |
+|                                                              |                  |
+|                                                              |                  |
+|                                                              |                  |
+|                                                              |                  |
+|                                                              |                  |
+
+Note: values do not include construction/initialization time. 
+
+Juicy! This is probably of sufficient utility that I should publish it separately.
+
+Next, we'll need a provision for storing multiple grids within multiple timesteps.
