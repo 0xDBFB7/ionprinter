@@ -67,6 +67,7 @@
 #include <GL/glu.h>
 #include <GL/glext.h>
 
+#include <boost/array.hpp>
 
 // using namespace std::chrono;
 
@@ -139,8 +140,11 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 // }
 
 // volatile float potentials[200*200*200];
+// std::array<float, (200*200*200)> potentials;
 
-std::array<float, (200*200*200)> potentials;
+// std::array<std::array<std::array<float, 200>, 200>, 200> potentials;
+
+// std::vector<float, (200*200*200)> potentials;
 
 int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance){
@@ -198,12 +202,12 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
             //                                          potentials[x][y][z-1] +
             //                                          potentials[x][y][z+1])/6.0;
 
-          potentials[(x_len*y_len*z) + (x_len*y) + x] = (potentials[(x_len*y_len*z) + (x_len*y) + x] +
-                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
-                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
-                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
-                                       potentials[(x_len*y_len*z) + (x_len*y) + x] +
-                                       potentials[(x_len*y_len*z) + (x_len*y) + x])/6.0;
+          potentials[(xy_len*z) + (x_len*y) + x] = (potentials[(xy_len*z) + (x_len*y) + x] +
+                                       potentials[(xy_len*z) + (x_len*y) + x] +
+                                       potentials[(xy_len*z) + (x_len*y) + x] +
+                                       potentials[(xy_len*z) + (x_len*y) + x] +
+                                       potentials[(xy_len*z) + (x_len*y) + x] +
+                                       potentials[(xy_len*z) + (x_len*y) + x])/6.0;
           // }
         }
       }
@@ -227,7 +231,7 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   t1 = std::chrono::high_resolution_clock::now();
   for(volatile int i = 0; i < 200; i++){
 
-    volatile int test = potentials[0];
+    // volatile int test = potentials;
     asm("");
   }
   t2 = std::chrono::high_resolution_clock::now();

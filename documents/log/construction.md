@@ -1193,7 +1193,7 @@ int i_idx_geom(int x, int y, int z, int mesh_geometry[3]){
 }
 
 
-
+1d vector-style
 std::vector<float> potentials((200*200*200),0);
 
 
@@ -1211,30 +1211,34 @@ std::array<float, (200*200*200)> potentials;
 
 ​	
 
-| 200x200x200 array, -O3 for all                               | CPU Time, +/-3ms |
-| :----------------------------------------------------------- | ---------------- |
-| 1d std::vector + i_idx_geom();                               | 1700 ms          |
-| 3d std::vector                                               | 440 ms           |
-| 3d C-style array                                             | 100.4 ms         |
-| i_idx_geom();                                                | 110 ns           |
-| i_idx_arg();                                                 | 60 ns            |
-| Single lookup with 3d C-style array (potentials\[0\]\[0\]\[0\]) | -- ns??          |
-| 3d std::array [nb: defaults to stack, segfault]              | 903.8 ms         |
-| 1d std::vector + i_idx_geom();                               | 438.6 ms         |
-| 1d std::vector + inline math (potentials[(x_len\*y_len\*z) + (x_len\*y) + x]) | 285.4 ms         |
-| 1d std::vector + less stupid inline math (potentials[(xy_len\*z) + (x_len\*y) + x]) | 279.3 ms         |
-| 1d C-style array + less stupid inline math                   | 147.8 ms         |
-| 1d std::array + less stupid inline math                      | 426.0 ms         |
-|                                                              |                  |
-|                                                              |                  |
-|                                                              |                  |
-|                                                              |                  |
-|                                                              |                  |
-|                                                              |                  |
-|                                                              |                  |
+| 200x200x200 array, -O3 for all                               | CPU Time, +/-10ms |
+| :----------------------------------------------------------- | ----------------- |
+| 1d std::vector + i_idx_geom();                               | 1700 ms           |
+| 3d std::vector                                               | 440 ms            |
+| 3d global C-style array on heap                              | 100.4 ms          |
+| i_idx_geom();                                                | 110 ns            |
+| i_idx_arg();                                                 | 60 ns             |
+| Single lookup with 3d C-style array (potentials\[0\]\[0\]\[0\]) | -- ns??           |
+| 3d std::array [nb: defaults to stack, segfault]              | 903.8 ms          |
+| 1d std::vector + i_idx_geom();                               | 438.6 ms          |
+| 1d std::vector + stupid inline math (potentials[(x_len\*y_len\*z) + (x_len\*y) + x]) | 285.4 ms          |
+| 1d std::vector + less stupid inline math (potentials[(xy_len\*z) + (x_len\*y) + x]) | 279.3 ms          |
+| 1d C-style array on heap + less stupid inline math           | 127.7 ms          |
+| 1d std::array + less stupid inline math                      | 426.0 ms          |
+| 1d boost::array + less stupid inline math                    | 293.0 ms          |
+|                                                              |                   |
+|                                                              |                   |
+|                                                              |                   |
+|                                                              |                   |
+|                                                              |                   |
+|                                                              |                   |
+
+
 
 Note: values do not include construction/initialization time. 
 
 Juicy! This is probably of sufficient utility that I should publish it separately.
 
-Next, we'll need a provision for storing multiple grids within multiple timesteps.
+
+
+Next, we'll need a provision for storing multiple grids within multiple timesteps. I think the 1d std::vector is the best option; despite being 2 times slower, it's much more versatile.
