@@ -52,7 +52,7 @@ TEST_GROUP(laplace_tests){};
 
 TEST(laplace_tests,laplace_tests_1){
   int mesh_geometry[3] = {20,3,3};
-  std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
+  std::vector<unsigned char> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
   std::vector<bool> active(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
 
@@ -79,7 +79,7 @@ TEST(laplace_tests,laplace_tests_1){
 TEST(laplace_tests,laplace_timing_1){
   int mesh_geometry[3] = {200,200,200};
 
-  std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
+  std::vector<unsigned char> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
   std::vector<bool> active(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),1);
   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
 

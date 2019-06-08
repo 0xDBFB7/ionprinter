@@ -146,7 +146,7 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 
 // std::vector<float, (200*200*200)> potentials;
 
-int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> &boundary_conditions, std::vector<bool> &active,
+int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<unsigned char> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
@@ -186,32 +186,46 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
 
   int xy_len = x_len*y_len;
 
+
+
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  // potentials[1][1][1] = 10;
+  // potentials[1] = 10;
+  float * potentials;
+  potentials = new float[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
+
+  int * boundaries;
+  boundaries = new int[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
+
+
+  potentials[500] = 10;
+  boundaries[500] = 10;
 
   for(int i = 0; i < 10; i++){
     for(int x = 1; x < mesh_geometry[X]-1; x++){ //the edges must be grounded.
       for(int y = 1; y < mesh_geometry[Y]-1; y++){
         for(int z = 1; z < mesh_geometry[Z]-1; z++){
-          // if(0){ //todo: adaptive mesh of some type
+          // volatile bool test = potentials[(xy_len*z) + (x_len*y) + x];
+          if(!boundaries[(xy_len*z) + (x_len*y) + x]){ //todo: adaptive mesh of some type
             // potentials[x][y][z] = (potentials[x-1][y][z] +
             //                                          potentials[x+1][y][z] +
             //                                          potentials[x][y-1][z] +
             //                                          potentials[x][y+1][z] +
             //                                          potentials[x][y][z-1] +
             //                                          potentials[x][y][z+1])/6.0;
+            potentials[(xy_len*z) + (x_len*y) + x] = (potentials[(xy_len*z) + (x_len*y) + (x+1)] +
+                                         potentials[(xy_len*z) + (x_len*y) + (x-1)] +
+                                         potentials[(xy_len*z) + (x_len*(y-1)) + x] +
+                                         potentials[(xy_len*z) + (x_len*(y+1)) + x] +
+                                         potentials[(xy_len*(z-1)) + (x_len*y) + x] +
+                                         potentials[(xy_len*(z+1)) + (x_len*y) + x])/6.0;
 
-          potentials[(xy_len*z) + (x_len*y) + x] = (potentials[(xy_len*z) + (x_len*y) + x] +
-                                       potentials[(xy_len*z) + (x_len*y) + x] +
-                                       potentials[(xy_len*z) + (x_len*y) + x] +
-                                       potentials[(xy_len*z) + (x_len*y) + x] +
-                                       potentials[(xy_len*z) + (x_len*y) + x] +
-                                       potentials[(xy_len*z) + (x_len*y) + x])/6.0;
-          // }
+          }
         }
       }
     }
+
+
     //
     // if(i % 20 == 0 && i != 0){
     //   float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ))/(num_active_points);
@@ -238,7 +252,13 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
 
   std::cout << "idx took " << (std::chrono::duration_cast<std::chrono::nanoseconds>(t2-t1).count())/200 << " us" << "\n";
 
-  return potentials[0];
+  potentials_2[0] = potentials[1];
+  delete[] potentials;
+  boundaries[0] = boundaries[1];
+  delete[] boundaries;
+  
+  return 0;
+  // return potentials[0];
   //throw std::runtime_error("Laplace did not converge!");
 }
 

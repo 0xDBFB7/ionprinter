@@ -1228,10 +1228,6 @@ std::array<float, (200*200*200)> potentials;
 | 1d boost::array + less stupid inline math                    | 293.0 ms          |
 |                                                              |                   |
 |                                                              |                   |
-|                                                              |                   |
-|                                                              |                   |
-|                                                              |                   |
-|                                                              |                   |
 
 
 
@@ -1242,3 +1238,8 @@ Juicy! This is probably of sufficient utility that I should publish it separatel
 
 
 Next, we'll need a provision for storing multiple grids within multiple timesteps. I think the 1d std::vector is the best option; despite being 2 times slower, it's much more versatile.
+
+
+
+For some reason, adding the boundary condition check makes the system 4 times slower. Curious! This doesn't happen if I check against the same potentials[] vector.
+

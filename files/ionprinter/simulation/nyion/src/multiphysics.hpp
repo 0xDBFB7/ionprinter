@@ -33,5 +33,5 @@ int i_idx(int x, int y, int z, int mesh_geometry[3]);
 int i_idx_2(int x, int y, int z, int x_len, int y_len, int z_len);
 void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);
 
-int relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &boundary_conditions, std::vector<bool> &active,
+int relax_laplace_potentials(std::vector<float> &potentials, std::vector<unsigned char> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance);
