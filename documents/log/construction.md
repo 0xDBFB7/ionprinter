@@ -1103,11 +1103,11 @@ Gotcha!
 
 
 
-#### Thinly sliced/halbach ion optics
+Thinly sliced/halbach ion optics
 
 
 
-#### FPGA 
+#### FPGA beam driver
 
 An FPGA with 200 I/O can be had for ~$10, in case some high-speed logic is required. Per-I/O prices of FPGAs vs microcontrollers are surprisingly similar.
 
@@ -1115,7 +1115,51 @@ An FPGA with 200 I/O can be had for ~$10, in case some high-speed logic is requi
 
 Bunching of the beam for diagnostics can be facilitated by mechanical vibration of the bowtie nozzle.
 
-#### Diffusion pump vapor superheat post-boiling - more efficient pumpdown with lower power consumption?
+#### Diffusion pump
 
-#### Diffusion pump - activated alumina beads for backstreaming absorption
+vapor superheat post-boiling - more efficient pumpdown with lower power consumption?
+
+Activated alumina beads for backstreaming absorption
+
+#### Jacobi relaxation in C++
+
+Trying to figure out the best data structure for Jacobi.
+
+A quick Nyion test yielded 1780 ms per iteration for a single-core 200x200x200 float mesh relax, using 1d C++ vectors with a 3d lookup function. 66.9 MB of memory was consumed. 
+
+This indicates an abysmal 222.5 ns per 7-point star sum - under 5 MHz! Ouch! I know, premature optimization and all that, but this is kind of a fundamental design issue; everything centers around this. 
+
+The Jacobi function will take thousands of cycles to converge, and will be called every time charge should  be deposited onto the PiC grid; that is, every time a particle moves into another grid; so it's really quite critical. 
+
+What's our goal? The rule of thumb is that 10 space-charge points are required to accurately model a beam. The nozzle is 0.4mm in diameter, so a 0.00004m mesh is required around there. The current generation extractor is 9mm in diameter, so 225 mesh points across the x.  200x200x200 is probably a reasonable estimate.
+
+Then, we'll need at least 1000 J or G-S cycles for convergence (with some multigrid action, surely), times 0.2 meters / 0.0001 = 2000 iterations as the space charge fills in. That's around 2 M J cycles - three weeks or so at 1.8 s each.
+
+Some beam envelope tricks could probably pare this down to 10-20, but I don't wanna be clever.
+
+So, is 5 Mhz all we're going to get? Assuming 100% cache misses, DDR4-1600 can hit 12800 MB/s. Divide by 4 because we're working with floats, divide by 8 for the stencil, then by 10 because this is silly best-case nonsense = 40 Mhz. 
+
+There's some room for improvement, but probably not the several orders of magnitude that are required.
+
+
+
+For the hell of it, I swapped out the 1d C++ vectors for a simple 3d array on the global heap. This required only 100 ms / cycle!
+
+Okay, so I guess we're still CPU limited - those ~10 index lookups were probably killer.
+
+Man, I'm really acutely lonely right now, but it's offset by just how much fun hand-optimization is! Also, got midterms.
+
+
+
+|                                                      |         |      |      |      |
+| ---------------------------------------------------- | ------- | ---- | ---- | ---- |
+| 1d std::vector + int idx lookups through mesh_geom[] | 1700 ms |      |      |      |
+| 3d std::vector                                       | 440 ms  |      |      |      |
+|                                                      |         |      |      |      |
+|                                                      |         |      |      |      |
+|                                                      |         |      |      |      |
+
+
+
+
 

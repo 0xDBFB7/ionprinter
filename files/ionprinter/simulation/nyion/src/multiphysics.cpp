@@ -137,7 +137,9 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 //
 // }
 
-int relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &boundary_conditions, std::vector<bool> &active,
+float potentials[200][200][200];
+
+int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> &boundary_conditions, std::vector<bool> &active,
                                                                                               int mesh_geometry[3], float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
@@ -156,45 +158,61 @@ int relax_laplace_potentials(std::vector<float> &potentials, std::vector<int> &b
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
-  if(potentials.size() != boundary_conditions.size() || boundary_conditions.size() != active.size()){
-    throw std::invalid_argument( "received negative value" );
-  }
-
-  int num_active_points = std::count(active.begin(), active.end(), true);
-  if(num_active_points <= 0){
-    return -1;
-  }
+  // if(potentials.size() != boundary_conditions.size() || boundary_conditions.size() != active.size()){
+  //   throw std::invalid_argument( "received negative value" );
+  // }
+  //
+  // int num_active_points = std::count(active.begin(), active.end(), true);
+  // if(num_active_points <= 0){
+  //   return -1;
+  // }
 
   float previous_convergence = 1e6;
 
-  for(int i = 0; i < 100000; i++){
+  // std::vector<std::vector<std::vector<float>>> potentials(200, std::vector<std::vector<float>>(200, std::vector<float>(200)));
+
+  auto t1 = std::chrono::high_resolution_clock::now();
+
+  potentials[1][1][1] = 10;
+  for(int i = 0; i < 10; i++){
     for(int x = 1; x < mesh_geometry[X]-1; x++){ //the edges must be grounded.
       for(int y = 1; y < mesh_geometry[Y]-1; y++){
         for(int z = 1; z < mesh_geometry[Z]-1; z++){
-          if(!boundary_conditions[i_idx(x,y,z,mesh_geometry)] && active[i_idx(x,y,z,mesh_geometry)]){ //todo: adaptive mesh of some type
-            potentials[i_idx(x,y,z,mesh_geometry)] = (potentials[i_idx(x-1,y,z,mesh_geometry)] +
-                                                     potentials[i_idx(x+1,y,z,mesh_geometry)] +
-                                                     potentials[i_idx(x,y-1,z,mesh_geometry)] +
-                                                     potentials[i_idx(x,y+1,z,mesh_geometry)] +
-                                                     potentials[i_idx(x,y,z+1,mesh_geometry)] +
-                                                     potentials[i_idx(x,y,z-1,mesh_geometry)])/6.0;
-            //wonder how many cycles will be lost via i_idx calls vs a 3d vector.
-          }
+          // if(0){ //todo: adaptive mesh of some type
+            potentials[x][y][z] = (potentials[x-1][y][z] +
+                                                     potentials[x+1][y][z] +
+                                                     potentials[x][y-1][z] +
+                                                     potentials[x][y+1][z] +
+                                                     potentials[x][y][z-1] +
+                                                     potentials[x][y][z+1])/6.0;
+          // }
         }
       }
     }
-
-    if(i % 20 == 0 && i != 0){
-      float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ))/(num_active_points);
-      // printf("%f,%f\n",previous_convergence, std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ));
-      // printf("%f\n",fabs(new_convergence-previous_convergence));
-      if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
-        return i;
-      }
-      previous_convergence = new_convergence;
-    }
+    //
+    // if(i % 20 == 0 && i != 0){
+    //   float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ))/(num_active_points);
+    //   // printf("%f,%f\n",previous_convergence, std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ));
+    //   // printf("%f\n",fabs(new_convergence-previous_convergence));
+    //   if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
+    //     return i;
+    //   }
+    //   previous_convergence = new_convergence;
+    // }
   }
-  throw std::runtime_error("Laplace did not converge!");
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+
+  std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << "\n";
+
+  t1 = std::chrono::high_resolution_clock::now();
+  i_idx(10,10,10,mesh_geometry);
+  t2 = std::chrono::high_resolution_clock::now();
+
+  std::cout << "idx took " << (std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/10.0 << " us" << "\n";
+
+  return potentials[0][0][0];
+  //throw std::runtime_error("Laplace did not converge!");
 }
 
 
@@ -256,27 +274,14 @@ int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]){
   return (mesh_geometry[X]*mesh_geometry[Y]*(z/mesh_scale[Z])) + (mesh_geometry[X]*(y/mesh_scale[Y])) + x/mesh_scale[X];
 }
 
-
-int i_idx(int x, int y, int z, vector<vector<int>> &mesh_geometry){
+int i_idx(int x, int y, int z, int mesh_geometry[3]){
   /*
-  This function chooses
-
+  Helper function to obtain 1D mesh index from int 3D mesh position
+  sanity checking should be done in caller for performance reasons
   */
-  int array_index = 0;
-  for(int grid_index = 0; grid_index < mesh_geometry.size(); grid_index++){
-    if(x >= mesh_geometry[grid_index][X1] && x < mesh_geometry[grid_index][X2] &&
-       y >= mesh_geometry[grid_index][Y1] && y < mesh_geometry[grid_index][Y2] &&
-       z >= mesh_geometry[grid_index][Z1] && z < mesh_geometry[grid_index][Z2]    ){ //if point is within the specified grid bounds
-
-      array_index += ((mesh_geometry[X]*mesh_geometry[Y]*()) + (mesh_geometry[X]*y) + x);
-      return array_index;
-    }
-    else{
-      array_index += ((mesh_geometry[grid_index][X_LEN]*mesh_geometry[grid_index][Y_LEN]*mesh_geometry[grid_index][Z_LEN]) + (mesh_geometry[X]*y) + x)
-    }
-  }
-  return 0;
+  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
 }
+
 
 void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
   /*
