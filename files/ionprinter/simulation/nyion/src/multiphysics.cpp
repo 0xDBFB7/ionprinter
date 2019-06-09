@@ -60,6 +60,9 @@
 #include <vtkDoubleArray.h>
 #include <vtkIntArray.h>
 
+#include <mpi.h>
+
+
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
@@ -161,6 +164,11 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
 
   */
 
+
+  int world_rank;
+  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+  int world_size;
+  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
   // MPI_Send(&tosend[0], tosend_size, MPI_INT, 0, 777, MPI_COMM_WORLD); //vector mpi
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
