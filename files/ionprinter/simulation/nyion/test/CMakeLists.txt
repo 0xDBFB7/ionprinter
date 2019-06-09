@@ -15,7 +15,7 @@ target_link_libraries(multiphysics_test ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} mult
 target_link_libraries(multiphysics_test CppUTest )
 target_link_libraries(multiphysics_test CppUTestExt )
 
-target_compile_options(multiphysics_test PRIVATE -Wall -Wextra -pedantic -Werror)
+target_compile_options(multiphysics_test PRIVATE -Wall -Wextra -pedantic -Werror -O0)
 
 if(VTK_LIBRARIES)
   target_link_libraries(multiphysics_test ${VTK_LIBRARIES})

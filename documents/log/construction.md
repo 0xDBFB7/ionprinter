@@ -1226,12 +1226,12 @@ std::array<float, (200*200*200)> potentials;
 | 1d C-style array on heap + less stupid inline math           | 127.7 ms          |
 | 1d std::array + less stupid inline math                      | 426.0 ms          |
 | 1d boost::array + less stupid inline math                    | 293.0 ms          |
+| 1d std::vector to 1d C-style arrays, then back               | 175.2 ms          |
 |                                                              |                   |
-|                                                              |                   |
 
 
 
-Note: values do not include construction/initialization time. 
+Note: values do not include allocation/construction/initialization time. 
 
 Juicy! This is probably of sufficient utility that I should publish it separately.
 
@@ -1241,5 +1241,11 @@ Next, we'll need a provision for storing multiple grids within multiple timestep
 
 
 
-For some reason, adding the boundary condition check makes the system 4 times slower. Curious! This doesn't happen if I check against the same potentials[] vector.
+For some reason, adding the boundary condition check makes the system 4 times slower. Curious! This doesn't happen if I check against the same potentials[] vector. Some strange cache effect? 
+
+Changing to unsigned char had no appreciable effect.
+
+Ah, but converting std::vector to a dynamic c-style array, performing the computation, then deleting the original array is very fast.
+
+
 
