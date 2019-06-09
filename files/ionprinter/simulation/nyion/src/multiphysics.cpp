@@ -165,10 +165,11 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   */
 
 
-  int world_rank;
-  MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
-  int world_size;
-  MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+  // int world_rank;
+  // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+  // int world_size;
+  // MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
   // MPI_Send(&tosend[0], tosend_size, MPI_INT, 0, 777, MPI_COMM_WORLD); //vector mpi
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
@@ -197,32 +198,45 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
 
   float * potentials;
   const size_t CACHE_LINE_SIZE = 256;
-  posix_memalign( reinterpret_cast<void**>(&potentials), CACHE_LINE_SIZE, sizeof(double) * (200*200*200));
+  posix_memalign( reinterpret_cast<void**>(&potentials), CACHE_LINE_SIZE, sizeof(float) * (200*200*200));
   potentials = new float[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
-  for(int i = 0; i < potentials_2.size(); i++){ potentials[i] = potentials_2[i];};
+
+  float * next_potentials;
+  posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * (200*200*200));
+  next_potentials = new float[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
+  for(int i = 0; i < potentials_2.size(); i++){ next_potentials[i] = 0;};
 
   bool * boundaries;
-  posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(double) * (200*200*200));
+  posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * (200*200*200));
   boundaries = new bool[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
   for(int i = 0; i < boundary_conditions.size(); i++){ boundaries[i] = 0;};
   boundaries[i_idx(5,1,1,mesh_geometry)] = boundary_conditions[i_idx(5,1,1,mesh_geometry)];
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
+
   for(int i = 0; i < 10; i++){
+
     for(int x = 1; x < x_len-1; x++){ //the edges must be grounded.
       for(int y = 1; y < y_len-1; y++){
         for(int z = 1; z < z_len-1; z++){
           int position = (xy_len*z) + (x_len*y) + x;
-          if(!boundaries[position]){
-            potentials[position] = (potentials[position + 1] +
+          // if(!boundaries[position]){
+            next_potentials[position] = (potentials[position + 1] +
                                          potentials[position - 1] +
                                          potentials[position-x_len] +
                                          potentials[position+x_len] +
                                          potentials[position-xy_len] +
                                          potentials[position+xy_len])/6.0;
-          }
+          // }
         }
+      }
+    }
+
+
+    for(int i = 0; i < (200*200*200); i++){
+      if(boundaries[i]){
+        next_potentials[i] = potentials[i];
       }
     }
 
@@ -243,10 +257,10 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << "\n";
 
 
-  for(int i = 0;i < potentials_2.size(); i++){ potentials_2[i] = potentials[i];};
+  for(int i = 0;i < potentials_2.size(); i++){ potentials_2[i] = next_potentials[i];};
   delete[] potentials;
-  boundaries[0] = boundaries[1];
   delete[] boundaries;
+  delete[] next_potentials;
 
   return 0;
   // return potentials[0];
