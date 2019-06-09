@@ -204,7 +204,7 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   float * next_potentials;
   posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * (200*200*200));
   next_potentials = new float[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
-  for(int i = 0; i < potentials_2.size(); i++){ next_potentials[i] = 0;};
+  for(int i = 0; i < potentials_2.size(); i++){ next_potentials[i] = potentials_2[i];};
 
   bool * boundaries;
   posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * (200*200*200));
