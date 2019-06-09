@@ -68,7 +68,7 @@ TEST(laplace_tests,laplace_tests_1){
   active[i_idx(4,1,1,mesh_geometry)] = true;
   active[i_idx(5,1,1,mesh_geometry)] = true;
 
-  relax_laplace_potentials(potentials, boundaries, active, mesh_geometry, 0.01);
+  relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
 
   // std::copy(potentials.begin(), potentials.end(), std::ostream_iterator<float>(std::cout, " "));
 
@@ -87,7 +87,7 @@ TEST(laplace_tests,laplace_timing_1){
   boundaries[i_idx(5,1,1,mesh_geometry)] = 10;
 
   // auto t1 = std::chrono::high_resolution_clock::now();
-  relax_laplace_potentials(potentials, boundaries, active, mesh_geometry, 0.01);
+  relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
 
   // auto t2 = std::chrono::high_resolution_clock::now();
   // std::cout << "f() took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << iterations << "\n";

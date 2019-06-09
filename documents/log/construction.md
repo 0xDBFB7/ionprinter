@@ -1215,7 +1215,7 @@ std::array<float, (200*200*200)> potentials;
 | :----------------------------------------------------------- | ----------------- |
 | 1d std::vector + i_idx_geom();                               | 1700 ms           |
 | 3d std::vector                                               | 440 ms            |
-| 3d global C-style array on heap                              | 100.4 ms          |
+| 3d global C-style array on heap but without BC flag          | 100.4 ms          |
 | i_idx_geom();                                                | 110 ns            |
 | i_idx_arg();                                                 | 60 ns             |
 | Single lookup with 3d C-style array (potentials\[0\]\[0\]\[0\]) | -- ns??           |
@@ -1223,11 +1223,11 @@ std::array<float, (200*200*200)> potentials;
 | 1d std::vector + i_idx_geom();                               | 438.6 ms          |
 | 1d std::vector + stupid inline math (potentials[(x_len\*y_len\*z) + (x_len\*y) + x]) | 285.4 ms          |
 | 1d std::vector + less stupid inline math (potentials[(xy_len\*z) + (x_len\*y) + x]) | 279.3 ms          |
-| 1d C-style array on heap + less stupid inline math           | 127.7 ms          |
+| 1d C-style array on heap + less stupid inline math, no BC flag | 127.7 ms          |
 | 1d std::array + less stupid inline math                      | 426.0 ms          |
 | 1d boost::array + less stupid inline math                    | 293.0 ms          |
 | 1d std::vector to 1d C-style arrays, then back               | 175.2 ms          |
-| 1d std::vector to 3 cache-aligned C-style arrays on heap, boundary conditions re-added after relax cycle (MPI-able, spectral radius comp easy), then back to vector | 112.8 ms!         |
+| 1d std::vector to 3 cache-aligned C-style arrays on heap, BCs re-added after relax cycle to skip slow flag (MPI easy, spectral radius comp easy), then back to vector | 108.42 ms!        |
 
 Note: values do not include allocation/construction/initialization time. 
 

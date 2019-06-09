@@ -149,8 +149,7 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 
 // std::vector<float, (200*200*200)> potentials;
 
-int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> &boundary_conditions, std::vector<bool> &active,
-                                                                                              int mesh_geometry[3], float tolerance){
+int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<int> &boundary_conditions_vector, int x_len, int y_len, int z_len, float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
 
@@ -174,71 +173,76 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
-  // if(potentials.size() != boundary_conditions.size() || boundary_conditions.size() != active.size()){
-  //   throw std::invalid_argument( "received negative value" );
-  // }
-  //
-  // int num_active_points = std::count(active.begin(), active.end(), true);
-  // if(num_active_points <= 0){
-  //   return -1;
-  // }
+  if(potentials_vector.size() != boundary_conditions_vector.size()){
+    throw std::invalid_argument( "received negative value" );
+  }
+
 
   float previous_convergence = 1e6;
 
-  // std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
-  // std::vector<std::vector<std::vector<float>>> potentials(200, std::vector<std::vector<float>>(200, std::vector<float>(200)));
-
-
-  int x_len = mesh_geometry[X];
-  int y_len = mesh_geometry[Y];
-  int z_len = mesh_geometry[Z];
+  int total_mesh_len = (x_len*y_len*z_len);
 
   int xy_len = x_len*y_len;
 
 
   float * potentials;
   const size_t CACHE_LINE_SIZE = 256;
-  posix_memalign( reinterpret_cast<void**>(&potentials), CACHE_LINE_SIZE, sizeof(float) * (200*200*200));
-  potentials = new float[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
+  posix_memalign( reinterpret_cast<void**>(&potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
+  potentials = new float[total_mesh_len];
 
   float * next_potentials;
-  posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * (200*200*200));
-  next_potentials = new float[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
-  for(int i = 0; i < potentials_2.size(); i++){ next_potentials[i] = potentials_2[i];};
+  posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
+  next_potentials = new float[total_mesh_len];
+  for(int i = 0; i < total_mesh_len; i++){ potentials[i] = potentials_vector[i];};
+  potentials[1006] = 1000;
 
   bool * boundaries;
-  posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * (200*200*200));
-  boundaries = new bool[i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry)];
-  for(int i = 0; i < boundary_conditions.size(); i++){ boundaries[i] = 0;};
-  boundaries[i_idx(5,1,1,mesh_geometry)] = boundary_conditions[i_idx(5,1,1,mesh_geometry)];
-
+  posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * total_mesh_len);
+  boundaries = new bool[total_mesh_len];
+  for(int i = 0; i < total_mesh_len; i++){ boundaries[i] = boundary_conditions_vector[i];};
+  boundaries[1006] = 1;
   auto t1 = std::chrono::high_resolution_clock::now();
 
+  float new_convergence = 0;
 
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 100; i++){
 
     for(int x = 1; x < x_len-1; x++){ //the edges must be grounded.
       for(int y = 1; y < y_len-1; y++){
         for(int z = 1; z < z_len-1; z++){
+          if(!boundaries[i]){
+
           int position = (xy_len*z) + (x_len*y) + x;
-          // if(!boundaries[position]){
-            next_potentials[position] = (potentials[position + 1] +
-                                         potentials[position - 1] +
-                                         potentials[position-x_len] +
-                                         potentials[position+x_len] +
-                                         potentials[position-xy_len] +
-                                         potentials[position+xy_len])/6.0;
-          // }
+          potentials[position] = (potentials[position + 1] +
+                                       potentials[position - 1] +
+                                       potentials[position-x_len] +
+                                       potentials[position+x_len] +
+                                       potentials[position-xy_len] +
+                                       potentials[position+xy_len])/6.0;
+         }
         }
       }
     }
 
+    // for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
+    //   if(boundaries[i]){
+    //     next_potentials[i] = potentials[i];
+    //   }
+    //   // if(i % 9 == 0){
+    //     new_convergence += fabs(potentials[i]-next_potentials[i]);
+    //   // }
+    //   potentials[i] = next_potentials[i];
+    // }
 
-    for(int i = 0; i < (200*200*200); i++){
-      if(boundaries[i]){
-        next_potentials[i] = potentials[i];
-      }
-    }
+    printf("convergence: %f\n",new_convergence);
+    printf("1000: %f\n",potentials[1005]);
+
+    new_convergence = 0;
+    //
+    // for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
+    //   potentials[i] = next_potentials[i];
+    // }
+
 
     //
     // if(i % 20 == 0 && i != 0){
@@ -257,7 +261,7 @@ int relax_laplace_potentials(std::vector<float> &potentials_2, std::vector<int> 
   std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << "\n";
 
 
-  for(int i = 0;i < potentials_2.size(); i++){ potentials_2[i] = next_potentials[i];};
+  for(int i = 0;i < total_mesh_len; i++){ potentials_vector[i] = next_potentials[i];};
   delete[] potentials;
   delete[] boundaries;
   delete[] next_potentials;
