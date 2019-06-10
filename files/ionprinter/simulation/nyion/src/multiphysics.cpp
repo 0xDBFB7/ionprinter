@@ -194,54 +194,54 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
   posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
   next_potentials = new float[total_mesh_len];
   for(int i = 0; i < total_mesh_len; i++){ potentials[i] = potentials_vector[i];};
-  potentials[1006] = 1000;
+  potentials[(xy_len*10) + (x_len*10) + 10] = 10000.0;
 
   bool * boundaries;
   posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * total_mesh_len);
   boundaries = new bool[total_mesh_len];
-  for(int i = 0; i < total_mesh_len; i++){ boundaries[i] = boundary_conditions_vector[i];};
-  boundaries[1006] = 1;
+  for(int i = 0; i < total_mesh_len; i++){ boundaries[i] = 0;};
+  boundaries[(xy_len*10) + (x_len*10) + 10] = 1;
   auto t1 = std::chrono::high_resolution_clock::now();
 
   float new_convergence = 0;
 
-  for(int i = 0; i < 100; i++){
+  for(int i = 1; i < 100; i++){
 
     for(int x = 1; x < x_len-1; x++){ //the edges must be grounded.
       for(int y = 1; y < y_len-1; y++){
         for(int z = 1; z < z_len-1; z++){
-          if(!boundaries[i]){
+          // if(!boundaries[i]){
 
           int position = (xy_len*z) + (x_len*y) + x;
-          potentials[position] = (potentials[position + 1] +
+          next_potentials[position] = (potentials[position + 1] +
                                        potentials[position - 1] +
                                        potentials[position-x_len] +
                                        potentials[position+x_len] +
                                        potentials[position-xy_len] +
                                        potentials[position+xy_len])/6.0;
-         }
+         // }
         }
       }
     }
 
-    // for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
-    //   if(boundaries[i]){
-    //     next_potentials[i] = potentials[i];
-    //   }
-    //   // if(i % 9 == 0){
-    //     new_convergence += fabs(potentials[i]-next_potentials[i]);
-    //   // }
-    //   potentials[i] = next_potentials[i];
-    // }
+    for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
+      if(boundaries[i]){
+        next_potentials[i] = potentials[i];
+      }
+      // if(i % 9 == 0){
+      if(fabs(potentials[i]-next_potentials[i]) > new_convergence){
+        new_convergence = fabs(potentials[i]-next_potentials[i]); //maximum difference between old and new 
+      }
+      potentials[i] = next_potentials[i];
+    }
+    // memcpy(next_potentials, potentials, sizeof(potentials)); about the same speed
+
+    if(new_convergence < tolerance){ //exit condition
+      return i;
+    }
 
     printf("convergence: %f\n",new_convergence);
-    printf("1000: %f\n",potentials[1005]);
-
     new_convergence = 0;
-    //
-    // for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
-    //   potentials[i] = next_potentials[i];
-    // }
 
 
     //
@@ -258,7 +258,7 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << "\n";
+  std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/i << " milliseconds" << "\n";
 
 
   for(int i = 0;i < total_mesh_len; i++){ potentials_vector[i] = next_potentials[i];};

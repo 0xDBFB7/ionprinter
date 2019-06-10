@@ -62,12 +62,6 @@ TEST(laplace_tests,laplace_tests_1){
   potentials[i_idx(5,1,1,mesh_geometry)] = 10;
   boundaries[i_idx(5,1,1,mesh_geometry)] = 10;
 
-  active[i_idx(1,1,1,mesh_geometry)] = true;
-  active[i_idx(2,1,1,mesh_geometry)] = true;
-  active[i_idx(3,1,1,mesh_geometry)] = true;
-  active[i_idx(4,1,1,mesh_geometry)] = true;
-  active[i_idx(5,1,1,mesh_geometry)] = true;
-
   relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
 
   // std::copy(potentials.begin(), potentials.end(), std::ostream_iterator<float>(std::cout, " "));

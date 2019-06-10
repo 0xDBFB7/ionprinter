@@ -1227,7 +1227,7 @@ std::array<float, (200*200*200)> potentials;
 | 1d std::array + less stupid inline math                      | 426.0 ms          |
 | 1d boost::array + less stupid inline math                    | 293.0 ms          |
 | 1d std::vector to 1d C-style arrays, then back               | 175.2 ms          |
-| 1d std::vector to 3 cache-aligned C-style arrays on heap, BCs re-added after relax cycle to skip slow flag (MPI easy, spectral radius comp easy), then back to vector | 108.42 ms!        |
+| 1d std::vector to 3 cache-aligned C-style arrays on heap, BCs re-added after relax cycle to skip slow flag (MPI easy, spectral radius comp easy), then back to vector | 108.4 ms!         |
 
 Note: values do not include allocation/construction/initialization time. 
 
