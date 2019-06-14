@@ -70,27 +70,45 @@ TEST(laplace_tests,laplace_tests_1){
 
 
 TEST(laplace_tests,laplace_timing_1){
-  int mesh_geometry[3] = {20,20,20};
+  int mesh_geometry[3] = {200,200,200};
 
   std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
 
-  potentials[i_idx(1,1,1,mesh_geometry)] = 10;
-  boundaries[i_idx(1,1,1,mesh_geometry)] = 10;
 
-  potentials[i_idx(5,1,1,mesh_geometry)] = 10;
-  boundaries[i_idx(5,1,1,mesh_geometry)] = 10;
+  for(int i = 0; i < 200; i++){
+    for(int i = 0; i < 200; i++){
+      potentials[i_idx(i,i,i,mesh_geometry)] = 1000;
+      boundaries[i_idx(i,i,i,mesh_geometry)] = 10;
+    }
+  }
 
-  // auto t1 = std::chrono::high_resolution_clock::now();
   relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
-
-  // auto t2 = std::chrono::high_resolution_clock::now();
-  // std::cout << "f() took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/10.0 << " milliseconds" << iterations << "\n";
-
-  // std::copy(potentials.begin(), potentials.end(), std::ostream_iterator<float>(std::cout, " "));
 
   DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
 }
+
+TEST(laplace_tests,laplace_convergence_1){
+  int mesh_geometry[3] = {50,50,50};
+  
+
+  std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
+  std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
+
+  for(int x = 1; x < 49; x++){
+    for(int y = 1; y < 49; y++){
+      for(int z = 25; z < 49; z++){
+        potentials[i_idx(x,y,z,mesh_geometry)] = 1000;
+        boundaries[i_idx(x,y,z,mesh_geometry)] = 10;
+      }
+    }
+  }
+
+  relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
+
+  DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
+}
+
 
 
 //

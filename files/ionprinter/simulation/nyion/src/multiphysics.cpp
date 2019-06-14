@@ -142,24 +142,23 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 //
 // }
 
-// volatile float potentials[200*200*200];
-// std::array<float, (200*200*200)> potentials;
-
-// std::array<std::array<std::array<float, 200>, 200>, 200> potentials;
-
-// std::vector<float, (200*200*200)> potentials;
-
 int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<int> &boundary_conditions_vector, int x_len, int y_len, int z_len, float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
 
   Jacobi is a bit slower, but allows parallel processing.
 
+  In fact, using Jacobi and skipping the boundary condition check runs almost 3 times faster than
+  Gauss-Seidel with a BC flag. The BCs are re-added to the new mesh after each iteration.
+
+  I'm still not sure why this is; some cursory objdump was not enlightening.
+
+  The solver sets the edges of the boundary to zero.
+
   Boundary conditions are included in the five-point star, but aren't modified.
 
-
-
   All input vectors must have the same dimensions.
+
 
   */
 
@@ -188,25 +187,25 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
   potentials = new float[total_mesh_len];
   memset(potentials, 0, total_mesh_len*sizeof(*potentials));
 
-
   float * next_potentials;
   posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
   next_potentials = new float[total_mesh_len];
   memset(next_potentials, 0, total_mesh_len*sizeof(*next_potentials));
   for(int i = 0; i < total_mesh_len; i++){ potentials[i] = potentials_vector[i];};
-
+  
   bool * boundaries;
   posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * total_mesh_len);
   boundaries = new bool[total_mesh_len];
   memset(boundaries, 0, total_mesh_len*sizeof(*boundaries));
-
   for(int i = 0; i < total_mesh_len; i++){ boundaries[i] = boundary_conditions_vector[i];};
+
+
   auto t1 = std::chrono::high_resolution_clock::now();
 
   float new_convergence = 0;
   int iterations = 0;
 
-  for(iterations = 1; iterations < 1000; iterations++){
+  for(iterations = 1; iterations < 10000; iterations++){
 
     for(int x = 1; x < x_len-1; x++){ //the edges must be grounded.
       for(int y = 1; y < y_len-1; y++){
@@ -226,13 +225,12 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
       if(boundaries[i]){
         next_potentials[i] = potentials[i];
       }
-      // if(i % 9 == 0){
+
       if(fabs(potentials[i]-next_potentials[i]) > new_convergence){
         new_convergence = fabs(potentials[i]-next_potentials[i]); //maximum difference between old and new
       }
       potentials[i] = next_potentials[i];
     }
-    // memcpy(next_potentials, potentials, sizeof(potentials)); about the same speed
 
     if(new_convergence < tolerance){ //exit condition
       break;
@@ -240,31 +238,19 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
 
     printf("convergence: %f\n",new_convergence);
     new_convergence = 0;
-
-
-    //
-    // if(i % 20 == 0 && i != 0){
-    //   float new_convergence = sqrt(std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ))/(num_active_points);
-    //   // printf("%f,%f\n",previous_convergence, std::inner_product(potentials.begin(), potentials.end(), potentials.begin(), 0 ));
-    //   // printf("%f\n",fabs(new_convergence-previous_convergence));
-    //   if(fabs(new_convergence-previous_convergence) < tolerance){ //simpler than the spectral radius metric
-    //     return i;
-    //   }
-    //   previous_convergence = new_convergence;
-    // }
   }
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  std::cout << "each cycle took " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/iterations << " milliseconds" << "\n";
-
+  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/iterations << " ms each" << "\n";
+  std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
 
   for(int i = 0; i < total_mesh_len; i++){ potentials_vector[i] = next_potentials[i];};
   delete[] potentials;
   delete[] boundaries;
   delete[] next_potentials;
 
-  return 0;
+  return iterations;
   // return potentials[0];
   //throw std::runtime_error("Laplace did not converge!");
 }
