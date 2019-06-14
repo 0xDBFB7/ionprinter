@@ -76,13 +76,14 @@ TEST(laplace_tests,laplace_timing_1){
   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
 
 
-  for(int i = 0; i < 200; i++){
-    for(int i = 0; i < 200; i++){
-      potentials[i_idx(i,i,i,mesh_geometry)] = 1000;
-      boundaries[i_idx(i,i,i,mesh_geometry)] = 10;
+  for(int x = 1; x < 199; x++){
+    for(int y = 1; y < 199; y++){
+      for(int z = 100; z < 199; z++){
+        potentials[i_idx(x,y,z,mesh_geometry)] = 1000;
+        boundaries[i_idx(x,y,z,mesh_geometry)] = 10;
+      }
     }
   }
-
   relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
 
   DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
@@ -90,7 +91,7 @@ TEST(laplace_tests,laplace_timing_1){
 
 TEST(laplace_tests,laplace_convergence_1){
   int mesh_geometry[3] = {50,50,50};
-  
+
 
   std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);

@@ -103,6 +103,8 @@
 #define THERMAL_MESH_SCALE_Z (MESH_Z/THERMAL_FIELD_MESH_Z)
 
 
+#define MULTIGRID_COARSE_GRID 50
+
 
 
 double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
@@ -176,23 +178,41 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
     throw std::invalid_argument( "received negative value" );
   }
 
+
+  printf("Solving mesh %i, %i, %i\n", x_len, y_len, z_len);
+
+  if(x_len > 50 || y_len > 50 || z_len > 50){ //recursive coarse mesh solver
+    int coarse_grid_len = (MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID);
+    std::vector<float> coarse_potential_vector(coarse_grid_len,0);
+    std::vector<int> coarse_boundary_conditions_vector(coarse_grid_len,0);
+
+    for(int i = 0; i < coarse_grid_len; i++){coarse_potential_vector[i] = potentials_vector[i*4];};
+    for(int i = 0; i < coarse_grid_len; i++){coarse_boundary_conditions_vector[i] = boundary_conditions_vector[i*4];};
+
+    relax_laplace_potentials(coarse_potential_vector,coarse_boundary_conditions_vector,
+                                        MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,tolerance);
+  }
+
+
   int total_mesh_len = (x_len*y_len*z_len);
 
   int xy_len = x_len*y_len;
 
-
+  /*
+  Allocate a few plain C-style arrays and cache-align for performance.
+  */
   float * potentials;
   const size_t CACHE_LINE_SIZE = 256;
   posix_memalign( reinterpret_cast<void**>(&potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
   potentials = new float[total_mesh_len];
   memset(potentials, 0, total_mesh_len*sizeof(*potentials));
+  for(int i = 0; i < total_mesh_len; i++){ potentials[i] = potentials_vector[i];};
 
   float * next_potentials;
   posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
   next_potentials = new float[total_mesh_len];
   memset(next_potentials, 0, total_mesh_len*sizeof(*next_potentials));
-  for(int i = 0; i < total_mesh_len; i++){ potentials[i] = potentials_vector[i];};
-  
+
   bool * boundaries;
   posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * total_mesh_len);
   boundaries = new bool[total_mesh_len];
@@ -200,14 +220,16 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
   for(int i = 0; i < total_mesh_len; i++){ boundaries[i] = boundary_conditions_vector[i];};
 
 
-  auto t1 = std::chrono::high_resolution_clock::now();
+
 
   float new_convergence = 0;
   int iterations = 0;
 
+  auto t1 = std::chrono::high_resolution_clock::now();
+
   for(iterations = 1; iterations < 10000; iterations++){
 
-    for(int x = 1; x < x_len-1; x++){ //the edges must be grounded.
+    for(int x = 1; x < x_len-1; x++){ //edges must be grounded.
       for(int y = 1; y < y_len-1; y++){
         for(int z = 1; z < z_len-1; z++){
           int position = (xy_len*z) + (x_len*y) + x;

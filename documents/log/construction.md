@@ -1245,5 +1245,11 @@ Changing to unsigned char had no appreciable effect.
 
 Ah, but converting std::vector to a dynamic c-style array, performing the computation, then deleting the original array is very fast.
 
+#### Multigrid
 
+Tried performing multigrid (that is, seeding a fine mesh with values from a coarse mesh) "in-place" in the same array, with a greater first pass step; however, this caused a number of issues.
+
+
+
+A mechanical pressure interlock could be used to short the HV supplies until a suitable vacuum has been reached.
 
