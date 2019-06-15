@@ -475,7 +475,7 @@ An aluminum reflector could be used - however, thermal heating is a little count
 
 <https://nvlpubs.nist.gov/nistpubs/bulletin/14/nbsbulletinv14n1p115_A2b.pdf>
 
-Describes in fascinating detail how the inner surfaces of a tungsten helix filament is significantly hotter than the outer.
+Describes in fascinating detail how the inner surfaces of a tungsten helix filament are significantly hotter than the outer ones.
 
 A bowtie with a reflector was designed and imported into Elmer; however, the elmer mesh generator doesn't currently support multiple bodies.
 
@@ -1249,7 +1249,31 @@ Ah, but converting std::vector to a dynamic c-style array, performing the comput
 
 Tried performing multigrid (that is, seeding a fine mesh with values from a coarse mesh) "in-place" in the same array, with a greater first pass step; however, this caused a number of issues.
 
+Also, I seem to have completely forgotten about the data structure. 
+
+#### HV Safety
+
+A mechanical pressure interlock could be used to short the HV supplies until a suitable vacuum has been reached. A mechanical flag could also prevent the chamber from being opened until the supplies are shorted.
+
+#### Data structure 2d: electric boogaloo
+
+A ragged 1d array of 1d arrays. The size of each sub-mesh in world-space is fixed; the resolution is determined by the size of the 1d sub-arrays. Meshes are initialized with zero size; those parts which are active have a size.
+
+Do we need 3-level refinement? Let's see. Let's take a worst-case scenario, where the mesh is the same size as the printer chassis; 0.5x0.5x0.5m. Splitting this into 3mm cubes would take only 170 mesh points; perfectly reasonable. Each cube would then have 216 cells.
+
+In this case, a 2d vector has a 42% overhead over simple 2d arrays. I think that's acceptable.
 
 
-A mechanical pressure interlock could be used to short the HV supplies until a suitable vacuum has been reached.
+
+The following assumptions will be made:
+
+- The root mesh need not be square, but all submeshes are. This lets us use the submesh array length to determine each submesh resolution; this will cost 1 cube root every ~216 stencils, but saves us a bunch of array lookups.
+- Submeshes can have arbitrary resolution.
+- Radiative transfer will only occur within meshes with equal world spacing.
+
+
+
+On second thought, scratch all that. Having a variable submesh resolution means indexing directly into the mesh will be impossible. This wouldn't be a huge deal, except applying the laplace stencil across submesh boundaries will be difficult and slow, I think. That is, negative indices would have to be caught, the previous submesh indexed into, and the previous submesh index computed.
+
+This is bustin' my noodle! Let's hardcode the submesh res for now.
 

@@ -1,30 +1,24 @@
 #include <vector>
 
 
-
-class root_mesh_region{
+class root_mesh_geometry{
   public:
-    std::vector<submesh_region> meshes;
 
-    std::vector<float> potential_vector;
-    std::vector<int> boundary_conditions_vector;
+    root_mesh_geometry(float bounds[6], float root_scale, float sub_scale);
 
-    std::vector<float> resistance_vector;
-    std::vector<float> temperature_vector;
+    int root_x_len; //root gridpoints for the mesh
+    int root_y_len;
+    int root_z_len;
 
-    void add_submesh (int,int);
-};
+    float root_scale; //world scale to submesh cube scale
 
+    int sub_len; //sub gridpoints per cube side
 
-class submesh_region { //contains parameters for a single rectangular sub-mesh.
-  public:
-    int x_len;
-    int y_len;
-    int z_len;
+    float sub_scale;
 
-    float x_world_scale; //real-world lengths
-    float y_world_scale;
-    float z_world_scale;
+    int virtual_x_len; //root_x_len * sub_len; number of gridpoints transparent to other logic
+    int virtual_y_len; // just convenience variables for later use
+    int virtual_z_len;
 
     float x_min_bound;
     float x_max_bound;
@@ -32,33 +26,5 @@ class submesh_region { //contains parameters for a single rectangular sub-mesh.
     float y_max_bound;
     float z_min_bound;
     float z_max_bound; //f*** getters and setters.
+
 };
-
-
-void root_mesh_region::add_submesh(int x_num, int y_num, int z_num, float bounds[6]) {
-  /*
-  Creates a new submesh with given dimensions.
-
-  the bounds[] array is more convenient for use with vtk.
-  */
-
-  submesh_region = new submesh_region();
-
-  x_world_scale = (bounds[X2]-bounds[X1])/x_num;
-  y_world_scale = (bounds[X2]-bounds[X1])/x_num;
-  z_world_scale = (bounds[X2]-bounds[X1])/x_num;
-
-  x_min_bound = bounds[X1];
-  x_max_bound = bounds[X2];
-  y_min_bound = bounds[Y1];
-  y_max_bound = bounds[Y2];
-  z_min_bound = bounds[Z1];
-  z_max_bound = bounds[Z2];
-
-}
-
-
-void root_mesh_region::build_coarse_meshes (int x, int y) {
-  width = x;
-  height = y;
-}

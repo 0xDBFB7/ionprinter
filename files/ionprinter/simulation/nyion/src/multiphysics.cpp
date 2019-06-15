@@ -72,38 +72,49 @@
 
 #include <boost/array.hpp>
 
-// using namespace std::chrono;
+#include "data_structure.hpp"
 
-#define BEAM_COUNT 5
-#define BEAM_STEPS 100
+// using namespace std::chrono;
 
 #define EPSILON_0 8.854187e-12
 
-#define MESH_X 0.1 //meters
-#define MESH_Y 0.1
-#define MESH_Z 0.1
-
-#define ELECTRODE_FIELD_MESH_X 100
-#define ELECTRODE_FIELD_MESH_Y 100
-#define ELECTRODE_FIELD_MESH_Z 100
-
-#define ELECTRODE_MESH_SCALE_X (MESH_X/ELECTRODE_FIELD_MESH_X) //meters
-#define ELECTRODE_MESH_SCALE_Y (MESH_Y/ELECTRODE_FIELD_MESH_Y) //meters
-#define ELECTRODE_MESH_SCALE_Z (MESH_Z/ELECTRODE_FIELD_MESH_Z) //meters
-
-#define SPACE_CHARGE_FIELD_MESH_X 100
-#define SPACE_CHARGE_FIELD_MESH_Y 100
-#define SPACE_CHARGE_FIELD_MESH_Z 100
-
-#define THERMAL_FIELD_MESH_X 1000
-#define THERMAL_FIELD_MESH_Y 1000
-#define THERMAL_FIELD_MESH_Z 1000
-#define THERMAL_MESH_SCALE_X (MESH_X/THERMAL_FIELD_MESH_X) //meters
-#define THERMAL_MESH_SCALE_Y (MESH_Y/THERMAL_FIELD_MESH_Y)
-#define THERMAL_MESH_SCALE_Z (MESH_Z/THERMAL_FIELD_MESH_Z)
-
 
 #define MULTIGRID_COARSE_GRID 50
+
+
+root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale, float new_sub_scale){
+  /*
+  Creates a new mesh with the specified parameters.
+
+  Root and sub_ scale are in meters per gridpoint.
+  sub_scale will be rounded to the nearest integer fraction of root_scale.
+
+  Mesh bounds will be rounded up to the nearest root_scale.
+  */
+
+
+  x_min_bound = bounds[X1];
+  y_min_bound = bounds[Y1];
+  z_min_bound = bounds[Z1];
+
+  root_x_len = ceil((bounds[X2]-x_min_bound)/new_root_scale);
+  root_y_len = ceil((bounds[Y2]-y_min_bound)/new_root_scale);
+  root_z_len = ceil((bounds[Z2]-z_min_bound)/new_root_scale);
+
+  x_max_bound = x_min_bound+(root_x_len*new_root_scale);
+  y_max_bound = y_min_bound+(root_y_len*new_root_scale);
+  z_max_bound = z_min_bound+(root_z_len*new_root_scale);
+
+  root_scale = new_root_scale;
+
+  sub_len = (root_scale/new_sub_scale);
+
+  sub_scale = root_scale/sub_len;
+
+  virtual_x_len = root_x_len * sub_len;
+  virtual_y_len = root_y_len * sub_len;
+  virtual_z_len = root_z_len * sub_len;
+}
 
 
 
@@ -143,6 +154,27 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 // float interpolated_field(x,y,z,potential,){
 //
 // }
+
+int submesh_value(root_mesh_geometry mesh_geometry){
+  return 0;
+
+}
+
+int root_submesh_index(int x, int y, int z, root_mesh_geometry mesh_geometry){
+  /*
+  Returns the submesh index of
+  */
+  return 0;
+}
+
+
+
+// int submesh_cube_length(int x, int y, int z, std::vector<std::vector<float>> root_mesh){
+//   root_mesh[]
+//   return pow(,(1.0/3.0));
+// }
+
+
 
 int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<int> &boundary_conditions_vector, int x_len, int y_len, int z_len, float tolerance){
   /*
@@ -323,6 +355,8 @@ void interpolated_electric_field(std::vector<float> &potentials, int x, int y, i
 // void clear_screen(){
 //   printf("\033[2J\033[1;1H");
 // }
+
+
 
 int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]){
   /*
