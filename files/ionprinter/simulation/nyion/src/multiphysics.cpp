@@ -198,12 +198,13 @@ void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root
     }
   }
 }
-
 template void enable_mesh_region(std::vector<std::vector<int>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
 template void enable_mesh_region(std::vector<std::vector<float>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
 
 
-float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry){
+
+template<typename T>
+float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry){
   int root_mesh_x = v_x/mesh_geometry.sub_len;
   int root_mesh_y = v_y/mesh_geometry.sub_len;
   int root_mesh_z = v_z/mesh_geometry.sub_len;
@@ -236,6 +237,47 @@ float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> 
 
   return mesh[root_idx][sub_idx];
 }
+
+template float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
+template float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
+
+
+template<typename T>
+void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry){ // this is SO UGLY
+  int root_mesh_x = v_x/mesh_geometry.sub_len;
+  int root_mesh_y = v_y/mesh_geometry.sub_len;
+  int root_mesh_z = v_z/mesh_geometry.sub_len;
+
+  if(root_mesh_x < 0 || root_mesh_y < 0 || root_mesh_z < 0
+                    || root_mesh_x >= mesh_geometry.root_x_len
+                    || root_mesh_y >= mesh_geometry.root_y_len
+                    || root_mesh_z >= mesh_geometry.root_z_len){
+    return;
+  }
+
+  int root_idx = ((mesh_geometry.root_x_len*mesh_geometry.root_y_len)*root_mesh_z) + ((mesh_geometry.root_x_len)*root_mesh_y) + root_mesh_x;
+
+  int sub_mesh_x = v_x-(root_mesh_x*mesh_geometry.sub_len);
+  int sub_mesh_y = v_y-(root_mesh_y*mesh_geometry.sub_len);
+  int sub_mesh_z = v_z-(root_mesh_z*mesh_geometry.sub_len);
+
+  if(sub_mesh_x < 0 || sub_mesh_y < 0 || sub_mesh_z < 0
+                    ||sub_mesh_x >= mesh_geometry.sub_len
+                    || sub_mesh_y >= mesh_geometry.sub_len
+                    || sub_mesh_z >= mesh_geometry.sub_len){
+    return;
+  }
+
+  int sub_idx = ((mesh_geometry.sub_len*mesh_geometry.sub_len)*sub_mesh_z) + ((mesh_geometry.sub_len)*sub_mesh_y) + sub_mesh_x;
+
+  if(mesh[root_idx].size() == 0){
+    return;
+  }
+
+  mesh[root_idx][sub_idx] = val;
+}
+template void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
+template void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
 
 
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
@@ -301,23 +343,26 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
       // printf("root_mesh_idx %i\n",root_mesh_idx);
       for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){ //check if submesh is active and iterate over the same
         if(!boundary_conditions[root_mesh_idx][submesh_idx]){
-          int x = root_mesh_idx / (potentials.size() * potentials.size());
-          int y = (root_mesh_idx / potentials.size()) % potentials.size();
-          int z = root_mesh_idx % potentials.size();
-          get_mesh_value(x,y,z,potentials,mesh_geometry);
-          get_mesh_value(x,y,z,potentials,mesh_geometry);
-          get_mesh_value(x,y,z,potentials,mesh_geometry);
-          get_mesh_value(x,y,z,potentials,mesh_geometry);
-          get_mesh_value(x,y,z,potentials,mesh_geometry);
-          get_mesh_value(x,y,z,potentials,mesh_geometry);
+          int x = (root_mesh_idx*mesh_geometry.sub_len) % mesh_geometry.virtual_x_len; //ugly and slow! Dumb and stupid!
+          int y = ((root_mesh_idx*mesh_geometry.sub_len) / mesh_geometry.virtual_x_len) % mesh_geometry.virtual_y_len; //idx of root cell
+          int z = (root_mesh_idx*mesh_geometry.sub_len) / (mesh_geometry.virtual_x_len * mesh_geometry.virtual_y_len);
+
+          x += submesh_idx % mesh_geometry.sub_len;
+          y += (submesh_idx / mesh_geometry.sub_len) % mesh_geometry.sub_len;
+          z += submesh_idx / (mesh_geometry.sub_len * mesh_geometry.sub_len); //this is SO DUMB
 
 
-          // potentials[position] = (potentials_copy[position + 1] +
-          //                              potentials_copy[position - 1] +
-          //                              potentials_copy[position-x_len] +
-          //                              potentials_copy[position+x_len] +
-          //                              potentials_copy[position-xy_len] +
-          //                              potentials_copy[position+xy_len])/6.0;
+          // if(x > 0 && y > 0 && z > 0 && x < )
+
+          float new_stencil_value = ((get_mesh_value(x+1,y,z,potentials,mesh_geometry) +
+                                      get_mesh_value(x-1,y,z,potentials,mesh_geometry) +
+                                      get_mesh_value(x,y+1,z,potentials,mesh_geometry) +
+                                      get_mesh_value(x,y-1,z,potentials,mesh_geometry) +
+                                      get_mesh_value(x,y,z+1,potentials,mesh_geometry) +
+                                      get_mesh_value(x,y,z-1,potentials,mesh_geometry))/6.0);
+
+          set_mesh_value(new_stencil_value,x,y,z,potentials,mesh_geometry);
+
         }
       }
     }

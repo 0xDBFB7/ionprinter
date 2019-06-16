@@ -191,11 +191,15 @@ TEST(laplace_tests,get_mesh){
 
   potentials.resize(mesh_geometry.root_size);
 
-  float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
+  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
 
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
 
-  
+  set_mesh_value(1000.0,10,10,10,potentials,mesh_geometry);
+
+  CHECK_EQUAL(1000.0,get_mesh_value(10,10,10,potentials,mesh_geometry));
+
+
 }
 
 
@@ -240,9 +244,12 @@ TEST(laplace_tests,laplace_convergence_1){
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
   enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry);
 
+  set_mesh_value(1000.0,1,1,1,potentials,mesh_geometry);
+  set_mesh_value(1,1,1,1,boundaries,mesh_geometry);
+
   relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01);
 
-  // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
+  DOUBLES_EQUAL(0.58823, get_mesh_value(1,3,1,potentials,mesh_geometry), 1e-2);
 }
 
 
@@ -271,8 +278,6 @@ TEST(laplace_tests,laplace_convergence_1){
 //   CHECK_EQUAL(false, mesh_present[f_idx(0.021,0,0,mesh_geometry,mesh_scale)]);
 //
 // }
-
-
 
 
 int main(int ac, char** av){

@@ -1297,3 +1297,11 @@ alumina mixed with silicone oil?
 
 The space shuttle leading-edge RCC heatshield tiles had a similar silicon carbide conversion coating for oxidation protection. 
 
+
+
+If a liquid ring roughing pump is used, it'd be cool to have the workings visible.
+
+Could a magnetohydrodynamic pump be used with a liquid ring? Interesting...
+
+No, liquid-ring pumps are not likely to be effective for this purpose; the base vacuum is not sufficient for diffusion pump startup.
+
