@@ -77,7 +77,7 @@
 #define EPSILON_0 8.854187e-12
 
 
-#define MULTIGRID_COARSE_GRID 50
+#define MULTIGRID_COARSE_GRID 0.001
 
 
 root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale, float new_sub_scale){
@@ -128,53 +128,6 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
     return ((beam_current/(2.0*(M_PI)*EPSILON_0*beam_velocity)) * (sample_radius/pow(beam_radius,2.0)));
 }
 
-// float float_array_max(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
-//   float max = 0;
-//   for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
-//     for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
-//       if(array[x][y] > max){
-//         max = array[x][y];
-//       }
-//     }
-//   }
-//   return max;
-// }
-//
-// float float_array_min(float array[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
-//   float min = 0;
-//   for(int x = 0; x < ELECTRODE_FIELD_MESH_X; x++){
-//     for(int y = 0; y < ELECTRODE_FIELD_MESH_Y; y++){
-//         if(array[x][y] < min){
-//           min = array[x][y];
-//       }
-//     }
-//   }
-//   return min;
-// }
-
-// float interpolated_field(x,y,z,potential,){
-//
-// }
-
-// void activate_submesh_i(int x, int y, int z, std::vector<std::vector<float>> root_mesh,root_mesh_geometry mesh_geometry){
-//
-// }
-//
-// bool submesh_active(int sub_x, int sub_y, int sub_z, std::vector<std::vector<float>> root_mesh, root_mesh_geometry mesh_geometry){
-//   /*
-//
-//   */
-//   return root_mesh[].size();
-// }
-
-// float get_mesh_
-
-// int submesh_index(int v_x, int v_y, int v_z, root_mesh_geometry mesh_geometry){
-//   /*
-//   Given a "virtual" gridpoint, return the submesh index.
-//   */
-//   v_x/
-// }
 
 template<typename T>
 void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry){
@@ -200,6 +153,11 @@ void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root
 }
 template void enable_mesh_region(std::vector<std::vector<int>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
 template void enable_mesh_region(std::vector<std::vector<float>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
+
+
+//
+// float fast_get_mesh_value(int root_x, int root_y, int root_z, int sub_x, int sub_y, int sub_z,
+//                                 std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry){
 
 
 
@@ -237,9 +195,32 @@ float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mes
 
   return mesh[root_idx][sub_idx];
 }
-
 template float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
 template float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
+
+
+
+template<typename T>
+float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry){
+
+  // int root_x = x/mesh_geometry.root_scale;
+  // int root_y = y/mesh_geometry.root_scale;
+  // int root_z = z/mesh_geometry.root_scale;
+  //
+  // int root_idx = idx_from_position(root_x,root_y,root_z,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
+  //
+  // int sub_x = x-(root_x*mesh_geometry.root_scale);
+  // int sub_y = y-(root_y*mesh_geometry.root_scale);
+  // int sub_z = z-(root_z*mesh_geometry.root_scale);
+  //
+  // int sub_idx = idx_from_position(root_x,root_y,root_z,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
+
+
+  return get_mesh_value(x/mesh_geometry.sub_scale,y/mesh_geometry.sub_scale,z/mesh_geometry.sub_scale,
+                                      mesh, mesh_geometry);
+}
+template float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
+template float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
 
 
 template<typename T>
@@ -278,6 +259,48 @@ void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vecto
 }
 template void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
 template void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
+
+
+
+template<typename T>
+void set_mesh_value_world_point(float val, float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry){
+
+  set_mesh_value(val, x/mesh_geometry.sub_scale,y/mesh_geometry.sub_scale,z/mesh_geometry.sub_scale,
+                                      mesh, mesh_geometry);
+}
+template void set_mesh_value_world_point(float val, float x, float y, float z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
+template void set_mesh_value_world_point(float val, float x, float y, float z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
+
+
+
+
+
+template<typename T>
+root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry){
+  /*
+  The root mesh resolution remains the same; only the submeshes are coarsened.
+  */
+  new = original;
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry new_geometry(mesh_bounds, 0.003, MULTIGRID_COARSE_GRID);
+
+  for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+    if(original[root_mesh_idx].size()){
+      new[root_mesh_idx].resize(new_geometry.sub_size);
+    }
+  }
+  for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){
+    
+  }
+
+  return original_geometry;
+}
+template root_mesh_geometry coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry);
+template root_mesh_geometry coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry);
+
+
 
 
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
@@ -321,13 +344,13 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
   //   std::vector<float> coarse_potential_vector(coarse_grid_len,0);
   //   std::vector<int> coarse_boundary_conditions_vector(coarse_grid_len,0);
   //
-  //   for(int i = 0; i < coarse_grid_len; i++){coarse_potential_vector[i] = potentials_vector[i*4];};
+  //   for(int i = 0; i < coarse_grid_len; i++){get_mesh_value(x,y,z,potentials,mesh_geometry)};
   //   for(int i = 0; i < coarse_grid_len; i++){coarse_boundary_conditions_vector[i] = boundary_conditions_vector[i*4];};
   //
   //   relax_laplace_potentials(coarse_potential_vector,coarse_boundary_conditions_vector,
   //                                       MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,tolerance);
   // }
-  //
+
 
 
   float new_convergence = 0;
@@ -335,24 +358,25 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  for(iterations = 1; iterations < 10; iterations++){
+  for(iterations = 1; iterations < 100; iterations++){
 
     std::vector<std::vector<float>> potentials_copy = potentials; //save for convergence metric
 
     for(int root_mesh_idx = 0; root_mesh_idx < potentials.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
-      // printf("root_mesh_idx %i\n",root_mesh_idx);
+
+      int root_idx = root_mesh_idx;
+      int root_x;
+      int root_y;
+      int root_z;
+      position_from_index(root_x,root_y,root_z,root_idx,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
+
       for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){ //check if submesh is active and iterate over the same
         if(!boundary_conditions[root_mesh_idx][submesh_idx]){
-          int x = (root_mesh_idx*mesh_geometry.sub_len) % mesh_geometry.virtual_x_len; //ugly and slow! Dumb and stupid!
-          int y = ((root_mesh_idx*mesh_geometry.sub_len) / mesh_geometry.virtual_x_len) % mesh_geometry.virtual_y_len; //idx of root cell
-          int z = (root_mesh_idx*mesh_geometry.sub_len) / (mesh_geometry.virtual_x_len * mesh_geometry.virtual_y_len);
 
-          x += submesh_idx % mesh_geometry.sub_len;
-          y += (submesh_idx / mesh_geometry.sub_len) % mesh_geometry.sub_len;
-          z += submesh_idx / (mesh_geometry.sub_len * mesh_geometry.sub_len); //this is SO DUMB
+          int x = (root_x*mesh_geometry.sub_len)+(submesh_idx % mesh_geometry.sub_len);
+          int y = (root_y*mesh_geometry.sub_len)+((submesh_idx / mesh_geometry.sub_len) % mesh_geometry.sub_len);
+          int z = (root_z*mesh_geometry.sub_len)+(submesh_idx / (mesh_geometry.sub_len * mesh_geometry.sub_len)); //this is SO DUMB
 
-
-          // if(x > 0 && y > 0 && z > 0 && x < )
 
           float new_stencil_value = ((get_mesh_value(x+1,y,z,potentials,mesh_geometry) +
                                       get_mesh_value(x-1,y,z,potentials,mesh_geometry) +
@@ -367,37 +391,20 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
       }
     }
 
-    // for(int x = 1; x < x_len-1; x++){ //edges must be grounded.
-    //   for(int y = 1; y < y_len-1; y++){
-    //     for(int z = 1; z < z_len-1; z++){
-    //       int position = (xy_len*z) + (x_len*y) + x;
-    //       next_potentials[position] = (potentials[position + 1] +
-    //                                    potentials[position - 1] +
-    //                                    potentials[position-x_len] +
-    //                                    potentials[position+x_len] +
-    //                                    potentials[position-xy_len] +
-    //                                    potentials[position+xy_len])/6.0;
-    //     }
-    //   }
-    // }
-    //
-    // for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
-    //   if(boundaries[i]){
-    //     next_potentials[i] = potentials[i];
-    //   }
-    //
-    //   if(fabs(potentials[i]-next_potentials[i]) > new_convergence){
-    //     new_convergence = fabs(potentials[i]-next_potentials[i]); //maximum difference between old and new
-    //   }
-    //   potentials[i] = next_potentials[i];
-    // }
-    //
-    // if(new_convergence < tolerance){ //exit condition
-    //   break;
-    // }
-    //
-    // printf("convergence: %f\n",new_convergence);
-    // new_convergence = 0;
+    for(int root_mesh_idx = 0; root_mesh_idx < potentials.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+      for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){
+        if(fabs(potentials[root_mesh_idx][submesh_idx]-potentials_copy[root_mesh_idx][submesh_idx]) > new_convergence){
+          new_convergence = fabs(potentials[root_mesh_idx][submesh_idx]-potentials_copy[root_mesh_idx][submesh_idx]); //maximum difference between old and new
+        }
+      }
+    }
+
+    if(new_convergence < tolerance){ //exit condition
+      break;
+    }
+
+    printf("convergence: %f\n",new_convergence);
+    new_convergence = 0;
 
 
 
@@ -486,6 +493,17 @@ int idx_from_position(int x, int y, int z, int x_len, int y_len, int z_len){
   */
   return (x_len*y_len*z) + (x_len*y) + x;
 }
+
+void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len){
+  /*
+  Helper function to obtain 1D mesh index from int 3D mesh position
+  sanity checking should be done in caller for performance reasons
+  */
+  x = index % x_len; //ugly and slow! Dumb and stupid!
+  y = (index / x_len) % y_len; //idx of root cell
+  z = index / (x_len * y_len);
+}
+
 
 int i_idx(int x, int y, int z, int mesh_geometry[3]){
   /*

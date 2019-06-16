@@ -191,13 +191,13 @@ TEST(laplace_tests,get_mesh){
 
   potentials.resize(mesh_geometry.root_size);
 
-  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
+  float mesh_active_bounds[6] = {0,0.02,0,0.01,0,0.01};
 
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
 
-  set_mesh_value(1000.0,10,10,10,potentials,mesh_geometry);
+  set_mesh_value(1000.0,150,10,10,potentials,mesh_geometry);
 
-  CHECK_EQUAL(1000.0,get_mesh_value(10,10,10,potentials,mesh_geometry));
+  CHECK_EQUAL(1000.0,get_mesh_value(150,10,10,potentials,mesh_geometry));
 
 
 }
@@ -215,6 +215,8 @@ TEST(laplace_tests,activate_submesh){
   potentials.resize(mesh_geometry.root_size);
 
   float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
+
+
 
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
 
@@ -244,12 +246,30 @@ TEST(laplace_tests,laplace_convergence_1){
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
   enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry);
 
-  set_mesh_value(1000.0,1,1,1,potentials,mesh_geometry);
-  set_mesh_value(1,1,1,1,boundaries,mesh_geometry);
+  for(float x = 0.005; x < 0.01; x+=mesh_geometry.sub_scale){
+    for(float y = 0.005; y < 0.01; y+=mesh_geometry.sub_scale){
+      for(float z = 0.005; z < 0.01; z+=mesh_geometry.sub_scale){
+        set_mesh_value_world_point(1000.0,x,y,z,potentials,mesh_geometry);
+        set_mesh_value_world_point(1,x,y,z,boundaries,mesh_geometry);
+      }
+    }
+  }
+
+
+//   set_mesh_value(1000.0,200,200,200,potentials,mesh_geometry);
+//   set_mesh_value(1,200,200,200,boundaries,mesh_geometry);
+// //
+// set_mesh_value_world_point(1,x,y,z,boundaries,mesh_geometry);
+//
 
   relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01);
+  printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
 
-  DOUBLES_EQUAL(0.58823, get_mesh_value(1,3,1,potentials,mesh_geometry), 1e-2);
+  for(float x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
+      printf("%f\n", get_mesh_value_world_point(x,0.005,0.005,potentials,mesh_geometry));
+  }
+
+  DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
 }
 
 
