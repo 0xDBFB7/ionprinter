@@ -71,9 +71,7 @@
 #include <GL/glext.h>
 
 #include <boost/array.hpp>
-
-#include "data_structure.hpp"
-
+#include <math.h>
 // using namespace std::chrono;
 
 #define EPSILON_0 8.854187e-12
@@ -101,6 +99,8 @@ root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale, fl
   root_y_len = ceil((bounds[Y2]-y_min_bound)/new_root_scale);
   root_z_len = ceil((bounds[Z2]-z_min_bound)/new_root_scale);
 
+  root_size = root_x_len*root_y_len*root_z_len;
+
   x_max_bound = x_min_bound+(root_x_len*new_root_scale);
   y_max_bound = y_min_bound+(root_y_len*new_root_scale);
   z_max_bound = z_min_bound+(root_z_len*new_root_scale);
@@ -110,6 +110,7 @@ root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale, fl
   sub_len = (root_scale/new_sub_scale);
 
   sub_scale = root_scale/sub_len;
+  sub_size = (sub_len*sub_len*sub_len);
 
   virtual_x_len = root_x_len * sub_len;
   virtual_y_len = root_y_len * sub_len;
@@ -155,28 +156,90 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 //
 // }
 
-int submesh_value(root_mesh_geometry mesh_geometry){
-  return 0;
-
-}
-
-int root_submesh_index(int x, int y, int z, root_mesh_geometry mesh_geometry){
-  /*
-  Returns the submesh index of
-  */
-  return 0;
-}
-
-
-
-// int submesh_cube_length(int x, int y, int z, std::vector<std::vector<float>> root_mesh){
-//   root_mesh[]
-//   return pow(,(1.0/3.0));
+// void activate_submesh_i(int x, int y, int z, std::vector<std::vector<float>> root_mesh,root_mesh_geometry mesh_geometry){
+//
+// }
+//
+// bool submesh_active(int sub_x, int sub_y, int sub_z, std::vector<std::vector<float>> root_mesh, root_mesh_geometry mesh_geometry){
+//   /*
+//
+//   */
+//   return root_mesh[].size();
 // }
 
+// float get_mesh_
+
+// int submesh_index(int v_x, int v_y, int v_z, root_mesh_geometry mesh_geometry){
+//   /*
+//   Given a "virtual" gridpoint, return the submesh index.
+//   */
+//   v_x/
+// }
+
+template<typename T>
+void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry){
+
+  int x_min = std::max(0,(int)((bounds[X1]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
+  int x_max = std::min(mesh_geometry.root_x_len,(int)((bounds[X2]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
+  int y_min = std::max(0,(int)((bounds[Y1]-mesh_geometry.y_min_bound)/mesh_geometry.root_scale));
+  int y_max = std::min(mesh_geometry.root_y_len,(int)((bounds[Y2]-mesh_geometry.y_min_bound)/mesh_geometry.root_scale));
+  int z_min = std::max(0,(int)((bounds[Z1]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
+  int z_max = std::min(mesh_geometry.root_z_len,(int)((bounds[Z2]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
 
 
-int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<int> &boundary_conditions_vector, int x_len, int y_len, int z_len, float tolerance){
+  for(int x = x_min; x < x_max; x++){
+    for(int y = y_min; y < y_max; y++){
+      for(int z = z_min; z < z_max; z++){
+        mesh[idx_from_position(x,y,z,
+                                mesh_geometry.root_x_len,
+                                mesh_geometry.root_y_len,
+                                mesh_geometry.root_z_len)].resize(mesh_geometry.sub_size);
+      }
+    }
+  }
+}
+
+template void enable_mesh_region(std::vector<std::vector<int>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
+template void enable_mesh_region(std::vector<std::vector<float>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
+
+
+float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry){
+  int root_mesh_x = v_x/mesh_geometry.sub_len;
+  int root_mesh_y = v_y/mesh_geometry.sub_len;
+  int root_mesh_z = v_z/mesh_geometry.sub_len;
+
+  if(root_mesh_x < 0 || root_mesh_y < 0 || root_mesh_z < 0
+                    || root_mesh_x >= mesh_geometry.root_x_len
+                    || root_mesh_y >= mesh_geometry.root_y_len
+                    || root_mesh_z >= mesh_geometry.root_z_len){
+    return 0.0;
+  }
+
+  int root_idx = ((mesh_geometry.root_x_len*mesh_geometry.root_y_len)*root_mesh_z) + ((mesh_geometry.root_x_len)*root_mesh_y) + root_mesh_x;
+
+  int sub_mesh_x = v_x-(root_mesh_x*mesh_geometry.sub_len);
+  int sub_mesh_y = v_y-(root_mesh_y*mesh_geometry.sub_len);
+  int sub_mesh_z = v_z-(root_mesh_z*mesh_geometry.sub_len);
+
+  if(sub_mesh_x < 0 || sub_mesh_y < 0 || sub_mesh_z < 0
+                    ||sub_mesh_x >= mesh_geometry.sub_len
+                    || sub_mesh_y >= mesh_geometry.sub_len
+                    || sub_mesh_z >= mesh_geometry.sub_len){
+    return 0.0;
+  }
+
+  int sub_idx = ((mesh_geometry.sub_len*mesh_geometry.sub_len)*sub_mesh_z) + ((mesh_geometry.sub_len)*sub_mesh_y) + sub_mesh_x;
+
+  if(mesh[root_idx].size() == 0){
+    return 0.0;
+  }
+
+  return mesh[root_idx][sub_idx];
+}
+
+
+int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
+                            std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
 
@@ -206,52 +269,23 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
-  if(potentials_vector.size() != boundary_conditions_vector.size()){
-    throw std::invalid_argument( "received negative value" );
+  if(potentials.size() != boundary_conditions.size()){
+    throw std::invalid_argument("Input vectors have different dimensions.");
   }
 
 
-  printf("Solving mesh %i, %i, %i\n", x_len, y_len, z_len);
-
-  if(x_len > 50 || y_len > 50 || z_len > 50){ //recursive coarse mesh solver
-    int coarse_grid_len = (MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID);
-    std::vector<float> coarse_potential_vector(coarse_grid_len,0);
-    std::vector<int> coarse_boundary_conditions_vector(coarse_grid_len,0);
-
-    for(int i = 0; i < coarse_grid_len; i++){coarse_potential_vector[i] = potentials_vector[i*4];};
-    for(int i = 0; i < coarse_grid_len; i++){coarse_boundary_conditions_vector[i] = boundary_conditions_vector[i*4];};
-
-    relax_laplace_potentials(coarse_potential_vector,coarse_boundary_conditions_vector,
-                                        MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,tolerance);
-  }
-
-
-  int total_mesh_len = (x_len*y_len*z_len);
-
-  int xy_len = x_len*y_len;
-
-  /*
-  Allocate a few plain C-style arrays and cache-align for performance.
-  */
-  float * potentials;
-  const size_t CACHE_LINE_SIZE = 256;
-  posix_memalign( reinterpret_cast<void**>(&potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
-  potentials = new float[total_mesh_len];
-  memset(potentials, 0, total_mesh_len*sizeof(*potentials));
-  for(int i = 0; i < total_mesh_len; i++){ potentials[i] = potentials_vector[i];};
-
-  float * next_potentials;
-  posix_memalign( reinterpret_cast<void**>(&next_potentials), CACHE_LINE_SIZE, sizeof(float) * total_mesh_len);
-  next_potentials = new float[total_mesh_len];
-  memset(next_potentials, 0, total_mesh_len*sizeof(*next_potentials));
-
-  bool * boundaries;
-  posix_memalign( reinterpret_cast<void**>(&boundaries), CACHE_LINE_SIZE, sizeof(bool) * total_mesh_len);
-  boundaries = new bool[total_mesh_len];
-  memset(boundaries, 0, total_mesh_len*sizeof(*boundaries));
-  for(int i = 0; i < total_mesh_len; i++){ boundaries[i] = boundary_conditions_vector[i];};
-
-
+  // if(x_len > 50 || y_len > 50 || z_len > 50){ //recursive coarse mesh solver
+  //   int coarse_grid_len = (MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID);
+  //   std::vector<float> coarse_potential_vector(coarse_grid_len,0);
+  //   std::vector<int> coarse_boundary_conditions_vector(coarse_grid_len,0);
+  //
+  //   for(int i = 0; i < coarse_grid_len; i++){coarse_potential_vector[i] = potentials_vector[i*4];};
+  //   for(int i = 0; i < coarse_grid_len; i++){coarse_boundary_conditions_vector[i] = boundary_conditions_vector[i*4];};
+  //
+  //   relax_laplace_potentials(coarse_potential_vector,coarse_boundary_conditions_vector,
+  //                                       MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,tolerance);
+  // }
+  //
 
 
   float new_convergence = 0;
@@ -259,50 +293,80 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  for(iterations = 1; iterations < 10000; iterations++){
+  for(iterations = 1; iterations < 10; iterations++){
 
-    for(int x = 1; x < x_len-1; x++){ //edges must be grounded.
-      for(int y = 1; y < y_len-1; y++){
-        for(int z = 1; z < z_len-1; z++){
-          int position = (xy_len*z) + (x_len*y) + x;
-          next_potentials[position] = (potentials[position + 1] +
-                                       potentials[position - 1] +
-                                       potentials[position-x_len] +
-                                       potentials[position+x_len] +
-                                       potentials[position-xy_len] +
-                                       potentials[position+xy_len])/6.0;
+    std::vector<std::vector<float>> potentials_copy = potentials; //save for convergence metric
+
+    for(int root_mesh_idx = 0; root_mesh_idx < potentials.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+      // printf("root_mesh_idx %i\n",root_mesh_idx);
+      for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){ //check if submesh is active and iterate over the same
+        if(!boundary_conditions[root_mesh_idx][submesh_idx]){
+          int x = root_mesh_idx / (potentials.size() * potentials.size());
+          int y = (root_mesh_idx / potentials.size()) % potentials.size();
+          int z = root_mesh_idx % potentials.size();
+          get_mesh_value(x,y,z,potentials,mesh_geometry);
+          get_mesh_value(x,y,z,potentials,mesh_geometry);
+          get_mesh_value(x,y,z,potentials,mesh_geometry);
+          get_mesh_value(x,y,z,potentials,mesh_geometry);
+          get_mesh_value(x,y,z,potentials,mesh_geometry);
+          get_mesh_value(x,y,z,potentials,mesh_geometry);
+
+
+          // potentials[position] = (potentials_copy[position + 1] +
+          //                              potentials_copy[position - 1] +
+          //                              potentials_copy[position-x_len] +
+          //                              potentials_copy[position+x_len] +
+          //                              potentials_copy[position-xy_len] +
+          //                              potentials_copy[position+xy_len])/6.0;
         }
       }
     }
 
-    for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
-      if(boundaries[i]){
-        next_potentials[i] = potentials[i];
-      }
+    // for(int x = 1; x < x_len-1; x++){ //edges must be grounded.
+    //   for(int y = 1; y < y_len-1; y++){
+    //     for(int z = 1; z < z_len-1; z++){
+    //       int position = (xy_len*z) + (x_len*y) + x;
+    //       next_potentials[position] = (potentials[position + 1] +
+    //                                    potentials[position - 1] +
+    //                                    potentials[position-x_len] +
+    //                                    potentials[position+x_len] +
+    //                                    potentials[position-xy_len] +
+    //                                    potentials[position+xy_len])/6.0;
+    //     }
+    //   }
+    // }
+    //
+    // for(int i = 0; i < total_mesh_len; i++){ //reset boundary conditions
+    //   if(boundaries[i]){
+    //     next_potentials[i] = potentials[i];
+    //   }
+    //
+    //   if(fabs(potentials[i]-next_potentials[i]) > new_convergence){
+    //     new_convergence = fabs(potentials[i]-next_potentials[i]); //maximum difference between old and new
+    //   }
+    //   potentials[i] = next_potentials[i];
+    // }
+    //
+    // if(new_convergence < tolerance){ //exit condition
+    //   break;
+    // }
+    //
+    // printf("convergence: %f\n",new_convergence);
+    // new_convergence = 0;
 
-      if(fabs(potentials[i]-next_potentials[i]) > new_convergence){
-        new_convergence = fabs(potentials[i]-next_potentials[i]); //maximum difference between old and new
-      }
-      potentials[i] = next_potentials[i];
-    }
 
-    if(new_convergence < tolerance){ //exit condition
-      break;
-    }
 
-    printf("convergence: %f\n",new_convergence);
-    new_convergence = 0;
   }
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/iterations << " ms each" << "\n";
+  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
 
-  for(int i = 0; i < total_mesh_len; i++){ potentials_vector[i] = next_potentials[i];};
-  delete[] potentials;
-  delete[] boundaries;
-  delete[] next_potentials;
+  // for(int i = 0; i < total_mesh_len; i++){ potentials_vector[i] = next_potentials[i];};
+  // delete[] potentials;
+  // delete[] boundaries;
+  // delete[] next_potentials;
 
   return iterations;
   // return potentials[0];
@@ -310,26 +374,26 @@ int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<
 }
 
 
-void electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
-  /*
-  Basic 3d field gradient computation.pa
-  Returns 0 if position is too close to an edge.
-  */
-  if(x > mesh_geometry[X]-1 || y > mesh_geometry[Y]-1 || y > mesh_geometry[Y]-1){
-    gradient[X] = 0;
-    gradient[Y] = 0;
-    gradient[Z] = 0;
-  }
-  else{
-    gradient[X] = (potentials[i_idx(x+1,y,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[X]; //unsymmetric field measurement; I don't think this matters.
-    gradient[Y] = (potentials[i_idx(x,y+1,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Y];
-    gradient[Z] = (potentials[i_idx(x,y,z+1,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Z];
-  }
-}
-
-void interpolated_electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
-
-}
+// void electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
+//   /*
+//   Basic 3d field gradient computation.pa
+//   Returns 0 if position is too close to an edge.
+//   */
+//   if(x > mesh_geometry[X]-1 || y > mesh_geometry[Y]-1 || y > mesh_geometry[Y]-1){
+//     gradient[X] = 0;
+//     gradient[Y] = 0;
+//     gradient[Z] = 0;
+//   }
+//   else{
+//     gradient[X] = (potentials[i_idx(x+1,y,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[X]; //unsymmetric field measurement; I don't think this matters.
+//     gradient[Y] = (potentials[i_idx(x,y+1,z,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Y];
+//     gradient[Z] = (potentials[i_idx(x,y,z+1,mesh_geometry)]-potentials[i_idx(x,y,z,mesh_geometry)])/mesh_scale[Z];
+//   }
+// }
+//
+// void interpolated_electric_field(std::vector<float> &potentials, int x, int y, int z, int mesh_geometry[3], float mesh_scale[3], float gradient[3]){
+//
+// }
 
 //
 // void display_potentials(float potentials[ELECTRODE_FIELD_MESH_X][ELECTRODE_FIELD_MESH_Y]){
@@ -370,7 +434,7 @@ int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]){
   return (mesh_geometry[X]*mesh_geometry[Y]*(z/mesh_scale[Z])) + (mesh_geometry[X]*(y/mesh_scale[Y])) + x/mesh_scale[X];
 }
 
-int i_idx_2(int x, int y, int z, int x_len, int y_len, int z_len){
+int idx_from_position(int x, int y, int z, int x_len, int y_len, int z_len){
   /*
   Helper function to obtain 1D mesh index from int 3D mesh position
   sanity checking should be done in caller for performance reasons
@@ -383,7 +447,8 @@ int i_idx(int x, int y, int z, int mesh_geometry[3]){
   Helper function to obtain 1D mesh index from int 3D mesh position
   sanity checking should be done in caller for performance reasons
   */
-  return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry[X]*y) + x ;
+  return 0;
+  // return (mesh_geometry[X]*mesh_geometry[Y]*z) + (mesh_geometry.*y) + x ;
 }
 
 

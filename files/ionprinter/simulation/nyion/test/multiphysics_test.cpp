@@ -1,5 +1,4 @@
 #include "multiphysics.hpp"
-#include "data_structure.hpp"
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 
@@ -39,9 +38,21 @@ TEST(idx_tests, geometry_construct_test)
   CHECK_EQUAL(58, test.sub_len);
   DOUBLES_EQUAL(0.0000517, test.sub_scale,1e-6);
 
+}
+
+
+TEST(idx_tests, vector_idx_test)
+{
+  float mesh_bounds[6] = {0.1,0.3,0.05,0.1,0,0.5};
+
+  root_mesh_geometry test(mesh_bounds, 0.003, 0.000051);
 
 
 }
+
+
+
+
 //
 // TEST(idx_tests, vector_test)
 // {
@@ -128,7 +139,7 @@ TEST(idx_tests, geometry_construct_test)
 //   CHECK_EQUAL(false, mesh_present[f_idx(0.011,0,0,mesh_geometry,mesh_scale)]);
 // }
 //
-// TEST_GROUP(laplace_tests){};
+TEST_GROUP(laplace_tests){};
 //
 // TEST(laplace_tests,laplace_tests_1){
 //   int mesh_geometry[3] = {20,3,3};
@@ -169,26 +180,70 @@ TEST(idx_tests, geometry_construct_test)
 //   DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
 // }
 //
-// TEST(laplace_tests,laplace_convergence_1){
-//   int mesh_geometry[3] = {50,50,50};
-//
-//
-//   std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
-//   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
-//
-//   for(int x = 1; x < 49; x++){
-//     for(int y = 1; y < 49; y++){
-//       for(int z = 25; z < 49; z++){
-//         potentials[i_idx(x,y,z,mesh_geometry)] = 1000;
-//         boundaries[i_idx(x,y,z,mesh_geometry)] = 10;
-//       }
-//     }
-//   }
-//
-//   relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
-//
-//   DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
-// }
+
+TEST(laplace_tests,get_mesh){
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.000051);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  potentials.resize(mesh_geometry.root_size);
+
+  float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
+
+  
+}
+
+
+TEST(laplace_tests,activate_submesh){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.000051);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  potentials.resize(mesh_geometry.root_size);
+
+  float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
+
+  CHECK_EQUAL(0,potentials[0].size());
+  CHECK_EQUAL(mesh_geometry.sub_size,potentials[1].size());
+  CHECK_EQUAL(0,potentials[2].size());
+
+  // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
+}
+
+
+
+TEST(laplace_tests,laplace_convergence_1){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.000051);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  potentials.resize(mesh_geometry.root_size);
+  boundaries.resize(mesh_geometry.root_size);
+
+  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
+  enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry);
+
+  relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01);
+
+  // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
+}
 
 
 

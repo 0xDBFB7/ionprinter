@@ -1277,3 +1277,23 @@ On second thought, scratch all that. Having a variable submesh resolution means 
 
 This is bustin' my noodle! Let's hardcode the submesh res for now.
 
+
+
+
+
+
+
+#### Magnetohydrodynamic metal pump 
+
+Magnetic liquid-metal pumps are quite common in nuclear reactors. This would be perfect for the 
+
+<https://www.mikeash.com/pyblog/fluid-simulation-for-dummies.html>
+
+A third alumina layer can be used between two graphite layers, with a labyrinth seal between each layer. Also solves the stiffness problem.
+
+Mold could be made such that the graphite part is put inside and an even coating of alumina is added around all surfaces.
+
+alumina mixed with silicone oil?
+
+The space shuttle leading-edge RCC heatshield tiles had a similar silicon carbide conversion coating for oxidation protection. 
+

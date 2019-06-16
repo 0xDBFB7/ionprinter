@@ -12,7 +12,7 @@
 #include <iostream>
 #include <chrono>
 #include <vector>
-
+#include "data_structure.hpp"
 
 #define X 0
 #define Y 1
@@ -30,7 +30,12 @@
 
 int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]);
 int i_idx(int x, int y, int z, int mesh_geometry[3]);
-int i_idx_2(int x, int y, int z, int x_len, int y_len, int z_len);
+int idx_from_position(int x, int y, int z, int x_len, int y_len, int z_len);
 void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);
 
-int relax_laplace_potentials(std::vector<float> &potentials_vector, std::vector<int> &boundary_conditions_vector, int x_len, int y_len, int z_len, float tolerance);
+float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
+
+int relax_laplace_potentials(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance);
+
+template<typename T>
+void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);

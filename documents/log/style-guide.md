@@ -6,6 +6,22 @@ I find that I often drift into obtuse and jargon-filled terminology, which great
 
 If a technique or technology (or even variable!) is named properly, one often finds that the name alone gives you some intuitive understanding of what it means, and how it operates. "Jacobi solver" is less descriptive than Jacobi Relaxation. "Standard Deviation Of The Mean". All variables in all equations should be labeled immediately below. Any magic constants or empirical fits should have units attached.
 
+
+
+
+
+Please don't speculate. 
+
+When faced with a bottleneck of information about their interests, certain online communities have devolved into an unfounded, unscientific sort of speculation that I don't think is particularly healthy. The engineering world moves quickly, and there are often countless internal analyses that observers are not privy to. If you have a hunch or a theory, try to contradict it.
+
+I will try to release information on 
+
+
+
+
+
+
+
 Everything in this project should be converted to SI + eV units.
 
 sources like:
@@ -14,5 +30,5 @@ sources like:
 
 Still not sure whether first- or third-person 
 
-Keep it whimisical. 
+Keep it whimsical. 
 

@@ -158,15 +158,17 @@ wear hat outside at portable
 
 
 
-The original Short Circuit intro (<https://www.youtube.com/watch?v=pUQIKnrZVTM>) is entirely close-up macro shots. The camera never moves, it's just a series of jump cuts of motion. The sound is prominent over the music.  The action sequence is 2 minutes long. 
+The original Short Circuit intro (<https://www.youtube.com/watch?v=pUQIKnrZVTM>) is entirely close-up macro shots. The camera never moves, it's just a series of jump cuts of motion. The sound is prominent over the music.  The action sequence is 2 minutes long. Everything's slow and methodical; it's clearly distinct from a simple montage.
 
 Nobody is visible; hands are gloved, everything visible is mechanical.
+
+
+
+
 
 Everything must be third-person scientific; no "I", we, etc
 
 
-
-Everything's slow and methodical; it's clearly distinct from a ssimple 
 
 
 
@@ -186,8 +188,35 @@ There's a scene in 20180111_195750.mp4 where a Q-tip gets sucked into the CNC
 
 
 
-So, I've run up against a bit of a stumbling block. I need to know the electron impact momentum balance of aluminum and copper; that is, when an electron and an aluminum particle get in a fiery wreck, which way do each fly off. So I tried to find the predictive theory that governs this, only to find that - to the embarrassment of physicists - it doesn't appear to have been developed yet. How about empirical equations? The best ones available 
+> So, I've run up against a bit of a stumbling block. I need to know the electron impact momentum balance of aluminum and copper; that is, when an electron and - say - aluminum particle get in a fiery wreck, which way do each fly off. So I tried to find the predictive theory that governs this, only to find that - to the embarrassment of physicists - it doesn't appear to have been fully developed yet. The best fits available only get within half an order of magnitude. 
+>
+> The quantum mechanics that fundamentally govern these collisions would take me many years to even begin to understand. 
+>
+> How about empirical equations? The best ones available 
+>
+> Somewhat surprisingly, the only experimental data I can find is on electron impact cross section from the 1960s; it seems nobody enjoys putting boiling aluminum into their particle accelerators.
+>
+> So the only course of action seems to be building a device that can take these measurements. This is a hybrid quartz crystal microbalance, Kelvin cup, and beam calorimeter, all on a nitinol servo. Since plastics, oils, bearings, etc can't be put in a vacuum, we have to 
 
-Somewhat surprisingly, the only experimental data I can find is on electron impact cross section from the 1960s; it seems nobody enjoys putting boiling aluminum into their particle accelerators - *I can't imagine why*. 
 
-So the only course of action seems to be building a device that can take these measurements. This is a hybrid quartz crystal microbalance, Kelvin cup, and beam calorimeter, all on a rotary servo. Since plastics, oils, bearings, etc can't be put in a vacuum, we have to 
+
+Camera on winch moves smoothly across the ionprinter deposition chambers, peers beside to where I'm standing, and switches focus to me, beaming. Maybe some split focus magic
+
+Camera switches to 
+
+
+
+
+
+> 
+>
+> So, what is it? Essentially, it's a particle accelerator that builds things. Indeed, many technologies (like the beam position monitors) are borrowed directly from the LHC and lesser accelerators. 
+
+
+
+
+
+
+
+
+
