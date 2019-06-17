@@ -289,7 +289,7 @@ root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vect
                             original_geometry.z_min_bound,
                             original_geometry.z_max_bound};
 
-  root_mesh_geometry new_geometry(mesh_bounds, original_geometry.root_scale, original_geometry.sub_scale*5.0);
+  root_mesh_geometry new_geometry(mesh_bounds, original_geometry.root_scale, new_sub_scale);
 
   int scale_divisor = new_geometry.sub_scale/original_geometry.sub_scale;
 
@@ -347,7 +347,7 @@ template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &deco
 
 
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
-                            std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance){
+                            std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance, bool root){
   /*
   For Jacobi, you store the new values in a new buffer; in Gauss-Seidel, you update them immediately.
 
@@ -391,24 +391,24 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
     }
   }
 
-  float overrelaxation = 1;
 
-  if(mesh_geometry.sub_len > 30){ //recursive coarse mesh solver
+  if(root){ //recursive coarse mesh solver
 
-    overrelaxation = 1.0;
+    for(int i = 10; i > 2; i-=1){
+      std::vector<std::vector<float>> coarsened_potentials;
+      std::vector<std::vector<int>> coarsened_boundaries;
 
-    std::vector<std::vector<float>> coarsened_potentials;
-    std::vector<std::vector<int>> coarsened_boundaries;
+      coarsened_potentials.resize(0);
+      coarsened_boundaries.resize(0);
 
-    root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.001);
-    coarsen_mesh(boundary_conditions,coarsened_boundaries,mesh_geometry,0.001);
+      root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,mesh_geometry.sub_scale*(i/2.0));
+      coarsen_mesh(boundary_conditions,coarsened_boundaries,mesh_geometry,mesh_geometry.sub_scale*(i/2.0));
 
-    relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,new_geometry,0.01);
+      relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,new_geometry,0.01,0);
 
-    decoarsen_mesh(potentials,coarsened_potentials,mesh_geometry,new_geometry);
+      decoarsen_mesh(potentials,coarsened_potentials,mesh_geometry,new_geometry);
+    }
 
-  //   relax_laplace_potentials(coarse_potential_vector,coarse_boundary_conditions_vector,
-  //                                       MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,tolerance);
   }
 
 
@@ -450,9 +450,9 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
           if(new_stencil_value == 0){ //sparse!
             continue;
           }
-          float current_val = get_mesh_value(x,y,z,potentials,mesh_geometry);
-          float delta = (new_stencil_value-current_val);
-          current_val += delta*overrelaxation;
+          // float current_val = get_mesh_value(x,y,z,potentials,mesh_geometry);
+          // float delta = (new_stencil_value-current_val);
+          // current_val += delta*overrelaxation;
           // current_val = overrelaxation*current_val-((overrelaxation-1.0)*delta);
           set_mesh_value(new_stencil_value,x,y,z,potentials,mesh_geometry);
 

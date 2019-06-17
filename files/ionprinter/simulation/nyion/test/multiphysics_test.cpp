@@ -198,9 +198,9 @@ TEST(laplace_tests,laplace_convergence_1){
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
   enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry);
 
-  for(float x = 0.005; x < 0.01; x+=mesh_geometry.sub_scale){
-    for(float y = 0.005; y < 0.01; y+=mesh_geometry.sub_scale){
-      for(float z = 0.005; z < 0.01; z+=mesh_geometry.sub_scale){
+  for(float x = 0.006; x < 0.01; x+=mesh_geometry.sub_scale){
+    for(float y = 0.006; y < 0.01; y+=mesh_geometry.sub_scale){
+      for(float z = 0.006; z < 0.01; z+=mesh_geometry.sub_scale){
         set_mesh_value_world_point(1000.0,x,y,z,potentials,mesh_geometry);
         set_mesh_value_world_point(1,x,y,z,boundaries,mesh_geometry);
       }
@@ -214,7 +214,7 @@ TEST(laplace_tests,laplace_convergence_1){
 // set_mesh_value_world_point(1,x,y,z,boundaries,mesh_geometry);
 //
 
-  relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01);
+  relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01,1);
   printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
 
   for(float x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
