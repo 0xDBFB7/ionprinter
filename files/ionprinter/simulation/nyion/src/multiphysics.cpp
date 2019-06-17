@@ -296,9 +296,15 @@ root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vect
   for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
       coarsened[root_mesh_idx].resize(new_geometry.sub_size);
-      for(int x = 0; x < new_geometry.sub_len; x++){
-        for(int y = 0; y < new_geometry.sub_len; y++){
-          for(int z = 0; z < new_geometry.sub_len; z++){
+
+      int root_x;
+      int root_y;
+      int root_z;
+      position_from_index(root_x,root_y,root_z,root_mesh_idx,new_geometry.root_x_len,new_geometry.root_y_len,new_geometry.root_z_len);
+
+      for(int x = (root_x*new_geometry.sub_len); x < (root_x*new_geometry.sub_len)+new_geometry.sub_len; x++){
+        for(int y = (root_y*new_geometry.sub_len); y < (root_y*new_geometry.sub_len)+new_geometry.sub_len; y++){
+          for(int z = (root_z*new_geometry.sub_len); z < (root_z*new_geometry.sub_len)+new_geometry.sub_len; z++){
             set_mesh_value(get_mesh_value(x*scale_divisor,y*scale_divisor,z*scale_divisor,original,original_geometry),x,y,z,coarsened,new_geometry);
           }
         }
@@ -315,11 +321,23 @@ template root_mesh_geometry coarsen_mesh(std::vector<std::vector<int>> &original
 template<typename T>
 root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std::vector<std::vector<T>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry){
 
+  int scale_divisor = decoarsened_geometry.sub_len/coarse_geometry.sub_len;
+
   for(int root_mesh_idx = 0; root_mesh_idx < decoarsened.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
 
     if(coarsened[root_mesh_idx].size()){
-      for(int i = 0; i < decoarsened[root_mesh_idx].size(); i++){
-        decoarsened[root_mesh_idx][i] = coarsened[root_mesh_idx][0];
+
+      int root_x;
+      int root_y;
+      int root_z;
+      position_from_index(root_x,root_y,root_z,root_mesh_idx,decoarsened_geometry.root_x_len,decoarsened_geometry.root_y_len,decoarsened_geometry.root_z_len);
+
+      for(int x = (root_x*decoarsened_geometry.sub_len); x < (root_x*decoarsened_geometry.sub_len)+decoarsened_geometry.sub_len; x++){
+        for(int y = (root_y*decoarsened_geometry.sub_len); y < (root_y*decoarsened_geometry.sub_len)+decoarsened_geometry.sub_len; y++){
+          for(int z = (root_z*decoarsened_geometry.sub_len); z < (root_z*decoarsened_geometry.sub_len)+decoarsened_geometry.sub_len; z++){
+            set_mesh_value(get_mesh_value(x/scale_divisor,y/scale_divisor,z/scale_divisor,coarsened,coarse_geometry),x,y,z,decoarsened,decoarsened_geometry);
+          }
+        }
       }
     }
   }
@@ -364,7 +382,7 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
   }
 
 
-  if(mesh_geometry.sub_len > 50){ //recursive coarse mesh solver
+  if(mesh_geometry.sub_len > 30){ //recursive coarse mesh solver
 
     std::vector<std::vector<float>> coarsened_potentials;
     std::vector<std::vector<int>> coarsened_boundaries;
@@ -388,7 +406,7 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  for(iterations = 1; iterations < 100; iterations++){
+  for(iterations = 1; iterations < 10000; iterations++){
 
     std::vector<std::vector<float>> potentials_copy = potentials; //save for convergence metric
 
