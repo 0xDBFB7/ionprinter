@@ -51,140 +51,92 @@ TEST(idx_tests, vector_idx_test)
 }
 
 
-
-
-//
-// TEST(idx_tests, vector_test)
-// {
-//
-//   std::vector<std::vector<float>> test(8000000);
-//
-//   test[50].resize(8000000);
-//
-//   auto t1 = std::chrono::high_resolution_clock::now();
-//
-//   for(int i = 0; i < 100000;i++){
-//     test[50][i] = i;
-//   }
-//
-//   auto t2 = std::chrono::high_resolution_clock::now();
-//
-//   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/100000.0 << " us" << "\n";
-// }
-//
-// TEST(idx_tests, carray_test)
-// {
-//
-//   int** test = new int*[8000000];
-//
-//
-//   test[50] = new int[8000000];
-//
-//   auto t1 = std::chrono::high_resolution_clock::now();
-//
-//   for(int i = 0; i < 100000;i++){
-//     test[50][i] = i;
-//   }
-//
-//   auto t2 = std::chrono::high_resolution_clock::now();
-//
-//   delete[] test[50];
-//
-//   delete[] test;
-//
-//   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/100000.0 << " us" << "\n";
-// }
-
-
-//
-// TEST(idx_tests, i_idx_test)
-// {
-//   int mesh_geometry[3] = {10,10,10};
-//   CHECK_EQUAL(1, i_idx(1,0,0,mesh_geometry));
-//   CHECK_EQUAL(10, i_idx(0,1,0,mesh_geometry));
-//   CHECK_EQUAL(100, i_idx(0,0,1,mesh_geometry));
-//   CHECK_EQUAL(111, i_idx(1,1,1,mesh_geometry));
-// }
-//
-// TEST(idx_tests, f_idx_test)
-// {
-//   int mesh_geometry[3] = {10,10,10};
-//   float mesh_scale[3] = {0.1,0.1,0.1};
-//
-//   CHECK_EQUAL(111, f_idx(0.1,0.1,0.1,mesh_geometry,mesh_scale));
-//   CHECK_EQUAL(1110, f_idx(1,1,1,mesh_geometry,mesh_scale));
-//
-//   std::vector<bool> mesh_present(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry));
-//   CHECK_EQUAL(1110, mesh_present.size());
-// }
-//
-// TEST_GROUP(mesh_tests){};
-//
-// TEST(mesh_tests,mesh_import_test_1){
-//   int mesh_geometry[3] = {20,1,1};
-//   float mesh_scale[3] = {0.001,0.001,0.001};
-//   std::vector<bool> mesh_present(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry));
-//   double bounds[6];
-//   // float translate[3] = {0};
-//   import_mesh("../10x10x10_cube.stl",mesh_present,mesh_geometry,mesh_scale,bounds);
-//   DOUBLES_EQUAL(0,bounds[0],1e-6);
-//   DOUBLES_EQUAL(0.01,bounds[1],1e-6);
-//   DOUBLES_EQUAL(0,bounds[2],1e-6);
-//   DOUBLES_EQUAL(0.01,bounds[3],1e-6);
-//   DOUBLES_EQUAL(0,bounds[4],1e-6);
-//   DOUBLES_EQUAL(0.01,bounds[5],1e-6);
-//
-//   CHECK_EQUAL(true, mesh_present[f_idx(0.008,0,0,mesh_geometry,mesh_scale)]);
-//   CHECK_EQUAL(true, mesh_present[f_idx(0,0,0,mesh_geometry,mesh_scale)]);
-//   CHECK_EQUAL(false, mesh_present[f_idx(0.011,0,0,mesh_geometry,mesh_scale)]);
-// }
-//
 TEST_GROUP(laplace_tests){};
-//
-// TEST(laplace_tests,laplace_tests_1){
-//   int mesh_geometry[3] = {20,3,3};
-//   std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
-//   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
-//
-//   potentials[i_idx(1,1,1,mesh_geometry)] = 10;
-//   boundaries[i_idx(1,1,1,mesh_geometry)] = 10;
-//
-//   potentials[i_idx(5,1,1,mesh_geometry)] = 10;
-//   boundaries[i_idx(5,1,1,mesh_geometry)] = 10;
-//
-//   relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
-//
-//   // std::copy(potentials.begin(), potentials.end(), std::ostream_iterator<float>(std::cout, " "));
-//
-//   DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
-// }
-//
-//
-// TEST(laplace_tests,laplace_timing_1){
-//   int mesh_geometry[3] = {200,200,200};
-//
-//   std::vector<int> boundaries(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0);
-//   std::vector<float> potentials(i_idx(mesh_geometry[X],mesh_geometry[Y],mesh_geometry[Z],mesh_geometry),0.0);
-//
-//
-//   for(int x = 1; x < 199; x++){
-//     for(int y = 1; y < 199; y++){
-//       for(int z = 100; z < 199; z++){
-//         potentials[i_idx(x,y,z,mesh_geometry)] = 1000;
-//         boundaries[i_idx(x,y,z,mesh_geometry)] = 10;
-//       }
-//     }
-//   }
-//   relax_laplace_potentials(potentials, boundaries, mesh_geometry[X], mesh_geometry[Y], mesh_geometry[Z], 0.01);
-//
-//   DOUBLES_EQUAL(0.58823, potentials[i_idx(3,1,1,mesh_geometry)], 1e-2);
-// }
-//
+
+TEST(laplace_tests,coarsen){
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  potentials.resize(mesh_geometry.root_size);
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
+
+  for(int x = 0; x < mesh_geometry.virtual_x_len; x++){
+    set_mesh_value(x*10.0+100,x,0,0,potentials,mesh_geometry);
+  }
+
+  std::vector<std::vector<float>> coarsened_potentials;
+  std::vector<std::vector<int>> coarsened_boundaries;
+
+  root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.0005);
+
+  // for(int x = 0; x < new_geometry.sub_len; x++){
+  //   printf("%f\n",get_mesh_value(x,0,0,coarsened_potentials,new_geometry));
+  // }
+
+  CHECK_EQUAL(100.0, get_mesh_value(0,0,0,coarsened_potentials,new_geometry));
+  CHECK_EQUAL(150.0, get_mesh_value(1,0,0,coarsened_potentials,new_geometry));
+
+
+
+}
+
+
+TEST(laplace_tests,decoarsen){
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  potentials.resize(mesh_geometry.root_size);
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
+
+  std::vector<std::vector<float>> decoarsened_potentials = potentials;
+
+  for(int x = 0; x < mesh_geometry.virtual_x_len; x++){
+        set_mesh_value(x*10.0+100,x,0,0,potentials,mesh_geometry);
+  }
+
+  std::vector<std::vector<float>> coarsened_potentials;
+  std::vector<std::vector<int>> coarsened_boundaries;
+
+  root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.0005);
+
+  // for(int x = 0; x < new_geometry.sub_len; x++){
+  //   printf("%f\n",get_mesh_value(x,0,0,coarsened_potentials,new_geometry));
+  // }
+
+
+  decoarsen_mesh(decoarsened_potentials,coarsened_potentials,mesh_geometry,new_geometry);
+
+  for(int x = 0; x < mesh_geometry.sub_len; x++){
+    printf("%f\n",get_mesh_value(x,0,0,decoarsened_potentials,new_geometry));
+  }
+
+
+  CHECK_EQUAL(100.0, get_mesh_value(0,0,0,coarsened_potentials,new_geometry));
+  CHECK_EQUAL(150.0, get_mesh_value(1,0,0,coarsened_potentials,new_geometry));
+
+
+
+}
+
 
 TEST(laplace_tests,get_mesh){
   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
 
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.000051);
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);
 
   std::vector<std::vector<float>> potentials;
   std::vector<std::vector<int>> boundaries;
@@ -207,7 +159,7 @@ TEST(laplace_tests,activate_submesh){
 
   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
 
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.000051);
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);
 
   std::vector<std::vector<float>> potentials;
   std::vector<std::vector<int>> boundaries;
@@ -271,6 +223,12 @@ TEST(laplace_tests,laplace_convergence_1){
 
   DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
 }
+
+
+
+
+
+
 
 
 

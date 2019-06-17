@@ -276,31 +276,56 @@ template void set_mesh_value_world_point(float val, float x, float y, float z, s
 
 
 template<typename T>
-root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry){
+root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, float new_sub_scale){
   /*
   The root mesh resolution remains the same; only the submeshes are coarsened.
   */
-  new = original;
+  coarsened = original;
 
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  float mesh_bounds[6] = {original_geometry.x_min_bound,
+                            original_geometry.x_max_bound,
+                            original_geometry.y_min_bound,
+                            original_geometry.y_max_bound,
+                            original_geometry.z_min_bound,
+                            original_geometry.z_max_bound};
 
-  root_mesh_geometry new_geometry(mesh_bounds, 0.003, MULTIGRID_COARSE_GRID);
+  root_mesh_geometry new_geometry(mesh_bounds, original_geometry.root_scale, original_geometry.sub_scale*5.0);
+
+  int scale_divisor = new_geometry.sub_scale/original_geometry.sub_scale;
 
   for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
-      new[root_mesh_idx].resize(new_geometry.sub_size);
+      coarsened[root_mesh_idx].resize(new_geometry.sub_size);
+      for(int x = 0; x < new_geometry.sub_len; x++){
+        for(int y = 0; y < new_geometry.sub_len; y++){
+          for(int z = 0; z < new_geometry.sub_len; z++){
+            set_mesh_value(get_mesh_value(x*scale_divisor,y*scale_divisor,z*scale_divisor,original,original_geometry),x,y,z,coarsened,new_geometry);
+          }
+        }
+      }
     }
   }
-  for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){
-    
-  }
 
-  return original_geometry;
+  return new_geometry;
 }
-template root_mesh_geometry coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry);
-template root_mesh_geometry coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry);
+template root_mesh_geometry coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry,float new_sub_scale);
+template root_mesh_geometry coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry,float new_sub_scale);
 
 
+template<typename T>
+root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std::vector<std::vector<T>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry){
+
+  for(int root_mesh_idx = 0; root_mesh_idx < decoarsened.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+
+    if(coarsened[root_mesh_idx].size()){
+      for(int i = 0; i < decoarsened[root_mesh_idx].size(); i++){
+        decoarsened[root_mesh_idx][i] = coarsened[root_mesh_idx][0];
+      }
+    }
+  }
+}
+template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<int>> &decoarsened, std::vector<std::vector<int>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
+template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &decoarsened, std::vector<std::vector<float>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
 
 
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
@@ -339,17 +364,22 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
   }
 
 
-  // if(x_len > 50 || y_len > 50 || z_len > 50){ //recursive coarse mesh solver
-  //   int coarse_grid_len = (MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID*MULTIGRID_COARSE_GRID);
-  //   std::vector<float> coarse_potential_vector(coarse_grid_len,0);
-  //   std::vector<int> coarse_boundary_conditions_vector(coarse_grid_len,0);
-  //
-  //   for(int i = 0; i < coarse_grid_len; i++){get_mesh_value(x,y,z,potentials,mesh_geometry)};
-  //   for(int i = 0; i < coarse_grid_len; i++){coarse_boundary_conditions_vector[i] = boundary_conditions_vector[i*4];};
-  //
+  if(mesh_geometry.sub_len > 50){ //recursive coarse mesh solver
+
+    std::vector<std::vector<float>> coarsened_potentials;
+    std::vector<std::vector<int>> coarsened_boundaries;
+
+    root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.0005);
+    coarsen_mesh(boundary_conditions,coarsened_boundaries,mesh_geometry,0.0005);
+
+
+    relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,new_geometry,0.01);
+
+    decoarsen_mesh(potentials,coarsened_potentials,mesh_geometry,new_geometry);
+
   //   relax_laplace_potentials(coarse_potential_vector,coarse_boundary_conditions_vector,
   //                                       MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,MULTIGRID_COARSE_GRID,tolerance);
-  // }
+  }
 
 
 

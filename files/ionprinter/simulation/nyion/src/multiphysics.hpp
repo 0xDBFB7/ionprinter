@@ -52,7 +52,9 @@ void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance);
 
 template<typename T>
-root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry);
+root_mesh_geometry coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry,float new_sub_scale);
 
+template<typename T>
+root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std::vector<std::vector<T>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
 
 void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len);
