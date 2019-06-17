@@ -1305,3 +1305,11 @@ Could a magnetohydrodynamic pump be used with a liquid ring? Interesting...
 
 No, liquid-ring pumps are not likely to be effective for this purpose; the base vacuum is not sufficient for diffusion pump startup.
 
+
+
+#### More laplace
+
+Got mesh refinement and multigrid working, both are very effective. Convergence is still a bit slow on the ol' laplace.
+
+Tried 9-point, SOR 1.2 to 1.7, 
+

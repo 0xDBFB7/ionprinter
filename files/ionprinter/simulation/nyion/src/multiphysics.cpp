@@ -381,15 +381,27 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
     throw std::invalid_argument("Input vectors have different dimensions.");
   }
 
+  float max_value = 0;
+
+  for(int root_mesh_idx = 0; root_mesh_idx < potentials.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+    for(int submesh_idx = 0; submesh_idx < potentials[root_mesh_idx].size(); submesh_idx++){
+      if(fabs(potentials[root_mesh_idx][submesh_idx]) > max_value){
+        max_value = fabs(potentials[root_mesh_idx][submesh_idx]); //maximum difference between old and new
+      }
+    }
+  }
+
+  float overrelaxation = 1;
 
   if(mesh_geometry.sub_len > 30){ //recursive coarse mesh solver
+
+    overrelaxation = 1.0;
 
     std::vector<std::vector<float>> coarsened_potentials;
     std::vector<std::vector<int>> coarsened_boundaries;
 
-    root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.0005);
-    coarsen_mesh(boundary_conditions,coarsened_boundaries,mesh_geometry,0.0005);
-
+    root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.001);
+    coarsen_mesh(boundary_conditions,coarsened_boundaries,mesh_geometry,0.001);
 
     relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,new_geometry,0.01);
 
@@ -404,11 +416,13 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
   float new_convergence = 0;
   int iterations = 0;
 
+
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(iterations = 1; iterations < 10000; iterations++){
 
     std::vector<std::vector<float>> potentials_copy = potentials; //save for convergence metric
+
 
     for(int root_mesh_idx = 0; root_mesh_idx < potentials.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
 
@@ -433,6 +447,13 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
                                       get_mesh_value(x,y,z+1,potentials,mesh_geometry) +
                                       get_mesh_value(x,y,z-1,potentials,mesh_geometry))/6.0);
 
+          if(new_stencil_value == 0){ //sparse!
+            continue;
+          }
+          float current_val = get_mesh_value(x,y,z,potentials,mesh_geometry);
+          float delta = (new_stencil_value-current_val);
+          current_val += delta*overrelaxation;
+          // current_val = overrelaxation*current_val-((overrelaxation-1.0)*delta);
           set_mesh_value(new_stencil_value,x,y,z,potentials,mesh_geometry);
 
         }
@@ -447,14 +468,14 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
       }
     }
 
+    // overrelaxation += new_convergence/max_value;
+
+    printf("convergence: %f\n",new_convergence);
+
     if(new_convergence < tolerance){ //exit condition
       break;
     }
-
-    printf("convergence: %f\n",new_convergence);
     new_convergence = 0;
-
-
 
   }
 

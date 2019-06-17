@@ -105,7 +105,7 @@ TEST(laplace_tests,decoarsen){
   std::vector<std::vector<float>> decoarsened_potentials = potentials;
 
   for(int x = 0; x < mesh_geometry.virtual_x_len; x++){
-        set_mesh_value(x*10.0+100,x,0,0,potentials,mesh_geometry);
+        set_mesh_value(x,x,0,0,potentials,mesh_geometry);
   }
 
   std::vector<std::vector<float>> coarsened_potentials;
@@ -120,9 +120,9 @@ TEST(laplace_tests,decoarsen){
 
   decoarsen_mesh(decoarsened_potentials,coarsened_potentials,mesh_geometry,new_geometry);
 
-  for(int x = 0; x < mesh_geometry.sub_len; x++){
-    printf("%f\n",get_mesh_value(x,0,0,decoarsened_potentials,new_geometry));
-  }
+  // for(int x = 0; x < mesh_geometry.sub_len; x++){
+  //   printf("%f\n",get_mesh_value(x,0,0,decoarsened_potentials,mesh_geometry));
+  // }
 
 
   CHECK_EQUAL(100.0, get_mesh_value(0,0,0,coarsened_potentials,new_geometry));
@@ -179,7 +179,7 @@ TEST(laplace_tests,activate_submesh){
   // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
 }
 
-
+//
 
 TEST(laplace_tests,laplace_convergence_1){
 
