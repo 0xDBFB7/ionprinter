@@ -1311,5 +1311,7 @@ No, liquid-ring pumps are not likely to be effective for this purpose; the base 
 
 Got mesh refinement and multigrid working, both are very effective. Convergence is still a bit slow on the ol' laplace.
 
-Tried 9-point, SOR 1.2 to 1.7, 
+Tried 9-point, SOR 1.2 to 1.7, still doesn't converge quickly.
+
+Tried a very slow multigrid progression. This works really well for meshes with <10% BCs. Convergence takes about 1 minute.
 
