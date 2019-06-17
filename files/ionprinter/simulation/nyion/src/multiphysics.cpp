@@ -412,6 +412,7 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
   }
 
 
+
   float new_convergence = 0;
   int iterations = 0;
 
@@ -449,11 +450,11 @@ int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
           if(new_stencil_value == 0){ //sparse!
             continue;
           }
-          float current_val = get_mesh_value(x,y,z,potentials,mesh_geometry);
-          float delta = (new_stencil_value-current_val);
-          current_val += delta*1.7;
+          // float current_val = get_mesh_value(x,y,z,potentials,mesh_geometry);
+          // float delta = (new_stencil_value-current_val);
+          // current_val += delta*overrelaxation;
           // current_val = overrelaxation*current_val-((overrelaxation-1.0)*delta);
-          set_mesh_value(current_val,x,y,z,potentials,mesh_geometry);
+          set_mesh_value(new_stencil_value,x,y,z,potentials,mesh_geometry);
 
         }
       }

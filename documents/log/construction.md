@@ -1313,5 +1313,17 @@ Got mesh refinement and multigrid working, both are very effective. Convergence 
 
 Tried 9-point, SOR 1.2 to 1.7, still doesn't converge quickly.
 
-Tried a very slow multigrid progression. This works really well for meshes with <10% BCs. Convergence takes about 1 minute.
+Tried a very slow multigrid progression. This works really well for meshes with <10% BCs. Convergence on a 200x200x200 mesh to 0.01 takes about 3 minutes. 100x100x100 takes 15 seconds.
+
+
+
+#### FPGA-accelerated laplace
+
+3 minutes to converge is a bit much. I could parallelize this, but have to learn verilog for school, and happen to have a DE0-Nano FPGA dev board with 32 MB of sdram, which will fit a 200x200x200 array perfectly. GPUs aren't ideal for this sort of problems.
+
+
+
+I think I can convert to integer operations by multiplying by 1000 or so; this should speed everything up. A 24-bit signed int should suffice.
+
+
 
