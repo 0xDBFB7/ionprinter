@@ -80,7 +80,7 @@
 #define MULTIGRID_COARSE_GRID 0.001
 
 
-root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale, float new_sub_scale){
+root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   /*
   Creates a new mesh with the specified parameters.
 
@@ -120,8 +120,7 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 }
 
 
-template<typename T>
-void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
+void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector<std::vector<float>> &boundaries, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
 
   int x_min = std::max(0,(int)((bounds[X1]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
   int x_max = std::min(mesh_geometry.root_x_len,(int)((bounds[X2]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
@@ -134,17 +133,13 @@ void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root
   for(int x = x_min; x < x_max; x++){
     for(int y = y_min; y < y_max; y++){
       for(int z = z_min; z < z_max; z++){
-        mesh[idx_from_position(x,y,z,
-                                mesh_geometry.root_x_len,
-                                mesh_geometry.root_y_len,
-                                mesh_geometry.root_z_len)].resize(submesh_side_length*submesh_side_length*submesh_side_length);
+        int index = (mesh_geometry.root_x_len*mesh_geometry.root_y_len*z) + (mesh_geometry.root_x_len*y) + x;
+        potentials[index].resize(submesh_side_length*submesh_side_length*submesh_side_length);
+        boundaries[index].resize(submesh_side_length*submesh_side_length*submesh_side_length);
       }
     }
   }
 }
-template void enable_mesh_region(std::vector<std::vector<int>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
-template void enable_mesh_region(std::vector<std::vector<float>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry);
-
 
 //
 // float fast_get_mesh_value(int root_x, int root_y, int root_z, int sub_x, int sub_y, int sub_z,
@@ -189,29 +184,29 @@ float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mes
 template float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
 template float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
 
-
-
-template<typename T>
-float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry){
-
-  // int root_x = x/mesh_geometry.root_scale;
-  // int root_y = y/mesh_geometry.root_scale;
-  // int root_z = z/mesh_geometry.root_scale;
-  //
-  // int root_idx = idx_from_position(root_x,root_y,root_z,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
-  //
-  // int sub_x = x-(root_x*mesh_geometry.root_scale);
-  // int sub_y = y-(root_y*mesh_geometry.root_scale);
-  // int sub_z = z-(root_z*mesh_geometry.root_scale);
-  //
-  // int sub_idx = idx_from_position(root_x,root_y,root_z,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
-
-
-  return get_mesh_value(x/mesh_geometry.sub_scale,y/mesh_geometry.sub_scale,z/mesh_geometry.sub_scale,
-                                      mesh, mesh_geometry);
-}
-template float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
-template float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
+//
+//
+// template<typename T>
+// float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry){
+//
+//   // int root_x = x/mesh_geometry.root_scale;
+//   // int root_y = y/mesh_geometry.root_scale;
+//   // int root_z = z/mesh_geometry.root_scale;
+//   //
+//   // int root_idx = idx_from_position(root_x,root_y,root_z,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
+//   //
+//   // int sub_x = x-(root_x*mesh_geometry.root_scale);
+//   // int sub_y = y-(root_y*mesh_geometry.root_scale);
+//   // int sub_z = z-(root_z*mesh_geometry.root_scale);
+//   //
+//   // int sub_idx = idx_from_position(root_x,root_y,root_z,mesh_geometry.root_x_len,mesh_geometry.root_y_len,mesh_geometry.root_z_len);
+//
+//
+//   return get_mesh_value(x/mesh_geometry.sub_scale,y/mesh_geometry.sub_scale,z/mesh_geometry.sub_scale,
+//                                       mesh, mesh_geometry);
+// }
+// template float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<float>> &mesh, root_mesh_geometry mesh_geometry);
+// template float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<int>> &mesh, root_mesh_geometry mesh_geometry);
 
 
 template<typename T>

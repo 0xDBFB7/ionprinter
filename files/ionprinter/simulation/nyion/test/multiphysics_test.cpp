@@ -170,7 +170,7 @@ TEST(laplace_tests,activate_submesh){
 
 
 
-  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
+  enable_mesh_region(potentials,potentials,mesh_active_bounds,mesh_geometry);
 
   CHECK_EQUAL(0,potentials[0].size());
   CHECK_EQUAL(mesh_geometry.sub_size,potentials[1].size());
