@@ -353,37 +353,122 @@ template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &deco
 
 
 
-int fast_relax_laplace_potentials(,
-                            std::vector<std::vector<int>> &boundary_conditions, float tolerance){
+int fast_relax_laplace_potentials(float tolerance){
+
+  // int world_rank;
+  // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
+  // int world_size;
+  // MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+
+  // MPI_Send(&tosend[0], tosend_size, MPI_INT, 0, 777, MPI_COMM_WORLD); //vector mpi
+  // results_and_rank.resize(results_rank_size);
+  // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
+
+
+  int root_mesh_x = 200;
+  int root_mesh_y = 200;
+  int root_mesh_z = 200;
+  int root_size = (root_mesh_x*root_mesh_y*root_mesh_z);
+  int root_xy = (root_mesh_x * root_mesh_y);
+
+  int * submesh_side_lengths = new int[root_size];
+  std::fill(submesh_side_lengths, submesh_side_lengths + sizeof(submesh_side_lengths), 0);
+
+  int **potentials = new int*[root_size];
+  potentials[0] = new int[submesh_size];
+
+  int **potentials_copy = new int*[root_size];
+  potentials_copy[0] = new int[submesh_size];
+
+  int **boundaries = new int*[root_size];
+  boundaries[0] = new int[submesh_size];
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  int32_t **potentials = new int32_t*[200*200*200];
+  for(int root = 0; root < root_size; root++){
+    if(submesh_side_lengths[root]){
 
-  root_mesh_x = 200;
-  root_mesh_y = 200;
-  root_mesh_z = 200;
-
-  submesh_side_length = 100;
-
-  potentials[i] = new int[sizeX];
-  potentials[i+200] = new int[sizeX];
+      int this_submesh_side_length = submesh_side_lengths[root];
+      int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
+      int * this_potential_submesh = potentials[root]; //problematic
+      // int * this_boundary_submesh = potentials[root]; //problematic
 
 
-  for(int root = 0; root < (200*200*200); i++){
+      int r_x = root % root_mesh_x; //ugly and slow! Dumb and stupid!
+      int r_y = (root / root_mesh_x) % root_mesh_y; //idx of root cell
+      int r_z = root / (root_xy);
 
+      //could go around the edges first, then do the inside...
+      // (x_len*y_len*z) + (x_len*y) + x;
+
+      //check root - if it's not an edge, we can skip the check
+
+      if(root-root_xy > 0 && submesh_side_lengths[root-root_xy]){ //"below": -z
+        for(int x = 0; x < this_submesh_side_length; x++){ //first do the edges, including the boundary check
+          for(int y = 0; y < this_submesh_side_length; y++){ // this could be made even more efficient by doing a side at a time
+            int stencil_value = 0;
+            stencil_value += this_potential_submesh[sub_idx-1];
+            this_potential_submesh[sub_idx+1] +
+            this_potential_submesh[sub_idx-this_submesh_side_length] +
+            this_potential_submesh[sub_idx+this_submesh_side_length] +
+            this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
+            this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+            potentials[root][sub_idx] = stencil_value;
+          }
+        }
+      }
+      else{
+
+      }
+
+
+
+      for(int x = 1; x < this_submesh_side_length-1; x++){ //and now a fast inner loop
+        for(int y = 1; y < this_submesh_side_length-1; y++){
+          for(int z = 1; z < this_submesh_side_length-1; z++){
+            int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
+            potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
+                                               this_potential_submesh[sub_idx+1] +
+                                               this_potential_submesh[sub_idx-this_submesh_side_length] +
+                                               this_potential_submesh[sub_idx+this_submesh_side_length] +
+                                               this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
+                                               this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+            }
+          }
+        }
+      }
+    }
   }
 
 
-
-
+  for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
+    if(submesh_side_lengths[root]){
+      for(int sub = 0; sub < submesh_size; sub++){
+        if(boundaries[root][sub_idx]){
+          potentials[root][sub_idx] = potentials_copy[root][sub_idx];
+        }
+      }
+    }
+  }
 
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
+  for(int root = 0; root < root_size; root++){
+    if(submesh_side_lengths[root]){
+      delete[] potentials[root];
+      delete[] boundaries[root];
+    }
+  }
+  delete[] submesh_side_lengths;
+  delete[] boundaries;
+  delete[] potentials;
+
+
+
+
   std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
-
 }
 
 

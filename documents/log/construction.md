@@ -1330,3 +1330,6 @@ I think I can convert to integer operations by multiplying by 1000 or so; this s
 "Go Fish: the FPGA accelerated poisson"
 
 Computer crashed a few times, needed sudo mv /var/lib/mysql/tc.log /var/lib/mysql/tc_bkp.log.
+
+
+
