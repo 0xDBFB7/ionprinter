@@ -183,6 +183,7 @@ TEST(laplace_tests,activate_submesh){
 
 TEST(laplace_tests,laplace_convergence_1){
 
+
   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
 
   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);

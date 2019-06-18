@@ -346,6 +346,49 @@ template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<int>> &decoar
 template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &decoarsened, std::vector<std::vector<float>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
 
 
+
+
+
+
+
+
+
+int fast_relax_laplace_potentials(,
+                            std::vector<std::vector<int>> &boundary_conditions, float tolerance){
+
+  auto t1 = std::chrono::high_resolution_clock::now();
+
+  int32_t **potentials = new int32_t*[200*200*200];
+
+  root_mesh_x = 200;
+  root_mesh_y = 200;
+  root_mesh_z = 200;
+
+  submesh_side_length = 100;
+
+  potentials[i] = new int[sizeX];
+  potentials[i+200] = new int[sizeX];
+
+
+  for(int root = 0; root < (200*200*200); i++){
+
+  }
+
+
+
+
+
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+
+  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
+  std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
+
+}
+
+
+
+
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials,
                             std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance, bool root){
   /*
