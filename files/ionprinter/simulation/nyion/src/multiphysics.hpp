@@ -58,3 +58,6 @@ template<typename T>
 root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std::vector<std::vector<T>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
 
 void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len);
+
+
+int fast_relax_laplace_potentials(float tolerance);

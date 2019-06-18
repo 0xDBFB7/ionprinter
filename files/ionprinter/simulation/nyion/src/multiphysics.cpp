@@ -365,90 +365,190 @@ int fast_relax_laplace_potentials(float tolerance){
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
 
-  int root_mesh_x = 200;
-  int root_mesh_y = 200;
-  int root_mesh_z = 200;
-  int root_size = (root_mesh_x*root_mesh_y*root_mesh_z);
-  int root_xy = (root_mesh_x * root_mesh_y);
+  int root_x = 200;
+  int root_y = 200;
+  int root_z = 200;
+  int root_size = (root_x*root_y*root_z);
+  int root_xy = (root_x * root_y);
 
   int * submesh_side_lengths = new int[root_size];
   std::fill(submesh_side_lengths, submesh_side_lengths + sizeof(submesh_side_lengths), 0);
 
   int **potentials = new int*[root_size];
-  potentials[0] = new int[submesh_size];
-
   int **potentials_copy = new int*[root_size];
-  potentials_copy[0] = new int[submesh_size];
-
   int **boundaries = new int*[root_size];
-  boundaries[0] = new int[submesh_size];
+
+  for(int i = 0; i < 40; i++){
+    submesh_side_lengths[i] = 60;
+    int this_submesh_size = (submesh_side_lengths[i]*submesh_side_lengths[i]*submesh_side_lengths[i]);
+    potentials[i] = new int[this_submesh_size];
+    potentials_copy[i] = new int[this_submesh_size];
+    boundaries[i] = new int[this_submesh_size];
+  }
+
+
+  for(int i = 0; i < 20; i++){
+    for(int x = 0; x < submesh_side_lengths[i]; x++){
+      potentials[i][x] = 1000000;
+      potentials_copy[i][x] = 1000000;
+      boundaries[i][x] = 1;
+    }
+  }
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  for(int root = 0; root < root_size; root++){
-    if(submesh_side_lengths[root]){
+  int iterations = 0;
 
-      int this_submesh_side_length = submesh_side_lengths[root];
-      int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
-      int * this_potential_submesh = potentials[root]; //problematic
-      // int * this_boundary_submesh = potentials[root]; //problematic
+  int new_convergence = 0;
+
+  for(iterations = 1; iterations < 100; iterations++){
+
+    for(int root = 0; root < root_size; root++){
+      if(submesh_side_lengths[root]){
+
+        int this_submesh_side_length = submesh_side_lengths[root];
+        int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
+        int * this_potential_submesh = potentials[root]; //problematic?
 
 
-      int r_x = root % root_mesh_x; //ugly and slow! Dumb and stupid!
-      int r_y = (root / root_mesh_x) % root_mesh_y; //idx of root cell
-      int r_z = root / (root_xy);
+        // int r_x = root % root_mesh_x; //ugly and slow! Dumb and stupid!
+        // int r_y = (root / root_mesh_x) % root_mesh_y;
+        // int r_z = root / (root_xy);
 
-      //could go around the edges first, then do the inside...
-      // (x_len*y_len*z) + (x_len*y) + x;
+        // (x_len*y_len*z) + (x_len*y) + x;
 
-      //check root - if it's not an edge, we can skip the check
-
-      if(root-root_xy > 0 && submesh_side_lengths[root-root_xy]){ //"below": -z
+        //for a typical 60^3 submesh, this loop will only run 0.0166x as many points as
+        //the full submesh
+        //so optimization isn't that crucial here
         for(int x = 0; x < this_submesh_side_length; x++){ //first do the edges, including the boundary check
           for(int y = 0; y < this_submesh_side_length; y++){ // this could be made even more efficient by doing a side at a time
-            int stencil_value = 0;
-            stencil_value += this_potential_submesh[sub_idx-1];
-            this_potential_submesh[sub_idx+1] +
-            this_potential_submesh[sub_idx-this_submesh_side_length] +
-            this_potential_submesh[sub_idx+this_submesh_side_length] +
-            this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
-            this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
-            potentials[root][sub_idx] = stencil_value;
-          }
-        }
-      }
-      else{
+            for(int z = 0; z < this_submesh_side_length; z++){
+              int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
 
-      }
+              if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length //if we're at an edge or corner
+                                            || y == this_submesh_side_length
+                                            || z == this_submesh_side_length){ //not quite as fast as 6 seperate loops, but that's tedious and boring
+
+                int stencil_value = 0;
+
+                if(x == 0){ //"below": -z
+                  if(root-1 > 0 && submesh_side_lengths[root-1]){
+                    stencil_value += potentials[root-1]
+                    [((submesh_side_lengths[root-1]*submesh_side_lengths[root-1])*z)
+                          + (submesh_side_lengths[root-1]*submesh_side_lengths[root-1]) + 0];
+                  }
+                  //else add zero.
+                }
+                else{
+                  stencil_value += this_potential_submesh[sub_idx-1];
+                }
+
+                if(x == this_submesh_side_length){ //"below": -z
+                  if(root+1 > 0 && submesh_side_lengths[root+1]){
+                    stencil_value += potentials[root+1]
+                    [((submesh_side_lengths[root+1]*submesh_side_lengths[root+1])*z)
+                          + (submesh_side_lengths[root+1]*y) + submesh_side_lengths[root+1]];
+                  }
+                  //else add zero.
+                }
+                else{
+                  stencil_value += this_potential_submesh[sub_idx+1];
+                }
+
+                if(y == 0){ //"below": -z
+                  if(root-root_y > 0 && submesh_side_lengths[root-root_y]){
+                    stencil_value += potentials[root-root_y]
+                    [((submesh_side_lengths[root-root_y]*submesh_side_lengths[root-root_y])*z)
+                          + (submesh_side_lengths[root-root_y]*submesh_side_lengths[root-root_y]) + x];
+                  }
+                  //else add zero.
+                }
+                else{
+                  stencil_value += this_potential_submesh[sub_idx-this_submesh_side_length];
+                }
+
+                if(y == this_submesh_side_length){ //"below": -z
+                  if(root+root_y > 0 && submesh_side_lengths[root+root_y]){
+                    stencil_value += potentials[root+root_y]
+                    [((submesh_side_lengths[root+root_y]*submesh_side_lengths[root+root_y])*z)
+                          + (submesh_side_lengths[root+root_y]*0) + x];
+                  }
+                  //else add zero.
+                }
+                else{
+                  stencil_value += this_potential_submesh[sub_idx+this_submesh_side_length];
+                }
+
+                if(z == 0){ //"below": -z
+                  if(root-root_xy > 0 && submesh_side_lengths[root-root_xy]){
+                    stencil_value += potentials[root-root_xy]
+                    [((submesh_side_lengths[root-root_xy]*submesh_side_lengths[root-root_xy])*submesh_side_lengths[root-root_xy])
+                          + (submesh_side_lengths[root-root_xy]*y) + x];
+                  }
+                  //else add zero.
+                }
+                else{
+                  stencil_value += this_potential_submesh[sub_idx-this_submesh_side_length_squared];
+                }
+
+                if(z == this_submesh_side_length){ //"above": +z
+                  if(root+root_xy < root_size && submesh_side_lengths[root+root_xy]){
+                    stencil_value += potentials[root+root_xy]
+                    [((submesh_side_lengths[root+root_xy]*submesh_side_lengths[root+root_xy])*0) //z=0 on cell above
+                          + (submesh_side_lengths[root+root_xy]*y) + x];
+                  }
+                  //else add zero.
+                }
+                else{
+                  stencil_value += this_potential_submesh[sub_idx+this_submesh_side_length_squared];
+                }
 
 
-
-      for(int x = 1; x < this_submesh_side_length-1; x++){ //and now a fast inner loop
-        for(int y = 1; y < this_submesh_side_length-1; y++){
-          for(int z = 1; z < this_submesh_side_length-1; z++){
-            int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
-            potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
-                                               this_potential_submesh[sub_idx+1] +
-                                               this_potential_submesh[sub_idx-this_submesh_side_length] +
-                                               this_potential_submesh[sub_idx+this_submesh_side_length] +
-                                               this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
-                                               this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+                stencil_value /= 6;
+                potentials[root][sub_idx] = stencil_value;
+              }
+              else{
+                potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
+                                                   this_potential_submesh[sub_idx+1] +
+                                                   this_potential_submesh[sub_idx-this_submesh_side_length] +
+                                                   this_potential_submesh[sub_idx+this_submesh_side_length] +
+                                                   this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
+                                                   this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+              }
             }
           }
         }
       }
     }
-  }
 
 
-  for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
-    if(submesh_side_lengths[root]){
-      for(int sub = 0; sub < submesh_size; sub++){
-        if(boundaries[root][sub_idx]){
-          potentials[root][sub_idx] = potentials_copy[root][sub_idx];
+    for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
+      if(submesh_side_lengths[root]){
+        for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
+          if(boundaries[root][sub]){
+            potentials[root][sub] = potentials_copy[root][sub];
+          }
         }
       }
     }
+
+    // for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
+    //   if(submesh_side_lengths[root]){
+    //     for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
+    //       if(boundaries[root][sub]){
+    //         potentials[root][sub] = potentials_copy[root][sub];
+    //       }
+    //     }
+    //   }
+    // }
+
+  }
+
+
+  for(int i = 0; i < 40; i++){
+    // for(int x = 0; x < submesh_side_lengths[i]; x++){
+      printf("%i\n",potentials[i][0]);
+    // }
   }
 
 
@@ -470,6 +570,23 @@ int fast_relax_laplace_potentials(float tolerance){
   std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
