@@ -350,10 +350,7 @@ template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &deco
 
 
 
-
-
-
-int fast_relax_laplace_potentials(float tolerance){
+int fast_relax_laplace_potentials(std::vector<std::vector<int>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, float tolerance){
 
   // int world_rank;
   // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
@@ -378,16 +375,18 @@ int fast_relax_laplace_potentials(float tolerance){
   int **potentials_copy = new int*[root_size];
   int **boundaries = new int*[root_size];
 
-  for(int i = 0; i < 40; i++){
-    submesh_side_lengths[i] = 60;
-    int this_submesh_size = (submesh_side_lengths[i]*submesh_side_lengths[i]*submesh_side_lengths[i]);
+  for(int root = 0; root < potentials_vector.size(); root++){
+    submesh_side_lengths[root] = pow(potentials_vector[root].size(),1.0/3.0); //cube root
+    int this_submesh_size = (submesh_side_lengths[root]*submesh_side_lengths[root]*submesh_side_lengths[root]);
     potentials[i] = new int[this_submesh_size];
     potentials_copy[i] = new int[this_submesh_size];
     boundaries[i] = new int[this_submesh_size];
+    for(int sub = 0; sub < ; sub++){
+
   }
 
 
-  for(int i = 0; i < 20; i++){
+  for(int i = 0; i < 2; i++){
     for(int x = 0; x < submesh_side_lengths[i]; x++){
       potentials[i][x] = 1000000;
       boundaries[i][x] = 1;
@@ -556,24 +555,8 @@ int fast_relax_laplace_potentials(float tolerance){
 
     printf("convergence: %i\n",new_convergence);
     new_convergence = 0;
-    // for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
-    //   if(submesh_side_lengths[root]){
-    //     for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-    //       if(boundaries[root][sub]){
-    //         potentials[root][sub] = potentials_copy[root][sub];
-    //       }
-    //     }
-    //   }
-    // }
 
   }
-
-  // ofstream myfile;
-  // myfile.open ("example.txt");
-  // for(int i = 0; i < 40; i++){
-  //   myfile << "Writing this to a file.\n";
-  //   myfile.close();
-  // }
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -584,6 +567,8 @@ int fast_relax_laplace_potentials(float tolerance){
       delete[] potentials_copy[root];
     }
   }
+
+
   delete[] submesh_side_lengths;
   delete[] boundaries;
   delete[] potentials;
