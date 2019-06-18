@@ -62,4 +62,4 @@ root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std:
 void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len);
 
 
-int fast_relax_laplace_potentials(float tolerance);
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, float tolerance);

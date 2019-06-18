@@ -106,15 +106,6 @@ root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale, fl
   z_max_bound = z_min_bound+(root_z_len*new_root_scale);
 
   root_scale = new_root_scale;
-
-  sub_len = (root_scale/new_sub_scale);
-
-  sub_scale = root_scale/sub_len;
-  sub_size = (sub_len*sub_len*sub_len);
-
-  virtual_x_len = root_x_len * sub_len;
-  virtual_y_len = root_y_len * sub_len;
-  virtual_z_len = root_z_len * sub_len;
 }
 
 
@@ -130,7 +121,7 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 
 
 template<typename T>
-void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry){
+void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
 
   int x_min = std::max(0,(int)((bounds[X1]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
   int x_max = std::min(mesh_geometry.root_x_len,(int)((bounds[X2]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
@@ -146,7 +137,7 @@ void enable_mesh_region(std::vector<std::vector<T>> &mesh, float bounds[6], root
         mesh[idx_from_position(x,y,z,
                                 mesh_geometry.root_x_len,
                                 mesh_geometry.root_y_len,
-                                mesh_geometry.root_z_len)].resize(mesh_geometry.sub_size);
+                                mesh_geometry.root_z_len)].resize(submesh_side_length*submesh_side_length*submesh_side_length);
       }
     }
   }
@@ -350,7 +341,7 @@ template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &deco
 
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<int>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, float tolerance){
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance){
 
   // int world_rank;
   // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
@@ -362,9 +353,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<int>> potentials_vecto
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
 
-  int root_x = 200;
-  int root_y = 200;
-  int root_z = 200;
+  int root_x = mesh_geometry.root_x_len;
+  int root_y = mesh_geometry.root_y_len;
+  int root_z = mesh_geometry.root_z_len;
   int root_size = (root_x*root_y*root_z);
   int root_xy = (root_x * root_y);
 
@@ -376,20 +367,17 @@ int fast_relax_laplace_potentials(std::vector<std::vector<int>> potentials_vecto
   int **boundaries = new int*[root_size];
 
   for(int root = 0; root < potentials_vector.size(); root++){
-    submesh_side_lengths[root] = pow(potentials_vector[root].size(),1.0/3.0); //cube root
-    int this_submesh_size = (submesh_side_lengths[root]*submesh_side_lengths[root]*submesh_side_lengths[root]);
-    potentials[i] = new int[this_submesh_size];
-    potentials_copy[i] = new int[this_submesh_size];
-    boundaries[i] = new int[this_submesh_size];
-    for(int sub = 0; sub < ; sub++){
 
-  }
+    submesh_side_lengths[root] = pow(potentials_vector[root].size(),1.0/3.0); //cube
+    int this_submesh_size = potentials_vector[root].size();
 
+    potentials[root] = new int[this_submesh_size];
+    potentials_copy[root] = new int[this_submesh_size];
+    boundaries[root] = new int[this_submesh_size];
 
-  for(int i = 0; i < 2; i++){
-    for(int x = 0; x < submesh_side_lengths[i]; x++){
-      potentials[i][x] = 1000000;
-      boundaries[i][x] = 1;
+    for(int sub = 0; sub < this_submesh_size; sub++){
+      potentials[root][sub] = potentials_vector[root][sub]*10000;
+      boundaries[root][sub] = boundaries_vector[root][sub];
     }
   }
 
@@ -415,11 +403,6 @@ int fast_relax_laplace_potentials(std::vector<std::vector<int>> potentials_vecto
         int this_submesh_side_length = submesh_side_lengths[root];
         int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
         int * this_potential_submesh = potentials[root]; //problematic?
-
-
-        // int r_x = root % root_mesh_x; //ugly and slow! Dumb and stupid!
-        // int r_y = (root / root_mesh_x) % root_mesh_y;
-        // int r_z = root / (root_xy);
 
         // (x_len*y_len*z) + (x_len*y) + x;
 
@@ -559,6 +542,14 @@ int fast_relax_laplace_potentials(std::vector<std::vector<int>> potentials_vecto
   }
 
   auto t2 = std::chrono::high_resolution_clock::now();
+
+
+  for(int root = 0; root < potentials_vector.size(); root++){
+    for(int sub = 0; sub < potentials_vector[root].size(); sub++){
+      potentials_vector[root][sub] = potentials[root][sub]/10000.0;
+      boundaries_vector[root][sub] = boundaries[root][sub];
+    }
+  }
 
   for(int root = 0; root < root_size; root++){
     if(submesh_side_lengths[root]){
