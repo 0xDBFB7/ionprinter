@@ -279,6 +279,8 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
   int new_convergence = 0;
 
+  int convergence_sum = 0;
+
   for(iterations = 1; iterations < 10000; iterations++){
 
     for(int root = 0; root < root_size; root++){  //make a copy of the last iteration for convergence testing
@@ -404,15 +406,19 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
 
                   stencil_value /= 6;
-                  potentials[root][sub_idx] = stencil_value;
+                  int delta = (stencil_value-potentials[root][sub_idx]);
+                  potentials[root][sub_idx] += delta;
                 }
                 else{
-                  potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
+
+                  int stencil_value =       (this_potential_submesh[sub_idx-1] +
                                                      this_potential_submesh[sub_idx+1] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+                 int delta = (stencil_value-potentials[root][sub_idx]);
+                 potentials[root][sub_idx] += delta;
                 }
               }
             }
@@ -435,10 +441,11 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
 
 
-    printf("convergence: %f\n",new_convergence/10000.0);
+    printf("convergence: %f, %f\n",new_convergence/10000.0,(float)convergence_sum/10000.0);
     if((new_convergence/10000.0) < tolerance){ //exit condition
       break;
     }
+    convergence_sum += new_convergence;
     new_convergence = 0;
 
   }
