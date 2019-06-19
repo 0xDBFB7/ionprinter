@@ -56,9 +56,9 @@ template<typename T>
 void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
 template<typename T>
-root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std::vector<std::vector<T>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
+void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry decoarsened_geometry, int scale_divisor);
 
 void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len);
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool root);
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive);

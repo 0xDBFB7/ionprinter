@@ -52,31 +52,46 @@ TEST_GROUP(idx_tests){};
 //
 //
 TEST_GROUP(laplace_tests){};
-//
-// TEST(laplace_tests,coarsen){
-//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-//
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);
-//
-//   std::vector<std::vector<float>> potentials;
-//   std::vector<std::vector<int>> boundaries;
-//
-//   potentials.resize(mesh_geometry.root_size);
-//
-//   float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
-//
-//   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
-//
-//   std::vector<std::vector<float>> coarsened_potentials;
-//   std::vector<std::vector<int>> coarsened_boundaries;
-//
-//   coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,4);
-//
-//
-//   CHECK_EQUAL(100.0, get_mesh_value(0,0,0,coarsened_potentials,new_geometry));
-//   CHECK_EQUAL(150.0, get_mesh_value(1,0,0,coarsened_potentials,new_geometry));
-//
-// }
+
+TEST(laplace_tests,coarsen){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.003};
+
+  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,20);
+
+  for(float sub = 0; sub < 20; sub++){
+    potentials[0][sub] = sub;
+  }
+
+  std::vector<std::vector<float>> coarsened_potentials;
+
+  coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,2);
+
+    // for(uint32_t root = 0; root < 20; root++){
+  // for(uint32_t sub = 0; sub < 10; sub++){
+  //   printf("%f\n",coarsened_potentials[0][sub]);
+  // }
+    // }
+
+  CHECK_EQUAL(4, potentials[0][4]);
+
+  std::vector<std::vector<float>> decoarsened_potentials;
+
+  decoarsen_mesh(coarsened_potentials,decoarsened_potentials,mesh_geometry,2);
+
+  // for(uint32_t sub = 0; sub < 10; sub++){
+  //   printf("%f\n",decoarsened_potentials[0][sub]);
+  // }
+
+}
+
 // //
 //
 // TEST(laplace_tests,decoarsen){
@@ -172,54 +187,6 @@ TEST_GROUP(laplace_tests){};
 
 //
 //
-// TEST(laplace_tests,laplace_convergence_1){
-//
-//
-//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-//
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003, 0.00005);
-//
-//   std::vector<std::vector<float>> potentials;
-//   std::vector<std::vector<int>> boundaries;
-//
-//   potentials.resize(mesh_geometry.root_size);
-//   boundaries.resize(mesh_geometry.root_size);
-//
-//   float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
-//
-//   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
-//   enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry);
-//
-//   for(float x = 0.006; x < 0.01; x+=mesh_geometry.sub_scale){
-//     for(float y = 0.006; y < 0.01; y+=mesh_geometry.sub_scale){
-//       for(float z = 0.006; z < 0.01; z+=mesh_geometry.sub_scale){
-//         set_mesh_value_world_point(1000.0,x,y,z,potentials,mesh_geometry);
-//         set_mesh_value_world_point(1,x,y,z,boundaries,mesh_geometry);
-//       }
-//     }
-//   }
-//
-//
-// //   set_mesh_value(1000.0,200,200,200,potentials,mesh_geometry);
-// //   set_mesh_value(1,200,200,200,boundaries,mesh_geometry);
-// // //
-// // set_mesh_value_world_point(1,x,y,z,boundaries,mesh_geometry);
-// //
-//
-//   relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01,1);
-//   printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
-//
-//   for(float x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
-//       printf("%f\n", get_mesh_value_world_point(x,0.005,0.005,potentials,mesh_geometry));
-//   }
-//
-//   DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
-// }
-//
-//
-
-
-
 TEST(laplace_tests,fast_laplace_convergence_1){
 
 
@@ -240,9 +207,7 @@ TEST(laplace_tests,fast_laplace_convergence_1){
       boundaries[root][sub] = 1;
     }
   }
-
-
-
+  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 5, 1);
   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1);
 
   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));

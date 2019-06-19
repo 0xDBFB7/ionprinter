@@ -163,9 +163,8 @@ void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector
       for(int x = 0; x < coarse_sub_len; x++){
         for(int y = 0; y < coarse_sub_len; y++){
           for(int z = 0; z < coarse_sub_len; z++){
-            int coarse_sub_idx = (coarse_sub_len*z) + (coarse_sub_len*y) + x;
-            int fine_sub_idx = (fine_sub_len*(z*scale_divisor)) + (fine_sub_len*(y*scale_divisor)) + (x*scale_divisor);
-
+            int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*z) + (coarse_sub_len*y) + x;
+            int fine_sub_idx = (fine_sub_len*fine_sub_len*(z*scale_divisor)) + (fine_sub_len*(y*scale_divisor)) + (x*scale_divisor);
             coarsened[root_mesh_idx][coarse_sub_idx] = original[root_mesh_idx][fine_sub_idx];
           }
         }
@@ -176,42 +175,40 @@ void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector
 template void coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
 template void coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
-//
-// template<typename T>
-// root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std::vector<std::vector<T>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry){
-//
-//   int scale_divisor = decoarsened_geometry.sub_len/coarse_geometry.sub_len;
-//
-//   for(int root_mesh_idx = 0; root_mesh_idx < decoarsened.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
-//
-//     if(coarsened[root_mesh_idx].size()){
-//        = std::round(std::cbrt(potentials_vector[root].size())); //cube root
-//
-//
-//       int root_x;
-//       int root_y;
-//       int root_z;
-//       position_from_index(root_x,root_y,root_z,root_mesh_idx,decoarsened_geometry.root_x_len,decoarsened_geometry.root_y_len,decoarsened_geometry.root_z_len);
-//
-//       for(int x = (root_x*decoarsened_geometry.sub_len); x < (root_x*decoarsened_geometry.sub_len)+decoarsened_geometry.sub_len; x++){
-//         for(int y = (root_y*decoarsened_geometry.sub_len); y < (root_y*decoarsened_geometry.sub_len)+decoarsened_geometry.sub_len; y++){
-//           for(int z = (root_z*decoarsened_geometry.sub_len); z < (root_z*decoarsened_geometry.sub_len)+decoarsened_geometry.sub_len; z++){
-//             set_mesh_value(get_mesh_value(x/scale_divisor,y/scale_divisor,z/scale_divisor,coarsened,coarse_geometry),x,y,z,decoarsened,decoarsened_geometry);
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-// template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<int>> &decoarsened, std::vector<std::vector<int>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
-// template root_mesh_geometry decoarsen_mesh(std::vector<std::vector<float>> &decoarsened, std::vector<std::vector<float>> &coarsened, root_mesh_geometry decoarsened_geometry, root_mesh_geometry coarse_geometry);
-//
-//
+
+template<typename T>
+void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor){
+  /*
+  The root mesh resolution remains the same; only the submeshes are coarsened.
+  */
+  decoarsened = original;
+
+  for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+    if(original[root_mesh_idx].size()){
+      int coarse_sub_len = std::round(std::cbrt(original[root_mesh_idx].size())); //cube root
+      int fine_sub_len = coarse_sub_len*scale_divisor;
+      decoarsened[root_mesh_idx].resize(fine_sub_len*fine_sub_len*fine_sub_len);
+
+      for(int x = 0; x < fine_sub_len; x++){
+        for(int y = 0; y < fine_sub_len; y++){
+          for(int z = 0; z < fine_sub_len; z++){
+            int fine_sub_idx = (fine_sub_len*fine_sub_len*z) + (fine_sub_len*y) + x;
+            int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z/scale_divisor)) + (coarse_sub_len*(y/scale_divisor)) + (x/scale_divisor);
+
+            decoarsened[root_mesh_idx][fine_sub_idx] = original[root_mesh_idx][coarse_sub_idx];
+          }
+        }
+      }
+    }
+  }
+}
+template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
+template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
 
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool root){
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive){
 
   // int world_rank;
   // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
@@ -222,23 +219,25 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
 
-  if(root){ //recursive coarse mesh solver
 
-    for(int i = 5; i > 2; i-=1){
+
+  if(recursive){ //recursive coarse mesh solver
+    printf("ROOT");
+    // for(int i = 6; i > 2; i-=2){
       std::vector<std::vector<float>> coarsened_potentials;
       std::vector<std::vector<int>> coarsened_boundaries;
 
-      coarsened_potentials.resize(0);
-      coarsened_boundaries.resize(0);
+      // coarsened_potentials.resize(0);
+      // coarsened_boundaries.resize(0);
 
-      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
-      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
+      // coarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,2);
+      // coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,2);
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,new_geometry,0.01,0);
-
-      decoarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,new_geometry);
-    }
-
+  //     // fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,1,0);
+  //
+      // decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,2);
+  //   // }
+  //
   }
 
   int root_x = mesh_geometry.root_x_len;
@@ -315,10 +314,12 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   int stencil_value = 0;
 
                   if(x == 0){ //-x
-                    if(root-1 >= 0 && submesh_side_lengths[root-1]){
-                      stencil_value += potentials[root-1]
-                      [((submesh_side_lengths[root-1]*submesh_side_lengths[root-1])*(z*(submesh_side_lengths[root-1]/submesh_side_lengths[root]))) // BUG: this will index into the wrong place if scales differ
-                            + (submesh_side_lengths[root-1]*submesh_side_lengths[root-1]) + (submesh_side_lengths[root+1]-1)];
+                    int root_i = root-1;
+                    if(root_i >= 0 && submesh_side_lengths[root_i]){
+                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+                      stencil_value += potentials[root_i]
+                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor))) // BUG: this will index into the wrong place if scales differ
+                            + (submesh_side_lengths[root_i]*submesh_side_lengths[root_i]) + (submesh_side_lengths[root_i]-1)];
                     }
                     //else add zero.
                   }
@@ -327,10 +328,12 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(x == this_submesh_side_length-1){ //"below": -z
-                    if(root+1 < root_size && submesh_side_lengths[root+1]){
-                      stencil_value += potentials[root+1]
-                      [((submesh_side_lengths[root+1]*submesh_side_lengths[root+1])*(z*(submesh_side_lengths[root+1]/submesh_side_lengths[root]))
-                            + (submesh_side_lengths[root+1]*(y*(submesh_side_lengths[root+1]/submesh_side_lengths[root]))) + 0];
+                    int root_i = root+1;
+                    if(root_i < root_size && submesh_side_lengths[root_i]){
+                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+                      stencil_value += potentials[root_i]
+                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
+                            + (submesh_side_lengths[root_i]*((int)(y*scale_factor))) + 0];
                     }
                     //else add zero.
                   }
@@ -339,10 +342,12 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(y == 0){ //"below": -z
-                    if(root-root_y >= 0 && submesh_side_lengths[root-root_y]){
-                      stencil_value += potentials[root-root_y]
-                      [((submesh_side_lengths[root-root_y]*submesh_side_lengths[root-root_y])*z)
-                            + (submesh_side_lengths[root-root_y]*(submesh_side_lengths[root-root_y]-1)) + x];
+                    int root_i = root-root_y;
+                    if(root_i >= 0 && submesh_side_lengths[root_i]){
+                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+                      stencil_value += potentials[root_i]
+                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
+                            + (submesh_side_lengths[root_i]*(submesh_side_lengths[root_i]-1)) + ((int)(x*scale_factor))];
                     }
                     //else add zero.
                   }
@@ -351,10 +356,12 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(y == this_submesh_side_length-1){ //"below": -z
-                    if(root+root_y < root_size && submesh_side_lengths[root+root_y]){
-                      stencil_value += potentials[root+root_y]
-                      [((submesh_side_lengths[root+root_y]*submesh_side_lengths[root+root_y])*z)
-                            + (submesh_side_lengths[root+root_y]*0) + x];
+                    int root_i = root+root_y;
+                    if(root_i < root_size && submesh_side_lengths[root_i]){
+                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+                      stencil_value += potentials[root_i]
+                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
+                            + (submesh_side_lengths[root_i]*0) + ((int)(x*scale_factor))];
                     }
                     //else add zero.
                   }
@@ -363,10 +370,12 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(z == 0){ //"below": -z
-                    if(root-root_xy >= 0 && submesh_side_lengths[root-root_xy]){
-                      stencil_value += potentials[root-root_xy]
-                      [((submesh_side_lengths[root-root_xy]*submesh_side_lengths[root-root_xy])*(submesh_side_lengths[root-root_xy]-1))
-                            + (submesh_side_lengths[root-root_xy]*y) + x];
+                    int root_i = root-root_xy;
+                    if(root_i >= 0 && submesh_side_lengths[root_i]){
+                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+                      stencil_value += potentials[root_i]
+                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*(submesh_side_lengths[root_i]-1))
+                            + (submesh_side_lengths[root_i]*((int)(y*scale_factor))) + ((int)(x*scale_factor))];
                     }
                     //else add zero.
                   }
@@ -375,9 +384,11 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(z == this_submesh_side_length-1){ //"above": +z
-                    if(root+root_xy < root_size && submesh_side_lengths[root+root_xy]){
-                      stencil_value += potentials[root+root_xy]
-                      [(submesh_side_lengths[root+root_xy]*y) + x]; //z=0 on cell above
+                    int root_i = root+root_xy;
+                    if(root_i < root_size && submesh_side_lengths[root_i]){
+                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+                      stencil_value += potentials[root_i]
+                      [(submesh_side_lengths[root_i]*((int)(y*scale_factor))) + ((int)(x*scale_factor))]; //z=0 on cell above
                     }
                     //else add zero.
                   }
