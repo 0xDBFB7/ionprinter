@@ -239,7 +239,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
   int root_z = mesh_geometry.root_z_len;
   int root_size = (root_x*root_y*root_z);
   int root_xy = (root_x * root_y);
-  
+
+  printf("root_size %i",root_size);
+
   int * submesh_side_lengths = new int[root_size];
   std::fill(submesh_side_lengths, submesh_side_lengths + sizeof(submesh_side_lengths), 0);
 
@@ -266,7 +268,22 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
     }
 
   }
+  //
+  // for(int i = 0; i < 10; i++){
+  //   submesh_side_lengths[i] = 60;
+  //   int this_submesh_size = (submesh_side_lengths[i]*submesh_side_lengths[i]*submesh_side_lengths[i]);
+  //   potentials[i] = new int[this_submesh_size];
+  //   potentials_copy[i] = new int[this_submesh_size];
+  //   boundaries[i] = new int[this_submesh_size];
+  // }
 
+
+  // for(int i = 0; i < 10; i++){
+  //   for(int x = 0; x < submesh_side_lengths[i]; x++){
+  //     potentials[i][x] = 1000000;
+  //     boundaries[i][x] = 1;
+  //   }
+  // }
 
 
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -275,7 +292,7 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
 
   int new_convergence = 0;
 
-  for(iterations = 1; iterations < 10000; iterations++){
+  for(iterations = 1; iterations < 100; iterations++){
 
     for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
       if(submesh_side_lengths[root]){
@@ -306,17 +323,17 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
 
               if(!boundaries[root][sub_idx]){
 
-                if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length //if we're at an edge or corner
-                                              || y == this_submesh_side_length
-                                              || z == this_submesh_side_length){ //not quite as fast as 6 seperate loops, but that's tedious and boring
+                if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length-1 //if we're at an edge or corner
+                                              || y == this_submesh_side_length-1
+                                              || z == this_submesh_side_length-1){ //not quite as fast as 6 seperate loops, but that's tedious and boring
 
                   int stencil_value = 0;
 
-                  if(x == 0){ //"below": -z
-                    if(root-1 > 0 && submesh_side_lengths[root-1]){
+                  if(x == 0){ //-x
+                    if(root-1 >= 0 && submesh_side_lengths[root-1]){
                       stencil_value += potentials[root-1]
                       [((submesh_side_lengths[root-1]*submesh_side_lengths[root-1])*z)
-                            + (submesh_side_lengths[root-1]*submesh_side_lengths[root-1]) + 0];
+                            + (submesh_side_lengths[root-1]*submesh_side_lengths[root-1]) + (submesh_side_lengths[root+1]-1)];
                     }
                     //else add zero.
                   }
@@ -324,11 +341,11 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                     stencil_value += this_potential_submesh[sub_idx-1];
                   }
 
-                  if(x == this_submesh_side_length){ //"below": -z
-                    if(root+1 > 0 && submesh_side_lengths[root+1]){
+                  if(x == this_submesh_side_length-1){ //"below": -z
+                    if(root+1 < root_size && submesh_side_lengths[root+1]){
                       stencil_value += potentials[root+1]
                       [((submesh_side_lengths[root+1]*submesh_side_lengths[root+1])*z)
-                            + (submesh_side_lengths[root+1]*y) + submesh_side_lengths[root+1]];
+                            + (submesh_side_lengths[root+1]*y) + 0];
                     }
                     //else add zero.
                   }
@@ -337,10 +354,10 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(y == 0){ //"below": -z
-                    if(root-root_y > 0 && submesh_side_lengths[root-root_y]){
+                    if(root-root_y >= 0 && submesh_side_lengths[root-root_y]){
                       stencil_value += potentials[root-root_y]
                       [((submesh_side_lengths[root-root_y]*submesh_side_lengths[root-root_y])*z)
-                            + (submesh_side_lengths[root-root_y]*submesh_side_lengths[root-root_y]) + x];
+                            + (submesh_side_lengths[root-root_y]*(submesh_side_lengths[root-root_y]-1)) + x];
                     }
                     //else add zero.
                   }
@@ -348,8 +365,8 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                     stencil_value += this_potential_submesh[sub_idx-this_submesh_side_length];
                   }
 
-                  if(y == this_submesh_side_length){ //"below": -z
-                    if(root+root_y > 0 && submesh_side_lengths[root+root_y]){
+                  if(y == this_submesh_side_length-1){ //"below": -z
+                    if(root+root_y < root_size && submesh_side_lengths[root+root_y]){
                       stencil_value += potentials[root+root_y]
                       [((submesh_side_lengths[root+root_y]*submesh_side_lengths[root+root_y])*z)
                             + (submesh_side_lengths[root+root_y]*0) + x];
@@ -361,9 +378,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                   }
 
                   if(z == 0){ //"below": -z
-                    if(root-root_xy > 0 && submesh_side_lengths[root-root_xy]){
+                    if(root-root_xy >= 0 && submesh_side_lengths[root-root_xy]){
                       stencil_value += potentials[root-root_xy]
-                      [((submesh_side_lengths[root-root_xy]*submesh_side_lengths[root-root_xy])*submesh_side_lengths[root-root_xy])
+                      [((submesh_side_lengths[root-root_xy]*submesh_side_lengths[root-root_xy])*(submesh_side_lengths[root-root_xy]-1))
                             + (submesh_side_lengths[root-root_xy]*y) + x];
                     }
                     //else add zero.
@@ -372,17 +389,18 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vec
                     stencil_value += this_potential_submesh[sub_idx-this_submesh_side_length_squared];
                   }
 
-                  if(z == this_submesh_side_length){ //"above": +z
+                  if(z == this_submesh_side_length-1){ //"above": +z
                     if(root+root_xy < root_size && submesh_side_lengths[root+root_xy]){
                       stencil_value += potentials[root+root_xy]
-                      [((submesh_side_lengths[root+root_xy]*submesh_side_lengths[root+root_xy])*0) //z=0 on cell above
-                            + (submesh_side_lengths[root+root_xy]*y) + x];
+                      [(submesh_side_lengths[root+root_xy]*y) + x]; //z=0 on cell above
                     }
                     //else add zero.
                   }
                   else{
                     stencil_value += this_potential_submesh[sub_idx+this_submesh_side_length_squared];
                   }
+
+
 
 
 

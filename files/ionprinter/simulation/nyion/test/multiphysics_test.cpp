@@ -243,12 +243,12 @@ TEST(laplace_tests,fast_laplace_convergence_1){
 
   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
 
-  // for(uint32_t root = 0; root < 5; root++){
-  //   for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
-  //     potentials[root][sub] = 1000.0;
-  //     boundaries[root][sub] = 1;
-  //   }
-  // }
+  for(uint32_t root = 0; root < 5; root++){
+    for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
+      potentials[root][sub] = 1000.0;
+      boundaries[root][sub] = 1;
+    }
+  }
 
 
 
