@@ -67,26 +67,17 @@ TEST_GROUP(laplace_tests){};
 //
 //   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry);
 //
-//   for(int x = 0; x < mesh_geometry.virtual_x_len; x++){
-//     set_mesh_value(x*10.0+100,x,0,0,potentials,mesh_geometry);
-//   }
-//
 //   std::vector<std::vector<float>> coarsened_potentials;
 //   std::vector<std::vector<int>> coarsened_boundaries;
 //
-//   root_mesh_geometry new_geometry = coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,0.0005);
+//   coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,4);
 //
-//   // for(int x = 0; x < new_geometry.sub_len; x++){
-//   //   printf("%f\n",get_mesh_value(x,0,0,coarsened_potentials,new_geometry));
-//   // }
 //
 //   CHECK_EQUAL(100.0, get_mesh_value(0,0,0,coarsened_potentials,new_geometry));
 //   CHECK_EQUAL(150.0, get_mesh_value(1,0,0,coarsened_potentials,new_geometry));
 //
-//
-//
 // }
-//
+// //
 //
 // TEST(laplace_tests,decoarsen){
 //   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
@@ -243,7 +234,7 @@ TEST(laplace_tests,fast_laplace_convergence_1){
 
   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
 
-  for(uint32_t root = 0; root < 5; root++){
+  for(uint32_t root = 0; root < 20; root++){
     for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
       potentials[root][sub] = 1000.0;
       boundaries[root][sub] = 1;
@@ -252,7 +243,7 @@ TEST(laplace_tests,fast_laplace_convergence_1){
 
 
 
-  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 1);
+  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1);
 
   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
   //
