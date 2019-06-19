@@ -4,12 +4,12 @@
 class root_mesh_geometry{
   public:
 
-    root_mesh_geometry(float bounds[6], float root_scale, float sub_scale);
+    root_mesh_geometry(float bounds[6], float root_scale);
 
     int root_x_len; //root gridpoints for the mesh
     int root_y_len;
     int root_z_len;
-    
+
     int root_size; //total gridpoints in root
 
     float root_scale; //world scale to submesh cube scale

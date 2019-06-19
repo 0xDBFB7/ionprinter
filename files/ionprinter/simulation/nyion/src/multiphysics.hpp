@@ -47,7 +47,7 @@ float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vec
 template<typename T>
 void set_mesh_value_world_point(float val, float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
 
-void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector<std::vector<float>> &boundaries,
+void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
                                         float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 
 int relax_laplace_potentials(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance, bool root);
@@ -61,4 +61,4 @@ root_mesh_geometry decoarsen_mesh(std::vector<std::vector<T>> &decoarsened, std:
 void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len);
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, float tolerance);
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> potentials_vector, std::vector<std::vector<int>> boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance);
