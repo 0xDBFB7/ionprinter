@@ -52,45 +52,45 @@ TEST_GROUP(idx_tests){};
 //
 //
 TEST_GROUP(laplace_tests){};
-
-TEST(laplace_tests,coarsen){
-
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-
-  std::vector<std::vector<float>> potentials;
-  std::vector<std::vector<int>> boundaries;
-
-  float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.003};
-
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,20);
-
-  for(float sub = 0; sub < 20; sub++){
-    potentials[0][sub] = sub;
-  }
-
-  std::vector<std::vector<float>> coarsened_potentials;
-
-  coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,2);
-
-    // for(uint32_t root = 0; root < 20; root++){
-  // for(uint32_t sub = 0; sub < 10; sub++){
-  //   printf("%f\n",coarsened_potentials[0][sub]);
-  // }
-    // }
-
-  CHECK_EQUAL(4, potentials[0][4]);
-
-  std::vector<std::vector<float>> decoarsened_potentials;
-
-  decoarsen_mesh(coarsened_potentials,decoarsened_potentials,mesh_geometry,2);
-
-  // for(uint32_t sub = 0; sub < 10; sub++){
-  //   printf("%f\n",decoarsened_potentials[0][sub]);
-  // }
-
-}
+//
+// TEST(laplace_tests,coarsen){
+//
+//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+//
+//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//   std::vector<std::vector<float>> potentials;
+//   std::vector<std::vector<int>> boundaries;
+//
+//   float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.003};
+//
+//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,20);
+//
+//   for(float sub = 0; sub < 20; sub++){
+//     potentials[0][sub] = sub;
+//   }
+//
+//   std::vector<std::vector<float>> coarsened_potentials;
+//
+//   coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,2);
+//
+//     // for(uint32_t root = 0; root < 20; root++){
+//   // for(uint32_t sub = 0; sub < 10; sub++){
+//   //   printf("%f\n",coarsened_potentials[0][sub]);
+//   // }
+//     // }
+//
+//   CHECK_EQUAL(4, potentials[0][4]);
+//
+//   std::vector<std::vector<float>> decoarsened_potentials;
+//
+//   decoarsen_mesh(coarsened_potentials,decoarsened_potentials,mesh_geometry,2);
+//
+//   // for(uint32_t sub = 0; sub < 10; sub++){
+//   //   printf("%f\n",decoarsened_potentials[0][sub]);
+//   // }
+//
+// }
 
 // //
 //
@@ -207,7 +207,9 @@ TEST(laplace_tests,fast_laplace_convergence_1){
       boundaries[root][sub] = 1;
     }
   }
+
   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 5, 1);
+
   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1);
 
   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));

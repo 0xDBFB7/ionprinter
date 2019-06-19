@@ -224,8 +224,8 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
   if(recursive){ //recursive coarse mesh solver
     printf("ROOT");
     // for(int i = 6; i > 2; i-=2){
-      std::vector<std::vector<float>> coarsened_potentials;
-      std::vector<std::vector<int>> coarsened_boundaries;
+      // std::vector<std::vector<float>> coarsened_potentials;
+      // std::vector<std::vector<int>> coarsened_boundaries;
 
       // coarsened_potentials.resize(0);
       // coarsened_boundaries.resize(0);
@@ -267,6 +267,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
         potentials[root][sub] = potentials_vector[root][sub]*10000;
         boundaries[root][sub] = boundaries_vector[root][sub];
       }
+    }
+    else{
+      submesh_side_lengths[root] = 0;
     }
   }
 
