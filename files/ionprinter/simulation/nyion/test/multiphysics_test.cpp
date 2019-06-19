@@ -201,16 +201,17 @@ TEST(laplace_tests,fast_laplace_convergence_1){
 
   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
 
-  for(uint32_t root = 0; root < 20; root++){
+  for(uint32_t root = 0; root < 200; root++){
     for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
       potentials[root][sub] = 1000.0;
       boundaries[root][sub] = 1;
     }
   }
 
-  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 5, 1);
 
   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1);
+
+  // fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1);
 
   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
   //

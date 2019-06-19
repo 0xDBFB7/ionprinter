@@ -223,21 +223,21 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
   if(recursive){ //recursive coarse mesh solver
     printf("ROOT");
-    // for(int i = 6; i > 2; i-=2){
-      // std::vector<std::vector<float>> coarsened_potentials;
-      // std::vector<std::vector<int>> coarsened_boundaries;
+    for(int i = 6; i > 2; i-=2){
+      std::vector<std::vector<float>> coarsened_potentials;
+      std::vector<std::vector<int>> coarsened_boundaries;
 
-      // coarsened_potentials.resize(0);
-      // coarsened_boundaries.resize(0);
+      coarsened_potentials.resize(0);
+      coarsened_boundaries.resize(0);
 
-      // coarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,2);
-      // coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,2);
+      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
+      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
 
-  //     // fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,1,0);
-  //
-      // decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,2);
-  //   // }
-  //
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.0001,0);
+
+      decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
+    }
+
   }
 
   int root_x = mesh_geometry.root_x_len;
