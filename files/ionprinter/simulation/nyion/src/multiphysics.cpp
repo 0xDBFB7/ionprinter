@@ -78,7 +78,7 @@
 
 
 #define MULTIGRID_COARSE_GRID 0.001
-
+#define MATERIAL_BC_CUTOFF 1000//
 
 root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   /*
@@ -208,7 +208,16 @@ template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vecto
 
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive){
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive, bool field){
+  /*
+
+  Jacobi averages the four nearest points and stores the result in a new matrix.
+  Gauss-Seidel averages the four nearest points and updates the current matrix.
+  Conjugate Gradient 
+
+  */
+
+
 
   // int world_rank;
   // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
@@ -233,7 +242,7 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
       coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
       coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.0001,0);
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.00001,0,1);
 
       decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
     }
@@ -279,8 +288,6 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
   int new_convergence = 0;
 
-  int convergence_sum = 0;
-
   for(iterations = 1; iterations < 10000; iterations++){
 
     for(int root = 0; root < root_size; root++){  //make a copy of the last iteration for convergence testing
@@ -310,13 +317,27 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
               int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
 
-              if(!boundaries[root][sub_idx]){
+              if((field && !boundaries[root][sub_idx]) || (!field && boundaries[root][sub_idx] > MATERIAL_BC_CUTOFF)){
 
                 if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length-1 //if we're at an edge or corner
                                               || y == this_submesh_side_length-1
                                               || z == this_submesh_side_length-1){ //not quite as fast as 6 seperate loops, but that's tedious and boring
 
                   int stencil_value = 0;
+
+                  int stencil_divisor = 6;
+                  /*
+                  The 'field' and 'stencil_divisor' flags serve to differentiate between in-conductor current simulations, or
+                  vacuum field sims.
+
+                  If this a field sim, no boundary condition cells should be updated; their value is set externally.
+                  Additionally, all edges of the simulation must be forced to zero.
+                  This is effected by always dividing by 6.
+
+                  However, we're using the BC array to also denote conductor presence; if the
+                  */
+
+
 
                   if(x == 0){ //-x
                     int root_i = root-1;
@@ -325,6 +346,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                       stencil_value += potentials[root_i]
                       [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor))) // BUG: this will index into the wrong place if scales differ
                             + (submesh_side_lengths[root_i]*submesh_side_lengths[root_i]) + (submesh_side_lengths[root_i]-1)];
+                    }
+                    else{
+                      stencil_divisor--;
                     }
                     //else add zero.
                   }
@@ -340,6 +364,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                       [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
                             + (submesh_side_lengths[root_i]*((int)(y*scale_factor))) + 0];
                     }
+                    else{
+                      stencil_divisor--;
+                    }
                     //else add zero.
                   }
                   else{
@@ -353,6 +380,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                       stencil_value += potentials[root_i]
                       [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
                             + (submesh_side_lengths[root_i]*(submesh_side_lengths[root_i]-1)) + ((int)(x*scale_factor))];
+                    }
+                    else{
+                      stencil_divisor--;
                     }
                     //else add zero.
                   }
@@ -368,6 +398,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                       [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
                             + (submesh_side_lengths[root_i]*0) + ((int)(x*scale_factor))];
                     }
+                    else{
+                      stencil_divisor--;
+                    }
                     //else add zero.
                   }
                   else{
@@ -382,6 +415,9 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                       [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*(submesh_side_lengths[root_i]-1))
                             + (submesh_side_lengths[root_i]*((int)(y*scale_factor))) + ((int)(x*scale_factor))];
                     }
+                    else{
+                      stencil_divisor--;
+                    }
                     //else add zero.
                   }
                   else{
@@ -395,30 +431,30 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                       stencil_value += potentials[root_i]
                       [(submesh_side_lengths[root_i]*((int)(y*scale_factor))) + ((int)(x*scale_factor))]; //z=0 on cell above
                     }
+                    else{
+                      stencil_divisor--;
+                    }
                     //else add zero.
                   }
                   else{
                     stencil_value += this_potential_submesh[sub_idx+this_submesh_side_length_squared];
                   }
 
-
-
-
-
-                  stencil_value /= 6;
-                  int delta = (stencil_value-potentials[root][sub_idx]);
-                  potentials[root][sub_idx] += delta;
+                  if(!field){
+                    stencil_value /= stencil_divisor;
+                  }
+                  else{
+                    stencil_value /= 6;
+                  }
+                  potentials[root][sub_idx] = stencil_value;
                 }
                 else{
-
-                  int stencil_value =       (this_potential_submesh[sub_idx-1] +
+                  potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
                                                      this_potential_submesh[sub_idx+1] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
-                 int delta = (stencil_value-potentials[root][sub_idx]);
-                 potentials[root][sub_idx] += delta;
                 }
               }
             }
@@ -430,22 +466,19 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
     for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
       if(submesh_side_lengths[root]){
         for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-
           if(fabs(potentials[root][sub]-potentials_copy[root][sub]) > new_convergence){
             new_convergence = fabs(potentials[root][sub]-potentials_copy[root][sub]); //maximum difference between old and new
           }
-
         }
       }
     }
 
 
 
-    printf("convergence: %f, %f\n",new_convergence/10000.0,(float)convergence_sum/10000.0);
+    printf("convergence: %f\n",new_convergence/10000.0);
     if((new_convergence/10000.0) < tolerance){ //exit condition
       break;
     }
-    convergence_sum += new_convergence;
     new_convergence = 0;
 
   }

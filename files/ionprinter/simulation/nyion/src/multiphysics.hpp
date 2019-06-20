@@ -61,4 +61,4 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len);
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive);
+int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive, bool field);

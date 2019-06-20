@@ -1321,15 +1321,95 @@ Tried a very slow multigrid progression. This works really well for meshes with 
 
 3 minutes to converge is a bit much. I could parallelize this, but have to learn verilog for school, and happen to have a DE0-Nano FPGA dev board with 32 MB of sdram, which will fit a 200x200x200 array perfectly. GPUs aren't ideal for this sort of problems.
 
-
+the "Kaczmarz method" is apparently guaranteed to converge.
 
 I think I can convert to integer operations by multiplying by 1000 or so; this should speed everything up. A 24-bit signed int should suffice.
 
 
 
-"Go Fish: the FPGA accelerated poisson"
+"Go Fish: the FPGA accelerated poisson solver"
 
 Computer crashed a few times, needed sudo mv /var/lib/mysql/tc.log /var/lib/mysql/tc_bkp.log.
+
+
+
+bunch of stuff happened off-camera
+
+So the new laplace relax algorithm can do a solid 80M stencils per second, and converges in about 50 seconds to a 200x200x200 array with 6 steps of multigrid and all integer ops. There's still a possible ~3v error or so at delta 0.01 convergence; it'd be great to get that down.
+
+> The Conjugate Gradient Method is the most prominent iterative method for solving sparse systems of linear equations.
+> Unfortunately, many textbook treatments of the topic are written with neither illustrations nor intuition, and their
+> victims can be found to this day babbling senselessly in the corners of dusty libraries. 
+
+CG/ method might be useful.
+
+
+
+The "DE10-NANO CYCLONE V SE SOC KIT" by terasic has a cool 1 GB of RAM. Only dev boards with SODIMM slots seem to have larger memories.
+
+If we halve our mesh resolution to 
+
+
+
+<hr>
+```
+Trials of HPC, act ii
+
+User: "Computer! I desire a 100 TB float array."
+KERNEL: [ moves to acquiesce, and falls bodily to the floor in the process ]
+User: "No, no, ignore that!"
+User: "Get up!"
+KERNEL: [ sobs gently without moving ]
+
+[ REAPER enters ]
+[ REAPER is dressed in bobby's outfit with SCYTHE slung across arm ]
+
+REAPER: " 'roit! What's all this about?!"
+
+[ REAPER sees LINUX lying on the floor ]
+
+REAPER: "ah!"
+REAPER: "..."
+REAPER: "ah!"
+REAPER: "..."
+
+[ REAPER begins to swing SCYTHE ineffectually and at random ]
+[ REAPER knocks over flowerpot, which smashes to bits on the ground ]
+[ REAPER gives LINUX a gash across the leg ]
+
+REAPER [ out of breath ]: "is-" [ pant ]
+REAPER: "is that better?"
+
+
+
+EarlyOOM: don't leave home without it
+```
+
+<hr>
+
+"Jacobi's just averaging? Let's try it out!"
+
+Numerical methods are a gateway drug.
+
+"Ah, what a wonderful gradient! Why, it almost looks physically correct!", you muse. "It'd be prettier in 3d, though."
+
+Next, you're loading up objdump to eek out the that last 12% you know is lost in the implementation. You acridly reassure yourself that you're *not* the root of all evil, that Knuth would be proud. Nevertheless, you avert your screen from the gazes of those peasants around. They wouldn't understand.
+
+
+
+You're cache-aligning, but your methods are hit-or-miss.
+
+Soon your life is downwards everywhere. Everything relaxes but you. You stand at the street corner, watching for non-zero second derivatives. Sunlight warms your pallid skin - nothing but a radiation condition with a conductivity term. The tepid breeze sends shivers down your spine nonetheless - the convection term and its ungainly unknowns have always strained your nerves. Your most valued possession, clutched in a paper bag; an FPGA PCIe board.
+
+Your eyes begin to blur. *this must be multigrid!*, you say.
+
+Prof. Shewchuk's words echo vaguely within your mind. *"Of course, a procedure that always converges to zero isn’t going to help you attract friends."* If only you could find the solution.
+
+
+
+A truck stops abruptly - too abruptly. Your eyes snap and crackle. You raise a tire-iron.
+
+<hr>
 
 
 
