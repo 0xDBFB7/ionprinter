@@ -359,7 +359,6 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
     // std::vector<std::vector<float>> input_residuals;
     // input_residuals = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,5,0,1);
 
-
     for(int i = 4; i > 2; i-=2){ //multigrid should
 
       std::vector<std::vector<float>> coarsened_potentials;
@@ -371,26 +370,10 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
       coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.01,0,1);
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.0001,0,1);
 
       decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
     }
-
-    for(int i = 2; i < 4; i+=2){ //multigrid should
-      std::vector<std::vector<float>> coarsened_potentials;
-      std::vector<std::vector<int>> coarsened_boundaries;
-
-      coarsened_potentials.resize(0);
-      coarsened_boundaries.resize(0);
-
-      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
-      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
-
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.01,0,1);
-
-      decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
-    }
-
   }
 
   int root_x = mesh_geometry.root_x_len;
@@ -492,16 +475,16 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
                   else{
                     stencil_value /= 6;
                   }
-                  potentials[root][sub_idx] = stencil_value;
+                  potentials[root][sub_idx] += (stencil_value-potentials[root][sub_idx])*1.8;
                 }
                 else{
 
-                  potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
+                  potentials[root][sub_idx] +=       (((this_potential_submesh[sub_idx-1] +
                                                      this_potential_submesh[sub_idx+1] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
-                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6)-potentials[root][sub_idx])*1.8;
                 }
               }
             }
