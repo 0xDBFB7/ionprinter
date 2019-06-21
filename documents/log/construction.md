@@ -1319,7 +1319,11 @@ Tried a very slow multigrid progression. This works really well for meshes with 
 
 #### FPGA-accelerated laplace
 
-3 minutes to converge is a bit much. I could parallelize this, but have to learn verilog for school, and happen to have a DE0-Nano FPGA dev board with 32 MB of sdram, which will fit a 200x200x200 array perfectly. GPUs aren't ideal for this sort of problems.
+3 minutes to converge is a bit much. I could parallelize this, but have to learn verilog for school, and happen to have a DE0-Nano FPGA dev board with 32 MB of sdram, which will fit a 200x200x200 array perfectly. GPUs aren't ideal for these sorts of problems. 
+
+Transferring data to the fpga at reasonable speed presents some difficulty; the built-in USB blaster can apparently hit ~10 Mbps, but the bindings that exist only allow ~10kbps. UART implementation is non-trivial because of clock domains etc. An RPI might work: socket -> wide gpio bus; direct port maniuplation in C++ can hit a few dozen Mhz. Ordered an FT232R high-speed parallel FIFO.
+
+
 
 the "Kaczmarz method" is apparently guaranteed to converge.
 
@@ -1366,7 +1370,7 @@ KERNEL: [ sobs gently without moving ]
 
 REAPER: " 'roit! What's all this about?!"
 
-[ REAPER sees LINUX lying on the floor ]
+[ REAPER sees LINUX lying in a heap on the floor ]
 
 REAPER: "ah!"
 REAPER: "..."
@@ -1375,7 +1379,7 @@ REAPER: "..."
 
 [ REAPER begins to swing SCYTHE ineffectually and at random ]
 [ REAPER knocks over flowerpot, which smashes to bits on the ground ]
-[ REAPER gives LINUX a gash across the leg ]
+[ REAPER gives KERNEL a gash across the leg ]
 
 REAPER [ out of breath ]: "is-" [ pant ]
 REAPER: "is that better?"
@@ -1411,5 +1415,14 @@ A truck stops abruptly - too abruptly. Your eyes snap and crackle. You raise a t
 
 <hr>
 
+It would be much better to use <https://www.mcs.anl.gov/petsc/documentation/index.html> PETSC. However, I'm really tired of dependencies right now; I grow weary of thousand-page user manuals and opaque data structures. 
 
+Trying to implement CG, which apparently converges in ~ sqrt that of gauss-seidel if properly preconditioned.
 
+Eh, perhaps it's not worth it. A better multigrid implementation may be better use of my time.
+
+Ah, no - there's just something wrong with the solver. Here's a single active point:
+
+![broken](assets/broken.png)
+
+That's not right.

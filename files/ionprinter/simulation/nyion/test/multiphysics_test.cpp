@@ -142,7 +142,7 @@ TEST(laplace_tests,coarsen){
 
 //
 //
-TEST(laplace_tests,fast_laplace_convergence_1){
+TEST(laplace_tests,fast_laplace_convergence_1_big){
 
 
   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
@@ -154,21 +154,18 @@ TEST(laplace_tests,fast_laplace_convergence_1){
 
   float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.05};
 
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,40);
+  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
 
-  for(uint32_t root = 0; root < 20; root++){
+  for(uint32_t root = 0; root < 200; root++){
     for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
       potentials[root][sub] = 1000.0;
       boundaries[root][sub] = 1;
     }
   }
 
-
   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1, 1);
   //takes 47 seconds ATM
-  for(uint32_t sub = 0; sub < 100; sub++){
-    printf("%f\n",potentials[1][sub]);
-  }
+  // to_csv(potentials,mesh_geometry);
 
 
   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
@@ -179,6 +176,55 @@ TEST(laplace_tests,fast_laplace_convergence_1){
   //
   // DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
 }
+
+
+
+TEST(laplace_tests,fast_laplace_convergence_1_point_tests){
+
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.01,0,0.006};
+
+  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
+
+  // for(uint32_t root = 0; root < 0; root++){
+  //   for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
+  //     potentials[root][sub] = 1000.0;
+  //     boundaries[root][sub] = 1;
+  //   }
+  // }
+
+  int fine_sub_idx = (60*60*(59)) + (60*29) + 29;
+  potentials[0][fine_sub_idx] = 1000.0;
+  boundaries[0][fine_sub_idx] = 1;
+
+  // to_csv(potentials,mesh_geometry);
+
+  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1, 1);
+  //takes 47 seconds ATM
+
+
+  // fine_sub_idx = (60*60*(0)) + (60*29) + 29;
+  // printf("%f\n",potentials[1][fine_sub_idx]);
+
+  to_csv(potentials,mesh_geometry);
+
+
+  // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
+  //
+  // for(float x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
+  //     printf("%f\n", get_mesh_value_world_point(x,0.005,0.005,potentials,mesh_geometry));
+  // }
+  //
+  // DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
+}
+
 
 
 

@@ -208,12 +208,14 @@ template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vecto
 
 
 
-int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive, bool field){
+std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive, bool field){
   /*
 
   Jacobi averages the four nearest points and stores the result in a new matrix.
-  Gauss-Seidel averages the four nearest points and updates the current matrix.
-  Conjugate Gradient 
+  Gauss-Seidel averages the four nearest points and updates the current matrix. Converges in
+  Conjugate Gradient. Converges in ~O(sqrt(n)) time.
+
+
 
   */
 
@@ -230,9 +232,14 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
 
 
-  if(recursive){ //recursive coarse mesh solver
+  if(recursive){ //recursive coarse mesh solver  V-cycle
     printf("ROOT");
-    for(int i = 6; i > 2; i-=2){
+
+    // std::vector<std::vector<float>> input_residuals;
+    // input_residuals = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,5,0,1);
+
+
+    for(int i = 6; i > 2; i-=2){ //multigrid should
       std::vector<std::vector<float>> coarsened_potentials;
       std::vector<std::vector<int>> coarsened_boundaries;
 
@@ -242,7 +249,7 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
       coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
       coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.00001,0,1);
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.5,0,1);
 
       decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
     }
@@ -326,6 +333,7 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
                   int stencil_value = 0;
 
                   int stencil_divisor = 6;
+                  
                   /*
                   The 'field' and 'stencil_divisor' flags serve to differentiate between in-conductor current simulations, or
                   vacuum field sims.
@@ -493,6 +501,15 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
     }
   }
 
+  std::vector<std::vector<float>> residuals = potentials_vector;
+  for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
+    if(submesh_side_lengths[root]){
+      for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
+        residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub])/10000.0;
+      }
+    }
+  }
+
   for(int root = 0; root < root_size; root++){
     if(submesh_side_lengths[root]){
       delete[] potentials[root];
@@ -511,13 +528,60 @@ int fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_ve
 
   std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
+
+  return residuals;
 }
 
 
 
+int fast_conjugate_gradient(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance){
+  /*
+  Speed is not as important here, since the number of iterations is much lower.
+  */
+  int iterations = 0;
+  for(iterations = 0; iterations < 10000; iterations++){
+
+  }
 
 
+}
 
+
+void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_geometry){
+  ofstream output_file;
+  output_file.open ("out.csv");
+
+  for(int r_x = 0; r_x < mesh_geometry.root_x_len; r_x++){
+    for(int r_y = 0; r_y < mesh_geometry.root_y_len; r_y+=5){
+      for(int r_z = 0; r_z < mesh_geometry.root_z_len; r_z++){
+        int root_idx = (mesh_geometry.root_x_len*mesh_geometry.root_y_len*r_z) + (mesh_geometry.root_x_len*r_y) + r_x;
+
+        if(original[root_idx].size()){
+          int fine_sub_len = std::round(std::cbrt(original[root_idx].size())); //cube root
+          for(int x = 0; x < fine_sub_len; x++){
+            for(int y = 0; y < fine_sub_len; y++){
+              for(int z = 0; z < fine_sub_len; z++){
+                int sub_idx = (fine_sub_len*fine_sub_len*z) + (fine_sub_len*y) + x;
+                float world_x = (r_x*mesh_geometry.root_scale)+(x*(mesh_geometry.root_scale/fine_sub_len));
+                float world_y = (r_y*mesh_geometry.root_scale)+(y*(mesh_geometry.root_scale/fine_sub_len));
+                float world_z = (r_z*mesh_geometry.root_scale)+(z*(mesh_geometry.root_scale/fine_sub_len));
+                if(original[root_idx][sub_idx]){
+                  output_file << world_x << ","
+                              << world_y << ","
+                              << world_z << ","
+                              << original[root_idx][sub_idx] << "," << "\n";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  output_file.close();
+
+}
 
 
 
