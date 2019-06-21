@@ -1425,4 +1425,8 @@ Ah, no - there's just something wrong with the solver. Here's a single active po
 
 ![broken](assets/broken.png)
 
-That's not right.
+That's not right.	
+
+
+
+Multigrid solvers typically use a V-cycle. 

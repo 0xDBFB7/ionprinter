@@ -80,6 +80,9 @@
 #define MULTIGRID_COARSE_GRID 0.001
 #define MATERIAL_BC_CUTOFF 1000//
 
+
+
+
 root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   /*
   Creates a new mesh with the specified parameters.
@@ -156,7 +159,7 @@ void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector
 
   for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
-      int fine_sub_len = std::round(std::cbrt(original[root_mesh_idx].size())); //cube root
+      int fine_sub_len = std::round(std::cbrt(original[root_mesh_idx].size())); //cube
       int coarse_sub_len = fine_sub_len/scale_divisor;
       coarsened[root_mesh_idx].resize(coarse_sub_len*coarse_sub_len*coarse_sub_len);
 
@@ -207,6 +210,124 @@ template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vecto
 
 
 
+int boundary_stencils(int ** potentials, int * submesh_side_lengths, int sub_idx, int x, int y, int z, int root, root_mesh_geometry mesh_geometry, int * stencil_divisor){
+    int stencil_value = 0;
+    int root_size = mesh_geometry.root_size;
+
+
+    if(x == 0){ //-x
+      int root_i = root-1;  //new submesh cell
+      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
+        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+        int sub_x = submesh_side_lengths[root_i]-1;
+        int sub_y = (int)(y*scale_factor);
+        int sub_z = (int)(z*scale_factor);
+        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
+      }
+      else{
+        stencil_divisor--;
+      }
+      //else add zero.
+    }
+    else{
+      stencil_value += potentials[root][sub_idx-1];
+    }
+
+    if(x == submesh_side_lengths[root]-1){ //-x
+      int root_i = root+1;  //new submesh cell
+      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
+        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+        int sub_x = 0;
+        int sub_y = (int)(y*scale_factor);
+        int sub_z = (int)(z*scale_factor);
+        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
+      }
+      else{
+        stencil_divisor--;
+      }
+      //else add zero.
+    }
+    else{
+      stencil_value += potentials[root][sub_idx+1];
+    }
+
+    if(y == 0){ //-x
+      int root_i = root-mesh_geometry.root_x_len;  //new submesh cell
+      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
+        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+        int sub_x = (int)(x*scale_factor);
+        int sub_y = submesh_side_lengths[root_i]-1;
+        int sub_z = (int)(z*scale_factor);
+        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
+      }
+      else{
+        stencil_divisor--;
+      }
+      //else add zero.
+    }
+    else{
+      stencil_value += potentials[root][sub_idx-submesh_side_lengths[root]];
+    }
+
+
+    if(y == submesh_side_lengths[root]-1){ //-x
+      int root_i = root+mesh_geometry.root_x_len;  //new submesh cell
+      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
+        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+        int sub_x = (int)(x*scale_factor);
+        int sub_y = 0;
+        int sub_z = (int)(z*scale_factor);
+        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
+      }
+      else{
+        stencil_divisor--;
+      }
+      //else add zero.
+    }
+    else{
+      stencil_value += potentials[root][sub_idx+submesh_side_lengths[root]];
+    }
+
+    if(z == 0){ //-x
+      int root_i = root-(mesh_geometry.root_x_len*mesh_geometry.root_y_len);  //new submesh cell
+      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
+        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+        int sub_x = (int)(x*scale_factor);
+        int sub_y = (int)(y*scale_factor);
+        int sub_z = submesh_side_lengths[root_i]-1;
+        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
+      }
+      else{
+        stencil_divisor--;
+      }
+      //else add zero.
+    }
+    else{
+      stencil_value += potentials[root][sub_idx-(submesh_side_lengths[root]*submesh_side_lengths[root])];
+    }
+
+    if(z == submesh_side_lengths[root]-1){ //-x
+      int root_i = root+(mesh_geometry.root_x_len*mesh_geometry.root_y_len);  //new submesh cell
+      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
+        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
+        int sub_x = (int)(x*scale_factor);
+        int sub_y = (int)(y*scale_factor);
+        int sub_z = 0;
+        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
+      }
+      else{
+        stencil_divisor--;
+      }
+      //else add zero.
+    }
+    else{
+      stencil_value += potentials[root][sub_idx+(submesh_side_lengths[root]*submesh_side_lengths[root])];
+    }
+
+    return stencil_value;
+}
+
+
 
 std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool recursive, bool field){
   /*
@@ -239,7 +360,8 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
     // input_residuals = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,5,0,1);
 
 
-    for(int i = 6; i > 2; i-=2){ //multigrid should
+    for(int i = 4; i > 2; i-=2){ //multigrid should
+
       std::vector<std::vector<float>> coarsened_potentials;
       std::vector<std::vector<int>> coarsened_boundaries;
 
@@ -249,7 +371,22 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
       coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.5,0,1);
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.01,0,1);
+
+      decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
+    }
+
+    for(int i = 2; i < 8; i+=2){ //multigrid should
+      std::vector<std::vector<float>> coarsened_potentials;
+      std::vector<std::vector<int>> coarsened_boundaries;
+
+      coarsened_potentials.resize(0);
+      coarsened_boundaries.resize(0);
+
+      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
+      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
+
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.01,0,1);
 
       decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
     }
@@ -324,16 +461,17 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
 
               int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
 
+
               if((field && !boundaries[root][sub_idx]) || (!field && boundaries[root][sub_idx] > MATERIAL_BC_CUTOFF)){
 
                 if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length-1 //if we're at an edge or corner
                                               || y == this_submesh_side_length-1
                                               || z == this_submesh_side_length-1){ //not quite as fast as 6 seperate loops, but that's tedious and boring
 
-                  int stencil_value = 0;
 
-                  int stencil_divisor = 6;
-                  
+
+
+
                   /*
                   The 'field' and 'stencil_divisor' flags serve to differentiate between in-conductor current simulations, or
                   vacuum field sims.
@@ -344,109 +482,9 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
 
                   However, we're using the BC array to also denote conductor presence; if the
                   */
+                  int stencil_divisor = 6;
 
-
-
-                  if(x == 0){ //-x
-                    int root_i = root-1;
-                    if(root_i >= 0 && submesh_side_lengths[root_i]){
-                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-                      stencil_value += potentials[root_i]
-                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor))) // BUG: this will index into the wrong place if scales differ
-                            + (submesh_side_lengths[root_i]*submesh_side_lengths[root_i]) + (submesh_side_lengths[root_i]-1)];
-                    }
-                    else{
-                      stencil_divisor--;
-                    }
-                    //else add zero.
-                  }
-                  else{
-                    stencil_value += this_potential_submesh[sub_idx-1];
-                  }
-
-                  if(x == this_submesh_side_length-1){ //"below": -z
-                    int root_i = root+1;
-                    if(root_i < root_size && submesh_side_lengths[root_i]){
-                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-                      stencil_value += potentials[root_i]
-                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
-                            + (submesh_side_lengths[root_i]*((int)(y*scale_factor))) + 0];
-                    }
-                    else{
-                      stencil_divisor--;
-                    }
-                    //else add zero.
-                  }
-                  else{
-                    stencil_value += this_potential_submesh[sub_idx+1];
-                  }
-
-                  if(y == 0){ //"below": -z
-                    int root_i = root-root_y;
-                    if(root_i >= 0 && submesh_side_lengths[root_i]){
-                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-                      stencil_value += potentials[root_i]
-                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
-                            + (submesh_side_lengths[root_i]*(submesh_side_lengths[root_i]-1)) + ((int)(x*scale_factor))];
-                    }
-                    else{
-                      stencil_divisor--;
-                    }
-                    //else add zero.
-                  }
-                  else{
-                    stencil_value += this_potential_submesh[sub_idx-this_submesh_side_length];
-                  }
-
-                  if(y == this_submesh_side_length-1){ //"below": -z
-                    int root_i = root+root_y;
-                    if(root_i < root_size && submesh_side_lengths[root_i]){
-                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-                      stencil_value += potentials[root_i]
-                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*((int)(z*scale_factor)))
-                            + (submesh_side_lengths[root_i]*0) + ((int)(x*scale_factor))];
-                    }
-                    else{
-                      stencil_divisor--;
-                    }
-                    //else add zero.
-                  }
-                  else{
-                    stencil_value += this_potential_submesh[sub_idx+this_submesh_side_length];
-                  }
-
-                  if(z == 0){ //"below": -z
-                    int root_i = root-root_xy;
-                    if(root_i >= 0 && submesh_side_lengths[root_i]){
-                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-                      stencil_value += potentials[root_i]
-                      [((submesh_side_lengths[root_i]*submesh_side_lengths[root_i])*(submesh_side_lengths[root_i]-1))
-                            + (submesh_side_lengths[root_i]*((int)(y*scale_factor))) + ((int)(x*scale_factor))];
-                    }
-                    else{
-                      stencil_divisor--;
-                    }
-                    //else add zero.
-                  }
-                  else{
-                    stencil_value += this_potential_submesh[sub_idx-this_submesh_side_length_squared];
-                  }
-
-                  if(z == this_submesh_side_length-1){ //"above": +z
-                    int root_i = root+root_xy;
-                    if(root_i < root_size && submesh_side_lengths[root_i]){
-                      float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-                      stencil_value += potentials[root_i]
-                      [(submesh_side_lengths[root_i]*((int)(y*scale_factor))) + ((int)(x*scale_factor))]; //z=0 on cell above
-                    }
-                    else{
-                      stencil_divisor--;
-                    }
-                    //else add zero.
-                  }
-                  else{
-                    stencil_value += this_potential_submesh[sub_idx+this_submesh_side_length_squared];
-                  }
+                  int stencil_value = boundary_stencils(potentials, submesh_side_lengths, sub_idx, x, y, z, root, mesh_geometry, &stencil_divisor);
 
                   if(!field){
                     stencil_value /= stencil_divisor;
@@ -457,6 +495,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
                   potentials[root][sub_idx] = stencil_value;
                 }
                 else{
+
                   potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
                                                      this_potential_submesh[sub_idx+1] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
@@ -552,7 +591,7 @@ void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_g
   output_file.open ("out.csv");
 
   for(int r_x = 0; r_x < mesh_geometry.root_x_len; r_x++){
-    for(int r_y = 0; r_y < mesh_geometry.root_y_len; r_y+=5){
+    for(int r_y = 0; r_y < mesh_geometry.root_y_len; r_y++){
       for(int r_z = 0; r_z < mesh_geometry.root_z_len; r_z++){
         int root_idx = (mesh_geometry.root_x_len*mesh_geometry.root_y_len*r_z) + (mesh_geometry.root_x_len*r_y) + r_x;
 

@@ -30,6 +30,8 @@
 #define Y_LEN 7 //bounds/len will have to be computed every time the scale is required.
 #define Z_LEN 8 //not sure if that's a big deal.
 
+#define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
+
 int f_idx(float x, float y, float z, int mesh_geometry[3], float mesh_scale[3]);
 int i_idx(int x, int y, int z, int mesh_geometry[3]);
 int idx_from_position(int x, int y, int z, int x_len, int y_len, int z_len);
