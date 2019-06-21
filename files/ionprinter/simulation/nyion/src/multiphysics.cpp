@@ -376,7 +376,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
     }
 
-    for(int i = 2; i < 8; i+=2){ //multigrid should
+    for(int i = 2; i < 4; i+=2){ //multigrid should
       std::vector<std::vector<float>> coarsened_potentials;
       std::vector<std::vector<int>> coarsened_boundaries;
 
