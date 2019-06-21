@@ -1430,3 +1430,11 @@ That's not right.
 
 
 Multigrid solvers typically use a V-cycle. 
+
+
+
+For poisson, the optimal SOR coefficient is known and is around 1.96 for these problems. However, the solver becomes hopelessly unstable.
+
+Oh, fascinating! The absolute value and units chosen greatly affect the convergence rate! <https://scicomp.stackexchange.com/questions/14809/why-should-i-renormalize-physical-variables/14810#14810>
+
+ 

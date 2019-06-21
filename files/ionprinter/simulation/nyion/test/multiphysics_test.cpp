@@ -156,18 +156,18 @@ TEST(laplace_tests,fast_laplace_convergence_1_big){
   std::vector<std::vector<float>> potentials;
   std::vector<std::vector<int>> boundaries;
 
-  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.05};
+  float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.006};
 
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
+  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,200);
 
-  for(uint32_t root = 0; root < 200; root++){
+  for(uint32_t root = 0; root < 1; root++){
     for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
       potentials[root][sub] = 1000.0;
       boundaries[root][sub] = 1;
     }
   }
 
-  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.01, 1, 1);
+  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.0001, 1, 1);
   //takes 47 seconds ATM
   // to_csv(potentials,mesh_geometry);
 

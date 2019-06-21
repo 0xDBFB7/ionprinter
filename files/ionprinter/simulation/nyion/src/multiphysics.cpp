@@ -400,7 +400,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       boundaries[root] = new int[this_submesh_size];
 
       for(int sub = 0; sub < this_submesh_size; sub++){
-        potentials[root][sub] = potentials_vector[root][sub]*10000;
+        potentials[root][sub] = potentials_vector[root][sub]*1000;
         boundaries[root][sub] = boundaries_vector[root][sub];
       }
     }
@@ -417,10 +417,12 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
 
   for(iterations = 1; iterations < 10000; iterations++){
 
-    for(int root = 0; root < root_size; root++){  //make a copy of the last iteration for convergence testing
-      if(submesh_side_lengths[root]){
-        for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-          potentials_copy[root][sub] = potentials[root][sub];
+    if(iterations % 20 == 0){
+      for(int root = 0; root < root_size; root++){  //make a copy of the last iteration for convergence testing
+        if(submesh_side_lengths[root]){
+          for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
+            potentials_copy[root][sub] = potentials[root][sub];
+          }
         }
       }
     }
@@ -475,16 +477,16 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
                   else{
                     stencil_value /= 6;
                   }
-                  potentials[root][sub_idx] += (stencil_value-potentials[root][sub_idx])*1.8;
+                  potentials[root][sub_idx] = stencil_value;
                 }
                 else{
 
-                  potentials[root][sub_idx] +=       (((this_potential_submesh[sub_idx-1] +
+                  potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
                                                      this_potential_submesh[sub_idx+1] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
-                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6)-potentials[root][sub_idx])*1.8;
+                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
                 }
               }
             }
@@ -493,21 +495,24 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       }
     }
 
-    for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
-      if(submesh_side_lengths[root]){
-        for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-          if(fabs(potentials[root][sub]-potentials_copy[root][sub]) > new_convergence){
-            new_convergence = fabs(potentials[root][sub]-potentials_copy[root][sub]); //maximum difference between old and new
+    if(iterations % 20 == 0){
+
+      for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
+        if(submesh_side_lengths[root]){
+          for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
+            if(fabs(potentials[root][sub]-potentials_copy[root][sub]) > new_convergence){
+              new_convergence = fabs(potentials[root][sub]-potentials_copy[root][sub]); //maximum difference between old and new
+            }
           }
         }
       }
-    }
 
 
 
-    printf("convergence: %f\n",new_convergence/10000.0);
-    if((new_convergence/10000.0) < tolerance){ //exit condition
-      break;
+      printf("convergence: %f\n",new_convergence/1000.0);
+      if((new_convergence/1000.0) < tolerance){ //exit condition
+        break;
+      }
     }
     new_convergence = 0;
 
@@ -518,7 +523,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
 
   for(int root = 0; root < potentials_vector.size(); root++){
     for(int sub = 0; sub < potentials_vector[root].size(); sub++){
-      potentials_vector[root][sub] = potentials[root][sub]/10000.0;
+      potentials_vector[root][sub] = potentials[root][sub]/1000.0;
       boundaries_vector[root][sub] = boundaries[root][sub];
     }
   }
@@ -527,7 +532,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
   for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
     if(submesh_side_lengths[root]){
       for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-        residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub])/10000.0;
+        residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub])/1000.0;
       }
     }
   }
@@ -563,9 +568,32 @@ int fast_conjugate_gradient(std::vector<std::vector<float>> &potentials_vector, 
   int iterations = 0;
   for(iterations = 0; iterations < 10000; iterations++){
 
+   // int n = A.size();
+   // vec X( n, 0.0 );
+   //
+   // vec R = B;
+   // vec P = R;
+   // int k = 0;
+   //
+   // while ( k < n )
+   // {
+   //    vec Rold = R;                                         // Store previous residual
+   //    vec AP = matrixTimesVector( A, P );
+   //
+   //    double alpha = innerProduct( R, R ) / max( innerProduct( P, AP ), NEARZERO );
+   //    X = vectorCombination( 1.0, X, alpha, P );            // Next estimate of solution
+   //    R = vectorCombination( 1.0, R, -alpha, AP );          // Residual
+   //
+   //    if ( vectorNorm( R ) < TOLERANCE ) break;             // Convergence test
+   //
+   //    double beta = innerProduct( R, R ) / max( innerProduct( Rold, Rold ), NEARZERO );
+   //    P = vectorCombination( 1.0, R, beta, P );             // Next gradient
+   //    k++;
+   // }
+   //
+   // return X;
+
   }
-
-
 }
 
 
