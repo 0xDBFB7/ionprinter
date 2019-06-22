@@ -385,20 +385,26 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
     // std::vector<std::vector<float>> input_residuals;
     // input_residuals = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,5,0,1);
 
-    std::vector<std::vector<float>> input_residuals =
-                        fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,50,0,1);
 
-    int cycle[] = {4};
-    for(int i = 0; i < 1; i++){ //multigrid should
-
-
+    int cycle[] = {30,10,6,4,6,4};
+    for(int i = 0; i < 6; i++){ //multigrid should
 
       std::vector<std::vector<float>> coarsened_potentials;
       std::vector<std::vector<int>> coarsened_boundaries;
 
+      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,cycle[i]);
+      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,cycle[i]);
+
+      std::vector<std::vector<float>> input_residuals =
+                          fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,50,0,1);
+
+      decoarsen_mesh(input_residuals,input_residuals,mesh_geometry,cycle[i]);
+
+
+      std::vector<std::vector<float>> coarsened_residuals;
       // coarsened_potentials.resize(0);
 
-      coarsen_mesh(input_residuals,coarsened_potentials,mesh_geometry,cycle[i]);
+      coarsen_mesh(input_residuals,coarsened_residuals,mesh_geometry,cycle[i]);
       coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,cycle[i]);
 
       for(int root = 0; root < coarsened_boundaries.size(); root++){
@@ -407,9 +413,9 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
         }
       }
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,10,0,1);
+      fast_relax_laplace_potentials(coarsened_residuals,coarsened_boundaries,mesh_geometry,1,0,1);
 
-      decoarsen_mesh(coarsened_potentials,input_residuals,mesh_geometry,cycle[i]);
+      decoarsen_mesh(coarsened_residuals,input_residuals,mesh_geometry,cycle[i]);
 
       for(int root = 0; root < potentials_vector.size(); root++){
         for(int sub = 0; sub < potentials_vector[root].size(); sub++){

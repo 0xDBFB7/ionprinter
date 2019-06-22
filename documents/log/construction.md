@@ -1440,3 +1440,5 @@ Oh, fascinating! The absolute value and units chosen greatly affect the converge
  Switched everything to doubles, not a huge difference.
 
 Interesting: letting coarse multigrid iterations converge too far can be detrimental
+
+Aha! I had previously left the boundaries in the coarse residual grid; however, this was incorrect.
