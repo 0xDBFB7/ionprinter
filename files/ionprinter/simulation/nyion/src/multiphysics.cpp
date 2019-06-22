@@ -389,19 +389,14 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
     int cycle[] = {30,10,6,4,6,4};
     for(int i = 0; i < 6; i++){ //multigrid should
 
-      std::vector<std::vector<float>> coarsened_potentials;
-      std::vector<std::vector<int>> coarsened_boundaries;
-
-      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,cycle[i]);
-      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,cycle[i]);
 
       std::vector<std::vector<float>> input_residuals =
-                          fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,50,0,1);
-
-      decoarsen_mesh(input_residuals,input_residuals,mesh_geometry,cycle[i]);
+                          fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,50,0,1);
 
 
       std::vector<std::vector<float>> coarsened_residuals;
+      std::vector<std::vector<int>> coarsened_boundaries;
+
       // coarsened_potentials.resize(0);
 
       coarsen_mesh(input_residuals,coarsened_residuals,mesh_geometry,cycle[i]);
