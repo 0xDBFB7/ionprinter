@@ -154,6 +154,8 @@ template<typename T>
 void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor){
   /*
   The root mesh resolution remains the same; only the submeshes are coarsened.
+  A simple straight-injection operator.
+  otherwise known as "restriction" in literature.
   */
   coarsened = original;
 
@@ -183,6 +185,8 @@ template<typename T>
 void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor){
   /*
   The root mesh resolution remains the same; only the submeshes are coarsened.
+
+  otherwise known as "prolongation" in literature.
   */
   decoarsened = original;
 
@@ -190,15 +194,37 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
     if(original[root_mesh_idx].size()){
       int coarse_sub_len = std::round(std::cbrt(original[root_mesh_idx].size())); //cube root
       int fine_sub_len = coarse_sub_len*scale_divisor;
+
       decoarsened[root_mesh_idx].resize(fine_sub_len*fine_sub_len*fine_sub_len);
 
-      for(int x = 0; x < fine_sub_len; x++){
-        for(int y = 0; y < fine_sub_len; y++){
-          for(int z = 0; z < fine_sub_len; z++){
-            int fine_sub_idx = (fine_sub_len*fine_sub_len*z) + (fine_sub_len*y) + x;
-            int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z/scale_divisor)) + (coarse_sub_len*(y/scale_divisor)) + (x/scale_divisor);
+      float interp_value = 0;
+      for(int x = 0; x < coarse_sub_len; x++){
+        for(int y = 0; y < coarse_sub_len; y++){
+          for(int z = 0; z < coarse_sub_len; z++){
+            int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z)) + (coarse_sub_len*(y)) + (x);
 
-            decoarsened[root_mesh_idx][fine_sub_idx] = original[root_mesh_idx][coarse_sub_idx];
+            float x_interp_scale = (original[root_mesh_idx][coarse_sub_idx+1]-original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
+            float y_interp_scale = (original[root_mesh_idx][coarse_sub_idx+coarse_sub_len]-original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
+            float z_interp_scale = (original[root_mesh_idx][coarse_sub_idx+(coarse_sub_len*coarse_sub_len)]-original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
+
+            for(int f_x = 0; f_x < scale_divisor; f_x++){
+              for(int f_y = 0; f_y < scale_divisor; f_y++){
+                for(int f_z = 0; f_z < scale_divisor; f_z++){
+                  int fine_sub_idx = (fine_sub_len*fine_sub_len*((z*scale_divisor)+f_z)) + (fine_sub_len*((y*scale_divisor)+f_y)) + ((x*scale_divisor)+f_x);
+
+                  if(x+f_x < fine_sub_len-1 && x+f_y < fine_sub_len-1 && z+f_z < fine_sub_len-1){
+
+
+                    interp_value = (x_interp_scale*f_x)
+                                          + (y_interp_scale*f_y)
+                                          + (z_interp_scale*f_z)
+                                          + original[root_mesh_idx][coarse_sub_idx];
+                  }
+
+                  decoarsened[root_mesh_idx][fine_sub_idx] = interp_value;
+                }
+              }
+            }
           }
         }
       }
@@ -210,8 +236,8 @@ template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vecto
 
 
 
-int boundary_stencils(int ** potentials, int * submesh_side_lengths, int sub_idx, int x, int y, int z, int root, root_mesh_geometry mesh_geometry, int * stencil_divisor){
-    int stencil_value = 0;
+float boundary_stencils(double ** potentials, int * submesh_side_lengths, int sub_idx, int x, int y, int z, int root, root_mesh_geometry mesh_geometry, int * stencil_divisor){
+    float stencil_value = 0;
     int root_size = mesh_geometry.root_size;
 
 
@@ -359,22 +385,59 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
     // std::vector<std::vector<float>> input_residuals;
     // input_residuals = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,5,0,1);
 
-    for(int i = 4; i > 2; i-=2){ //multigrid should
+    std::vector<std::vector<float>> input_residuals =
+                        fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,50,0,1);
+
+    int cycle[] = {4};
+    for(int i = 0; i < 1; i++){ //multigrid should
+
+
 
       std::vector<std::vector<float>> coarsened_potentials;
       std::vector<std::vector<int>> coarsened_boundaries;
 
-      coarsened_potentials.resize(0);
-      coarsened_boundaries.resize(0);
+      // coarsened_potentials.resize(0);
 
-      coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
-      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
+      coarsen_mesh(input_residuals,coarsened_potentials,mesh_geometry,cycle[i]);
+      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,cycle[i]);
 
-      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,0.0001,0,1);
+      for(int root = 0; root < coarsened_boundaries.size(); root++){
+        for(int sub = 0; sub < coarsened_boundaries[root].size(); sub++){
+          coarsened_boundaries[root][sub] = 0;
+        }
+      }
 
-      decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
+      fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,10,0,1);
+
+      decoarsen_mesh(coarsened_potentials,input_residuals,mesh_geometry,cycle[i]);
+
+      for(int root = 0; root < potentials_vector.size(); root++){
+        for(int sub = 0; sub < potentials_vector[root].size(); sub++){
+          potentials_vector[root][sub] += input_residuals[root][sub];
+        }
+      }
+
     }
+    // fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,0.2,0,1);
+
+    // for(int i = 4; i > 2; i-=2){ //multigrid should
+    //
+    //   std::vector<std::vector<float>> coarsened_potentials;
+    //   std::vector<std::vector<int>> coarsened_boundaries;
+    //
+    //   coarsened_potentials.resize(0);
+    //   coarsened_boundaries.resize(0);
+    //
+    //   coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
+    //   coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
+    //
+    //   fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,10,0,1);
+    //
+    //   decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
+    // }
+
   }
+
 
   int root_x = mesh_geometry.root_x_len;
   int root_y = mesh_geometry.root_y_len;
@@ -385,8 +448,8 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
   int * submesh_side_lengths = new int[root_size];
   std::fill(submesh_side_lengths, submesh_side_lengths + sizeof(submesh_side_lengths), 0);
 
-  int **potentials = new int*[root_size];
-  int **potentials_copy = new int*[root_size];
+  double **potentials = new double*[root_size];
+  double **potentials_copy = new double*[root_size];
   int **boundaries = new int*[root_size];
 
   for(int root = 0; root < root_size; root++){ //copy vector to ints
@@ -395,12 +458,12 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       submesh_side_lengths[root] = std::round(std::cbrt(potentials_vector[root].size())); //cube root
       int this_submesh_size = potentials_vector[root].size();
 
-      potentials[root] = new int[this_submesh_size];
-      potentials_copy[root] = new int[this_submesh_size];
+      potentials[root] = new double[this_submesh_size];
+      potentials_copy[root] = new double[this_submesh_size];
       boundaries[root] = new int[this_submesh_size];
 
       for(int sub = 0; sub < this_submesh_size; sub++){
-        potentials[root][sub] = potentials_vector[root][sub]*1000;
+        potentials[root][sub] = potentials_vector[root][sub]/1000.0;
         boundaries[root][sub] = boundaries_vector[root][sub];
       }
     }
@@ -413,11 +476,11 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
 
   int iterations = 0;
 
-  int new_convergence = 0;
+  float new_convergence = 0;
 
   for(iterations = 1; iterations < 10000; iterations++){
 
-    if(iterations % 20 == 0){
+    // if(iterations % 20 == 0){
       for(int root = 0; root < root_size; root++){  //make a copy of the last iteration for convergence testing
         if(submesh_side_lengths[root]){
           for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
@@ -425,14 +488,14 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
           }
         }
       }
-    }
+    // }
 
     for(int root = 0; root < root_size; root++){
       if(submesh_side_lengths[root]){
 
         int this_submesh_side_length = submesh_side_lengths[root];
         int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
-        int * this_potential_submesh = potentials[root]; //problematic?
+        double * this_potential_submesh = potentials[root]; //problematic?
 
         // (x_len*y_len*z) + (x_len*y) + x;
 
@@ -469,13 +532,13 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
                   */
                   int stencil_divisor = 6;
 
-                  int stencil_value = boundary_stencils(potentials, submesh_side_lengths, sub_idx, x, y, z, root, mesh_geometry, &stencil_divisor);
+                  float stencil_value = boundary_stencils(potentials, submesh_side_lengths, sub_idx, x, y, z, root, mesh_geometry, &stencil_divisor);
 
                   if(!field){
                     stencil_value /= stencil_divisor;
                   }
                   else{
-                    stencil_value /= 6;
+                    stencil_value /= 6.0;
                   }
                   potentials[root][sub_idx] = stencil_value;
                 }
@@ -486,7 +549,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx+this_submesh_side_length] +
                                                      this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
-                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6;
+                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6.0;
                 }
               }
             }
@@ -495,7 +558,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
       }
     }
 
-    if(iterations % 20 == 0){
+    // if(iterations % 20 == 0){
 
       for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
         if(submesh_side_lengths[root]){
@@ -509,31 +572,23 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
 
 
 
-      printf("convergence: %f\n",new_convergence/1000.0);
-      if((new_convergence/1000.0) < tolerance){ //exit condition
+      printf("convergence: %f\n",new_convergence*1000.0);
+      if((new_convergence*1000.0) < tolerance){ //exit condition
         break;
       }
-    }
+    // }
     new_convergence = 0;
 
   }
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-
+  std::vector<std::vector<float>> residuals = potentials_vector;
   for(int root = 0; root < potentials_vector.size(); root++){
     for(int sub = 0; sub < potentials_vector[root].size(); sub++){
-      potentials_vector[root][sub] = potentials[root][sub]/1000.0;
+      potentials_vector[root][sub] = potentials[root][sub]*1000.0;
       boundaries_vector[root][sub] = boundaries[root][sub];
-    }
-  }
-
-  std::vector<std::vector<float>> residuals = potentials_vector;
-  for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
-    if(submesh_side_lengths[root]){
-      for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-        residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub])/1000.0;
-      }
+      residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub])*1000.0;
     }
   }
 

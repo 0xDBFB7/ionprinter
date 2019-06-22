@@ -1437,4 +1437,6 @@ For poisson, the optimal SOR coefficient is known and is around 1.96 for these p
 
 Oh, fascinating! The absolute value and units chosen greatly affect the convergence rate! <https://scicomp.stackexchange.com/questions/14809/why-should-i-renormalize-physical-variables/14810#14810>
 
- 
+ Switched everything to doubles, not a huge difference.
+
+Interesting: letting coarse multigrid iterations converge too far can be detrimental

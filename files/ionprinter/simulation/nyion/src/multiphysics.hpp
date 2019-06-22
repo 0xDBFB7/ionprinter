@@ -52,8 +52,6 @@ void set_mesh_value_world_point(float val, float x, float y, float z, std::vecto
 void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
                                         float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 
-int relax_laplace_potentials(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundary_conditions, root_mesh_geometry mesh_geometry, float tolerance, bool root);
-
 template<typename T>
 void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
