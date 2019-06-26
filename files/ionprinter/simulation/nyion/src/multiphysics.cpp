@@ -372,12 +372,12 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
   // MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
   // int world_size;
   // MPI_Comm_size(MPI_COMM_WORLD, &world_size);
-
+  //
   // MPI_Send(&tosend[0], tosend_size, MPI_INT, 0, 777, MPI_COMM_WORLD); //vector mpi
   // results_and_rank.resize(results_rank_size);
   // MPI_Recv(&results_and_rank[0], results_rank_size, MPI_INT, MPI_ANY_SOURCE, 777, MPI_COMM_WORLD, &status);
-
-
+  //
+  //
 
   if(recursive){ //recursive coarse mesh solver  V-cycle
     printf("ROOT");
@@ -385,57 +385,61 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
     // std::vector<std::vector<float>> input_residuals;
     // input_residuals = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,5,0,1);
 
+    int cycle[] = {4,6};
+    int cycle_points = 2;
+    float tolerance[] = {1,1,1,0.0001};
 
-    int cycle[] = {30,10,6,4,6,4};
-    for(int i = 0; i < 6; i++){ //multigrid should
+    std::vector<std::vector<std::vector<float>>> input_residuals(cycle_points+1);
+
+    input_residuals[0] = fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,50,0,1);
+
+    std::vector<std::vector<int>> zero_boundaries(potentials_vector.size());
+
+    for(int root = 0; root < potentials_vector.size(); root++){ //make an empty copy of the boundaries vector
+      zero_boundaries[root].resize(potentials_vector[root].size());
+      for(int sub = 0; sub < potentials_vector[root].size(); sub++){
+        zero_boundaries[root][sub] = 0;
+      }
+    }
 
 
-      std::vector<std::vector<float>> input_residuals =
-                          fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,50,0,1);
 
-
+    for(int i = 0; i < cycle_points; i++){
+      printf("Moving down multigrid V-cycle, coarsened to %i\n",cycle[i]);
       std::vector<std::vector<float>> coarsened_residuals;
-      std::vector<std::vector<int>> coarsened_boundaries;
 
-      // coarsened_potentials.resize(0);
+      coarsen_mesh(input_residuals[i],coarsened_residuals,mesh_geometry,cycle[i]);
 
-      coarsen_mesh(input_residuals,coarsened_residuals,mesh_geometry,cycle[i]);
-      coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,cycle[i]);
+      input_residuals[i+1] = fast_relax_laplace_potentials(coarsened_residuals,zero_boundaries,mesh_geometry,tolerance[i],0,1);
+    }
 
-      for(int root = 0; root < coarsened_boundaries.size(); root++){
-        for(int sub = 0; sub < coarsened_boundaries[root].size(); sub++){
-          coarsened_boundaries[root][sub] = 0;
+
+    for(int i = cycle_points; i > 0; i--){
+      printf("Moving up multigrid V-cycle, refined to %i\n",cycle[i-1]);
+
+      std::vector<std::vector<float>> finer_residuals;
+
+      decoarsen_mesh(input_residuals[i],finer_residuals,mesh_geometry,cycle[i-1]);
+
+      for(int root = 0; root < finer_residuals.size(); root++){
+        for(int sub = 0; sub < finer_residuals[root].size(); sub++){
+          input_residuals[i-1][root][sub] += finer_residuals[root][sub];
         }
       }
 
-      fast_relax_laplace_potentials(coarsened_residuals,coarsened_boundaries,mesh_geometry,1,0,1);
-
-      decoarsen_mesh(coarsened_residuals,input_residuals,mesh_geometry,cycle[i]);
-
-      for(int root = 0; root < potentials_vector.size(); root++){
-        for(int sub = 0; sub < potentials_vector[root].size(); sub++){
-          potentials_vector[root][sub] += input_residuals[root][sub];
-        }
-      }
+      // fast_relax_laplace_potentials(input_residuals[i-1],boundaries_vector,mesh_geometry,0.0001,0,1); //zero boundaries?
 
     }
-    // fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,0.2,0,1);
 
-    // for(int i = 4; i > 2; i-=2){ //multigrid should
-    //
-    //   std::vector<std::vector<float>> coarsened_potentials;
-    //   std::vector<std::vector<int>> coarsened_boundaries;
-    //
-    //   coarsened_potentials.resize(0);
-    //   coarsened_boundaries.resize(0);
-    //
-    //   coarsen_mesh(potentials_vector,coarsened_potentials,mesh_geometry,i);
-    //   coarsen_mesh(boundaries_vector,coarsened_boundaries,mesh_geometry,i);
-    //
-    //   fast_relax_laplace_potentials(coarsened_potentials,coarsened_boundaries,mesh_geometry,10,0,1);
-    //
-    //   decoarsen_mesh(coarsened_potentials,potentials_vector,mesh_geometry,i);
-    // }
+    for(int root = 0; root < potentials_vector.size(); root++){ //apply final correction
+      for(int sub = 0; sub < potentials_vector[root].size(); sub++){
+        potentials_vector[root][sub] += input_residuals[0][root][sub];
+      }
+    }
+
+
+    fast_relax_laplace_potentials(potentials_vector,boundaries_vector,mesh_geometry,0.00001,0,1); //finish up
+
 
   }
 
@@ -608,6 +612,7 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
   delete[] potentials_copy;
 
 
+  to_csv(potentials_vector,mesh_geometry);
 
   std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";

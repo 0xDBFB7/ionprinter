@@ -218,5 +218,9 @@ Camera switches to
 
 
 
+VCR camcorder is upstairs; might be cool for some retro-style effects. Over-recording, perhaps?
+
+
+
 
 

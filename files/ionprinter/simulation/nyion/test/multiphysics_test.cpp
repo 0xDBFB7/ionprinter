@@ -147,7 +147,7 @@ TEST(laplace_tests,fast_laplace_convergence_1_big){
   std::vector<std::vector<float>> potentials;
   std::vector<std::vector<int>> boundaries;
 
-  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.1};
+  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
 
   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
 

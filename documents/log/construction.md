@@ -1356,7 +1356,9 @@ If we halve our mesh resolution to
 
 
 <hr>
+
 ```
+
 Trials of HPC, act ii
 
 User: "Computer! I desire a 100 TB float array."
@@ -1387,9 +1389,12 @@ REAPER: "is that better?"
 
 
 EarlyOOM: don't leave home without it
+
 ```
 
-<hr>
+
+
+```
 
 "Jacobi's just averaging? Let's try it out!"
 
@@ -1410,8 +1415,9 @@ Your eyes begin to blur. *this must be multigrid!*, you say.
 Prof. Shewchuk's words echo vaguely within your mind. *"Of course, a procedure that always converges to zero isn’t going to help you attract friends."* If only you could find the solution.
 
 
-
 A truck stops abruptly - too abruptly. Your eyes snap and crackle. You raise a tire-iron.
+
+```
 
 <hr>
 
@@ -1441,4 +1447,17 @@ Oh, fascinating! The absolute value and units chosen greatly affect the converge
 
 Interesting: letting coarse multigrid iterations converge too far can be detrimental
 
-Aha! I had previously left the boundaries in the coarse residual grid; however, this was incorrect.
+Aha! I had previously left the boundaries in the coarse residual grid; however, this was incorrect. Also, I was using a totally incorrect multigrid procedure. Here's the right one:
+
+![Multigrid_Visualization](assets/Multigrid_Visualization.png)
+
+(By ansariddle - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=52309844)
+
+umfpack has some nasty memory limits though.
+
+The effect of value scaling is called "condition number".
+
+
+```
+
+```
