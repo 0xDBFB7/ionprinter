@@ -149,7 +149,7 @@ TEST(laplace_tests,fast_laplace_convergence_1_big){
 
   float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
 
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
+  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,30);
 
   // for(uint32_t root = 0; root < 1; root++){
     for(uint32_t sub = 0; sub < potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)].size()/2; sub++){
@@ -158,7 +158,7 @@ TEST(laplace_tests,fast_laplace_convergence_1_big){
     }
   // }
 
-  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 0.0001, 1, 1);
+  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 1, 1, 1);
   //takes 47 seconds ATM
   // to_csv(potentials,mesh_geometry);
 
