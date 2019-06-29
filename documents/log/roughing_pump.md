@@ -1,4 +1,3 @@
 #### Options:
 
-Liquid-ring pump
-
+Rotary vane pump

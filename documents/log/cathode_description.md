@@ -122,7 +122,7 @@ Okay, so let's look at all our cathode options. [10] provides a good summary.
 | ------------- | ------------- | ------------- | ---------------- | --------------- | ---------------------- | --------------------- |
 | Pure tungsten | 4.54 eV       | 4A/cm^2       | 17.5 W/A (1400w) | 2400K           | :heavy_check_mark:     |                       |
 
-Tungsten wire is cheap and readily available, but the low efficiency is nkiller.
+Tungsten wire is cheap and readily available, but the low efficiency is killer.
 
 | Material           | Work Function | Typ. Emission | Efficiency      | Operating temp. | Resistant to poisoning |
 | ------------------ | ------------- | ------------- | --------------- | --------------- | ---------------------- |

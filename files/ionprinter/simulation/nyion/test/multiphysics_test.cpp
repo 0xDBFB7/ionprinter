@@ -6,16 +6,7 @@
 
 TEST_GROUP(idx_tests){};
 
-// TEST(idx_tests, i_idx_test)
-// {
-//   int mesh_geometry[3] = {10,10,10};
-//   CHECK_EQUAL(1, i_idx(1,0,0,mesh_geometry));
-//   CHECK_EQUAL(10, i_idx(0,1,0,mesh_geometry));
-//   CHECK_EQUAL(100, i_idx(0,0,1,mesh_geometry));
-//   CHECK_EQUAL(111, i_idx(1,1,1,mesh_geometry));
-// }
 
-//
 // TEST(idx_tests, geometry_construct_test)
 // {
 //   float mesh_bounds[6] = {0.1,0.3,0.05,0.1,0,0.5};
