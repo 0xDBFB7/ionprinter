@@ -5,7 +5,6 @@
 #include <iterator> // for ostream_iterator
 #include <algorithm>
 #include <cmath>
-#include <cmath>
 
 #include <fstream>
 
@@ -31,7 +30,10 @@
 #define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
 
 
-void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);
+int submesh_side_length(std::vector<float> input_vector);
+
+//
+// void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);
 
 // template<typename T>
 // float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);

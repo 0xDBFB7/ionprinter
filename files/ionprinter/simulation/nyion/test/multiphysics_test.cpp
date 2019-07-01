@@ -44,125 +44,139 @@ TEST_GROUP(idx_tests){};
 //
 TEST_GROUP(laplace_tests){};
 
+TEST(laplace_tests,submesh_side){
+    std::vector<std::vector<float>> potentials;
 
+    potentials.resize(10);
+    potentials[0].resize(idx(9,9,9,10,10)+1);
 
-TEST(laplace_tests,coarsen){
+    CHECK_EQUAL(10, submesh_side_length(potentials[0]));
+    CHECK_EQUAL(0, submesh_side_length(potentials[1]));
 
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+    potentials[0].resize(idx(10,10,10,11,11)+1);
 
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-
-  std::vector<std::vector<float>> potentials;
-  std::vector<std::vector<int>> boundaries;
-
-  float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.006};
-
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,20);
-
-  for(float sub = 0; sub < 20; sub++){
-    potentials[0][sub] = sub;
-  }
-
-
-  for(uint32_t sub = 0; sub < 10; sub++){
-    printf("%f\n",potentials[0][sub]);
-  }
-
-  std::vector<std::vector<float>> coarsened_potentials;
-
-  coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,4);
-
-  for(int x = 0; x < 5; x++){
-    for(int y = 0; y < 5; y++){
-      int fine_sub_idx = (5*5*0) + (5*y) + x;
-      printf("%f\n",coarsened_potentials[0][fine_sub_idx]);
-    }
-  }
-
-  // for(uint32_t sub = 0; sub < 10; sub++){
-  //   printf("%f\n",coarsened_potentials[0][sub]);
-  // }
-
-  CHECK_EQUAL(4, potentials[0][4]);
-
-  std::vector<std::vector<float>> decoarsened_potentials;
-
-  decoarsen_mesh(coarsened_potentials,decoarsened_potentials,mesh_geometry,4);
-
-  for(uint32_t sub = 0; sub < 10; sub++){
-    printf("%f\n",decoarsened_potentials[0][sub]);
-  }
-
-}
-
-
-
-
-TEST(laplace_tests,activate_submesh){
-
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-
-  std::vector<std::vector<float>> potentials;
-  std::vector<std::vector<int>> boundaries;
-
-  potentials.resize(mesh_geometry.root_size);
-
-  float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
-
-
-
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
-
-
-
-
-
-  CHECK_EQUAL(0,potentials[0].size());
-  CHECK_EQUAL(60*60*60,potentials[1].size());
-  CHECK_EQUAL(0,potentials[2].size());
-
-  // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
+    CHECK_EQUAL(11, submesh_side_length(potentials[0]));
 }
 
 //
-
-TEST(laplace_tests,fast_laplace_convergence_1_big){
-
-
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-
-  std::vector<std::vector<float>> potentials;
-  std::vector<std::vector<int>> boundaries;
-
-  float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
-
-  enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,30);
-
-  // for(uint32_t root = 0; root < 1; root++){
-    for(uint32_t sub = 0; sub < potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)].size()/2; sub++){
-      potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)][sub] = 1000.0;
-      boundaries[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)][sub] = 1;
-    }
-  // }
-
-  fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 1, 1, 1);
-  //takes 47 seconds ATM
-  // to_csv(potentials,mesh_geometry);
-
-
-  // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
-  //
-  // for(float x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
-  //     printf("%f\n", get_mesh_value_world_point(x,0.005,0.005,potentials,mesh_geometry));
-  // }
-  //
-  // DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
-}
-
+//
+// TEST(laplace_tests,coarsen){
+//
+//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+//
+//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//   std::vector<std::vector<float>> potentials;
+//   std::vector<std::vector<int>> boundaries;
+//
+//   float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.006};
+//
+//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,20);
+//
+//   for(float sub = 0; sub < 20; sub++){
+//     potentials[0][sub] = sub;
+//   }
+//
+//
+//   for(uint32_t sub = 0; sub < 10; sub++){
+//     printf("%f\n",potentials[0][sub]);
+//   }
+//
+//   std::vector<std::vector<float>> coarsened_potentials;
+//
+//   coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,4);
+//
+//   for(int x = 0; x < 5; x++){
+//     for(int y = 0; y < 5; y++){
+//       int fine_sub_idx = (5*5*0) + (5*y) + x;
+//       printf("%f\n",coarsened_potentials[0][fine_sub_idx]);
+//     }
+//   }
+//
+//   // for(uint32_t sub = 0; sub < 10; sub++){
+//   //   printf("%f\n",coarsened_potentials[0][sub]);
+//   // }
+//
+//   CHECK_EQUAL(4, potentials[0][4]);
+//
+//   std::vector<std::vector<float>> decoarsened_potentials;
+//
+//   decoarsen_mesh(coarsened_potentials,decoarsened_potentials,mesh_geometry,4);
+//
+//   for(uint32_t sub = 0; sub < 10; sub++){
+//     printf("%f\n",decoarsened_potentials[0][sub]);
+//   }
+//
+// }
+//
+//
+//
+//
+// TEST(laplace_tests,activate_submesh){
+//
+//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+//
+//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//   std::vector<std::vector<float>> potentials;
+//   std::vector<std::vector<int>> boundaries;
+//
+//   potentials.resize(mesh_geometry.root_size);
+//
+//   float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
+//
+//
+//
+//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
+//
+//
+//
+//
+//
+//   CHECK_EQUAL(0,potentials[0].size());
+//   CHECK_EQUAL(60*60*60,potentials[1].size());
+//   CHECK_EQUAL(0,potentials[2].size());
+//
+//   // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
+// }
+//
+// //
+//
+// TEST(laplace_tests,fast_laplace_convergence_1_big){
+//
+//
+//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+//
+//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//   std::vector<std::vector<float>> potentials;
+//   std::vector<std::vector<int>> boundaries;
+//
+//   float mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
+//
+//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,30);
+//
+//   // for(uint32_t root = 0; root < 1; root++){
+//     for(uint32_t sub = 0; sub < potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)].size()/2; sub++){
+//       potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)][sub] = 1000.0;
+//       boundaries[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)][sub] = 1;
+//     }
+//   // }
+//
+//   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 1, 1, 1);
+//   //takes 47 seconds ATM
+//   // to_csv(potentials,mesh_geometry);
+//
+//
+//   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
+//   //
+//   // for(float x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
+//   //     printf("%f\n", get_mesh_value_world_point(x,0.005,0.005,potentials,mesh_geometry));
+//   // }
+//   //
+//   // DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
+// }
+//
 
 
 
