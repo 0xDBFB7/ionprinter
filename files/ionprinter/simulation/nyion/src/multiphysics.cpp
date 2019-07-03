@@ -141,13 +141,14 @@ void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6]
 
   /* -----------------------------------------------------------------------------
   Constrain the newly-activated bounds to the actual bounds of the mesh.
+  Round lower bounds down and upper bounds up.
   ----------------------------------------------------------------------------- */
   int x_min = std::max(0,(int)((bounds[X1]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
-  int x_max = std::min(mesh_geometry.root_x_len,(int)((bounds[X2]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
+  int x_max = std::min(mesh_geometry.root_x_len,(int) ceil((bounds[X2]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
   int y_min = std::max(0,(int)((bounds[Y1]-mesh_geometry.y_min_bound)/mesh_geometry.root_scale));
-  int y_max = std::min(mesh_geometry.root_y_len,(int)((bounds[Y2]-mesh_geometry.y_min_bound)/mesh_geometry.root_scale));
+  int y_max = std::min(mesh_geometry.root_y_len,(int) ceil((bounds[Y2]-mesh_geometry.y_min_bound)/mesh_geometry.root_scale));
   int z_min = std::max(0,(int)((bounds[Z1]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
-  int z_max = std::min(mesh_geometry.root_z_len,(int)((bounds[Z2]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
+  int z_max = std::min(mesh_geometry.root_z_len,(int) ceil((bounds[Z2]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
 
   input_mesh.resize(mesh_geometry.root_size);
 
@@ -253,6 +254,76 @@ template void enable_mesh_region(std::vector<std::vector<int>> &input_mesh, floa
 // template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 // template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 //
+
+template<typename T>
+float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
+  /* -----------------------------------------------------------------------------
+  s_x,y,z refer to cell index within submesh.
+
+  Since the submesh side lengths are variable, one can't index directly into the array.
+
+  int * valid is a pseudo-return value that indicates whether the requested position is defined.
+  It's useful to return a value of 0.0 if we run off the edge of the mesh; this is a simple way of defining
+  the required edge-of-domain ghost points for infinite boundary potential solvers.
+  However, all other solvers must ignore undefined points; hence the valid flag.
+  ----------------------------------------------------------------------------- */
+
+
+  int this_submesh_side_length = submesh_side_length(input_mesh[root]);
+
+  /* -----------------------------------------------------------------------------
+  Determine which root submesh contains the new point. Index in a relative manner.
+  ----------------------------------------------------------------------------- */
+  int r_x_rel = 0;
+  int r_y_rel = 0;
+  int r_z_rel = 0;
+
+  if(x_rel == -1 && s_x == 0){ r_x_rel = -1;};
+  if(x_rel == 1 && s_x == this_submesh_side_length-1){ r_x_rel = 1;};
+  if(y_rel == -1 && s_y == 0){ r_y_rel = -1;};
+  if(y_rel == 1 && s_y == this_submesh_side_length-1){ r_y_rel = 1;};
+  if(z_rel == -1 && s_z == 0){ r_z_rel = -1;};
+  if(z_rel == 1 && s_z == this_submesh_side_length-1){ r_z_rel = 1;};
+
+  int root_i = root + idx(r_x_rel,r_y_rel,r_z_rel,mesh_geometry.root_x_len,mesh_geometry.root_y_len);
+
+  /* -----------------------------------------------------------------------------
+  Make sure that's a valid submesh
+  ----------------------------------------------------------------------------- */
+  if(root_i >= 0 && root_i < mesh_geometry.root_size && input_mesh[root_i].size()){
+
+    int new_submesh_side_length = submesh_side_length(input_mesh[root_i]);
+
+    /* -----------------------------------------------------------------------------
+    Correct for differing current and adjacent submesh side lengths
+    ----------------------------------------------------------------------------- */
+    float scale_factor = new_submesh_side_length/this_submesh_side_length;
+
+    int new_sub_x = (int)(s_x*scale_factor);
+    int new_sub_y = (int)(s_y*scale_factor);
+    int new_sub_z = (int)(s_z*scale_factor);
+
+    /* -----------------------------------------------------------------------------
+    If we've skipped to the next submesh, adjust the submesh index accordingly
+    to get the adjacent cell.
+    ----------------------------------------------------------------------------- */
+    if(r_x_rel == -1) new_sub_x = new_submesh_side_length-1;
+    if(r_x_rel == 1) new_sub_x = 0;
+    if(r_y_rel == -1) new_sub_y = new_submesh_side_length-1;
+    if(r_y_rel == 1) new_sub_y = 0;
+    if(r_z_rel == -1) new_sub_z = new_submesh_side_length-1;
+    if(r_z_rel == 1) new_sub_z = 0;
+
+    valid = true;
+    return input_mesh[root_i][idx(new_sub_x,new_sub_y,new_sub_z,new_submesh_side_length,new_submesh_side_length)];
+  }
+  else{
+    valid = false;
+    return 0.0;
+  }
+}
+template float relative_mesh_value(std::vector<std::vector<float>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
+template float relative_mesh_value(std::vector<std::vector<int>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
 
 
 float boundary_stencils(double ** potentials, int * submesh_side_lengths, int sub_idx, int x, int y, int z, int root, root_mesh_geometry mesh_geometry, int * stencil_divisor){
@@ -382,14 +453,15 @@ float boundary_stencils(double ** potentials, int * submesh_side_lengths, int su
     return stencil_value;
 }
 
-
-int submesh_side_length(std::vector<float> input_vector){
+template<typename T>
+int submesh_side_length(std::vector<T> input_vector){
   /*
 
   */
   return std::cbrt(input_vector.size());
 }
-
+template int submesh_side_length(std::vector<float> input_vector);
+template int submesh_side_length(std::vector<int> input_vector);
 
 void v_cycle(){
 

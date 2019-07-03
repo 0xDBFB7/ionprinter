@@ -47,7 +47,7 @@ TEST(laplace_tests,submesh_side){
 
 
 
-TEST(laplace_tests,activate_submesh){
+TEST(laplace_tests,activate_submesh_even){
 
   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
 
@@ -65,6 +65,72 @@ TEST(laplace_tests,activate_submesh){
   CHECK_EQUAL(0,potentials[root_idx(0,1,0,mesh_geometry)].size());
 }
 
+TEST(laplace_tests,activate_submesh_round){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0.0035,0.004,0,0.0035,0,0.003};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,60);
+
+  CHECK_EQUAL(0,potentials[root_idx(0,0,0,mesh_geometry)].size());
+  CHECK_EQUAL(60*60*60,potentials[root_idx(1,0,0,mesh_geometry)].size());
+  CHECK_EQUAL(0,potentials[root_idx(0,0,0,mesh_geometry)].size());
+  CHECK_EQUAL(0,potentials[root_idx(0,1,0,mesh_geometry)].size());
+}
+
+
+TEST(laplace_tests,relative_indexing){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0.000,0.009,0,0.009,0,0.009}; // a 3x3x3 mesh
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,10);
+
+
+  /* -----------------------------------------------------------------------------
+  Test with equal submesh sizes first
+  ----------------------------------------------------------------------------- */
+
+  int number_of_points = 2;
+  //format:
+  //relative root, relative sub, relative delta, actual root, actual sub, valid
+  int test_points[][16] = {
+            {1,1,1, 0,0,0, 0,0,0, 1,1,1, 0,0,0, 1}, //no movement
+            {1,1,1, 0,0,0, 0,0,-1, 1,0,0, 0,0,9, 1} //down in z across boundary
+            };
+
+  bool valid = false;
+
+  for(int i = 0; i < number_of_points; i++){
+
+    potentials[root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry)]
+                [idx(test_points[i][12],test_points[i][13],test_points[i][14],10,10)] = i+1;
+
+    CHECK_EQUAL(i+1, relative_mesh_value(potentials,
+                      root_idx(test_points[i][0],test_points[i][1],test_points[i][2],mesh_geometry),
+                            test_points[i][3],test_points[i][4],test_points[i][5],
+                            test_points[i][6],test_points[i][7],test_points[i][8], mesh_geometry, valid));
+
+    CHECK_EQUAL((bool) test_points[15], valid);
+
+  }
+
+  /* -----------------------------------------------------------------------------
+  Now different submeshes
+  ----------------------------------------------------------------------------- */
+
+
+}
 
 
 
