@@ -96,18 +96,24 @@ TEST(laplace_tests,relative_indexing){
 
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,10);
 
+  //we'll make the upper-right-corner tests go across a submesh length boundary
+  potentials[root_idx(1,1,2,mesh_geometry)].resize(5*5*5);
 
-  /* -----------------------------------------------------------------------------
-  Test with equal submesh sizes first
-  ----------------------------------------------------------------------------- */
-
-  int number_of_points = 3;
+  int number_of_points = 9;
   //format:
   //relative root, relative sub, relative delta, actual root, actual sub, valid
   int test_points[][16] = {
             {1,1,1, 0,0,0, 0,0,0, 1,1,1, 0,0,0, 1}, //no movement
             {1,1,1, 0,0,0, 0,0,-1, 1,1,0, 0,0,9, 1}, //down in z across boundary
-            {1,1,1, 0,0,0, 0,0,1, 1,1,1, 0,0,1, 1} // up in z
+            {1,1,1, 0,0,0, 0,0,1, 1,1,1, 0,0,1, 1}, // up in z
+            {1,1,1, 0,0,0, 0,-1,0, 1,0,1, 0,9,0, 1}, // -y, across boundary
+            {1,1,1, 0,0,0, 0,1,0, 1,1,1, 0,1,0, 1}, // +y
+            {1,1,1, 0,0,0, -1,0,0, 0,1,1, 9,0,0, 1}, // -x, across boundary
+            {1,1,1, 0,0,0, 1,0,0, 1,1,1, 1,0,0, 1}, // +x
+
+            {1,1,1, 9,9,9, 0,0,1, 1,1,2, 4,4,0, 1}, //top corner, up in z, across size boundary
+
+            {0,0,0, 0,0,0, 0,0,-1, 1,1,2, 4,4,0, 0} //invalid
             };
 
   bool valid = false;
@@ -127,11 +133,6 @@ TEST(laplace_tests,relative_indexing){
     CHECK_EQUAL((bool) test_points[15], valid);
 
   }
-
-  /* -----------------------------------------------------------------------------
-  Now different submeshes
-  ----------------------------------------------------------------------------- */
-
 
 }
 

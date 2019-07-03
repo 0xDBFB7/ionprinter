@@ -299,11 +299,11 @@ float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int 
     /* -----------------------------------------------------------------------------
     Correct for differing current and adjacent submesh side lengths
     ----------------------------------------------------------------------------- */
-    float scale_factor = new_submesh_side_length/this_submesh_side_length;
+    float scale_factor = new_submesh_side_length / ((float) this_submesh_side_length);
 
-    int new_sub_x = (int)(s_x*scale_factor);
-    int new_sub_y = (int)(s_y*scale_factor);
-    int new_sub_z = (int)(s_z*scale_factor);
+    int new_sub_x = 0;
+    int new_sub_y = 0;
+    int new_sub_z = 0;
 
     /* -----------------------------------------------------------------------------
     If we've skipped to the next submesh, adjust the submesh index accordingly
@@ -311,13 +311,15 @@ float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int 
     ----------------------------------------------------------------------------- */
     if(r_x_rel == -1) new_sub_x = new_submesh_side_length-1;
     else if(r_x_rel == 1) new_sub_x = 0;
-    else new_sub_x += x_rel;
+    else new_sub_x = (int)((s_x+x_rel)*scale_factor);
+
     if(r_y_rel == -1) new_sub_y = new_submesh_side_length-1;
     else if(r_y_rel == 1) new_sub_y = 0;
-    else new_sub_y += y_rel;
+    else new_sub_y = (int)((s_y+y_rel)*scale_factor);
+
     if(r_z_rel == -1) new_sub_z = new_submesh_side_length-1;
     else if(r_z_rel == 1) new_sub_z = 0;
-    else new_sub_z += z_rel;
+    else new_sub_z = (int)((s_z+z_rel)*scale_factor);
 
     printf("%i,%i,%i\n",new_sub_x,new_sub_y,new_sub_z);
 
