@@ -119,18 +119,19 @@ TEST(laplace_tests,relative_indexing){
   bool valid = false;
 
   for(int i = 0; i < number_of_points; i++){
+    int root = root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry);
+    int side_len = submesh_side_length(potentials[root]);
+    potentials[root][idx(test_points[i][12],test_points[i][13],test_points[i][14],side_len,side_len)] = i+1;
 
-    potentials[root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry)]
-                [idx(test_points[i][12],test_points[i][13],test_points[i][14],10,10)] = i+1;
 
     float value = relative_mesh_value(potentials,
                       root_idx(test_points[i][0],test_points[i][1],test_points[i][2],mesh_geometry),
                             test_points[i][3],test_points[i][4],test_points[i][5],
                             test_points[i][6],test_points[i][7],test_points[i][8], mesh_geometry, valid);
 
-    CHECK_EQUAL(i+1, value);
+    CHECK_EQUAL((i+1)*valid, value);
 
-    CHECK_EQUAL((bool) test_points[15], valid);
+    CHECK_EQUAL((bool) test_points[i][15], valid);
 
   }
 
