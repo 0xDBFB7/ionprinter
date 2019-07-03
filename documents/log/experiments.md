@@ -57,7 +57,7 @@ Let's examine a simple, straightforward joule heating / radiation simulation in 
 
 Nevermind trying to add some esoteric feature.
 
-In software development, a 10-second compile time (or, in TTD, test runner length) is generally regarded as unacceptable. Most toolchains are installed in a few minutes at most.
+In software development, a 10-second compile time (or, in TDD, test runner length) is generally regarded as unacceptable. Most toolchains are installed in a few minutes at most.
 
 In hardware, rapid prototyping has become mainstream; the ability to conduct extremely rapid iteration is highly sought after. Most small parts can be made in under a few hours.
 
@@ -67,6 +67,6 @@ The situation is such that building a physical prototype and testing it in a vac
 
 This is ridiculous!
 
-Moreover, this isn't a computing limitation - most simulations only required 
+Moreover, this isn't a computing limitation - most simulations only required a few seconds to solve.
 
 What if I want a diagnostic that doesn't already exist? 

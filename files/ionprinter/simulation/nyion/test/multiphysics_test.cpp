@@ -7,41 +7,28 @@
 TEST_GROUP(idx_tests){};
 
 
-// TEST(idx_tests, geometry_construct_test)
-// {
-//   float mesh_bounds[6] = {0.1,0.3,0.05,0.1,0,0.5};
-//
-//   root_mesh_geometry test(mesh_bounds, 0.003, 0.000051);
-//
-//   CHECK_EQUAL(67, test.root_x_len);
-//   CHECK_EQUAL(17, test.root_y_len);
-//   CHECK_EQUAL(167, test.root_z_len);
-//
-//   DOUBLES_EQUAL(0.003, test.root_scale,1e-6);
-//
-//   DOUBLES_EQUAL(0.1, test.x_min_bound,1e-6);
-//   DOUBLES_EQUAL(0.301, test.x_max_bound,1e-6);
-//   DOUBLES_EQUAL(0.05, test.y_min_bound,1e-6);
-//   DOUBLES_EQUAL(0.101, test.y_max_bound,1e-6);
-//   DOUBLES_EQUAL(0.0, test.z_min_bound,1e-6);
-//   DOUBLES_EQUAL(0.501, test.z_max_bound,1e-6);
-//
-//   CHECK_EQUAL(58, test.sub_len);
-//   DOUBLES_EQUAL(0.0000517, test.sub_scale,1e-6);
-//
-// }
-//
-//
-// TEST(idx_tests, vector_idx_test)
-// {
-//   float mesh_bounds[6] = {0.1,0.3,0.05,0.1,0,0.5};
-//
-//   root_mesh_geometry test(mesh_bounds, 0.003, 0.000051);
-//
-//
-// }
-//
-//
+TEST(idx_tests, geometry_construct_test)
+{
+
+  float mesh_bounds[6] = {0.1,0.3,0.05,0.1,0,0.5};
+
+  root_mesh_geometry test(mesh_bounds, 0.003);
+
+  CHECK_EQUAL(67, test.root_x_len);
+  CHECK_EQUAL(17, test.root_y_len);
+  CHECK_EQUAL(167, test.root_z_len);
+  CHECK_EQUAL(190213,test.root_size);
+
+  DOUBLES_EQUAL(0.1,test.x_min_bound,1e-6);
+  DOUBLES_EQUAL(0.301,test.x_max_bound,1e-6);
+  DOUBLES_EQUAL(0.05,test.y_min_bound,1e-6);
+  DOUBLES_EQUAL(0.101,test.y_max_bound,1e-6);
+  DOUBLES_EQUAL(0.0,test.z_min_bound,1e-6);
+  DOUBLES_EQUAL(0.501,test.z_max_bound,1e-6);
+
+}
+
+
 TEST_GROUP(laplace_tests){};
 
 TEST(laplace_tests,submesh_side){
@@ -57,6 +44,29 @@ TEST(laplace_tests,submesh_side){
 
     CHECK_EQUAL(11, submesh_side_length(potentials[0]));
 }
+
+
+
+TEST(laplace_tests,activate_submesh){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,60);
+
+  CHECK_EQUAL(0,potentials[root_idx(0,0,0,mesh_geometry)].size());
+  CHECK_EQUAL(60*60*60,potentials[root_idx(1,0,0,mesh_geometry)].size());
+  CHECK_EQUAL(0,potentials[root_idx(0,0,0,mesh_geometry)].size());
+  CHECK_EQUAL(0,potentials[root_idx(0,1,0,mesh_geometry)].size());
+}
+
+
+
 
 //
 //
@@ -112,34 +122,7 @@ TEST(laplace_tests,submesh_side){
 //
 //
 //
-// TEST(laplace_tests,activate_submesh){
-//
-//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-//
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-//
-//   std::vector<std::vector<float>> potentials;
-//   std::vector<std::vector<int>> boundaries;
-//
-//   potentials.resize(mesh_geometry.root_size);
-//
-//   float mesh_active_bounds[6] = {0.003,0.006,0,0.003,0,0.003};
-//
-//
-//
-//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,60);
-//
-//
-//
-//
-//
-//   CHECK_EQUAL(0,potentials[0].size());
-//   CHECK_EQUAL(60*60*60,potentials[1].size());
-//   CHECK_EQUAL(0,potentials[2].size());
-//
-//   // DOUBLES_EQUAL(0.58823, potentials[10][i_idx(3,1,1,mesh_geometry)], 1e-2);
-// }
-//
+
 // //
 //
 // TEST(laplace_tests,fast_laplace_convergence_1_big){

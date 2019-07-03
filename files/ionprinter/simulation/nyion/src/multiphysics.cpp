@@ -78,6 +78,10 @@ using namespace std::chrono;
 // #include <boost/array.hpp>
 
 
+/* -----------------------------------------------------------------------------
+----------------------------------------------------------------------------- */
+
+
 #define EPSILON_0 8.854187e-12
 
 
@@ -89,12 +93,11 @@ using namespace std::chrono;
 
 root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   /*
-  Creates a new mesh with the specified parameters.
+  Creates a new mesh description with the specified parameters.
 
-  Root and sub_ scale are in meters per gridpoint.
-  sub_scale will be rounded to the nearest integer fraction of root_scale.
+  Root scale is in meters per gridpoint.
 
-  Mesh bounds will be rounded up to the nearest root_scale.
+  Mesh maximum bounds are rounded up to the nearest root_scale.
   */
 
 
@@ -119,7 +122,7 @@ root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
 
 double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
     //Calculate the electric field at the edge of a beam
-    //Eq. 44 at https://arxiv.org/pdf/1401.3951.pdf
+    //Eq. 44 in https://arxiv.org/pdf/1401.3951.pdf
     //returns one value: V/m
     //Beam velocity is in m/s
 
@@ -128,9 +131,17 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 
 
 
+template<typename T>
+void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
+  /* -----------------------------------------------------------------------------
+  Resize submeshes within specified bounds to desired submesh_side_length.
+  ----------------------------------------------------------------------------- */
 
-void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
 
+
+  /* -----------------------------------------------------------------------------
+  Constrain the newly-activated bounds to the actual bounds of the mesh.
+  ----------------------------------------------------------------------------- */
   int x_min = std::max(0,(int)((bounds[X1]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
   int x_max = std::min(mesh_geometry.root_x_len,(int)((bounds[X2]-mesh_geometry.x_min_bound)/mesh_geometry.root_scale));
   int y_min = std::max(0,(int)((bounds[Y1]-mesh_geometry.y_min_bound)/mesh_geometry.root_scale));
@@ -138,19 +149,19 @@ void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector
   int z_min = std::max(0,(int)((bounds[Z1]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
   int z_max = std::min(mesh_geometry.root_z_len,(int)((bounds[Z2]-mesh_geometry.z_min_bound)/mesh_geometry.root_scale));
 
-  potentials.resize(mesh_geometry.root_size);
-  boundaries.resize(mesh_geometry.root_size);
+  input_mesh.resize(mesh_geometry.root_size);
 
   for(int x = x_min; x < x_max; x++){
     for(int y = y_min; y < y_max; y++){
       for(int z = z_min; z < z_max; z++){
-        int index = (mesh_geometry.root_x_len*mesh_geometry.root_y_len*z) + (mesh_geometry.root_x_len*y) + x;
-        potentials[index].resize(submesh_side_length*submesh_side_length*submesh_side_length);
-        boundaries[index].resize(submesh_side_length*submesh_side_length*submesh_side_length);
+        int index = idx(x,y,z,mesh_geometry.root_x_len,mesh_geometry.root_y_len);
+        input_mesh[index].resize(submesh_side_length*submesh_side_length*submesh_side_length);
       }
     }
   }
 }
+template void enable_mesh_region(std::vector<std::vector<float>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
+template void enable_mesh_region(std::vector<std::vector<int>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 
 
 

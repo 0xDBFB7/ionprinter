@@ -28,6 +28,7 @@
 
 
 #define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
+#define root_idx(x,y,z,mesh_geometry) ((mesh_geometry.root_x_len*mesh_geometry.root_y_len*z) + (mesh_geometry.root_x_len*y) + x)
 
 
 int submesh_side_length(std::vector<float> input_vector);
@@ -47,8 +48,8 @@ int submesh_side_length(std::vector<float> input_vector);
 // template<typename T>
 // void set_mesh_value_world_point(float val, float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
 
-void enable_mesh_region(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
-                                        float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
+template<typename T>
+void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 
 template<typename T>
 void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
