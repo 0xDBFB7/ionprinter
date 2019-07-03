@@ -86,7 +86,7 @@ TEST(laplace_tests,activate_submesh_round){
 
 TEST(laplace_tests,relative_indexing){
 
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  float mesh_bounds[6] = {0,0.009,0,0.009,0,0.009};
 
   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 
@@ -101,12 +101,13 @@ TEST(laplace_tests,relative_indexing){
   Test with equal submesh sizes first
   ----------------------------------------------------------------------------- */
 
-  int number_of_points = 2;
+  int number_of_points = 3;
   //format:
   //relative root, relative sub, relative delta, actual root, actual sub, valid
   int test_points[][16] = {
             {1,1,1, 0,0,0, 0,0,0, 1,1,1, 0,0,0, 1}, //no movement
-            {1,1,1, 0,0,0, 0,0,-1, 1,0,0, 0,0,9, 1} //down in z across boundary
+            {1,1,1, 0,0,0, 0,0,-1, 1,1,0, 0,0,9, 1}, //down in z across boundary
+            {1,1,1, 0,0,0, 0,0,1, 1,1,1, 0,0,1, 1} // up in z
             };
 
   bool valid = false;
@@ -116,10 +117,12 @@ TEST(laplace_tests,relative_indexing){
     potentials[root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry)]
                 [idx(test_points[i][12],test_points[i][13],test_points[i][14],10,10)] = i+1;
 
-    CHECK_EQUAL(i+1, relative_mesh_value(potentials,
+    float value = relative_mesh_value(potentials,
                       root_idx(test_points[i][0],test_points[i][1],test_points[i][2],mesh_geometry),
                             test_points[i][3],test_points[i][4],test_points[i][5],
-                            test_points[i][6],test_points[i][7],test_points[i][8], mesh_geometry, valid));
+                            test_points[i][6],test_points[i][7],test_points[i][8], mesh_geometry, valid);
+
+    CHECK_EQUAL(i+1, value);
 
     CHECK_EQUAL((bool) test_points[15], valid);
 

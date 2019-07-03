@@ -225,3 +225,7 @@ VCR camcorder is upstairs; might be cool for some retro-style effects. Over-reco
 
 
 'powered by debian, notepad html button'
+
+
+
+mdp or tpp or vimdeck closing credits?

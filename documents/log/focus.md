@@ -57,6 +57,14 @@ Back to theory.
 
 This does mean that we'll have a very short distance in which the recombination must occur. The ion curtain will have to have a thin cross-section.
 
+
+
+
+
+Update, several months on. These problems are aggressively non-linear, and so the precepts of geometric optics no longer hold.
+
+
+
 Beam current: 35.757 A 
 
 [1]: https://what-if.xkcd.com/145/

@@ -262,6 +262,8 @@ float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int 
 
   Since the submesh side lengths are variable, one can't index directly into the array.
 
+  Currently only indexes into the 8 directly adjacent points.
+
   int * valid is a pseudo-return value that indicates whether the requested position is defined.
   It's useful to return a value of 0.0 if we run off the edge of the mesh; this is a simple way of defining
   the required edge-of-domain ghost points for infinite boundary potential solvers.
@@ -305,14 +307,19 @@ float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int 
 
     /* -----------------------------------------------------------------------------
     If we've skipped to the next submesh, adjust the submesh index accordingly
-    to get the adjacent cell.
+    to get the adjacent cell. Otherwise, add the relative move to the submesh index.
     ----------------------------------------------------------------------------- */
     if(r_x_rel == -1) new_sub_x = new_submesh_side_length-1;
-    if(r_x_rel == 1) new_sub_x = 0;
+    else if(r_x_rel == 1) new_sub_x = 0;
+    else new_sub_x += x_rel;
     if(r_y_rel == -1) new_sub_y = new_submesh_side_length-1;
-    if(r_y_rel == 1) new_sub_y = 0;
+    else if(r_y_rel == 1) new_sub_y = 0;
+    else new_sub_y += y_rel;
     if(r_z_rel == -1) new_sub_z = new_submesh_side_length-1;
-    if(r_z_rel == 1) new_sub_z = 0;
+    else if(r_z_rel == 1) new_sub_z = 0;
+    else new_sub_z += z_rel;
+
+    printf("%i,%i,%i\n",new_sub_x,new_sub_y,new_sub_z);
 
     valid = true;
     return input_mesh[root_i][idx(new_sub_x,new_sub_y,new_sub_z,new_submesh_side_length,new_submesh_side_length)];
