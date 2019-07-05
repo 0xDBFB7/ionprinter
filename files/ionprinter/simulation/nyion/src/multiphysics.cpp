@@ -165,98 +165,116 @@ template void enable_mesh_region(std::vector<std::vector<float>> &input_mesh, fl
 template void enable_mesh_region(std::vector<std::vector<int>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 
 
-
-
-
-//
-//
-// template<typename T>
-// void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor){
-//   /*
-//   The root mesh resolution remains the same; only the submeshes are coarsened.
-//   A simple straight-injection operator.
-//   otherwise known as "restriction" in literature.
-//   */
-//   coarsened = original;
-//
-//   for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
-//     if(original[root_mesh_idx].size()){
-//       int fine_sub_len = std::round(std::cbrt(original[root_mesh_idx].size())); //cube
-//       int coarse_sub_len = fine_sub_len/scale_divisor;
-//       coarsened[root_mesh_idx].resize(coarse_sub_len*coarse_sub_len*coarse_sub_len);
-//
-//       for(int x = 0; x < coarse_sub_len; x++){
-//         for(int y = 0; y < coarse_sub_len; y++){
-//           for(int z = 0; z < coarse_sub_len; z++){
-//             int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*z) + (coarse_sub_len*y) + x;
-//             int fine_sub_idx = (fine_sub_len*fine_sub_len*(z*scale_divisor)) + (fine_sub_len*(y*scale_divisor)) + (x*scale_divisor);
-//             coarsened[root_mesh_idx][coarse_sub_idx] = original[root_mesh_idx][fine_sub_idx];
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-// template void coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
-// template void coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
-//
-//
-// template<typename T>
-// void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor){
-//   /*
-//   The root mesh resolution remains the same; only the submeshes are coarsened.
-//
-//   otherwise known as "prolongation" in literature.
-//   */
-//   decoarsened = original;
-//
-//   for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
-//     if(original[root_mesh_idx].size()){
-//       int coarse_sub_len = std::round(std::cbrt(original[root_mesh_idx].size())); //cube root
-//       int fine_sub_len = coarse_sub_len*scale_divisor;
-//
-//       decoarsened[root_mesh_idx].resize(fine_sub_len*fine_sub_len*fine_sub_len);
-//
-//       float interp_value = 0;
-//       for(int x = 0; x < coarse_sub_len; x++){
-//         for(int y = 0; y < coarse_sub_len; y++){
-//           for(int z = 0; z < coarse_sub_len; z++){
-//             int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z)) + (coarse_sub_len*(y)) + (x);
-//
-//             float x_interp_scale = (original[root_mesh_idx][coarse_sub_idx+1]-original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
-//             float y_interp_scale = (original[root_mesh_idx][coarse_sub_idx+coarse_sub_len]-original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
-//             float z_interp_scale = (original[root_mesh_idx][coarse_sub_idx+(coarse_sub_len*coarse_sub_len)]-original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
-//
-//             for(int f_x = 0; f_x < scale_divisor; f_x++){
-//               for(int f_y = 0; f_y < scale_divisor; f_y++){
-//                 for(int f_z = 0; f_z < scale_divisor; f_z++){
-//                   int fine_sub_idx = (fine_sub_len*fine_sub_len*((z*scale_divisor)+f_z)) + (fine_sub_len*((y*scale_divisor)+f_y)) + ((x*scale_divisor)+f_x);
-//
-//                   if(x+f_x < fine_sub_len-1 && x+f_y < fine_sub_len-1 && z+f_z < fine_sub_len-1){
-//
-//
-//                     interp_value = (x_interp_scale*f_x)
-//                                           + (y_interp_scale*f_y)
-//                                           + (z_interp_scale*f_z)
-//                                           + original[root_mesh_idx][coarse_sub_idx];
-//                   }
-//
-//                   decoarsened[root_mesh_idx][fine_sub_idx] = interp_value;
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-// }
-// template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
-// template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
-//
+//sanity-checked getter and setter?
 
 template<typename T>
-float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
+void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor){
+  /*
+  The root mesh resolution remains the same; only the submeshes are coarsened.
+  A simple straight-injection operator.
+  otherwise known as "restriction" in literature.
+  */
+  coarsened = original;
+
+  for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+    if(original[root_mesh_idx].size()){
+
+      int fine_sub_len = submesh_side_length(original[root_mesh_idx]); //cube
+
+      if(fine_sub_len % scale_divisor != 0){
+        throw std::invalid_argument("Mesh not evenly divisible by scale factor.");
+      }
+
+      int coarse_sub_len = fine_sub_len/scale_divisor;
+      coarsened[root_mesh_idx].resize(coarse_sub_len*coarse_sub_len*coarse_sub_len);
+
+      for(int x = 0; x < coarse_sub_len; x++){
+        for(int y = 0; y < coarse_sub_len; y++){
+          for(int z = 0; z < coarse_sub_len; z++){
+            int coarse_sub_idx = idx(x,y,z,coarse_sub_len,coarse_sub_len);
+            int fine_sub_idx = idx((x*scale_divisor),(y*scale_divisor),(z*scale_divisor),fine_sub_len,fine_sub_len);
+
+            coarsened[root_mesh_idx][coarse_sub_idx] = original[root_mesh_idx][fine_sub_idx];
+          }
+        }
+      }
+    }
+  }
+}
+template void coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
+template void coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
+
+
+template<typename T>
+void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor){
+  /*
+  The root mesh resolution remains the same; only the submeshes are coarsened.
+
+  otherwise known as "prolongation" in literature.
+
+  Trilinearly interpolates a coarse mesh into a fine one.
+  */
+  decoarsened = original;
+
+  float interp_value = 0;
+
+  for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+    if(original[root_mesh_idx].size()){
+      int coarse_sub_len = submesh_side_length(original[root_mesh_idx]);
+      int fine_sub_len = coarse_sub_len*scale_divisor;
+
+      decoarsened[root_mesh_idx].resize(fine_sub_len*fine_sub_len*fine_sub_len);
+
+
+
+      for(int x = 0; x < coarse_sub_len; x++){
+        for(int y = 0; y < coarse_sub_len; y++){
+          for(int z = 0; z < coarse_sub_len; z++){
+            int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z)) + (coarse_sub_len*(y)) + (x);
+
+            bool valid = false;
+
+            float x_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,1,0,0,original_geometry,valid)
+                                          -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
+            if(!valid) x_interp_scale = 0;
+
+            float y_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,1,0,original_geometry,valid)
+                                          -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
+            if(!valid) y_interp_scale = 0;
+
+            float z_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,0,1,original_geometry,valid)
+                                          -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
+            if(!valid) z_interp_scale = 0;
+
+            printf("%i,%i,%i\n",x,y,z);
+
+            for(int f_x = 0; f_x < scale_divisor; f_x++){
+              for(int f_y = 0; f_y < scale_divisor; f_y++){
+                for(int f_z = 0; f_z < scale_divisor; f_z++){
+                  int fine_sub_idx = (fine_sub_len*fine_sub_len*((z*scale_divisor)+f_z)) + (fine_sub_len*((y*scale_divisor)+f_y)) + ((x*scale_divisor)+f_x);
+
+                  interp_value = (x_interp_scale*f_x)
+                                        + (y_interp_scale*f_y)
+                                        + (z_interp_scale*f_z)
+                                        + original[root_mesh_idx][coarse_sub_idx];
+
+                  decoarsened[root_mesh_idx][fine_sub_idx] = interp_value;
+
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
+template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
+
+
+template<typename T>
+float relative_mesh_value(std::vector<std::vector<T>> input_mesh, std::vector<std::vector<int>> subme_side_lengths, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
   /* -----------------------------------------------------------------------------
   s_x,y,z refer to cell index within submesh.
 
@@ -321,8 +339,6 @@ float relative_mesh_value(std::vector<std::vector<T>> input_mesh, int root, int 
     else if(r_z_rel == 1) new_sub_z = 0;
     else new_sub_z = (int)((s_z+z_rel)*scale_factor);
 
-    printf("%i,%i,%i\n",new_sub_x,new_sub_y,new_sub_z);
-
     valid = true;
     return input_mesh[root_i][idx(new_sub_x,new_sub_y,new_sub_z,new_submesh_side_length,new_submesh_side_length)];
   }
@@ -335,132 +351,6 @@ template float relative_mesh_value(std::vector<std::vector<float>> input_mesh, i
 template float relative_mesh_value(std::vector<std::vector<int>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
 
 
-float boundary_stencils(double ** potentials, int * submesh_side_lengths, int sub_idx, int x, int y, int z, int root, root_mesh_geometry mesh_geometry, int * stencil_divisor){
-  /*
-  Purpose:
-
-
-
-  Exceptional values:
-
-  No checking implemented for performance reasons.
-
-  */
-    float stencil_value = 0;
-    int root_size = mesh_geometry.root_size;
-
-
-    if(x == 0){ //-x
-      int root_i = root-1;  //new submesh cell
-      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
-        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-        int sub_x = submesh_side_lengths[root_i]-1;
-        int sub_y = (int)(y*scale_factor);
-        int sub_z = (int)(z*scale_factor);
-        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
-      }
-      else{
-        stencil_divisor--;
-      }
-      //else add zero.
-    }
-    else{
-      stencil_value += potentials[root][sub_idx-1];
-    }
-
-    if(x == submesh_side_lengths[root]-1){ //-x
-      int root_i = root+1;  //new submesh cell
-      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
-        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-        int sub_x = 0;
-        int sub_y = (int)(y*scale_factor);
-        int sub_z = (int)(z*scale_factor);
-        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
-      }
-      else{
-        stencil_divisor--;
-      }
-      //else add zero.
-    }
-    else{
-      stencil_value += potentials[root][sub_idx+1];
-    }
-
-    if(y == 0){ //-x
-      int root_i = root-mesh_geometry.root_x_len;  //new submesh cell
-      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
-        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-        int sub_x = (int)(x*scale_factor);
-        int sub_y = submesh_side_lengths[root_i]-1;
-        int sub_z = (int)(z*scale_factor);
-        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
-      }
-      else{
-        stencil_divisor--;
-      }
-      //else add zero.
-    }
-    else{
-      stencil_value += potentials[root][sub_idx-submesh_side_lengths[root]];
-    }
-
-
-    if(y == submesh_side_lengths[root]-1){ //-x
-      int root_i = root+mesh_geometry.root_x_len;  //new submesh cell
-      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
-        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-        int sub_x = (int)(x*scale_factor);
-        int sub_y = 0;
-        int sub_z = (int)(z*scale_factor);
-        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
-      }
-      else{
-        stencil_divisor--;
-      }
-      //else add zero.
-    }
-    else{
-      stencil_value += potentials[root][sub_idx+submesh_side_lengths[root]];
-    }
-
-    if(z == 0){ //-x
-      int root_i = root-(mesh_geometry.root_x_len*mesh_geometry.root_y_len);  //new submesh cell
-      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
-        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-        int sub_x = (int)(x*scale_factor);
-        int sub_y = (int)(y*scale_factor);
-        int sub_z = submesh_side_lengths[root_i]-1;
-        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
-      }
-      else{
-        stencil_divisor--;
-      }
-      //else add zero.
-    }
-    else{
-      stencil_value += potentials[root][sub_idx-(submesh_side_lengths[root]*submesh_side_lengths[root])];
-    }
-
-    if(z == submesh_side_lengths[root]-1){ //-x
-      int root_i = root+(mesh_geometry.root_x_len*mesh_geometry.root_y_len);  //new submesh cell
-      if(root_i >= 0 && root_i < root_size && submesh_side_lengths[root_i]){
-        float scale_factor = submesh_side_lengths[root_i]/submesh_side_lengths[root];
-        int sub_x = (int)(x*scale_factor);
-        int sub_y = (int)(y*scale_factor);
-        int sub_z = 0;
-        stencil_value += potentials[root_i][idx(sub_x,sub_y,sub_z,submesh_side_lengths[root_i],submesh_side_lengths[root_i])];
-      }
-      else{
-        stencil_divisor--;
-      }
-      //else add zero.
-    }
-    else{
-      stencil_value += potentials[root][sub_idx+(submesh_side_lengths[root]*submesh_side_lengths[root])];
-    }
-
-    return stencil_value;
-}
 
 template<typename T>
 int submesh_side_length(std::vector<T> input_vector){
@@ -472,16 +362,22 @@ int submesh_side_length(std::vector<T> input_vector){
 template int submesh_side_length(std::vector<float> input_vector);
 template int submesh_side_length(std::vector<int> input_vector);
 
+
+
 void v_cycle(){
 
 }
+
+
 //
 //
 // std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool field){
 //   /*
 //   Jacobi averages the four nearest points and stores the result in a new matrix.
 //   Gauss-Seidel averages the four nearest points and updates the current matrix. Converges in
-//   Conjugate Gradient. Converges in ~O(sqrt(n)) time.
+//   SOR/SSOR is essentially Gauss-Seidel * 1 to 2.0.
+//   Conjugate Gradient. Converges in something like sqrt() that of Gauss-Seidel.
+//   Alternative stencils (8-point etc) can also improve convergence, but are computationally expensive.
 //   */
 //
 //

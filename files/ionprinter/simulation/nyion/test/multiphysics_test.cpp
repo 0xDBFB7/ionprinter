@@ -118,6 +118,8 @@ TEST(laplace_tests,relative_indexing){
 
   bool valid = false;
 
+  auto t1 = std::chrono::high_resolution_clock::now();
+
   for(int i = 0; i < number_of_points; i++){
     int root = root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry);
     int side_len = submesh_side_length(potentials[root]);
@@ -133,66 +135,108 @@ TEST(laplace_tests,relative_indexing){
 
     CHECK_EQUAL((bool) test_points[i][15], valid);
 
+
+
+  }
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::cout << "relative mesh lookup takes " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) number_of_points << " us" << "\n";
+
+}
+
+
+
+
+
+TEST(laplace_tests,coarsen){
+  /* -----------------------------------------------------------------------------
+  Simple exhaustive test of mesh coarsening
+  ----------------------------------------------------------------------------- */
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,10);
+
+  for(int root = 0; root < mesh_geometry.root_size; root++){
+    int side_len = submesh_side_length(potentials[root]);
+    for(int x = 0; x < side_len; x++){
+      for(int y = 0; y < side_len; y++){
+        for(int z = 0; z < side_len; z++){
+          potentials[root][idx(x,y,z,side_len,side_len)] = (root*100000)+idx(x,y,z,side_len,side_len);
+        }
+      }
+    }
+  }
+
+  std::vector<std::vector<float>> coarsened_potentials;
+
+  int test_divisor = 5;
+
+  coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,test_divisor);
+
+  for(int root = 0; root < mesh_geometry.root_size; root++){
+    int side_len = submesh_side_length(potentials[root]);;
+    for(int x = 0; x < side_len/test_divisor; x++){
+      for(int y = 0; y < side_len/test_divisor; y++){
+        for(int z = 0; z < side_len/test_divisor; z++){
+          CHECK_EQUAL((root*100000)+idx(x*test_divisor,y*test_divisor,z*test_divisor,side_len,side_len),
+                                    coarsened_potentials[root][idx(x,y,z,side_len/test_divisor,side_len/test_divisor)]);
+        }
+      }
+    }
+  }
+
+
+}
+
+TEST(laplace_tests,refine){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  int input_mesh_len = 10;
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
+
+  for(int x = 0; x < input_mesh_len; x++){
+    potentials[0][idx(x,0,0,input_mesh_len,input_mesh_len)] = x;
+  }
+
+  for(int y = 0; y < input_mesh_len; y++){
+    potentials[0][idx(0,y,0,input_mesh_len,input_mesh_len)] = y;
+  }
+
+  for(int z = 0; z < input_mesh_len; z++){
+    potentials[0][idx(0,0,z,input_mesh_len,input_mesh_len)] = z;
+  }
+
+  std::vector<std::vector<float>> refined_potentials;
+
+  int test_divisor = 4;
+
+  decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
+
+  for(int x = 0; x < input_mesh_len*test_divisor; x++){
+    printf("%f\n",refined_potentials[0][x]);
+  }
+
+  for(int y = 0; y < input_mesh_len*test_divisor; y++){
+    printf("%f\n",refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
   }
 
 }
 
 
 
-//
-//
-// TEST(laplace_tests,coarsen){
-//
-//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-//
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-//
-//   std::vector<std::vector<float>> potentials;
-//   std::vector<std::vector<int>> boundaries;
-//
-//   float mesh_active_bounds[6] = {0,0.003,0,0.003,0,0.006};
-//
-//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,20);
-//
-//   for(float sub = 0; sub < 20; sub++){
-//     potentials[0][sub] = sub;
-//   }
-//
-//
-//   for(uint32_t sub = 0; sub < 10; sub++){
-//     printf("%f\n",potentials[0][sub]);
-//   }
-//
-//   std::vector<std::vector<float>> coarsened_potentials;
-//
-//   coarsen_mesh(potentials,coarsened_potentials,mesh_geometry,4);
-//
-//   for(int x = 0; x < 5; x++){
-//     for(int y = 0; y < 5; y++){
-//       int fine_sub_idx = (5*5*0) + (5*y) + x;
-//       printf("%f\n",coarsened_potentials[0][fine_sub_idx]);
-//     }
-//   }
-//
-//   // for(uint32_t sub = 0; sub < 10; sub++){
-//   //   printf("%f\n",coarsened_potentials[0][sub]);
-//   // }
-//
-//   CHECK_EQUAL(4, potentials[0][4]);
-//
-//   std::vector<std::vector<float>> decoarsened_potentials;
-//
-//   decoarsen_mesh(coarsened_potentials,decoarsened_potentials,mesh_geometry,4);
-//
-//   for(uint32_t sub = 0; sub < 10; sub++){
-//     printf("%f\n",decoarsened_potentials[0][sub]);
-//   }
-//
-// }
-//
-//
-//
-//
 
 // //
 //

@@ -229,3 +229,15 @@ VCR camcorder is upstairs; might be cool for some retro-style effects. Over-reco
 
 
 mdp or tpp or vimdeck closing credits?
+
+
+
+This technology has a long and sordid family tree - it's hard to know exactly what to call it.
+
+
+
+"this is governed by the Child-Langmuir law, which is essentially the particle accelerator equivalent of a traffic jam"
+
+
+
+RF metamaterial with hackrf
