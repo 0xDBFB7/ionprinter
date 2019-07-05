@@ -233,7 +233,7 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
             int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z)) + (coarse_sub_len*(y)) + (x);
 
             bool valid = false;
-
+            //
             float x_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,1,0,0,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
             if(!valid) x_interp_scale = 0;
@@ -274,7 +274,7 @@ template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vecto
 
 
 template<typename T>
-float relative_mesh_value(std::vector<std::vector<T>> input_mesh, std::vector<std::vector<int>> subme_side_lengths, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
+float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
   /* -----------------------------------------------------------------------------
   s_x,y,z refer to cell index within submesh.
 
@@ -347,8 +347,8 @@ float relative_mesh_value(std::vector<std::vector<T>> input_mesh, std::vector<st
     return 0.0;
   }
 }
-template float relative_mesh_value(std::vector<std::vector<float>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
-template float relative_mesh_value(std::vector<std::vector<int>> input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
+template float relative_mesh_value(std::vector<std::vector<float>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
+template float relative_mesh_value(std::vector<std::vector<int>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
 
 
 
@@ -358,6 +358,12 @@ int submesh_side_length(std::vector<T> input_vector){
 
   */
   return std::cbrt(input_vector.size());
+  // if(input_vector.size() == 10*10*10) return 10;
+  // if(input_vector.size() == 60*60*60) return 10;
+  // if(input_vector.size() == 120*120*120) return 10;
+  // if(input_vector.size() == 5*5*5) return 10;
+  // if(input_vector.size() == 20*20*20) return 10;
+
 }
 template int submesh_side_length(std::vector<float> input_vector);
 template int submesh_side_length(std::vector<int> input_vector);

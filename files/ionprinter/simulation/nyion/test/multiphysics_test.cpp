@@ -118,7 +118,6 @@ TEST(laplace_tests,relative_indexing){
 
   bool valid = false;
 
-  auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < number_of_points; i++){
     int root = root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry);
@@ -134,16 +133,37 @@ TEST(laplace_tests,relative_indexing){
     CHECK_EQUAL((i+1)*valid, value);
 
     CHECK_EQUAL((bool) test_points[i][15], valid);
-
-
-
   }
-
-  auto t2 = std::chrono::high_resolution_clock::now();
-  std::cout << "relative mesh lookup takes " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) number_of_points << " us" << "\n";
 
 }
 
+
+
+TEST(laplace_tests,relative_timing){
+
+  float mesh_bounds[6] = {0,0.009,0,0.009,0,0.009};
+
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0.000,0.009,0,0.009,0,0.009}; // a 3x3x3 mesh
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,10);
+
+  auto t1 = std::chrono::high_resolution_clock::now();
+  bool valid = false;
+  for(int i = 0; i < 100; i++){
+    potentials[0][0] = i+1;
+
+    relative_mesh_value(potentials,
+                      0,0,0,0,0,0,0, mesh_geometry, valid);
+  }
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+  std::cout << "relative mesh lookup takes " << (std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/(float) 100.0 << " us" << "\n";
+
+}
 
 
 
@@ -194,47 +214,48 @@ TEST(laplace_tests,coarsen){
 
 }
 
-TEST(laplace_tests,refine){
-
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-
-  std::vector<std::vector<float>> potentials;
-
-  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
-
-  int input_mesh_len = 10;
-
-  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
-
-  for(int x = 0; x < input_mesh_len; x++){
-    potentials[0][idx(x,0,0,input_mesh_len,input_mesh_len)] = x;
-  }
-
-  for(int y = 0; y < input_mesh_len; y++){
-    potentials[0][idx(0,y,0,input_mesh_len,input_mesh_len)] = y;
-  }
-
-  for(int z = 0; z < input_mesh_len; z++){
-    potentials[0][idx(0,0,z,input_mesh_len,input_mesh_len)] = z;
-  }
-
-  std::vector<std::vector<float>> refined_potentials;
-
-  int test_divisor = 4;
-
-  decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
-
-  for(int x = 0; x < input_mesh_len*test_divisor; x++){
-    printf("%f\n",refined_potentials[0][x]);
-  }
-
-  for(int y = 0; y < input_mesh_len*test_divisor; y++){
-    printf("%f\n",refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
-  }
-
-}
-
+//
+// TEST(laplace_tests,refine){
+//
+//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//   std::vector<std::vector<float>> potentials;
+//
+//   float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+//
+//   int input_mesh_len = 10;
+//
+//   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
+//
+//   for(int x = 0; x < input_mesh_len; x++){
+//     potentials[0][idx(x,0,0,input_mesh_len,input_mesh_len)] = x;
+//   }
+//
+//   for(int y = 0; y < input_mesh_len; y++){
+//     potentials[0][idx(0,y,0,input_mesh_len,input_mesh_len)] = y;
+//   }
+//
+//   for(int z = 0; z < input_mesh_len; z++){
+//     potentials[0][idx(0,0,z,input_mesh_len,input_mesh_len)] = z;
+//   }
+//
+//   std::vector<std::vector<float>> refined_potentials;
+//
+//   int test_divisor = 4;
+//
+//   decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
+//
+//   for(int x = 0; x < input_mesh_len*test_divisor; x++){
+//     printf("%f\n",refined_potentials[0][x]);
+//   }
+//
+//   for(int y = 0; y < input_mesh_len*test_divisor; y++){
+//     printf("%f\n",refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
+//   }
+//
+// }
+//
 
 
 
