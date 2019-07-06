@@ -361,194 +361,193 @@ template int submesh_side_length(std::vector<int> &input_vector);
 
 
 
-void v_cycle(){
+void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance){
+  /* -----------------------------------------------------------------------------
+  Multigrid v-cycle implementation based off
+  http://www.maths.lth.se/na/courses/FMNN15/media/material/Chapter8.09b__.pdf
+  and Wikipedia's multigrid diagram
+  ----------------------------------------------------------------------------- */
 
+  /* -----------------------------------------------------------------------------
+  First, iterate once or twice over the finest mesh to obtain residuals.
+  Boundary conditions are required.
+  ----------------------------------------------------------------------------- */
+  std::vector<std::vector<float>> residuals;
+  residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
+  /* -----------------------------------------------------------------------------
+  Pre-smoothing Jacobi?
+  ----------------------------------------------------------------------------- */
+
+  /* -----------------------------------------------------------------------------
+  'Restrict' to a coarser grid. This must be an even multiple of the original.
+  ----------------------------------------------------------------------------- */
+  std::vector<std::vector<float>> coarsened_grid;
+  coarsen_mesh(residuals,coarsened_grid,mesh_geometry,4);
+  /* -----------------------------------------------------------------------------
+  Null out errors.
+  Boundary conditions are ignored.
+  ----------------------------------------------------------------------------- */
+  gauss_seidel(coarsened_grid, boundaries, mesh_geometry, 0.01, 1, 1);
+  /* -----------------------------------------------------------------------------
+  Interpolate residual mesh back to original resolution.
+  ----------------------------------------------------------------------------- */
+  decoarsen_mesh(coarsened_grid,residuals,mesh_geometry,4);
+  /* -----------------------------------------------------------------------------
+  Correct original mesh with computed residuals.
+  ----------------------------------------------------------------------------- */
+  for(int root = 0; root < potentials.size(); root++){
+    for(int sub = 0; sub < potentials[root].size(); sub++){
+      potentials[root][sub] = (potentials[root][sub] - residuals[root][sub]);
+    }
+  }
+  /* -----------------------------------------------------------------------------
+  Correct original mesh with computed residuals.
+  ----------------------------------------------------------------------------- */
+  gauss_seidel(potentials, boundaries, mesh_geometry, tolerance, 1, 0);
 }
 
 
-//
-//
-// std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials_vector, std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool field){
-//   /*
-//   Jacobi averages the four nearest points and stores the result in a new matrix.
-//   Gauss-Seidel averages the four nearest points and updates the current matrix. Converges in
-//   SOR/SSOR is essentially Gauss-Seidel * 1 to 2.0.
-//   Conjugate Gradient. Converges in something like sqrt() that of Gauss-Seidel.
-//   Alternative stencils (8-point etc) can also improve convergence, but are computationally expensive.
-//   */
-//
-//
-//   float standard_normal_scalar = 1000.0; //some algorithms converge faster if values are near 1; therefore, we scale the input.
-//
-//   int root_x = mesh_geometry.root_x_len;
-//   int root_y = mesh_geometry.root_y_len;
-//   int root_z = mesh_geometry.root_z_len;
-//   int root_size = (root_x*root_y*root_z);
-//   int root_xy = (root_x * root_y);
-//
-//   int * submesh_side_lengths = new int[root_size];
-//   std::fill(submesh_side_lengths, submesh_side_lengths + sizeof(submesh_side_lengths), 0);
-//
-//   double **potentials = new double*[root_size];
-//   double **potentials_copy = new double*[root_size];
-//   int **boundaries = new int*[root_size];
-//
-//
-//   for(int root = 0; root < root_size; root++){ //copy vector to ints
-//     if(potentials_vector[root].size()){
-//
-//       submesh_side_lengths[root] =  //cube root
-//       int this_submesh_size = potentials_vector[root].size();
-//
-//       potentials[root] = new double[this_submesh_size];
-//       potentials_copy[root] = new double[this_submesh_size];
-//       boundaries[root] = new int[this_submesh_size];
-//
-//       for(int sub = 0; sub < this_submesh_size; sub++){
-//         potentials[root][sub] = potentials_vector[root][sub]/standard_normal_scalar;
-//         boundaries[root][sub] = boundaries_vector[root][sub];
-//       }
-//     }
-//     else{
-//       submesh_side_lengths[root] = 0;
-//     }
-//   }
-//
-//
-//   auto t1 = std::chrono::high_resolution_clock::now();
-//
-//   int iterations = 0;
-//
-//   float new_convergence = 0;
-//
-//   for(iterations = 1; iterations < 10000; iterations++){
-//
-//     // if(iterations % 20 == 0){
-//       for(int root = 0; root < root_size; root++){  //make a copy of the last iteration for convergence testing
-//         if(submesh_side_lengths[root]){
-//           for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-//             potentials_copy[root][sub] = potentials[root][sub];
-//           }
-//         }
-//       }
-//     // }
-//
-//     for(int root = 0; root < root_size; root++){
-//       if(submesh_side_lengths[root]){
-//
-//         int this_submesh_side_length = submesh_side_lengths[root];
-//         int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
-//
-//         for(int x = 0; x < this_submesh_side_length; x++){ //first do the edges, including the boundary check
-//           for(int y = 0; y < this_submesh_side_length; y++){ // this could be made even more efficient by doing a side at a time
-//             for(int z = 0; z < this_submesh_side_length; z++){
-//
-//               int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
-//
-//               if(!boundaries[root][sub_idx]){
-//                 //for a typical 60^3 submesh, this part of the loop will only run 0.0166x as many points as the rest
-//
-//                 if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length-1 //if we're at an edge or corner
-//                                               || y == this_submesh_side_length-1
-//                                               || z == this_submesh_side_length-1){ //not quite as fast as 6 seperate loops, but that's tedious and boring
-//
-//
-//                   /*
-//                   The 'field' and 'stencil_divisor' flags serve to differentiate between in-conductor current simulations, or
-//                   vacuum field sims.
-//
-//                   If this a field sim, no boundary condition cells should be updated; their value is set externally.
-//                   Additionally, all edges of the simulation must be forced to zero.
-//                   This is effected by always dividing by 6.
-//
-//                   However, we're using the BC array to also denote conductor presence; if the
-//                   */
-//
-//                   int stencil_divisor = 6;
-//
-//                   float stencil_value = boundary_stencils(potentials, submesh_side_lengths, sub_idx, x, y, z, root, mesh_geometry, &stencil_divisor);
-//
-//                   if(!field){
-//                     stencil_value /= stencil_divisor;
-//                   }
-//                   else{
-//                     stencil_value /= 6.0;
-//                   }
-//                   potentials[root][sub_idx] = stencil_value;
-//                 }
-//                 else{
-//
-//                   potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
-//                                                      this_potential_submesh[sub_idx+1] +
-//                                                      this_potential_submesh[sub_idx-this_submesh_side_length] +
-//                                                      this_potential_submesh[sub_idx+this_submesh_side_length] +
-//                                                      this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
-//                                                      this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6.0;
-//
-//                 }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//
-//     // if(iterations % 20 == 0){
-//
-//       for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
-//         if(submesh_side_lengths[root]){
-//           for(int sub = 0; sub < submesh_side_lengths[root]; sub++){
-//             if(fabs(potentials[root][sub]-potentials_copy[root][sub]) > new_convergence){
-//               new_convergence = fabs(potentials[root][sub]-potentials_copy[root][sub]); //maximum difference between old and new
-//             }
-//           }
-//         }
-//       }
-//
-//
-//
-//       printf("convergence: %f\n",new_convergence*standard_normal_scalar);
-//       if((new_convergence*standard_normal_scalar) < tolerance){ //exit condition
-//         break;
-//       }
-//     // }
-//     new_convergence = 0;
-//
-//   }
-//
-//   auto t2 = std::chrono::high_resolution_clock::now();
-//
-//   std::vector<std::vector<float>> residuals = potentials_vector;
-//   for(int root = 0; root < potentials_vector.size(); root++){
-//     for(int sub = 0; sub < potentials_vector[root].size(); sub++){
-//       potentials_vector[root][sub] = potentials[root][sub]*standard_normal_scalar;
-//       boundaries_vector[root][sub] = boundaries[root][sub];
-//       residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub])*standard_normal_scalar;
-//     }
-//   }
-//
-//   for(int root = 0; root < root_size; root++){
-//     if(submesh_side_lengths[root]){
-//       delete[] potentials[root];
-//       delete[] boundaries[root];
-//       delete[] potentials_copy[root];
-//     }
-//   }
-//
-//
-//   delete[] submesh_side_lengths;
-//   delete[] boundaries;
-//   delete[] potentials;
-//   delete[] potentials_copy;
-//
-//
-//   std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
-//   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
-//
-//   return residuals;
-// }
-//
-//
+
+
+std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
+                                                                                                root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries){
+  /*
+  Jacobi averages the four nearest points and stores the result in a new matrix.
+  Gauss-Seidel averages the four nearest points and updates the current matrix. Converges in
+  SOR/SSOR is essentially Gauss-Seidel * 1 to 2.0.
+  Conjugate Gradient. Converges in something like sqrt() that of Gauss-Seidel.
+  Alternative stencils (8-point etc) can also improve convergence, but are computationally expensive.
+  */
+
+
+  // float standard_normal_scalar = 1000.0; //some algorithms converge faster if values are near 1; therefore, we scale the input.
+
+  int root_x = mesh_geometry.root_x_len;
+  int root_y = mesh_geometry.root_y_len;
+  int root_z = mesh_geometry.root_z_len;
+  int root_size = (root_x*root_y*root_z);
+  int root_xy = (root_x * root_y);
+
+  std::vector<std::vector<float>> potentials_copy = potentials;
+
+
+  auto t1 = std::chrono::high_resolution_clock::now();
+
+  int iterations = 0;
+
+  float new_convergence = 0;
+
+  for(iterations = 1; iterations < 10000; iterations++){
+
+    potentials_copy = potentials;
+
+    for(int root = 0; root < root_size; root++){
+      if(potentials[root].size()){
+
+        int this_submesh_side_length = submesh_side_length(potentials[root]); //slow AF
+        int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
+
+        std::vector<float> this_potential_submesh = potentials[root];
+
+        for(int x = 0; x < this_submesh_side_length; x++){ //first do the edges, including the boundary check
+          for(int y = 0; y < this_submesh_side_length; y++){ // this could be made even more efficient by doing a side at a time
+            for(int z = 0; z < this_submesh_side_length; z++){
+
+              int sub_idx = (this_submesh_side_length_squared*z) + (this_submesh_side_length*y) + x;
+
+              if(!boundaries[root][sub_idx] || ignore_boundaries){
+
+                //for a typical 60^3 submesh, this part of the loop will only run 0.0166x as many points as the rest
+                if(x == 0 || y == 0 || z == 0 || x == this_submesh_side_length-1 //if we're at an edge or corner
+                                              || y == this_submesh_side_length-1
+                                              || z == this_submesh_side_length-1){ //not quite as fast as 6 seperate loops, but that's tedious and boring
+
+
+                  /*
+                  The 'field' and 'stencil_divisor' flags serve to differentiate between in-conductor current simulations, or
+                  vacuum field sims.
+
+                  If this a field sim, no boundary condition cells should be updated; their value is set externally.
+                  Additionally, all edges of the simulation must be forced to zero.
+                  This is effected by always dividing by 6.
+
+                  However, we're using the BC array to also denote conductor presence; if the
+                  */
+
+                  int stencil_divisor = 6;
+                  float stencil_value = 0;
+                  bool valid = false;
+
+                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,1,mesh_geometry,valid);
+                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,-1,mesh_geometry,valid);
+                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,1,0,mesh_geometry,valid);
+                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,-1,0,mesh_geometry,valid);
+                  stencil_value += relative_mesh_value(potentials,root,x,y,z,1,0,0,mesh_geometry,valid);
+                  stencil_value += relative_mesh_value(potentials,root,x,y,z,-1,0,0,mesh_geometry,valid);
+
+                  if(!field){
+                    stencil_value /= stencil_divisor;
+                  }
+                  else{
+                    stencil_value /= 6.0;
+                  }
+                  potentials[root][sub_idx] = stencil_value;
+                }
+                else{
+
+                  potentials[root][sub_idx] =       (this_potential_submesh[sub_idx-1] +
+                                                     this_potential_submesh[sub_idx+1] +
+                                                     this_potential_submesh[sub_idx-this_submesh_side_length] +
+                                                     this_potential_submesh[sub_idx+this_submesh_side_length] +
+                                                     this_potential_submesh[sub_idx-this_submesh_side_length_squared] +
+                                                     this_potential_submesh[sub_idx+this_submesh_side_length_squared])/6.0; //this will be changed for !field sim
+
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // if(iterations % 20 == 0){
+
+      for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
+        if(potentials[root].size()){
+          for(int sub = 0; sub < potentials[root].size(); sub++){
+            if(fabs(potentials[root][sub]-potentials_copy[root][sub]) > new_convergence){
+              new_convergence = fabs(potentials[root][sub]-potentials_copy[root][sub]); //maximum difference between old and new
+            }
+          }
+        }
+      }
+
+      printf("convergence: %f\n",new_convergence);
+      if((new_convergence) < tolerance){ //exit condition
+        break;
+      }
+    // }
+    new_convergence = 0;
+
+  }
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+
+  std::vector<std::vector<float>> residuals = potentials;
+  for(int root = 0; root < potentials.size(); root++){
+    for(int sub = 0; sub < potentials[root].size(); sub++){
+      residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub]);
+    }
+  }
+
+
+  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
+  std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
+
+  return residuals;
+}
+
+
 
 
 void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_geometry){

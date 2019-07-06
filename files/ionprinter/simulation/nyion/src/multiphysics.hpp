@@ -65,3 +65,8 @@ std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::v
                                         std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool field);
 
 void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_geometry);
+
+std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
+    root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries);
+
+void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance);

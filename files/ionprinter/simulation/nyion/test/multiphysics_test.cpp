@@ -231,49 +231,53 @@ TEST(laplace_tests,refine){
 
   float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
 
-  int input_mesh_len = 15;
+  for(int test_divisor = 2; test_divisor < 4; test_divisor++){
 
-  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
+    for(int input_mesh_len = 2; input_mesh_len < 60; input_mesh_len+=30){
 
-  /* -----------------------------------------------------------------------------
-  Write beyond a single submesh to test behavior near submesh edges.
-  ----------------------------------------------------------------------------- */
-  for(int i = 0; i < 2; i++){
-    for(int x = 0; x < input_mesh_len; x++){
-      potentials[root_idx(i,0,0,mesh_geometry)][idx(x,0,0,input_mesh_len,input_mesh_len)] = x + (input_mesh_len*i);
+      enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
+
+      /* -----------------------------------------------------------------------------
+      Write beyond a single submesh to test behavior near submesh edges.
+      ----------------------------------------------------------------------------- */
+      for(int i = 0; i < 2; i++){
+        for(int x = 0; x < input_mesh_len; x++){
+          potentials[root_idx(i,0,0,mesh_geometry)][idx(x,0,0,input_mesh_len,input_mesh_len)] = x + (input_mesh_len*i);
+        }
+      }
+
+      for(int i = 0; i < 2; i++){
+        for(int y = 0; y < input_mesh_len; y++){
+          potentials[root_idx(0,i,0,mesh_geometry)][idx(0,y,0,input_mesh_len,input_mesh_len)] = y + (input_mesh_len*i);
+        }
+      }
+
+      for(int i = 0; i < 2; i++){
+        for(int z = 0; z < input_mesh_len; z++){
+          potentials[root_idx(0,0,i,mesh_geometry)][idx(0,0,z,input_mesh_len,input_mesh_len)] = z + (input_mesh_len*i);
+        }
+      }
+
+      std::vector<std::vector<float>> refined_potentials;
+
+
+      decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
+
+      for(int x = 0; x < (input_mesh_len*test_divisor); x++){
+        DOUBLES_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*x,refined_potentials[0][x], 1e-4);
+      }
+
+      for(int y = 0; y < (input_mesh_len*test_divisor)-test_divisor; y++){
+        DOUBLES_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*y,
+                          refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)],1e-4);
+      }
+
+      for(int z = 0; z < (input_mesh_len*test_divisor)-test_divisor; z++){
+        DOUBLES_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*z,
+                          refined_potentials[0][idx(0,z,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)],1e-4);
+      }
     }
-  }
 
-  for(int i = 0; i < 2; i++){
-    for(int y = 0; y < input_mesh_len; y++){
-      potentials[root_idx(0,i,0,mesh_geometry)][idx(0,y,0,input_mesh_len,input_mesh_len)] = y + (input_mesh_len*i);
-    }
-  }
-
-  for(int i = 0; i < 2; i++){
-    for(int z = 0; z < input_mesh_len; z++){
-      potentials[root_idx(0,0,i,mesh_geometry)][idx(0,0,z,input_mesh_len,input_mesh_len)] = z + (input_mesh_len*i);
-    }
-  }
-
-  std::vector<std::vector<float>> refined_potentials;
-
-  int test_divisor = 4;
-
-  decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
-
-  for(int x = 0; x < (input_mesh_len*test_divisor); x++){
-    CHECK_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*x,refined_potentials[0][x]);
-  }
-
-  for(int y = 0; y < (input_mesh_len*test_divisor)-test_divisor; y++){
-    CHECK_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*y,
-                      refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
-  }
-
-  for(int z = 0; z < (input_mesh_len*test_divisor)-test_divisor; z++){
-    CHECK_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*z,
-                      refined_potentials[0][idx(0,z,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
   }
 
 }
@@ -281,7 +285,7 @@ TEST(laplace_tests,refine){
 
 
 
-// //
+//
 //
 // TEST(laplace_tests,fast_laplace_convergence_1_big){
 //
@@ -319,8 +323,46 @@ TEST(laplace_tests,refine){
 // }
 //
 
+TEST(laplace_tests,gauss_seidel_point_tests){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,10);
+  enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,10);
+
+  potentials[0][idx(4,0,0,10,10)] = 1000.0;
+  boundaries[0][idx(4,0,0,10,10)] = 10;
+
+  gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
 
 
+
+}
+
+TEST(laplace_tests,v_cycle_tests){
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+  std::vector<std::vector<int>> boundaries;
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,60);
+  enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,60);
+
+  potentials[0][idx(4,0,0,10,10)] = 1000.0;
+  boundaries[0][idx(4,0,0,10,10)] = 10;
+
+  v_cycle(potentials,boundaries,mesh_geometry,0.01);
+}
+  //
 //
 //
 // TEST(laplace_tests,fast_laplace_convergence_1_point_tests){
