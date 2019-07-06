@@ -1481,6 +1481,15 @@ MISRA C is an excellent example.
 
 However, clearly something's amiss, so I'mma look into it.
 
-
+<hr>
 
 Gallium has a low vapor pressure. If gallium's propensity to attack aluminum could be prevented, it could be magnetohydro- pumped through a diffusion pump. 
+
+This is nonsense. Vane pumps are high-TRL and simple. It'll be fine. 
+
+<hr>
+
+In keeping with the serviceability/prototyping bringup combination, it may be helpful to be able to isolate sectors of the board electronically; this would avoid having to unit test each component before assembly. For instance, each power supply could have an output switch.
+
+<hr>
+

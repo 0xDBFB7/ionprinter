@@ -32,7 +32,7 @@
 
 
 template<typename T>
-int submesh_side_length(std::vector<T> input_vector);
+int submesh_side_length(std::vector<T> &input_vector);
 
 //
 // void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);

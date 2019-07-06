@@ -40,9 +40,16 @@ TEST(laplace_tests,submesh_side){
     CHECK_EQUAL(10, submesh_side_length(potentials[0]));
     CHECK_EQUAL(0, submesh_side_length(potentials[1]));
 
-    potentials[0].resize(idx(10,10,10,11,11)+1);
 
-    CHECK_EQUAL(11, submesh_side_length(potentials[0]));
+    /* -----------------------------------------------------------------------------
+    Exhaustively test.
+    ----------------------------------------------------------------------------- */
+
+    for(int i = 1; i < 300; i++){
+      potentials[0].resize(i*i*i);
+
+      CHECK_EQUAL(i, submesh_side_length(potentials[0]));
+    }
 }
 
 
@@ -214,48 +221,63 @@ TEST(laplace_tests,coarsen){
 
 }
 
-//
-// TEST(laplace_tests,refine){
-//
-//   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-//
-//   std::vector<std::vector<float>> potentials;
-//
-//   float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
-//
-//   int input_mesh_len = 10;
-//
-//   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
-//
-//   for(int x = 0; x < input_mesh_len; x++){
-//     potentials[0][idx(x,0,0,input_mesh_len,input_mesh_len)] = x;
-//   }
-//
-//   for(int y = 0; y < input_mesh_len; y++){
-//     potentials[0][idx(0,y,0,input_mesh_len,input_mesh_len)] = y;
-//   }
-//
-//   for(int z = 0; z < input_mesh_len; z++){
-//     potentials[0][idx(0,0,z,input_mesh_len,input_mesh_len)] = z;
-//   }
-//
-//   std::vector<std::vector<float>> refined_potentials;
-//
-//   int test_divisor = 4;
-//
-//   decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
-//
-//   for(int x = 0; x < input_mesh_len*test_divisor; x++){
-//     printf("%f\n",refined_potentials[0][x]);
-//   }
-//
-//   for(int y = 0; y < input_mesh_len*test_divisor; y++){
-//     printf("%f\n",refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
-//   }
-//
-// }
-//
+
+TEST(laplace_tests,refine){
+
+  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+
+  std::vector<std::vector<float>> potentials;
+
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+
+  int input_mesh_len = 15;
+
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,input_mesh_len);
+
+  /* -----------------------------------------------------------------------------
+  Write beyond a single submesh to test behavior near submesh edges.
+  ----------------------------------------------------------------------------- */
+  for(int i = 0; i < 2; i++){
+    for(int x = 0; x < input_mesh_len; x++){
+      potentials[root_idx(i,0,0,mesh_geometry)][idx(x,0,0,input_mesh_len,input_mesh_len)] = x + (input_mesh_len*i);
+    }
+  }
+
+  for(int i = 0; i < 2; i++){
+    for(int y = 0; y < input_mesh_len; y++){
+      potentials[root_idx(0,i,0,mesh_geometry)][idx(0,y,0,input_mesh_len,input_mesh_len)] = y + (input_mesh_len*i);
+    }
+  }
+
+  for(int i = 0; i < 2; i++){
+    for(int z = 0; z < input_mesh_len; z++){
+      potentials[root_idx(0,0,i,mesh_geometry)][idx(0,0,z,input_mesh_len,input_mesh_len)] = z + (input_mesh_len*i);
+    }
+  }
+
+  std::vector<std::vector<float>> refined_potentials;
+
+  int test_divisor = 4;
+
+  decoarsen_mesh(potentials,refined_potentials,mesh_geometry,test_divisor);
+
+  for(int x = 0; x < (input_mesh_len*test_divisor); x++){
+    CHECK_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*x,refined_potentials[0][x]);
+  }
+
+  for(int y = 0; y < (input_mesh_len*test_divisor)-test_divisor; y++){
+    CHECK_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*y,
+                      refined_potentials[0][idx(0,y,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
+  }
+
+  for(int z = 0; z < (input_mesh_len*test_divisor)-test_divisor; z++){
+    CHECK_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*z,
+                      refined_potentials[0][idx(0,z,0,input_mesh_len*test_divisor,input_mesh_len*test_divisor)]);
+  }
+
+}
+
 
 
 

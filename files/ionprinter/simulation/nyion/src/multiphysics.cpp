@@ -225,18 +225,17 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 
       decoarsened[root_mesh_idx].resize(fine_sub_len*fine_sub_len*fine_sub_len);
 
-
-
       for(int x = 0; x < coarse_sub_len; x++){
         for(int y = 0; y < coarse_sub_len; y++){
           for(int z = 0; z < coarse_sub_len; z++){
             int coarse_sub_idx = (coarse_sub_len*coarse_sub_len*(z)) + (coarse_sub_len*(y)) + (x);
 
             bool valid = false;
-            //
+
             float x_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,1,0,0,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
-            if(!valid) x_interp_scale = 0;
+            if(!valid) x_interp_scale = 0; //this will produce incorrect results at the edge of the root mesh.
+                                            // extrapolating using previous scale would be a more suitable method.
 
             float y_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,1,0,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
@@ -245,8 +244,6 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
             float z_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,0,1,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
             if(!valid) z_interp_scale = 0;
-
-            printf("%i,%i,%i\n",x,y,z);
 
             for(int f_x = 0; f_x < scale_divisor; f_x++){
               for(int f_y = 0; f_y < scale_divisor; f_y++){
@@ -353,20 +350,14 @@ template float relative_mesh_value(std::vector<std::vector<int>>& input_mesh, in
 
 
 template<typename T>
-int submesh_side_length(std::vector<T> input_vector){
+int submesh_side_length(std::vector<T> &input_vector){
   /*
 
   */
-  return std::cbrt(input_vector.size());
-  // if(input_vector.size() == 10*10*10) return 10;
-  // if(input_vector.size() == 60*60*60) return 10;
-  // if(input_vector.size() == 120*120*120) return 10;
-  // if(input_vector.size() == 5*5*5) return 10;
-  // if(input_vector.size() == 20*20*20) return 10;
-
+  return round(std::cbrt(input_vector.size()));
 }
-template int submesh_side_length(std::vector<float> input_vector);
-template int submesh_side_length(std::vector<int> input_vector);
+template int submesh_side_length(std::vector<float> &input_vector);
+template int submesh_side_length(std::vector<int> &input_vector);
 
 
 

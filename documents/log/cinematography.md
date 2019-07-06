@@ -241,3 +241,9 @@ This technology has a long and sordid family tree - it's hard to know exactly wh
 
 
 RF metamaterial with hackrf
+
+
+
+
+
+'build up' solids in sim animation from corner
