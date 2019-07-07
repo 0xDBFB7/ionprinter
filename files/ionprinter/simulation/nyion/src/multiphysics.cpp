@@ -373,7 +373,7 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
   Boundary conditions are required.
   ----------------------------------------------------------------------------- */
   std::vector<std::vector<float>> residuals;
-  residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
+  residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 5, 1, 0);
   /* -----------------------------------------------------------------------------
   Pre-smoothing Jacobi?
   ----------------------------------------------------------------------------- */
@@ -382,19 +382,24 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
   'Restrict' to a coarser grid. This must be an even multiple of the original.
   ----------------------------------------------------------------------------- */
   std::vector<std::vector<float>> coarsened_grid;
-  coarsen_mesh(residuals,coarsened_grid,mesh_geometry,4);
+  coarsen_mesh(residuals,coarsened_grid,mesh_geometry,2);
   /* -----------------------------------------------------------------------------
   Null out errors.
   Boundary conditions are ignored.
   ----------------------------------------------------------------------------- */
-  gauss_seidel(coarsened_grid, boundaries, mesh_geometry, 0.01, 1, 1);
+  gauss_seidel(coarsened_grid, boundaries, mesh_geometry, 50, 1, 1);
   /* -----------------------------------------------------------------------------
   Interpolate residual mesh back to original resolution.
   ----------------------------------------------------------------------------- */
-  decoarsen_mesh(coarsened_grid,residuals,mesh_geometry,4);
+  decoarsen_mesh(coarsened_grid,residuals,mesh_geometry,2);
   /* -----------------------------------------------------------------------------
   Correct original mesh with computed residuals.
   ----------------------------------------------------------------------------- */
+  for(int x = 0; x < 10; x++){
+    printf("%f\n",residuals[0][x]);
+    // DOUBLES_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*x,refined_potentials[0][x], 1e-4);
+  }
+
   for(int root = 0; root < potentials.size(); root++){
     for(int sub = 0; sub < potentials[root].size(); sub++){
       potentials[root][sub] = (potentials[root][sub] - residuals[root][sub]);
@@ -403,7 +408,9 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
   /* -----------------------------------------------------------------------------
   Correct original mesh with computed residuals.
   ----------------------------------------------------------------------------- */
-  gauss_seidel(potentials, boundaries, mesh_geometry, tolerance, 1, 0);
+
+  gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
+
 }
 
 
@@ -413,7 +420,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
                                                                                                 root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries){
   /*
   Jacobi averages the four nearest points and stores the result in a new matrix.
-  Gauss-Seidel averages the four nearest points and updates the current matrix. Converges in
+  Gauss-Seidel averages the four nearest points and updates the current matrix.
   SOR/SSOR is essentially Gauss-Seidel * 1 to 2.0.
   Conjugate Gradient. Converges in something like sqrt() that of Gauss-Seidel.
   Alternative stencils (8-point etc) can also improve convergence, but are computationally expensive.

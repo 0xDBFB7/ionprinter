@@ -339,20 +339,26 @@ TEST(laplace_tests,gauss_seidel_point_tests){
   potentials[0][idx(4,0,0,10,10)] = 1000.0;
   boundaries[0][idx(4,0,0,10,10)] = 10;
 
-  gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
+  std::vector<std::vector<float>> residuals;
+
+  residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
 
 
+  // for(int x = 0; x < 10; x++){
+  //   printf("%f\n",residuals[0][x]);
+  //   // DOUBLES_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*x,refined_potentials[0][x], 1e-4);
+  // }
 
 }
 
 TEST(laplace_tests,v_cycle_tests){
-  float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
+  float mesh_bounds[6] = {0,0.05,0,0.05,0,0.3};
   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 
   std::vector<std::vector<float>> potentials;
   std::vector<std::vector<int>> boundaries;
 
-  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.05};
 
   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,60);
   enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,60);
@@ -360,8 +366,13 @@ TEST(laplace_tests,v_cycle_tests){
   potentials[0][idx(4,0,0,10,10)] = 1000.0;
   boundaries[0][idx(4,0,0,10,10)] = 10;
 
-  v_cycle(potentials,boundaries,mesh_geometry,0.01);
+  v_cycle(potentials,boundaries,mesh_geometry,1);
+
+  to_csv(potentials,mesh_geometry);
 }
+
+
+
   //
 //
 //
