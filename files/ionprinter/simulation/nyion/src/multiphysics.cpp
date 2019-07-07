@@ -361,55 +361,51 @@ template int submesh_side_length(std::vector<int> &input_vector);
 
 
 
-void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance){
+
+void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i){
   /* -----------------------------------------------------------------------------
   Multigrid v-cycle implementation based off
   http://www.maths.lth.se/na/courses/FMNN15/media/material/Chapter8.09b__.pdf
   and Wikipedia's multigrid diagram
   ----------------------------------------------------------------------------- */
 
+  int stages = 2;
+  int cycle[] = {2,2};
+  float tol[] = {0.5,0.01,0.01};
+
   /* -----------------------------------------------------------------------------
   First, iterate once or twice over the finest mesh to obtain residuals.
   Boundary conditions are required.
   ----------------------------------------------------------------------------- */
   std::vector<std::vector<float>> residuals;
-  residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 5, 1, 0);
-  /* -----------------------------------------------------------------------------
-  Pre-smoothing Jacobi?
-  ----------------------------------------------------------------------------- */
+  residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 500, (i==0), (i!=0));
 
-  /* -----------------------------------------------------------------------------
-  'Restrict' to a coarser grid. This must be an even multiple of the original.
-  ----------------------------------------------------------------------------- */
-  std::vector<std::vector<float>> coarsened_grid;
-  coarsen_mesh(residuals,coarsened_grid,mesh_geometry,2);
-  /* -----------------------------------------------------------------------------
-  Null out errors.
-  Boundary conditions are ignored.
-  ----------------------------------------------------------------------------- */
-  gauss_seidel(coarsened_grid, boundaries, mesh_geometry, 50, 1, 1);
-  /* -----------------------------------------------------------------------------
-  Interpolate residual mesh back to original resolution.
-  ----------------------------------------------------------------------------- */
-  decoarsen_mesh(coarsened_grid,residuals,mesh_geometry,2);
+  std::vector<std::vector<float>> rhs;
+
+  coarsen_mesh(residuals,rhs,mesh_geometry,cycle[i]);
+
+  std::vector<std::vector<float>> eps;
+  if(i == stages-1){
+    gauss_seidel(rhs, boundaries, mesh_geometry, tol[i], 0, 1);
+  }
+  else{
+    v_cycle(rhs,boundaries,mesh_geometry,tol[i],i+1);
+  }
+
+
+  std::vector<std::vector<float>> temp;
+  decoarsen_mesh(rhs,temp,mesh_geometry,cycle[i]);
+
   /* -----------------------------------------------------------------------------
   Correct original mesh with computed residuals.
   ----------------------------------------------------------------------------- */
-  for(int x = 0; x < 10; x++){
-    printf("%f\n",residuals[0][x]);
-    // DOUBLES_EQUAL((input_mesh_len/ (float) (input_mesh_len*test_divisor))*x,refined_potentials[0][x], 1e-4);
-  }
-
-  for(int root = 0; root < potentials.size(); root++){
-    for(int sub = 0; sub < potentials[root].size(); sub++){
-      potentials[root][sub] = (potentials[root][sub] - residuals[root][sub]);
+  for(int root = 0; root < temp.size(); root++){
+    for(int sub = 0; sub < temp[root].size(); sub++){
+      potentials[root][sub] += temp[root][sub];
     }
   }
-  /* -----------------------------------------------------------------------------
-  Correct original mesh with computed residuals.
-  ----------------------------------------------------------------------------- */
 
-  gauss_seidel(potentials, boundaries, mesh_geometry, 50, 1, 0);
+  gauss_seidel(potentials, boundaries, mesh_geometry, 50, (i==0), (i!=0));
 
 }
 
@@ -486,11 +482,17 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
                   bool valid = false;
 
                   stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,1,mesh_geometry,valid);
+                  if(!valid) stencil_divisor--;
                   stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,-1,mesh_geometry,valid);
+                  if(!valid) stencil_divisor--;
                   stencil_value += relative_mesh_value(potentials,root,x,y,z,0,1,0,mesh_geometry,valid);
+                  if(!valid) stencil_divisor--;
                   stencil_value += relative_mesh_value(potentials,root,x,y,z,0,-1,0,mesh_geometry,valid);
+                  if(!valid) stencil_divisor--;
                   stencil_value += relative_mesh_value(potentials,root,x,y,z,1,0,0,mesh_geometry,valid);
+                  if(!valid) stencil_divisor--;
                   stencil_value += relative_mesh_value(potentials,root,x,y,z,-1,0,0,mesh_geometry,valid);
+                  if(!valid) stencil_divisor--;
 
                   if(!field){
                     stencil_value /= stencil_divisor;
@@ -575,12 +577,12 @@ void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_g
                 float world_x = (r_x*mesh_geometry.root_scale)+(x*(mesh_geometry.root_scale/fine_sub_len));
                 float world_y = (r_y*mesh_geometry.root_scale)+(y*(mesh_geometry.root_scale/fine_sub_len));
                 float world_z = (r_z*mesh_geometry.root_scale)+(z*(mesh_geometry.root_scale/fine_sub_len));
-                if(original[root_idx][sub_idx]){
+                // if(original[root_idx][sub_idx]){
                   output_file << world_x << ","
                               << world_y << ","
                               << world_z << ","
                               << original[root_idx][sub_idx] << "," << "\n";
-                }
+                // }
               }
             }
           }

@@ -358,17 +358,21 @@ TEST(laplace_tests,v_cycle_tests){
   std::vector<std::vector<float>> potentials;
   std::vector<std::vector<int>> boundaries;
 
-  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.05};
+  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.02};
 
-  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,60);
-  enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,60);
+  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
+  enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,20);
 
   potentials[0][idx(4,0,0,10,10)] = 1000.0;
   boundaries[0][idx(4,0,0,10,10)] = 10;
 
-  v_cycle(potentials,boundaries,mesh_geometry,1);
+  while(1){
+    printf("\n\n");
+    v_cycle(potentials,boundaries,mesh_geometry,1,0);
+    to_csv(potentials,mesh_geometry);
+  }
 
-  to_csv(potentials,mesh_geometry);
+  // to_csv(potentials,mesh_geometry);
 }
 
 
