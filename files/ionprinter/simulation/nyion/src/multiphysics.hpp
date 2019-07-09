@@ -15,6 +15,13 @@
 #include <vector>
 #include "data_structure.hpp"
 
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <GL/freeglut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
+
 #define X 0
 #define Y 1
 #define Z 2
@@ -25,6 +32,13 @@
 #define Y2 3
 #define Z1 4
 #define Z2 5
+
+
+/* -----------------------------------------------------------------------------
+DISPLAY SETTINGS
+----------------------------------------------------------------------------- */
+#define OPENGL_WORLD_SCALE 0.0005 //m/opengl index
+
 
 
 #define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
@@ -70,3 +84,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
     root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries);
 
 void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i);
+
+void initialize_opengl(int window_x, int window_y);
+void update_screen();
+void draw_geometry_outline(root_mesh_geometry mesh_geometry);

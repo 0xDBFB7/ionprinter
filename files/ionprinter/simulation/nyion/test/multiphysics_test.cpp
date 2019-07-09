@@ -350,31 +350,50 @@ TEST(laplace_tests,gauss_seidel_point_tests){
   // }
 
 }
+//
+// TEST(laplace_tests,v_cycle_tests){
+//   float mesh_bounds[6] = {0,0.05,0,0.05,0,0.3};
+//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//   std::vector<std::vector<float>> potentials;
+//   std::vector<std::vector<int>> boundaries;
+//
+//   float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.02};
+//
+//   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
+//   enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,20);
+//
+//   potentials[0][idx(4,0,0,10,10)] = 1000.0;
+//   boundaries[0][idx(4,0,0,10,10)] = 10;
+//
+//   while(1){
+//     printf("\n\n");
+//     v_cycle(potentials,boundaries,mesh_geometry,1,0);
+//     to_csv(potentials,mesh_geometry);
+//   }
+//
+//   // to_csv(potentials,mesh_geometry);
+// }
+//
 
-TEST(laplace_tests,v_cycle_tests){
-  float mesh_bounds[6] = {0,0.05,0,0.05,0,0.3};
-  root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+TEST(laplace_tests,opengl_simple_boundary){
+    float mesh_bounds[6] = {0,0.05,0,0.05,0,0.3};
+    root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 
-  std::vector<std::vector<float>> potentials;
-  std::vector<std::vector<int>> boundaries;
+    std::vector<std::vector<float>> potentials;
 
-  float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.02};
+    float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.02};
 
-  enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
-  enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,20);
+    enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
 
-  potentials[0][idx(4,0,0,10,10)] = 1000.0;
-  boundaries[0][idx(4,0,0,10,10)] = 10;
 
-  while(1){
-    printf("\n\n");
-    v_cycle(potentials,boundaries,mesh_geometry,1,0);
-    to_csv(potentials,mesh_geometry);
-  }
+    initialize_opengl(1920,1080);
+    draw_geometry_outline(mesh_geometry);
+    update_screen();
+    while(true){};
 
-  // to_csv(potentials,mesh_geometry);
+
 }
-
 
 
   //

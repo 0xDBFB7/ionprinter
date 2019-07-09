@@ -68,12 +68,12 @@ using namespace std::chrono;
 // #include <mpi.h>
 //
 //
-// #include <GL/glew.h>
-// #include <GL/glut.h>
-// #include <GL/freeglut.h>
-// #include <GL/gl.h>
-// #include <GL/glu.h>
-// #include <GL/glext.h>
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include <GL/freeglut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glext.h>
 //
 // #include <boost/array.hpp>
 
@@ -83,6 +83,7 @@ using namespace std::chrono;
 
 
 #define EPSILON_0 8.854187e-12
+
 
 
 #define MULTIGRID_COARSE_GRID 0.001
@@ -592,6 +593,160 @@ void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_g
   }
   output_file.close();
 }
+
+
+void initialize_opengl(int window_x, int window_y){
+  int argc;
+  char *argv[0];
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+  glEnable(GL_MULTISAMPLE);
+  glutInitWindowSize(window_x, window_y);
+  glutCreateWindow("Nyion");
+  glViewport(0, 0, window_x, window_y);
+
+
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Set background color to black and opaque
+  glClearDepth(1.0f);                   // Set background depth to farthest
+  glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
+  glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
+  glShadeModel(GL_SMOOTH);   // Enable smooth shading
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  double aspect = (double)viewport[2] / (double)viewport[3];
+  // int znear = 200;
+  // int zfar = 400;
+  gluPerspective(60, aspect, 200, 400);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+
+
+  // glutKeyboardFunc(keyboard);
+  // glutPassiveMotionFunc(mouse);
+
+
+  /* -----------------------------------------------------------------------------
+  Set viewport parameters
+  ----------------------------------------------------------------------------- */
+  glTranslatef(0,0, -300);
+  glRotatef(45.0, 0, 1.0, 0);
+  glRotatef(25.0, 1.0, 0, 0);
+
+
+  // glTranslatef(-grid_width/2,-grid_width/2, -grid_width/2);
+
+  //
+  glPushMatrix();
+    glTranslatef(0,0,0);
+    glColor3f(255,255,255);
+    glutSolidCube(3);
+  glPopMatrix();
+
+
+
+  /* -----------------------------------------------------------------------------
+  Update screen
+  ----------------------------------------------------------------------------- */
+
+
+}
+
+void draw_geometry_outline(root_mesh_geometry mesh_geometry){
+  /* -----------------------------------------------------------------------------
+  Draw a wireframe box encompassing mesh_geometry.
+  GL_LINE_STRIPs should be drawn between pixels; hence the +0.5.
+  ----------------------------------------------------------------------------- */
+  // glPushMatrix();
+    glColor3f(1.0f, 1.0f, 0.0f);
+      glBegin(GL_LINE_STRIP);
+      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+      glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+      glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                            ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+    glEnd();
+  // glPopMatrix();
+
+}
+
+
+void update_screen(){
+  glutSwapBuffers();
+  glutPostRedisplay();
+  // TakeScreenshot(t);
+  glPopMatrix();
+  glutMainLoopEvent();
+}
+
+
+// void TakeScreenshot(float time)
+// {
+// 	unsigned char *buffer;
+// 	char filename[200];
+// 	int w = 1920;
+// 	int h = 1080;
+// 	int buf_size = 18 + (w * h * 3);
+// 	int i;
+// 	unsigned char temp;
+// 	FILE *out_file;
+// 	char filename2[200];
+// 	sprintf(filename2,"video/%i.tga",shot_counter);
+// 	if (!(out_file = fopen(filename2, "wb")))
+// 	{
+// 		return;
+// 	}
+//
+// 	// allocate mem to read from frame buf
+// 	if (!(buffer = (unsigned char *) calloc(1, buf_size)))
+// 	{
+// 		return;
+// 	}
+//
+// 	// set header info
+// 	buffer[2] = 2;	// uncompressed
+// 	buffer[12] = w & 255;
+// 	buffer[13] = w >> 8;
+// 	buffer[14] = h & 255;
+// 	buffer[15] = h >> 8;
+// 	buffer[16] = 24;	// 24 bits per pix
+//
+// 	// read frame buf
+// 	glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, buffer + 18);
+//
+// 	// RGB to BGR
+// 	for (i = 18; i < buf_size; i += 3)
+// 	{
+// 		temp = buffer[i];
+// 		buffer[i] = buffer[i + 2];
+// 		buffer[i + 2] = temp;
+// 	}
+// 	// write header + color buf to file
+// 	fwrite(buffer, sizeof(unsigned char), buf_size, out_file);
+// 	// cleanup
+// 	fclose(out_file);
+// 	free(buffer);
+// 	shot_counter++;
+// }
+
 
 
 //

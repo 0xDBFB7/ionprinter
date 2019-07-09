@@ -42,3 +42,27 @@ Exhaustive test procedures should be implemented wherever possible.
 
 <Hr>
 
+#### Issue:
+
+```c++
+int argc;
+char *argv[0];
+glutInit(&argc, argv); //segfaults
+```
+
+
+
+```c++
+int argc = 0;
+char *argv[1];
+glutInit(&argc, argv);
+```
+
+##### Discovery
+
+Commenting out an unrelated bit of code triggered this error.
+
+<hr>
+
+
+

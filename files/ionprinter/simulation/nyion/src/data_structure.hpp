@@ -14,7 +14,6 @@ class root_mesh_geometry{
 
     float root_scale; //world scale to submesh cube scale
 
-
     float x_min_bound;
     float x_max_bound;
     float y_min_bound;
