@@ -386,11 +386,16 @@ TEST(laplace_tests,opengl_simple_boundary){
 
     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
 
+    initialize_opengl(mesh_geometry);
+    // draw_geometry_outline(mesh_geometry);
+    // update_screen();
+    // opengl_clear_screen();
 
-    initialize_opengl(1920,1080);
-    draw_geometry_outline(mesh_geometry);
-    update_screen();
-    while(true){};
+    while(true){
+      draw_geometry_outline(mesh_geometry);
+      update_screen();
+      opengl_clear_screen();
+    }
 
 
 }

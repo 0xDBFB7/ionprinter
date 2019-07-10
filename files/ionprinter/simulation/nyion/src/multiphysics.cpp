@@ -89,8 +89,11 @@ using namespace std::chrono;
 #define MULTIGRID_COARSE_GRID 0.001
 #define MATERIAL_BC_CUTOFF 1000//
 
-
-
+float opengl_zoom = 800;
+float opengl_angle_x = 45;
+float opengl_angle_y = 25.0;
+// float mouse_previous_x = 0;
+// float mouse_previous_y = 0;
 
 root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   /*
@@ -594,16 +597,38 @@ void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_g
   output_file.close();
 }
 
+//
+// void mouse_handler(int x, int y){
+//   opengl_angle_x = ((x-mouse_previous_x)/(float)OPENGL_WINDOW_X)*360.0;
+//   opengl_angle_y = ((y-mouse_previous_y)/(float)OPENGL_WINDOW_Y)*360.0;
+//   mouse_previous_x = x;
+//   mouse_previous_y = y;
+//
+// }
 
-void initialize_opengl(int window_x, int window_y){
-  int argc;
-  char *argv[0];
+void keyboard_handler(unsigned char key, int x, int y){
+  if(key == '4') opengl_angle_x = 10;
+  if(key == '6') opengl_angle_x = -10;
+  if(key == '+') opengl_zoom = -10;
+  if(key == '-') opengl_zoom = +1;
+
+  // opengl_angle_y = 10;
+  // mouse_previous_x = x;
+  // mouse_previous_y = y;
+  //
+  // if(ch)
+  // opengl_angle_x
+}
+
+void initialize_opengl(root_mesh_geometry mesh_geometry){
+  int argc = 0;
+  char *argv[1];
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
   glEnable(GL_MULTISAMPLE);
-  glutInitWindowSize(window_x, window_y);
+  glutInitWindowSize(OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
   glutCreateWindow("Nyion");
-  glViewport(0, 0, window_x, window_y);
+  glViewport(0, 0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
 
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Set background color to black and opaque
@@ -620,23 +645,37 @@ void initialize_opengl(int window_x, int window_y){
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
   double aspect = (double)viewport[2] / (double)viewport[3];
-  // int znear = 200;
-  // int zfar = 400;
-  gluPerspective(60, aspect, 200, 400);
-  glMatrixMode(GL_MODELVIEW);
+
+
+  int min_extent = std::min(std::min(mesh_geometry.x_min_bound,mesh_geometry.y_min_bound),mesh_geometry.z_min_bound)/OPENGL_WORLD_SCALE;
+  int max_extent = std::max(std::max(mesh_geometry.x_max_bound,mesh_geometry.y_max_bound),mesh_geometry.z_max_bound)/OPENGL_WORLD_SCALE;
+  int extent = max_extent-min_extent;
+  int zoom = 800;
+
+  gluPerspective(60, aspect, zoom-extent, zoom); //all parameters must be positive.
+  // glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 
 
-  // glutKeyboardFunc(keyboard);
-  // glutPassiveMotionFunc(mouse);
+  glutKeyboardFunc(keyboard_handler);
+  // glutPassiveMotionFunc(mouse_handler);
+  // glutMouseFunc(void (*func)(int button, int state,
+  //                                 int x, int y));
 
 
   /* -----------------------------------------------------------------------------
   Set viewport parameters
   ----------------------------------------------------------------------------- */
-  glTranslatef(0,0, -300);
-  glRotatef(45.0, 0, 1.0, 0);
-  glRotatef(25.0, 1.0, 0, 0);
+  // int x_translate = (((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)-
+  //                     (int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE))/2)+
+  //                     (int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE);
+  // int y_translate = (((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)-
+  //                   (int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE))/2)+
+  //                   (int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE);
+
+  glTranslatef(0,0, -zoom);
+  // glRotatef(45.0, 0, 1.0, 0);
+  // glRotatef(25.0, 1.0, 0, 0);
 
 
   // glTranslatef(-grid_width/2,-grid_width/2, -grid_width/2);
@@ -648,13 +687,35 @@ void initialize_opengl(int window_x, int window_y){
     glutSolidCube(3);
   glPopMatrix();
 
+  opengl_draw_axis_cross();
+
+}
 
 
-  /* -----------------------------------------------------------------------------
-  Update screen
-  ----------------------------------------------------------------------------- */
 
+void opengl_clear_screen(){
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glPopMatrix();
+}
 
+void opengl_draw_axis_cross(){
+  glColor3f(1.0f, 0.0f, 0.0f);
+  glBegin(GL_LINE_STRIP);
+  glVertex3f(300,0,0);
+  glVertex3f(0,0,0);
+  glEnd();
+
+  glColor3f(0.0f, 1.0f, 0.0f);
+  glBegin(GL_LINE_STRIP);
+  glVertex3f(0,300,0);
+  glVertex3f(0,0,0);
+  glEnd();
+
+  glColor3f(0.0f, 0.0f, 1.0f);
+  glBegin(GL_LINE_STRIP);
+  glVertex3f(0,0,300);
+  glVertex3f(0,0,0);
+  glEnd();
 }
 
 void draw_geometry_outline(root_mesh_geometry mesh_geometry){
@@ -662,40 +723,49 @@ void draw_geometry_outline(root_mesh_geometry mesh_geometry){
   Draw a wireframe box encompassing mesh_geometry.
   GL_LINE_STRIPs should be drawn between pixels; hence the +0.5.
   ----------------------------------------------------------------------------- */
-  // glPushMatrix();
-    glColor3f(1.0f, 1.0f, 0.0f);
-      glBegin(GL_LINE_STRIP);
-      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-      glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-      glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-      glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                            ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glEnd();
-  // glPopMatrix();
+  glColor3f(1.0f, 1.0f, 0.0f);
+    glBegin(GL_LINE_STRIP);
+    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+  glEnd();
 
 }
 
 
+
 void update_screen(){
+  glutMainLoopEvent();
+  opengl_draw_axis_cross();
+  glTranslatef(0,0, opengl_zoom);
+  glRotatef(opengl_angle_x, 1.0, 0, 0);
+  glRotatef(opengl_angle_y, 0, 1.0, 0);
+  opengl_zoom = 0;
+  opengl_angle_x = 0;
+  opengl_angle_y = 0;
+
   glutSwapBuffers();
   glutPostRedisplay();
   // TakeScreenshot(t);
   glPopMatrix();
-  glutMainLoopEvent();
+
 }
+
 
 
 // void TakeScreenshot(float time)
@@ -749,9 +819,6 @@ void update_screen(){
 
 
 
-//
-//
-//
 // void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
 //   /*
 //   Deposit a mesh onto a uniform grid.

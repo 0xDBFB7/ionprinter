@@ -38,7 +38,8 @@
 DISPLAY SETTINGS
 ----------------------------------------------------------------------------- */
 #define OPENGL_WORLD_SCALE 0.0005 //m/opengl index
-
+#define OPENGL_WINDOW_X 1920
+#define OPENGL_WINDOW_Y 1080
 
 
 #define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
@@ -85,6 +86,8 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 
 void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i);
 
-void initialize_opengl(int window_x, int window_y);
+void initialize_opengl(root_mesh_geometry mesh_geometry);
 void update_screen();
 void draw_geometry_outline(root_mesh_geometry mesh_geometry);
+void opengl_clear_screen();
+void opengl_draw_axis_cross();
