@@ -1493,3 +1493,29 @@ In keeping with the serviceability/prototyping bringup combination, it may be he
 
 <hr>
 
+One could be forgiven for questioning why I'm rolling my own solver (and visualization, for that matter). There are many reasons: first, I want to be able to tack on new features at will (abstracting to the complex plane for EM sim, for instance). 
+
+Secondly, I'm quite tired of using third-party libraries, of dependency hell, of indecipherable error codes emerging from deep within twisted codebases, and sparse tomes of documentation. I want to know everything about the solver, how it works, under which conditions it will fail, etc. 
+
+This is nonsense, of course, but I hope it's forgivable nonsense.
+
+<hr>
+
+<https://en.wikipedia.org/wiki/Ultra-high-temperature_ceramics>
+
+Whole bunch of materials like HfB2 etc developed by Manlabs that may be useful. 
+
+Zirconia is a bit  on the expensive side, also not resistant to thermal shock, but has a ridiculously high melting temp. 
+
+SiC powder is easy to obtain. Sinter temp ~1600-2000. Might work; however, still degrades on contact with aluminum. Perhaps SiC and alumina can be cofired?
+
+Liquid silicon can be used to coat RCC.
+
+Graphite bowtie life will probably be negligible due to aluminum carbide formation. 
+
+
+
+<hr>
+
+
+

@@ -76,6 +76,8 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 template<typename T>
 float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
 
+
+
 std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector,
                                         std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool field);
 
@@ -91,3 +93,7 @@ void update_screen();
 void draw_geometry_outline(root_mesh_geometry mesh_geometry);
 void opengl_clear_screen();
 void opengl_draw_axis_cross();
+void opengl_3d_mode();
+void opengl_2d_mode();
+template<typename T>
+void draw_mesh(std::vector<std::vector<T>>& input_mesh,root_mesh_geometry mesh_geometry);

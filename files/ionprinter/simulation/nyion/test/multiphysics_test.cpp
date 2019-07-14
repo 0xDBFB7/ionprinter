@@ -377,12 +377,12 @@ TEST(laplace_tests,gauss_seidel_point_tests){
 //
 
 TEST(laplace_tests,opengl_simple_boundary){
-    float mesh_bounds[6] = {0,0.05,0,0.05,0,0.3};
+    float mesh_bounds[6] = {0,0.05,0,0.05,0,0.05};
     root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 
     std::vector<std::vector<float>> potentials;
 
-    float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.02};
+    float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.1};
 
     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
 
@@ -392,7 +392,9 @@ TEST(laplace_tests,opengl_simple_boundary){
     // opengl_clear_screen();
 
     while(true){
+      opengl_3d_mode();
       draw_geometry_outline(mesh_geometry);
+      draw_mesh(potentials,mesh_geometry);
       update_screen();
       opengl_clear_screen();
     }

@@ -247,3 +247,9 @@ RF metamaterial with hackrf
 
 
 'build up' solids in sim animation from corner
+
+
+
+
+
+Press kit would be really helpful.
