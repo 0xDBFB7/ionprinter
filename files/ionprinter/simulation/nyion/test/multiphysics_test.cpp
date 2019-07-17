@@ -396,7 +396,7 @@ TEST(laplace_tests,opengl_simple_boundary){
     glutCreateWindow("Nyion");
     glViewport(0, 0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
 
-    glutKeyboardFunc(keyboard_handler);
+    // glutKeyboardFunc(keyboard_handler);
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Set background color to black and opaque
     glClearDepth(1.0f);                   // Set background depth to farthest
@@ -415,15 +415,24 @@ TEST(laplace_tests,opengl_simple_boundary){
     // initialize_opengl(mesh_geometry);
 
     while(true){
+
       glMatrixMode(GL_PROJECTION);
       glLoadIdentity();
       GLint viewport[4];
       glGetIntegerv(GL_VIEWPORT, viewport);
       double aspect = (double)viewport[2] / (double)viewport[3];
-      printf("%f,%f\n",opengl_current_z_translate-2*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
-      gluPerspective(60, aspect, opengl_current_z_translate-2*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
+      gluPerspective(60, aspect, 20, 40); //all parameters must be positive.
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
+
+      glTranslatef(0, 0, -30);
+
+      glPushMatrix();
+        glTranslatef(0,0,0);
+        glColor3f(255,255,255);
+        glutSolidCube(3);
+      glPopMatrix();
+
 
       glMatrixMode(GL_PROJECTION);
       glPushMatrix();
@@ -431,6 +440,18 @@ TEST(laplace_tests,opengl_simple_boundary){
       glOrtho(0.0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y, 0.0, -1.0, 10.0);
       glMatrixMode(GL_MODELVIEW);
       glLoadIdentity();
+
+      glRasterPos2i(100, 120);
+      glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+
+      glutBitmapString(GLUT_BITMAP_HELVETICA_12, (unsigned char *) "testing testing testing");
+
+      glutMainLoopEvent();
+
+      glutSwapBuffers();
+      glutPostRedisplay();
+
+
 
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       glPopMatrix();
@@ -440,7 +461,6 @@ TEST(laplace_tests,opengl_simple_boundary){
       // draw_mesh(potentials,mesh_geometry);
       // opengl_2d_mode();
 
-      opengl_clear_screen();
     }
 
 
