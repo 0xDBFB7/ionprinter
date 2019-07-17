@@ -7,6 +7,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
+#include <GL/glx.h>
 
 
 float opengl_zoom = 30;
@@ -23,9 +24,11 @@ float opengl_delta_x_translate = 0.0;
 float opengl_delta_y_translate = 0.0;
 float opengl_delta_z_translate = 0.0;
 
+
+
 void keyboard_handler(unsigned char key, int x, int y){
-  if(key == '2') opengl_delta_angle_x = -10;
-  if(key == '8') opengl_delta_angle_x = 10;
+  if(key == '2') opengl_delta_angle_x = 10;
+  if(key == '8') opengl_delta_angle_x = -10;
   if(key == '4') opengl_delta_angle_y = 10;
   if(key == '6') opengl_delta_angle_y = -10;
   if(key == '+') opengl_delta_zoom = -10;
@@ -38,6 +41,19 @@ void keyboard_handler(unsigned char key, int x, int y){
 
 
 void initialize_opengl(root_mesh_geometry mesh_geometry){
+
+  int sngBuf[] = { GLX_RGBA,
+                   GLX_RED_SIZE, 1,
+                   GLX_GREEN_SIZE, 1,
+                   GLX_BLUE_SIZE, 1,
+                   GLX_DEPTH_SIZE, 12,
+                   None
+  };
+  Display * display = XOpenDisplay(0);
+  XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), sngBuf);
+  GLXContext glContext = glXCreateContext(display, vi, 0, GL_TRUE);
+
+
   int argc = 0;
   char *argv[1];
   glutInit(&argc, argv);
@@ -72,7 +88,6 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
   opengl_current_z_translate = 2*opengl_z_extent;
   opengl_current_x_translate = -(((mesh_geometry.x_max_bound-mesh_geometry.x_min_bound)/2)+mesh_geometry.x_min_bound)/OPENGL_WORLD_SCALE;
   opengl_current_y_translate = -(((mesh_geometry.y_max_bound-mesh_geometry.y_min_bound)/2)+mesh_geometry.y_min_bound)/OPENGL_WORLD_SCALE;
-
 }
 
 
@@ -83,7 +98,7 @@ void opengl_3d_mode(){
   glGetIntegerv(GL_VIEWPORT, viewport);
   double aspect = (double)viewport[2] / (double)viewport[3];
   printf("%f,%f\n",opengl_current_z_translate-1.5*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
-  gluPerspective(60, aspect, 10, 500); //all parameters must be positive.
+  gluPerspective(60, aspect, opengl_current_z_translate-1.5*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -194,20 +209,7 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh ,root_mesh_geometry mesh_
   /* -----------------------------------------------------------------------------
   Determine min and max for color scaling
   ----------------------------------------------------------------------------- */
-  float min = 1e10;
-  float max = 1e-10;
-  for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
-    if(input_mesh[root].size()){
-      for(int sub = 0; sub < input_mesh[root].size(); sub++){
-        if(input_mesh[root][sub] < min){
-          min = input_mesh[root][sub];
-        }
-        if(input_mesh[root][sub] > max){
-          max = input_mesh[root][sub];
-        }
-      }
-    }
-  }
+
   /* -----------------------------------------------------------------------------
   Draw cubes
   ----------------------------------------------------------------------------- */
@@ -243,12 +245,13 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh ,root_mesh_geometry mesh_
                   glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                                 (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                                 (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-                  glColor3f(255,255,255);
+                  glColor4f(255,255,255,1.0);
                   glutWireCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
                 glPopMatrix();
               }
             }
           }
+
 
         }
         else{

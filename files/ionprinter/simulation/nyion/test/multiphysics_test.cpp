@@ -385,7 +385,7 @@ TEST(laplace_tests,opengl_simple_boundary){
 
     float mesh_active_bounds[6] = {0,0.05,0,0.06,0,0.05};
 
-    enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,5);
+    enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,2);
 
 
     initialize_opengl(mesh_geometry);

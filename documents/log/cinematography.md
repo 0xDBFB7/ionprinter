@@ -253,3 +253,11 @@ RF metamaterial with hackrf
 
 
 Press kit would be really helpful.
+
+
+
+Sepia + closeup of keyboard is neat.
+
+
+
+Face mask monitor reflection like 2001?

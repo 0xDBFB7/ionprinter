@@ -128,6 +128,31 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
     return ((beam_current/(2.0*(M_PI)*EPSILON_0*beam_velocity)) * (sample_radius/pow(beam_radius,2.0)));
 }
 
+float vector_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry){
+  float min = 1e0;
+  for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
+    if(input_mesh[root].size()){
+      for(int sub = 0; sub < input_mesh[root].size(); sub++){
+        if(input_mesh[root][sub] < min){
+          min = input_mesh[root][sub];
+        }
+      }
+    }
+  }
+}
+
+float vector_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry){
+  float max = 1e-30;
+  for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
+    if(input_mesh[root].size()){
+      for(int sub = 0; sub < input_mesh[root].size(); sub++){
+        if(input_mesh[root][sub] > max){
+          max = input_mesh[root][sub];
+        }
+      }
+    }
+  }
+}
 
 
 template<typename T>

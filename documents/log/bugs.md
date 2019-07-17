@@ -62,7 +62,17 @@ glutInit(&argc, argv);
 
 Commenting out an unrelated bit of code triggered this error.
 
+##### Solution
+
+Memory fuzzer testing would probably have caught this earlier.
+
 <hr>
+#### Issue:
+
+Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing.
+
+##### Discovery
+
 
 
 
