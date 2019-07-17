@@ -1,4 +1,5 @@
 #include "multiphysics.hpp"
+#include "visualize.hpp"
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 

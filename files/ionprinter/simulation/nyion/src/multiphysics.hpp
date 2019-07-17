@@ -15,12 +15,7 @@
 #include <vector>
 #include "data_structure.hpp"
 
-#include <GL/glew.h>
-#include <GL/glut.h>
-#include <GL/freeglut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
+#include "visualize.hpp"
 
 #define X 0
 #define Y 1
@@ -32,14 +27,6 @@
 #define Y2 3
 #define Z1 4
 #define Z2 5
-
-
-/* -----------------------------------------------------------------------------
-DISPLAY SETTINGS
------------------------------------------------------------------------------ */
-#define OPENGL_WORLD_SCALE 0.0005 //m/opengl index
-#define OPENGL_WINDOW_X 1920
-#define OPENGL_WINDOW_Y 1080
 
 
 #define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
@@ -81,20 +68,8 @@ float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int
 std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector,
                                         std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool field);
 
-void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_geometry);
 
 std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
     root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries);
 
 void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i);
-
-void initialize_opengl(root_mesh_geometry mesh_geometry);
-void update_screen();
-void draw_geometry_outline(root_mesh_geometry mesh_geometry);
-void opengl_clear_screen();
-void opengl_draw_axis_cross();
-void opengl_3d_mode();
-void opengl_2d_mode();
-template<typename T>
-void draw_mesh(std::vector<std::vector<T>>& input_mesh,root_mesh_geometry mesh_geometry);
-void opengl_apply_camera_rotation();
