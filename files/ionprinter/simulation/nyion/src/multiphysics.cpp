@@ -89,8 +89,8 @@ using namespace std::chrono;
 #define MULTIGRID_COARSE_GRID 0.001
 #define MATERIAL_BC_CUTOFF 1000//
 
-float opengl_zoom = 0;
-float opengl_z_extent = 0;
+float opengl_zoom = 30;
+float opengl_z_extent = 10;
 float opengl_current_angle_x = 45;
 float opengl_current_angle_y = 25.0;
 float opengl_current_x_translate = 0.0;
@@ -102,7 +102,6 @@ float opengl_delta_angle_y = 0;
 float opengl_delta_x_translate = 0.0;
 float opengl_delta_y_translate = 0.0;
 float opengl_delta_z_translate = 0.0;
-bool opengl_3d_active = 0;
 // float mouse_previous_x = 0;
 // float mouse_previous_y = 0;
 
@@ -663,16 +662,14 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
   /* -----------------------------------------------------------------------------
   Determine the longest side of the mesh and configure the frustrum appropriately.
   ----------------------------------------------------------------------------- */
-  // int min_extent = std::min(std::min(mesh_geometry.x_min_bound,mesh_geometry.y_min_bound),mesh_geometry.z_min_bound)/OPENGL_WORLD_SCALE;
-  // int max_extent = std::max(std::max(mesh_geometry.x_max_bound,mesh_geometry.y_max_bound),mesh_geometry.z_max_bound)/OPENGL_WORLD_SCALE;
-  // opengl_z_extent = max_extent-min_extent;
-  //
-  // opengl_current_z_translate = 2*opengl_z_extent;
-  // opengl_current_x_translate = -(((mesh_geometry.x_max_bound-mesh_geometry.x_min_bound)/2)+mesh_geometry.x_min_bound)/OPENGL_WORLD_SCALE;
-  // opengl_current_y_translate = -(((mesh_geometry.y_max_bound-mesh_geometry.y_min_bound)/2)+mesh_geometry.y_min_bound)/OPENGL_WORLD_SCALE;
+  int min_extent = std::min(std::min(mesh_geometry.x_min_bound,mesh_geometry.y_min_bound),mesh_geometry.z_min_bound)/OPENGL_WORLD_SCALE;
+  int max_extent = std::max(std::max(mesh_geometry.x_max_bound,mesh_geometry.y_max_bound),mesh_geometry.z_max_bound)/OPENGL_WORLD_SCALE;
+  opengl_z_extent = max_extent-min_extent;
 
-  opengl_3d_active = false;
-  opengl_3d_mode();
+  opengl_current_z_translate = 2*opengl_z_extent;
+  opengl_current_x_translate = -(((mesh_geometry.x_max_bound-mesh_geometry.x_min_bound)/2)+mesh_geometry.x_min_bound)/OPENGL_WORLD_SCALE;
+  opengl_current_y_translate = -(((mesh_geometry.y_max_bound-mesh_geometry.y_min_bound)/2)+mesh_geometry.y_min_bound)/OPENGL_WORLD_SCALE;
+
 
   // glutPassiveMotionFunc(mouse_handler);
   // glutMouseFunc(void (*func)(int button, int state,
@@ -685,46 +682,36 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
 
   // glTranslatef(opengl_current_x_translate,opengl_current_y_translate, -opengl_current_z_translate);
 
-  glPushMatrix();
-    glTranslatef(0,0,0);
-    glColor3f(255,255,255);
-    glutSolidCube(3);
-  glPopMatrix();
+  // glPushMatrix();
+  //   glTranslatef(0,0,0);
+  //   glColor3f(255,255,255);
+  //   glutSolidCube(3);
+  // glPopMatrix();
 
-  opengl_draw_axis_cross();
+  // opengl_draw_axis_cross();
 }
 
+
 void opengl_3d_mode(){
-  if (!opengl_3d_active) {
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    double aspect = (double)viewport[2] / (double)viewport[3];
-    printf("%f,%f\n",opengl_current_z_translate-2*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
-    gluPerspective(60, aspect, opengl_current_z_translate-2*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    opengl_3d_active = 1;
-  }
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  double aspect = (double)viewport[2] / (double)viewport[3];
+  printf("%f,%f\n",opengl_current_z_translate-2*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
+  gluPerspective(60, aspect, opengl_current_z_translate-2*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 }
 
 
 void opengl_2d_mode(){
-  if (opengl_3d_active) {
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y, 0.0, -1.0, 10.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    // glDisable(GL_CULL_FACE);
-    //
-    // glClear(GL_DEPTH_BUFFER_BIT);
-
-    opengl_3d_active = 0;
-  }
+  glMatrixMode(GL_PROJECTION);
+  glPushMatrix();
+  glLoadIdentity();
+  glOrtho(0.0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y, 0.0, -1.0, 10.0);
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
 }
 
 
@@ -928,10 +915,6 @@ void opengl_apply_camera_rotation(){
 
 void update_screen(){
   glutMainLoopEvent();
-  // opengl_3d_mode();
-  // opengl_draw_axis_cross();
-
-  // opengl_apply_camera_rotation();
 
   glutSwapBuffers();
   glutPostRedisplay();

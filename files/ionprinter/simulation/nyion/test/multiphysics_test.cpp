@@ -387,45 +387,17 @@ TEST(laplace_tests,opengl_simple_boundary){
     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
 
 
-    int argc = 0;
-    char *argv[1];
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glEnable(GL_MULTISAMPLE);
-    glutInitWindowSize(OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
-    glutCreateWindow("Nyion");
-    glViewport(0, 0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
-
-    // glutKeyboardFunc(keyboard_handler);
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Set background color to black and opaque
-    glClearDepth(1.0f);                   // Set background depth to farthest
-    glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
-    glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
-    glShadeModel(GL_SMOOTH);   // Enable smooth shading
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
-
-    glEnable (GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-
-    // initialize_opengl(mesh_geometry);
+    initialize_opengl(mesh_geometry);
 
     while(true){
 
-      glMatrixMode(GL_PROJECTION);
-      glLoadIdentity();
-      GLint viewport[4];
-      glGetIntegerv(GL_VIEWPORT, viewport);
-      double aspect = (double)viewport[2] / (double)viewport[3];
-      gluPerspective(60, aspect, 20, 40); //all parameters must be positive.
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
+      opengl_3d_mode();
 
       glTranslatef(0, 0, -30);
+
+      glRotatef(45, 0, 1.0, 0);
+
+      
 
       glPushMatrix();
         glTranslatef(0,0,0);
@@ -433,28 +405,17 @@ TEST(laplace_tests,opengl_simple_boundary){
         glutSolidCube(3);
       glPopMatrix();
 
-
-      glMatrixMode(GL_PROJECTION);
-      glPushMatrix();
-      glLoadIdentity();
-      glOrtho(0.0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y, 0.0, -1.0, 10.0);
-      glMatrixMode(GL_MODELVIEW);
-      glLoadIdentity();
+      opengl_2d_mode();
 
       glRasterPos2i(100, 120);
       glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 
       glutBitmapString(GLUT_BITMAP_HELVETICA_12, (unsigned char *) "testing testing testing");
 
-      glutMainLoopEvent();
-
-      glutSwapBuffers();
-      glutPostRedisplay();
+      update_screen();
 
 
-
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      glPopMatrix();
+      opengl_clear_screen();
 
 
       // draw_geometry_outline(mesh_geometry);
