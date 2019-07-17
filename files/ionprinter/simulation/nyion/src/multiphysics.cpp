@@ -698,8 +698,8 @@ void opengl_3d_mode(){
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
   double aspect = (double)viewport[2] / (double)viewport[3];
-  printf("%f,%f\n",opengl_current_z_translate-2*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
-  gluPerspective(60, aspect, opengl_current_z_translate-2*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
+  printf("%f,%f\n",opengl_current_z_translate-1.5*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
+  gluPerspective(60, aspect, 10, 500); //all parameters must be positive.
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -893,19 +893,13 @@ void opengl_apply_camera_rotation(){
   /* -----------------------------------------------------------------------------
   Undo model rotation and translation
   ----------------------------------------------------------------------------- */
-  glRotatef(-opengl_current_angle_y, 0, 1.0, 0);
-  glRotatef(-opengl_current_angle_x, 1.0, 0, 0);
-  glTranslatef(-opengl_current_x_translate, -opengl_current_y_translate, -opengl_current_z_translate);
-  // opengl_current_x_translate += opengl_delta_zoom;
-  // opengl_current_y_translate += opengl_delta_zoom;
   opengl_current_z_translate += opengl_delta_zoom;
-
   opengl_current_angle_x += opengl_delta_angle_x;
   opengl_current_angle_y += opengl_delta_angle_y;
   /* -----------------------------------------------------------------------------
   Redo model rotation and translation
   ----------------------------------------------------------------------------- */
-  glTranslatef(opengl_current_x_translate, opengl_current_y_translate, opengl_current_z_translate);
+  glTranslatef(opengl_current_x_translate, opengl_current_y_translate, -opengl_current_z_translate);
   glRotatef(opengl_current_angle_x, 1.0, 0, 0);
   glRotatef(opengl_current_angle_y, 0, 1.0, 0);
   opengl_delta_zoom = 0;

@@ -382,9 +382,9 @@ TEST(laplace_tests,opengl_simple_boundary){
 
     std::vector<std::vector<float>> potentials;
 
-    float mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.1};
+    float mesh_active_bounds[6] = {0,0.05,0,0.06,0,0.05};
 
-    enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,20);
+    enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,5);
 
 
     initialize_opengl(mesh_geometry);
@@ -393,34 +393,21 @@ TEST(laplace_tests,opengl_simple_boundary){
 
       opengl_3d_mode();
 
-      glTranslatef(0, 0, -30);
+      opengl_apply_camera_rotation();
 
-      glRotatef(45, 0, 1.0, 0);
-
-      
-
-      glPushMatrix();
-        glTranslatef(0,0,0);
-        glColor3f(255,255,255);
-        glutSolidCube(3);
-      glPopMatrix();
+      opengl_draw_axis_cross();
+      draw_geometry_outline(mesh_geometry);
+      draw_mesh(potentials,mesh_geometry);
 
       opengl_2d_mode();
 
       glRasterPos2i(100, 120);
       glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-
       glutBitmapString(GLUT_BITMAP_HELVETICA_12, (unsigned char *) "testing testing testing");
 
       update_screen();
 
-
       opengl_clear_screen();
-
-
-      // draw_geometry_outline(mesh_geometry);
-      // draw_mesh(potentials,mesh_geometry);
-      // opengl_2d_mode();
 
     }
 
