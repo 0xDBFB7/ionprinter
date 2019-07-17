@@ -97,3 +97,4 @@ void opengl_3d_mode();
 void opengl_2d_mode();
 template<typename T>
 void draw_mesh(std::vector<std::vector<T>>& input_mesh,root_mesh_geometry mesh_geometry);
+void opengl_apply_camera_rotation();
