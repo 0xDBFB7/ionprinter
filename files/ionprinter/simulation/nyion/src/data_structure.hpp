@@ -22,27 +22,28 @@ class root_mesh_geometry{
     float z_max_bound; //f*** getters and setters.
 
 };
-
-class macroparticle{
-  public:
-
-    particle();
-
-    double x; //positions
-    double y;
-    double z;
-
-    double v_x; //velocities
-    double v_y;
-    double v_z;
-
-    double mass;
-    double charge;
-
-    double super_factor; //how many real particles this macroparticle represents
-
-    //how do we handle cross-sections?
-    //the following collisions will be modeled:
-    //electron-ion, ion-electron,
-    //
-};
+//
+// class macroparticle{
+//   public:
+//
+//     particle(int test);
+//
+//     double x; //positions
+//     double y;
+//     double z;
+//
+//     double v_x; //velocities
+//     double v_y;
+//     double v_z;
+//
+//     double mass;
+//     double charge;
+//
+//     double super_factor; //how many real particles this macroparticle represents
+//
+//     //how do we handle cross-sections?
+//     //the following collisions will be modeled:
+//     //electron-ion, ion-electron,
+//     //
+//
+// };

@@ -1,5 +1,6 @@
 #include "multiphysics.hpp"
 #include "visualize.hpp"
+#include <thread>
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -24,7 +25,11 @@ float opengl_delta_x_translate = 0.0;
 float opengl_delta_y_translate = 0.0;
 float opengl_delta_z_translate = 0.0;
 
-
+GLXDrawable mesh_window;
+GLXDrawable graph_window;
+GLXContext glContext;
+Display * display;
+XVisualInfo* vi;
 
 void keyboard_handler(unsigned char key, int x, int y){
   if(key == '2') opengl_delta_angle_x = 10;
@@ -49,28 +54,43 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
                    GLX_DEPTH_SIZE, 12,
                    None
   };
-  Display * display = XOpenDisplay(0);
-  XVisualInfo* vi = glXChooseVisual(display, DefaultScreen(display), sngBuf);
-  GLXContext glContext = glXCreateContext(display, vi, 0, GL_TRUE);
+  display = XOpenDisplay(0);
+  vi = glXChooseVisual(display, DefaultScreen(display), sngBuf);
+  glContext = glXCreateContext(display, vi, 0, GL_TRUE);
 
 
   int argc = 0;
   char *argv[1];
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+
   glEnable(GL_MULTISAMPLE);
-  glutInitWindowSize(OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
-  glutCreateWindow("Nyion");
-  glViewport(0, 0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y);
+  glutInitWindowSize(OPENGL_3D_WINDOW_X, OPENGL_3D_WINDOW_Y);
+  glutCreateWindow("Nyion Mesh");
+  glViewport(0, 0, OPENGL_3D_WINDOW_X, OPENGL_3D_WINDOW_Y);
 
   glutKeyboardFunc(keyboard_handler);
 
-  glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // Set background color to black and opaque
-  glClearDepth(1.0f);                   // Set background depth to farthest
-  glEnable(GL_DEPTH_TEST);   // Enable depth testing for z-culling
-  glDepthFunc(GL_LEQUAL);    // Set the type of depth-test
-  glShadeModel(GL_SMOOTH);   // Enable smooth shading
-  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);  // Nice perspective corrections
+  mesh_window = glXGetCurrentDrawable();
+
+  glutInitWindowSize(OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_X);
+  glutCreateWindow("Nyion Graph");
+  glViewport(0, 0, OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_Y);
+
+  glutKeyboardFunc(keyboard_handler);
+
+  graph_window = glXGetCurrentDrawable();
+
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+  opengl_switch_to_mesh_window();
+
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  glClearDepth(1.0f);
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glShadeModel(GL_SMOOTH);
+  glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
   glEnable (GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
@@ -90,6 +110,13 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
   opengl_current_y_translate = -(((mesh_geometry.y_max_bound-mesh_geometry.y_min_bound)/2)+mesh_geometry.y_min_bound)/OPENGL_WORLD_SCALE;
 }
 
+void opengl_switch_to_graph_window(){
+  glXMakeCurrent(display,graph_window,glContext);
+}
+
+void opengl_switch_to_mesh_window(){
+  glXMakeCurrent(display,mesh_window,glContext);
+}
 
 void opengl_3d_mode(){
   glMatrixMode(GL_PROJECTION);
@@ -97,7 +124,7 @@ void opengl_3d_mode(){
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
   double aspect = (double)viewport[2] / (double)viewport[3];
-  printf("%f,%f\n",opengl_current_z_translate-1.5*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
+  // printf("%f,%f\n",opengl_current_z_translate-1.5*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
   gluPerspective(60, aspect, opengl_current_z_translate-1.5*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -108,7 +135,7 @@ void opengl_2d_mode(){
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho(0.0, OPENGL_WINDOW_X, OPENGL_WINDOW_Y, 0.0, -1.0, 10.0);
+  glOrtho(0.0, OPENGL_3D_WINDOW_X, OPENGL_3D_WINDOW_Y, 0.0, -1.0, 10.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -319,8 +346,8 @@ void update_screen(){
 
 //
 // void mouse_handler(int x, int y){
-//   opengl_angle_x = ((x-mouse_previous_x)/(float)OPENGL_WINDOW_X)*360.0;
-//   opengl_angle_y = ((y-mouse_previous_y)/(float)OPENGL_WINDOW_Y)*360.0;
+//   opengl_angle_x = ((x-mouse_previous_x)/(float)OPENGL_3D_WINDOW_X)*360.0;
+//   opengl_angle_y = ((y-mouse_previous_y)/(float)OPENGL_3D_WINDOW_Y)*360.0;
 //   mouse_previous_x = x;
 //   mouse_previous_y = y;
 //

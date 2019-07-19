@@ -27,9 +27,10 @@
 DISPLAY SETTINGS
 ----------------------------------------------------------------------------- */
 #define OPENGL_WORLD_SCALE 0.0005 //m/opengl index
-#define OPENGL_WINDOW_X 1920
-#define OPENGL_WINDOW_Y 1080
-
+#define OPENGL_3D_WINDOW_X 1920
+#define OPENGL_3D_WINDOW_Y 1080
+#define OPENGL_GRAPH_WINDOW_X 1000
+#define OPENGL_GRAPH_WINDOW_Y 1000
 
 void initialize_opengl(root_mesh_geometry mesh_geometry);
 void update_screen();
@@ -45,3 +46,5 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh,root_mesh_geometry mesh_g
 void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_geometry);
 
 void opengl_apply_camera_rotation();
+void opengl_switch_to_graph_window();
+void opengl_switch_to_mesh_window();
