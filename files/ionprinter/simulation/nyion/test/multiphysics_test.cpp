@@ -387,7 +387,8 @@ TEST(laplace_tests,opengl_simple_boundary){
 
     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,2);
 
-
+    potentials[0][0] = 100;
+    potentials[10][2] = -100;
     initialize_opengl(mesh_geometry);
     std::vector<float> test_graph = {10,-10,0.3};
 

@@ -88,8 +88,8 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClearDepth(1.0f);
-  glEnable(GL_DEPTH_TEST);
-  glDepthFunc(GL_LEQUAL);
+  // glEnable(GL_DEPTH_TEST);
+  // glDepthFunc(GL_LEQUAL);
   glShadeModel(GL_SMOOTH);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
@@ -255,7 +255,7 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh, root_mesh_geometry mesh_
             glTranslatef((r_x*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                           (r_y*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                           (r_z*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-            glColor4f(1, 0, 0, 1);
+            glColor4f(1, 0, 0, 0.1);
             glutWireCube(cube_size);
           glPopMatrix();
           /* -----------------------------------------------------------------------------
@@ -273,11 +273,14 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh, root_mesh_geometry mesh_
                   glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                                 (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                                 (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-                  if(input_mesh[idx(x,y,z,sub_len,sub_len] > 0){
-                    glColor4f(0,(255.0*(max)),0,1.0);
+
+                  if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
+                    glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,0,
+                                                (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
                   }
                   else{
-                    glColor4f((255.0*()),0,0,1.0);
+                    glColor4f(0,(255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min)),0,
+                                                (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min));
                   }
                   glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
                 glPopMatrix();
