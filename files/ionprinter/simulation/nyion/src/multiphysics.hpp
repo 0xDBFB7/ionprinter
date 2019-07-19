@@ -73,3 +73,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
     root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries);
 
 void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i);
+template<typename T>
+float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry);
+template<typename T>
+float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry);

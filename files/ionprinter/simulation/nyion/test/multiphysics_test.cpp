@@ -389,14 +389,15 @@ TEST(laplace_tests,opengl_simple_boundary){
 
 
     initialize_opengl(mesh_geometry);
+    std::vector<float> test_graph = {10,-10,0.3};
 
     while(true){
 
       opengl_switch_to_graph_window();
+      test_graph.push_back(10);
+      opengl_graph_1d_vector(test_graph,"Test",0);
+
       opengl_2d_mode();
-      glRasterPos2i(100, 120);
-      glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-      glutBitmapString(GLUT_BITMAP_HELVETICA_12, (unsigned char *) "testing testing testing");
 
       opengl_switch_to_mesh_window();
 
@@ -410,14 +411,14 @@ TEST(laplace_tests,opengl_simple_boundary){
 
       opengl_2d_mode();
 
-      glRasterPos2i(100, 120);
-      glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-      glutBitmapString(GLUT_BITMAP_HELVETICA_12, (unsigned char *) "testing testing testing");
 
       update_screen();
-      opengl_clear_screen();
 
       opengl_switch_to_graph_window();
+      opengl_clear_screen();
+
+      opengl_switch_to_mesh_window();
+      opengl_clear_screen();
       // update_screen();
 
     }

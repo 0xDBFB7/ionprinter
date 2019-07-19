@@ -128,7 +128,8 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
     return ((beam_current/(2.0*(M_PI)*EPSILON_0*beam_velocity)) * (sample_radius/pow(beam_radius,2.0)));
 }
 
-float vector_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry){
+template<typename T>
+float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
   float min = 1e0;
   for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
     if(input_mesh[root].size()){
@@ -140,10 +141,13 @@ float vector_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry
     }
   }
 }
+template float mesh_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
+template float mesh_min(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
 
-float vector_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry){
+template<typename T>
+float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
   float max = 1e-30;
-  for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
+  for(int root = 0; root < mesh_geometry.root_size; root++){
     if(input_mesh[root].size()){
       for(int sub = 0; sub < input_mesh[root].size(); sub++){
         if(input_mesh[root][sub] > max){
@@ -153,7 +157,8 @@ float vector_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry
     }
   }
 }
-
+template float mesh_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
+template float mesh_max(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
 
 template<typename T>
 void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){

@@ -32,6 +32,11 @@ DISPLAY SETTINGS
 #define OPENGL_GRAPH_WINDOW_X 1000
 #define OPENGL_GRAPH_WINDOW_Y 1000
 
+#define OPENGL_GRAPH_COUNT 5
+
+#define OPENGL_GRAPH_X_OFFSET 40
+#define OPENGL_GRAPH_Y_OFFSET 70
+
 void initialize_opengl(root_mesh_geometry mesh_geometry);
 void update_screen();
 void draw_geometry_outline(root_mesh_geometry mesh_geometry);
@@ -48,3 +53,4 @@ void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_g
 void opengl_apply_camera_rotation();
 void opengl_switch_to_graph_window();
 void opengl_switch_to_mesh_window();
+void opengl_graph_1d_vector(std::vector<float> &input, const std::string& title, int index);

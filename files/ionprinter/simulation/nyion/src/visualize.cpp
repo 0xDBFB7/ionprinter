@@ -54,6 +54,7 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
                    GLX_DEPTH_SIZE, 12,
                    None
   };
+
   display = XOpenDisplay(0);
   vi = glXChooseVisual(display, DefaultScreen(display), sngBuf);
   glContext = glXCreateContext(display, vi, 0, GL_TRUE);
@@ -94,7 +95,6 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
 
   glEnable (GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -232,11 +232,12 @@ void draw_geometry_outline(root_mesh_geometry mesh_geometry){
 }
 
 template<typename T>
-void draw_mesh(std::vector<std::vector<T>>& input_mesh ,root_mesh_geometry mesh_geometry){
+void draw_mesh(std::vector<std::vector<T>>& input_mesh, root_mesh_geometry mesh_geometry){
   /* -----------------------------------------------------------------------------
   Determine min and max for color scaling
   ----------------------------------------------------------------------------- */
-
+  float min = mesh_min(input_mesh,mesh_geometry);
+  float max = mesh_max(input_mesh,mesh_geometry);
   /* -----------------------------------------------------------------------------
   Draw cubes
   ----------------------------------------------------------------------------- */
@@ -272,14 +273,17 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh ,root_mesh_geometry mesh_
                   glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                                 (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
                                 (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-                  glColor4f(255,255,255,1.0);
-                  glutWireCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
+                  if(input_mesh[idx(x,y,z,sub_len,sub_len] > 0){
+                    glColor4f(0,(255.0*(max)),0,1.0);
+                  }
+                  else{
+                    glColor4f((255.0*()),0,0,1.0);
+                  }
+                  glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
                 glPopMatrix();
               }
             }
           }
-
-
         }
         else{
           /* -----------------------------------------------------------------------------
@@ -304,10 +308,7 @@ template void draw_mesh(std::vector<std::vector<int>>& input_mesh,root_mesh_geom
 
 
 void opengl_apply_camera_rotation(){
-  /* -----------------------------------------------------------------------------
-  Undo model rotation and translation
-  ----------------------------------------------------------------------------- */
-  opengl_current_z_translate += opengl_delta_zoom;
+  opengl_current_z_translate += opengl_delta_zoom; //FIXME: no longer required.
   opengl_current_angle_x += opengl_delta_angle_x;
   opengl_current_angle_y += opengl_delta_angle_y;
   /* -----------------------------------------------------------------------------
@@ -321,23 +322,36 @@ void opengl_apply_camera_rotation(){
   opengl_delta_angle_y = 0;
 }
 
-// glPushMatrix();  //Make sure our transformations don't affect any other transformations in other code
-//   glTranslatef(pRect->x, pRect->y, 0.0f);  //Translate rectangle to its assigned x and y position
-//   //Put other transformations here
-//   glBegin(GL_QUADS);   //We want to draw a quad, i.e. shape with four sides
-//     glColor3f(1, 0, 0); //Set the colour to red
-//     glVertex2f(0, 0);            //Draw the four corners of the rectangle
-//     glVertex2f(0, pRect->h);
-//     glVertex2f(pRect->w, pRect->h);
-//     glVertex2f(pRect->w, 0);
-//   glEnd();
-// glPopMatrix();
+
+void opengl_graph_1d_vector(std::vector<float> &input, const std::string& title, int index){
+  float min = *std::min_element(input.begin(),input.end());
+  float max = *std::max_element(input.begin(),input.end());
+
+  opengl_switch_to_graph_window();
+
+  float graph_y_position = (OPENGL_GRAPH_WINDOW_Y/ ((float)OPENGL_GRAPH_COUNT))*index + OPENGL_GRAPH_Y_OFFSET;
+  float graph_height = OPENGL_GRAPH_WINDOW_Y/((float)OPENGL_GRAPH_COUNT);
+  glRasterPos2i(OPENGL_GRAPH_X_OFFSET,graph_y_position);
+  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+  glutBitmapString(GLUT_BITMAP_HELVETICA_18, (unsigned char *) title.c_str());
+
+  glColor3f(1.0f, 1.0f, 0.0f);
+  glBegin(GL_LINE_STRIP);
+  float graph_x_scale = (((float)OPENGL_GRAPH_WINDOW_X-OPENGL_GRAPH_X_OFFSET)/input.size());
+  float graph_y_scale = graph_height/(max-min);
+  for(int i = 0; i < input.size(); i++){
+    glVertex2f(OPENGL_GRAPH_X_OFFSET+(graph_x_scale*i),(graph_y_position+graph_height)-(graph_y_scale*(input[i]-min)));
+  }
+  glEnd();
+
+}
 
 void update_screen(){
   glutMainLoopEvent();
 
   glutSwapBuffers();
   glutPostRedisplay();
+
   // TakeScreenshot(t);
 }
 
