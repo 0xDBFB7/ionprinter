@@ -44,6 +44,11 @@ void keyboard_handler(unsigned char key, int x, int y){
   }
 }
 
+void special_keyboard_handler(int key, int x, int y){
+  if(key == GLUT_KEY_F6){
+
+  }
+}
 
 void initialize_opengl(root_mesh_geometry mesh_geometry){
 
@@ -71,6 +76,7 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
   glViewport(0, 0, OPENGL_3D_WINDOW_X, OPENGL_3D_WINDOW_Y);
 
   glutKeyboardFunc(keyboard_handler);
+  glutSpecialFunc(special_keyboard_handler);
 
   mesh_window = glXGetCurrentDrawable();
 
@@ -79,6 +85,7 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
   glViewport(0, 0, OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_Y);
 
   glutKeyboardFunc(keyboard_handler);
+  glutSpecialFunc(special_keyboard_handler);
 
   graph_window = glXGetCurrentDrawable();
 

@@ -1516,6 +1516,4 @@ Graphite bowtie life will probably be negligible due to aluminum carbide formati
 
 
 <hr>
-
-
-
+Dropped LG G3 - 

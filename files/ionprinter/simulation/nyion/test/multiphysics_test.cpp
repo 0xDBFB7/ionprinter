@@ -382,13 +382,17 @@ TEST(laplace_tests,opengl_simple_boundary){
     root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 
     std::vector<std::vector<float>> potentials;
+    std::vector<std::vector<int>> boundaries;
 
     float mesh_active_bounds[6] = {0,0.05,0,0.06,0,0.05};
 
     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,2);
+    enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,2);
 
-    potentials[0][0] = 100;
-    potentials[10][2] = -100;
+    potentials[0][1] = 1000;
+    boundaries[0][1] = 1;
+    potentials[10][1] = -1000;
+    boundaries[10][1] = 1;
     initialize_opengl(mesh_geometry);
     std::vector<float> test_graph = {10,-10,0.3};
 
@@ -407,7 +411,9 @@ TEST(laplace_tests,opengl_simple_boundary){
       opengl_apply_camera_rotation();
 
       opengl_draw_axis_cross();
+
       draw_geometry_outline(mesh_geometry);
+      gauss_seidel(potentials, boundaries, mesh_geometry, 5, 1, 0);
       draw_mesh(potentials,mesh_geometry);
 
       opengl_2d_mode();

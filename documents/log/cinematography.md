@@ -261,3 +261,8 @@ Sepia + closeup of keyboard is neat.
 
 
 Face mask monitor reflection like 2001?
+
+
+
+manual tilt-shift by removing lens
+

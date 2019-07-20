@@ -67,12 +67,37 @@ Commenting out an unrelated bit of code triggered this error.
 Memory fuzzer testing would probably have caught this earlier.
 
 <hr>
+
 #### Issue:
 
-Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing.
+
+Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing. It seemed that the mode change ruined the perspective rotation somehow.
 
 ##### Discovery
 
+Removing all functions and writing a minimal test case in a separate inline loop clearly demonstrated that the 3d renderer was fine; rather, the viewpoint code was broken.
+
+#### Solution
+
+Particularly persistent bugs should be isolated from the codebase for closer examination if possible.
+
+<hr>
+
+#### Issue:
+
+Return value neglected for custom min and max functions:
+
+```c++
+float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
+  float max = 1e-30;
+  for(int root = 0; root < mesh_geometry.root_size; root++){
+      ...
+  }
+  ...nothing, you idiot!
+}
+```
+
+##### Discovery:
 
 
 

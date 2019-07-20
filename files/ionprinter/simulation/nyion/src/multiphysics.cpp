@@ -140,6 +140,7 @@ float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
       }
     }
   }
+  return min;
 }
 template float mesh_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
 template float mesh_min(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
@@ -156,6 +157,7 @@ float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
       }
     }
   }
+  return max;
 }
 template float mesh_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
 template float mesh_max(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
@@ -186,6 +188,7 @@ void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6]
       for(int z = z_min; z < z_max; z++){
         int index = idx(x,y,z,mesh_geometry.root_x_len,mesh_geometry.root_y_len);
         input_mesh[index].resize(submesh_side_length*submesh_side_length*submesh_side_length);
+        std::fill(input_mesh[index].begin(), input_mesh[index].end(), 0);
       }
     }
   }
