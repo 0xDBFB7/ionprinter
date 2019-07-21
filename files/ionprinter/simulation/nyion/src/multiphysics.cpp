@@ -145,6 +145,7 @@ float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
 template float mesh_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
 template float mesh_min(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
 
+
 template<typename T>
 float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
   float max = 1e-30;
@@ -161,6 +162,7 @@ float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
 }
 template float mesh_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
 template float mesh_max(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
+
 
 template<typename T>
 void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){

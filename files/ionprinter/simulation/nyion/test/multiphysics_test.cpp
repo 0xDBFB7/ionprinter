@@ -325,7 +325,6 @@ TEST(laplace_tests,refine){
 //
 
 TEST(laplace_tests,gauss_seidel_point_tests){
-
   float mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 

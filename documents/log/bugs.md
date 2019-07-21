@@ -77,7 +77,7 @@ Trying to switch OpenGL mode between Perspective to Ortho expended several hours
 
 Removing all functions and writing a minimal test case in a separate inline loop clearly demonstrated that the 3d renderer was fine; rather, the viewpoint code was broken.
 
-#### Solution
+##### Solution
 
 Particularly persistent bugs should be isolated from the codebase for closer examination if possible.
 
@@ -97,7 +97,20 @@ float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
 }
 ```
 
-##### Discovery:
+##### Discovery
+
+These functions always returned zero, which made draw_mesh very uncomfortable indeed.
+
+Surprisingly, g++ did not take issue with this code, despite the use of `-Wall -Wextra -pedantic -Werror`.
+
+##### Solution
 
 
+
+<hr>
+#### Issue:
+
+
+
+This bug somehow survived some ten rewrites of the relevant function.
 
