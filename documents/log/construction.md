@@ -1532,3 +1532,43 @@ Previously, I have shirked bounds-checking on arrays for performance reasons. Ho
 
 
 
+cutting pretty deep now! not sure how long I can maintain this
+
+I wish I were a better person
+
+this is a turning point; do I lay down andadlfjasld;kfjwhwateladfl; fuck fuck fuck fuuuuuck
+
+
+
+I love you molly
+
+short for molybdenum
+
+you're amazing
+
+I love you
+
+I'll never be a millionth as smart or productive as you
+
+goodbye
+
+I must finish this
+
+I love you
+
+I love you 
+
+I love you
+
+
+
+haha why'm I fucking typing this in my scientific report notes 
+
+what fucking ever 
+
+who gives a shit
+
+fuck everything 
+
+fuck!
+

@@ -304,7 +304,7 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
-
+ // 
 template<typename T>
 float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
   /* -----------------------------------------------------------------------------
@@ -336,6 +336,8 @@ float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int
   if(y_rel == 1 && s_y == this_submesh_side_length-1){ r_y_rel = 1;};
   if(z_rel == -1 && s_z == 0){ r_z_rel = -1;};
   if(z_rel == 1 && s_z == this_submesh_side_length-1){ r_z_rel = 1;};
+
+  
 
   int root_i = root + idx(r_x_rel,r_y_rel,r_z_rel,mesh_geometry.root_x_len,mesh_geometry.root_y_len);
 
@@ -445,8 +447,6 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
 }
 
 
-
-
 std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
                                                                                                 root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries){
   /*
@@ -514,7 +514,11 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 
                   int stencil_divisor = 6;
                   float stencil_value = 0;
-                  // bool valid = false;
+                  bool valid = false;
+
+                  
+                  
+                  
 
                   // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,1,mesh_geometry,valid);
                   // if(!valid) stencil_divisor--;
@@ -529,7 +533,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
                   // stencil_value += relative_mesh_value(potentials,root,x,y,z,-1,0,0,mesh_geometry,valid);
                   // if(!valid) stencil_divisor--;
 
-                                  
+                    
 
                   if(!field){
                     stencil_value /= stencil_divisor;
