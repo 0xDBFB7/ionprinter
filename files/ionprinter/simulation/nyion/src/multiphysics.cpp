@@ -133,7 +133,7 @@ float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
   float min = 1e0;
   for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
     if(input_mesh[root].size()){
-      for(int sub = 0; sub < input_mesh[root].size(); sub++){
+      for(uint32_t sub = 0; sub < input_mesh[root].size(); sub++){
         if(input_mesh[root][sub] < min){
           min = input_mesh[root][sub];
         }
@@ -151,7 +151,7 @@ float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
   float max = 1e-30;
   for(int root = 0; root < mesh_geometry.root_size; root++){
     if(input_mesh[root].size()){
-      for(int sub = 0; sub < input_mesh[root].size(); sub++){
+      for(uint32_t sub = 0; sub < input_mesh[root].size(); sub++){
         if(input_mesh[root][sub] > max){
           max = input_mesh[root][sub];
         }
@@ -202,15 +202,16 @@ template void enable_mesh_region(std::vector<std::vector<int>> &input_mesh, floa
 //sanity-checked getter and setter?
 
 template<typename T>
-void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor){
+void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened,__attribute__((unused)) root_mesh_geometry original_geometry, int scale_divisor){
   /*
   The root mesh resolution remains the same; only the submeshes are coarsened.
   A simple straight-injection operator.
   otherwise known as "restriction" in literature.
   */
   coarsened = original;
+  
 
-  for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+  for(uint32_t root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
 
       int fine_sub_len = submesh_side_length(original[root_mesh_idx]); //cube
@@ -252,7 +253,7 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 
   float interp_value = 0;
 
-  for(int root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
+  for(uint32_t root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
       int coarse_sub_len = submesh_side_length(original[root_mesh_idx]);
       int fine_sub_len = coarse_sub_len*scale_divisor;
@@ -433,13 +434,13 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
   /* -----------------------------------------------------------------------------
   Correct original mesh with computed residuals.
   ----------------------------------------------------------------------------- */
-  for(int root = 0; root < temp.size(); root++){
-    for(int sub = 0; sub < temp[root].size(); sub++){
+  for(uint32_t root = 0; root < temp.size(); root++){
+    for(uint32_t sub = 0; sub < temp[root].size(); sub++){
       potentials[root][sub] += temp[root][sub];
     }
   }
 
-  gauss_seidel(potentials, boundaries, mesh_geometry, 50, (i==0), (i!=0));
+  gauss_seidel(potentials, boundaries, mesh_geometry, tolerance, (i==0), (i!=0));
 
 }
 
@@ -463,7 +464,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
   int root_y = mesh_geometry.root_y_len;
   int root_z = mesh_geometry.root_z_len;
   int root_size = (root_x*root_y*root_z);
-  int root_xy = (root_x * root_y);
+  // int root_xy = (root_x * root_y);
 
   std::vector<std::vector<float>> potentials_copy = potentials;
 
@@ -513,20 +514,22 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 
                   int stencil_divisor = 6;
                   float stencil_value = 0;
-                  bool valid = false;
+                  // bool valid = false;
 
-                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,1,mesh_geometry,valid);
-                  if(!valid) stencil_divisor--;
-                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,-1,mesh_geometry,valid);
-                  if(!valid) stencil_divisor--;
-                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,1,0,mesh_geometry,valid);
-                  if(!valid) stencil_divisor--;
-                  stencil_value += relative_mesh_value(potentials,root,x,y,z,0,-1,0,mesh_geometry,valid);
-                  if(!valid) stencil_divisor--;
-                  stencil_value += relative_mesh_value(potentials,root,x,y,z,1,0,0,mesh_geometry,valid);
-                  if(!valid) stencil_divisor--;
-                  stencil_value += relative_mesh_value(potentials,root,x,y,z,-1,0,0,mesh_geometry,valid);
-                  if(!valid) stencil_divisor--;
+                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,1,mesh_geometry,valid);
+                  // if(!valid) stencil_divisor--;
+                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,-1,mesh_geometry,valid);
+                  // if(!valid) stencil_divisor--;
+                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,1,0,mesh_geometry,valid);
+                  // if(!valid) stencil_divisor--;
+                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,-1,0,mesh_geometry,valid);
+                  // if(!valid) stencil_divisor--;
+                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,1,0,0,mesh_geometry,valid);
+                  // if(!valid) stencil_divisor--;
+                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,-1,0,0,mesh_geometry,valid);
+                  // if(!valid) stencil_divisor--;
+
+                                  
 
                   if(!field){
                     stencil_value /= stencil_divisor;
@@ -557,7 +560,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 
       for(int root = 0; root < root_size; root++){ //re-add boundaries - saves the additional check
         if(potentials[root].size()){
-          for(int sub = 0; sub < potentials[root].size(); sub++){
+          for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
             if(fabs(potentials[root][sub]-potentials_copy[root][sub]) > new_convergence){
               new_convergence = fabs(potentials[root][sub]-potentials_copy[root][sub]); //maximum difference between old and new
             }
@@ -577,8 +580,8 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
   auto t2 = std::chrono::high_resolution_clock::now();
 
   std::vector<std::vector<float>> residuals = potentials;
-  for(int root = 0; root < potentials.size(); root++){
-    for(int sub = 0; sub < potentials[root].size(); sub++){
+  for(uint32_t root = 0; root < potentials.size(); root++){
+    for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
       residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub]);
     }
   }
@@ -591,53 +594,53 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 }
 
 
-
-
+// 
+// 
 // void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
-//   /*
-//   Deposit a mesh onto a uniform grid.
-//   Inputs are filename c_string, a 1-D mesh with length
+  // /*
+  // Deposit a mesh onto a uniform grid.
+  // Inputs are filename c_string, a 1-D mesh with length
 //
-//   The convoluted mesh_geometry setup is used because 3d vectors have large overhead in C++
-//   mesh_geometry stores the dimensions of the mesh in indices, mesh scale stores grid to world scale in meters
+  // The convoluted mesh_geometry setup is used because 3d vectors have large overhead in C++
+  // mesh_geometry stores the dimensions of the mesh in indices, mesh scale stores grid to world scale in meters
 //
-//   Outputs bounds of imported mesh.
-//   */
-//   vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
-//   reader->SetFileName(filename);
-//   reader->Update();
+  // Outputs bounds of imported mesh.
+  // */
+  // vtkSmartPointer<vtkSTLReader> reader = vtkSmartPointer<vtkSTLReader>::New();
+  // reader->SetFileName(filename);
+  // reader->Update();
 //
-//   vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
-//   reader->GetOutput()->GetBounds(bounds);
-//   for(int i = 0; i < 6; i++) bounds[i] /= 1000.0; //convert mm to m
+  // vtkSmartPointer<vtkVoxelModeller> voxelModeller = vtkSmartPointer<vtkVoxelModeller>::New();
+  // reader->GetOutput()->GetBounds(bounds);
+  // for(int i = 0; i < 6; i++) bounds[i] /= 1000.0; //convert mm to m
 //
-//   // for(int i = 0; i < 6; i++){bounds[i] += translate[i/2];}; //translate
+  // for(int i = 0; i < 6; i++){bounds[i] += translate[i/2];}; //translate
 //
-//   vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-//   vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
-//   //Points inside test
-//   vtkSmartPointer<vtkSelectEnclosedPoints> selectEnclosedPoints =
-//     vtkSmartPointer<vtkSelectEnclosedPoints>::New();
-//   selectEnclosedPoints->SetInputData(pointsPolydata);
-//   selectEnclosedPoints->SetSurfaceConnection(reader->GetOutputPort());
+  // vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  // vtkSmartPointer<vtkPolyData> pointsPolydata = vtkSmartPointer<vtkPolyData>::New();
+  // //Points inside test
+  // vtkSmartPointer<vtkSelectEnclosedPoints> selectEnclosedPoints =
+    // vtkSmartPointer<vtkSelectEnclosedPoints>::New();
+  // selectEnclosedPoints->SetInputData(pointsPolydata);
+  // selectEnclosedPoints->SetSurfaceConnection(reader->GetOutputPort());
 //
-//   double point[3] = {0, 0.0, 0.0};
-//   points->InsertNextPoint(point);
+  // double point[3] = {0, 0.0, 0.0};
+  // points->InsertNextPoint(point);
 //
-//   // throw std::invalid_argument( "received negative value" );
+  // throw std::invalid_argument( "received negative value" );
 //
 //
-//   for(int x = std::max(bounds[0]/mesh_scale[X],0.0); x < std::min((int)(bounds[1]/mesh_scale[X]),mesh_geometry[X]); x++){
-//     for(int y = std::max(bounds[2]/mesh_scale[Y],0.0); y < std::min((int)(bounds[3]/mesh_scale[Y]),mesh_geometry[Y]); y++){
-//       for(int z = std::max(bounds[4]/mesh_scale[Z],0.0); z < std::min((int)(bounds[5]/mesh_scale[Z]),mesh_geometry[Z]); z++){
-//         point[X] = (x*mesh_scale[X]);
-//         point[Y] = (y*mesh_scale[Y]);
-//         point[Z] = (z*mesh_scale[Z]);
-//         points->SetPoint(0,point);
-//         pointsPolydata->SetPoints(points);
-//         selectEnclosedPoints->Update();
-//         mesh_present[i_idx(x,y,z,mesh_geometry)] = selectEnclosedPoints->IsInside(0);
-//       }
-//     }
-//   }
+  // for(int x = std::max(bounds[0]/mesh_scale[X],0.0); x < std::min((int)(bounds[1]/mesh_scale[X]),mesh_geometry[X]); x++){
+    // for(int y = std::max(bounds[2]/mesh_scale[Y],0.0); y < std::min((int)(bounds[3]/mesh_scale[Y]),mesh_geometry[Y]); y++){
+      // for(int z = std::max(bounds[4]/mesh_scale[Z],0.0); z < std::min((int)(bounds[5]/mesh_scale[Z]),mesh_geometry[Z]); z++){
+        // point[X] = (x*mesh_scale[X]);
+        // point[Y] = (y*mesh_scale[Y]);
+        // point[Z] = (z*mesh_scale[Z]);
+        // points->SetPoint(0,point);
+        // pointsPolydata->SetPoints(points);
+        // selectEnclosedPoints->Update();
+        // mesh_present[i_idx(x,y,z,mesh_geometry)] = selectEnclosedPoints->IsInside(0);
+      // }
+    // }
+  // }
 // }

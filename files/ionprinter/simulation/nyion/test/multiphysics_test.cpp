@@ -388,9 +388,9 @@ TEST(laplace_tests,opengl_simple_boundary){
     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,2);
     enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,2);
 
-    potentials[0][1] = 1000;
+    potentials[0][1] = -1000;
     boundaries[0][1] = 1;
-    potentials[10][1] = -1000;
+    potentials[10][1] = 1000;
     boundaries[10][1] = 1;
     initialize_opengl(mesh_geometry);
     std::vector<float> test_graph = {10,-10,0.3};
@@ -426,6 +426,8 @@ TEST(laplace_tests,opengl_simple_boundary){
       opengl_switch_to_mesh_window();
       opengl_clear_screen();
       // update_screen();
+       bool valid = false;
+      printf("%f",relative_mesh_value(potentials,idx(10,0,16,17,17),16,16,16,0,0,-1,mesh_geometry,valid));          
 
     }
 

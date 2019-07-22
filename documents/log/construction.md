@@ -1517,3 +1517,18 @@ Graphite bowtie life will probably be negligible due to aluminum carbide formati
 
 <hr>
 Dropped LG G3 - 
+
+"Literate" coding looks pretty interesting (<https://github.com/zyedidia/Literate>)
+
+<http://akkartik.name/post/readable-bad>
+
+<http://akkartik.name/post/2009-01-24-19-46-26_002-soc>
+
+
+
+<hr>
+
+Previously, I have shirked bounds-checking on arrays for performance reasons. However, given that stencil operations are largely memory-limited, I wonder if this is still true.
+
+
+

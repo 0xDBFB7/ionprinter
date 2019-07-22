@@ -31,7 +31,7 @@ GLXContext glContext;
 Display * display;
 XVisualInfo* vi;
 
-void keyboard_handler(unsigned char key, int x, int y){
+void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribute__((unused)) int y){
   if(key == '2') opengl_delta_angle_x = 10;
   if(key == '8') opengl_delta_angle_x = -10;
   if(key == '4') opengl_delta_angle_y = 10;
@@ -44,7 +44,7 @@ void keyboard_handler(unsigned char key, int x, int y){
   }
 }
 
-void special_keyboard_handler(int key, int x, int y){
+void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute__((unused)) int y){
   if(key == GLUT_KEY_F6){
 
   }
@@ -93,6 +93,7 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
 
   opengl_switch_to_mesh_window();
 
+  
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClearDepth(1.0f);
   // glEnable(GL_DEPTH_TEST);
@@ -282,7 +283,7 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh, root_mesh_geometry mesh_
                                 (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
 
                   if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
-                    glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,0,
+                    glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,255,
                                                 (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
                   }
                   else{
@@ -349,7 +350,7 @@ void opengl_graph_1d_vector(std::vector<float> &input, const std::string& title,
   glBegin(GL_LINE_STRIP);
   float graph_x_scale = (((float)OPENGL_GRAPH_WINDOW_X-OPENGL_GRAPH_X_OFFSET)/input.size());
   float graph_y_scale = graph_height/(max-min);
-  for(int i = 0; i < input.size(); i++){
+  for(uint32_t i = 0; i < input.size(); i++){
     glVertex2f(OPENGL_GRAPH_X_OFFSET+(graph_x_scale*i),(graph_y_position+graph_height)-(graph_y_scale*(input[i]-min)));
   }
   glEnd();

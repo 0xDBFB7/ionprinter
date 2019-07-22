@@ -105,7 +105,7 @@ Surprisingly, g++ did not take issue with this code, despite the use of `-Wall -
 
 ##### Solution
 
-
+All compiler warnings were disabled.
 
 <hr>
 #### Issue:
