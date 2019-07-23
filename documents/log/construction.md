@@ -1530,3 +1530,6 @@ Dropped LG G3 -
 
 Previously, I have shirked bounds-checking on arrays for performance reasons. However, given that stencil operations are largely memory-limited, I wonder if this is still true.
 
+
+
+Ionization electrons can be siphoned off and used 

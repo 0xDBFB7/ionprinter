@@ -9,7 +9,10 @@ include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${MPI_INCLUDE_
 
 add_executable(multiphysics main.cpp)
 
-add_library (multiphysics_lib multiphysics.cpp multiphysics.hpp visualize.cpp visualize.hpp)
+add_library (multiphysics_lib
+                        multiphysics.cpp multiphysics.hpp
+                        visualize.cpp visualize.hpp
+                        stencils.cpp stencils.hpp)
 
 target_compile_options(multiphysics PRIVATE -Wall -Wextra -pedantic -Werror -std=c++17 -O3)
 

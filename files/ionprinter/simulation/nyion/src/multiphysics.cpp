@@ -117,8 +117,6 @@ root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   root_scale = new_root_scale;
 }
 
-
-
 double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
     //Calculate the electric field at the edge of a beam
     //Eq. 44 in https://arxiv.org/pdf/1401.3951.pdf
@@ -127,6 +125,7 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 
     return ((beam_current/(2.0*(M_PI)*EPSILON_0*beam_velocity)) * (sample_radius/pow(beam_radius,2.0)));
 }
+
 
 template<typename T>
 float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
@@ -194,6 +193,7 @@ void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6]
       }
     }
   }
+
 }
 template void enable_mesh_region(std::vector<std::vector<float>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 template void enable_mesh_region(std::vector<std::vector<int>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
@@ -209,7 +209,7 @@ void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector
   otherwise known as "restriction" in literature.
   */
   coarsened = original;
-  
+
 
   for(uint32_t root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
@@ -304,7 +304,9 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
- // 
+
+
+ //
 template<typename T>
 float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
   /* -----------------------------------------------------------------------------
@@ -330,6 +332,7 @@ float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int
   int r_y_rel = 0;
   int r_z_rel = 0;
 
+
   if(x_rel == -1 && s_x == 0){ r_x_rel = -1;};
   if(x_rel == 1 && s_x == this_submesh_side_length-1){ r_x_rel = 1;};
   if(y_rel == -1 && s_y == 0){ r_y_rel = -1;};
@@ -337,9 +340,8 @@ float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int
   if(z_rel == -1 && s_z == 0){ r_z_rel = -1;};
   if(z_rel == 1 && s_z == this_submesh_side_length-1){ r_z_rel = 1;};
 
-  
-
   int root_i = root + idx(r_x_rel,r_y_rel,r_z_rel,mesh_geometry.root_x_len,mesh_geometry.root_y_len);
+
 
   /* -----------------------------------------------------------------------------
   Make sure that's a valid submesh
@@ -485,6 +487,10 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
         int this_submesh_side_length = submesh_side_length(potentials[root]); //slow AF
         int this_submesh_side_length_squared = this_submesh_side_length*this_submesh_side_length;
 
+        int r_x = root % mesh_geometry.root_x_len;
+        int r_y = (root / mesh_geometry.root_x_len) % mesh_geometry.root_y_len;
+        int r_z = root / (mesh_geometry.root_x_len * mesh_geometry.root_y_len);
+
         std::vector<float> this_potential_submesh = potentials[root];
 
         for(int x = 0; x < this_submesh_side_length; x++){ //first do the edges, including the boundary check
@@ -516,24 +522,19 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
                   float stencil_value = 0;
                   bool valid = false;
 
-                  
-                  
-                  
+                  stencil_value += value_plus_x(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  if(!valid) stencil_divisor--;
+                  stencil_value += value_minus_x(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  if(!valid) stencil_divisor--;
+                  stencil_value += value_plus_y(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  if(!valid) stencil_divisor--;
+                  stencil_value += value_minus_y(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  if(!valid) stencil_divisor--;
+                  stencil_value += value_plus_z(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  if(!valid) stencil_divisor--;
+                  stencil_value += value_minus_z(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  if(!valid) stencil_divisor--;
 
-                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,1,mesh_geometry,valid);
-                  // if(!valid) stencil_divisor--;
-                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,0,-1,mesh_geometry,valid);
-                  // if(!valid) stencil_divisor--;
-                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,1,0,mesh_geometry,valid);
-                  // if(!valid) stencil_divisor--;
-                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,0,-1,0,mesh_geometry,valid);
-                  // if(!valid) stencil_divisor--;
-                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,1,0,0,mesh_geometry,valid);
-                  // if(!valid) stencil_divisor--;
-                  // stencil_value += relative_mesh_value(potentials,root,x,y,z,-1,0,0,mesh_geometry,valid);
-                  // if(!valid) stencil_divisor--;
-
-                    
 
                   if(!field){
                     stencil_value /= stencil_divisor;
@@ -598,8 +599,8 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 }
 
 
-// 
-// 
+//
+//
 // void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
   // /*
   // Deposit a mesh onto a uniform grid.
