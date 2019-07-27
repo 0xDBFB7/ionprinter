@@ -240,8 +240,7 @@ void draw_geometry_outline(root_mesh_geometry mesh_geometry){
 
 }
 
-template<typename T>
-void draw_mesh(std::vector<std::vector<T>>& input_mesh, root_mesh_geometry mesh_geometry){
+void draw_mesh(std::vector<std::vector<double>>& input_mesh, root_mesh_geometry mesh_geometry){
   /* -----------------------------------------------------------------------------
   Determine min and max for color scaling
   ----------------------------------------------------------------------------- */
@@ -315,9 +314,6 @@ void draw_mesh(std::vector<std::vector<T>>& input_mesh, root_mesh_geometry mesh_
     }
   }
 }
-template void draw_mesh(std::vector<std::vector<double>>& input_mesh,root_mesh_geometry mesh_geometry);
-template void draw_mesh(std::vector<std::vector<int>>& input_mesh,root_mesh_geometry mesh_geometry);
-
 
 void opengl_apply_camera_rotation(){
   opengl_current_z_translate += opengl_delta_zoom; //FIXME: no longer required.

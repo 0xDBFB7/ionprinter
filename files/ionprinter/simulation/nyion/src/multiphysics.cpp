@@ -417,7 +417,7 @@ void v_cycle(std::vector<std::vector<double>> &potentials, std::vector<std::vect
 }
 
 
-std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &potentials, std::vector<std::vector<int>> &boundaries,
+std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &potentials, std::vector<std::vector<double>> &boundaries,
                                                                                                 root_mesh_geometry mesh_geometry, double tolerance, bool field, bool ignore_boundaries){
   /*
   Jacobi averages the four nearest points and stores the result in a new matrix.

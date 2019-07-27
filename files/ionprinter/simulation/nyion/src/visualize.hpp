@@ -44,8 +44,7 @@ void opengl_draw_axis_cross();
 void opengl_3d_mode();
 void opengl_2d_mode();
 
-template<typename T>
-void draw_mesh(std::vector<std::vector<T>>& input_mesh,root_mesh_geometry mesh_geometry);
+void draw_mesh(std::vector<std::vector<double>>& input_mesh,root_mesh_geometry mesh_geometry);
 
 void to_csv(std::vector<std::vector<double>> &original, root_mesh_geometry mesh_geometry);
 

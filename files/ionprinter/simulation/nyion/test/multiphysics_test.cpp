@@ -390,7 +390,7 @@ TEST(laplace_tests,gauss_seidel_point_tests){
   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
 
   std::vector<std::vector<double>> potentials;
-  std::vector<std::vector<int>> boundaries;
+  std::vector<std::vector<double>> boundaries;
 
   double mesh_active_bounds[6] = {0,0.006,0,0.006,0,0.006};
 

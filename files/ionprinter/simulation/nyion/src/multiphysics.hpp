@@ -70,7 +70,7 @@ std::vector<std::vector<double>> fast_relax_laplace_potentials(std::vector<std::
                                         std::vector<std::vector<double>> &boundaries_vector, root_mesh_geometry mesh_geometry, double tolerance, bool field);
 
 
-std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &potentials, std::vector<std::vector<int>> &boundaries,
+std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &potentials, std::vector<std::vector<double>> &boundaries,
     root_mesh_geometry mesh_geometry, double tolerance, bool field, bool ignore_boundaries);
 
 void v_cycle(std::vector<std::vector<double>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, double tolerance, int i);
