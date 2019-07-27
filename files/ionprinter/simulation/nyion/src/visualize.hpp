@@ -47,9 +47,9 @@ void opengl_2d_mode();
 template<typename T>
 void draw_mesh(std::vector<std::vector<T>>& input_mesh,root_mesh_geometry mesh_geometry);
 
-void to_csv(std::vector<std::vector<float>> &original, root_mesh_geometry mesh_geometry);
+void to_csv(std::vector<std::vector<double>> &original, root_mesh_geometry mesh_geometry);
 
 void opengl_apply_camera_rotation();
 void opengl_switch_to_graph_window();
 void opengl_switch_to_mesh_window();
-void opengl_graph_1d_vector(std::vector<float> &input, const std::string& title, int index);
+void opengl_graph_1d_vector(std::vector<double> &input, const std::string& title, int index);

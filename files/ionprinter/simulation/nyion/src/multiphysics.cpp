@@ -62,7 +62,7 @@ using namespace std::chrono;
 // #include <vtkSphereSource.h>
 // #include <vtkPolyData.h>
 // #include <vtkPointData.h>
-// #include <vtkFloatArray.h>
+// #include <vtkdoubleArray.h>
 // #include <vtkDoubleArray.h>
 // #include <vtkIntArray.h>
 //
@@ -86,12 +86,11 @@ using namespace std::chrono;
 #define EPSILON_0 8.854187e-12
 
 
-
 #define MULTIGRID_COARSE_GRID 0.001
 #define MATERIAL_BC_CUTOFF 1000//
 
 
-root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
+root_mesh_geometry::root_mesh_geometry(double bounds[6], double new_root_scale){
   /*
   Creates a new mesh description with the specified parameters.
 
@@ -118,7 +117,7 @@ root_mesh_geometry::root_mesh_geometry(float bounds[6], float new_root_scale){
   root_scale = new_root_scale;
 }
 
-double scharge_efield(float beam_current, float beam_velocity, float beam_radius, float sample_radius){
+double scharge_efield(double beam_current, double beam_velocity, double beam_radius, double sample_radius){
     //Calculate the electric field at the edge of a beam
     //Eq. 44 in https://arxiv.org/pdf/1401.3951.pdf
     //returns one value: V/m
@@ -128,9 +127,8 @@ double scharge_efield(float beam_current, float beam_velocity, float beam_radius
 }
 
 
-template<typename T>
-float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
-  float min = 1e0;
+double mesh_min(std::vector<std::vector<double>> &input_mesh, root_mesh_geometry mesh_geometry){
+  double min = 1e0;
   for(int root = 0; root < mesh_geometry.root_size; root++){ //re-add boundaries - saves the additional check
     if(input_mesh[root].size()){
       for(uint32_t sub = 0; sub < input_mesh[root].size(); sub++){
@@ -142,13 +140,9 @@ float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
   }
   return min;
 }
-template float mesh_min(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
-template float mesh_min(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
 
-
-template<typename T>
-float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry){
-  float max = 1e-30;
+double mesh_max(std::vector<std::vector<double>> &input_mesh, root_mesh_geometry mesh_geometry){
+  double max = 1e-30;
   for(int root = 0; root < mesh_geometry.root_size; root++){
     if(input_mesh[root].size()){
       for(uint32_t sub = 0; sub < input_mesh[root].size(); sub++){
@@ -160,12 +154,8 @@ float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_
   }
   return max;
 }
-template float mesh_max(std::vector<std::vector<float>> &input_mesh, root_mesh_geometry mesh_geometry);
-template float mesh_max(std::vector<std::vector<int>> &input_mesh, root_mesh_geometry mesh_geometry);
 
-
-template<typename T>
-void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
+void enable_mesh_region(std::vector<std::vector<double>> &input_mesh, double bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length){
   /* -----------------------------------------------------------------------------
   Resize submeshes within specified bounds to desired submesh_side_length.
   ----------------------------------------------------------------------------- */
@@ -194,16 +184,11 @@ void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6]
       }
     }
   }
-
 }
-template void enable_mesh_region(std::vector<std::vector<float>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
-template void enable_mesh_region(std::vector<std::vector<int>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
-
 
 //sanity-checked getter and setter?
 
-template<typename T>
-void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened,__attribute__((unused)) root_mesh_geometry original_geometry, int scale_divisor){
+void coarsen_mesh(std::vector<std::vector<double>> &original, std::vector<std::vector<double>> &coarsened,__attribute__((unused)) root_mesh_geometry original_geometry, int scale_divisor){
   /*
   The root mesh resolution remains the same; only the submeshes are coarsened.
   A simple straight-injection operator.
@@ -237,12 +222,8 @@ void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector
     }
   }
 }
-template void coarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
-template void coarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
-
-template<typename T>
-void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor){
+void decoarsen_mesh(std::vector<std::vector<double>> &original, std::vector<std::vector<double>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor){
   /*
   The root mesh resolution remains the same; only the submeshes are coarsened.
 
@@ -252,7 +233,7 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
   */
   decoarsened = original;
 
-  float interp_value = 0;
+  double interp_value = 0;
 
   for(uint32_t root_mesh_idx = 0; root_mesh_idx < original.size(); root_mesh_idx++){ //iterate over coarse submesh cubes
     if(original[root_mesh_idx].size()){
@@ -268,16 +249,16 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
 
             bool valid = false;
 
-            float x_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,1,0,0,original_geometry,valid)
+            double x_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,1,0,0,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
             if(!valid) x_interp_scale = 0; //this will produce incorrect results at the edge of the root mesh.
                                             // extrapolating using previous scale would be a more suitable method.
 
-            float y_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,1,0,original_geometry,valid)
+            double y_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,1,0,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
             if(!valid) y_interp_scale = 0;
 
-            float z_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,0,1,original_geometry,valid)
+            double z_interp_scale = (relative_mesh_value(original,root_mesh_idx,x,y,z,0,0,1,original_geometry,valid)
                                           -original[root_mesh_idx][coarse_sub_idx])/scale_divisor;
             if(!valid) z_interp_scale = 0;
 
@@ -302,14 +283,9 @@ void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vect
     }
   }
 }
-template void decoarsen_mesh(std::vector<std::vector<float>> &original, std::vector<std::vector<float>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
-template void decoarsen_mesh(std::vector<std::vector<int>> &original, std::vector<std::vector<int>> &decoarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
 
-
- //
-template<typename T>
-float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
+ double relative_mesh_value(std::vector<std::vector<double>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid){
   /* -----------------------------------------------------------------------------
   s_x,y,z refer to cell index within submesh.
 
@@ -354,7 +330,7 @@ float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int
     /* -----------------------------------------------------------------------------
     Correct for differing current and adjacent submesh side lengths
     ----------------------------------------------------------------------------- */
-    float scale_factor = new_submesh_side_length / ((float) this_submesh_side_length);
+    double scale_factor = new_submesh_side_length / ((double) this_submesh_side_length);
 
     int new_sub_x = 0;
     int new_sub_y = 0;
@@ -384,25 +360,16 @@ float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int
     return 0.0;
   }
 }
-template float relative_mesh_value(std::vector<std::vector<float>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
-template float relative_mesh_value(std::vector<std::vector<int>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
 
-
-
-template<typename T>
-int submesh_side_length(std::vector<T> &input_vector){
+int submesh_side_length(std::vector<double> &input_vector){
   /*
 
   */
   return round(std::cbrt(input_vector.size()));
 }
-template int submesh_side_length(std::vector<float> &input_vector);
-template int submesh_side_length(std::vector<int> &input_vector);
 
 
-
-
-void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i){
+void v_cycle(std::vector<std::vector<double>> &potentials, std::vector<std::vector<double>> &boundaries, root_mesh_geometry mesh_geometry, double tolerance, int i){
   /* -----------------------------------------------------------------------------
   Multigrid v-cycle implementation based off
   http://www.maths.lth.se/na/courses/FMNN15/media/material/Chapter8.09b__.pdf
@@ -411,20 +378,20 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
 
   int stages = 2;
   int cycle[] = {2,2};
-  float tol[] = {0.5,0.01,0.01};
+  double tol[] = {0.5,0.01,0.01};
 
   /* -----------------------------------------------------------------------------
   First, iterate once or twice over the finest mesh to obtain residuals.
   Boundary conditions are required.
   ----------------------------------------------------------------------------- */
-  std::vector<std::vector<float>> residuals;
+  std::vector<std::vector<double>> residuals;
   residuals = gauss_seidel(potentials, boundaries, mesh_geometry, 500, (i==0), (i!=0));
 
-  std::vector<std::vector<float>> rhs;
+  std::vector<std::vector<double>> rhs;
 
   coarsen_mesh(residuals,rhs,mesh_geometry,cycle[i]);
 
-  std::vector<std::vector<float>> eps;
+  std::vector<std::vector<double>> eps;
   if(i == stages-1){
     gauss_seidel(rhs, boundaries, mesh_geometry, tol[i], 0, 1);
   }
@@ -433,7 +400,7 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
   }
 
 
-  std::vector<std::vector<float>> temp;
+  std::vector<std::vector<double>> temp;
   decoarsen_mesh(rhs,temp,mesh_geometry,cycle[i]);
 
   /* -----------------------------------------------------------------------------
@@ -450,8 +417,8 @@ void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vecto
 }
 
 
-std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
-                                                                                                root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries){
+std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &potentials, std::vector<std::vector<int>> &boundaries,
+                                                                                                root_mesh_geometry mesh_geometry, double tolerance, bool field, bool ignore_boundaries){
   /*
   Jacobi averages the four nearest points and stores the result in a new matrix.
   Gauss-Seidel averages the four nearest points and updates the current matrix.
@@ -461,7 +428,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
   */
 
 
-  // float standard_normal_scalar = 1000.0; //some algorithms converge faster if values are near 1; therefore, we scale the input.
+  // double standard_normal_scalar = 1000.0; //some algorithms converge faster if values are near 1; therefore, we scale the input.
 
   int root_x = mesh_geometry.root_x_len;
   int root_y = mesh_geometry.root_y_len;
@@ -469,14 +436,14 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
   int root_size = (root_x*root_y*root_z);
   // int root_xy = (root_x * root_y);
 
-  std::vector<std::vector<float>> potentials_copy = potentials;
+  std::vector<std::vector<double>> potentials_copy = potentials;
 
 
   auto t1 = std::chrono::high_resolution_clock::now();
 
   int iterations = 0;
 
-  float new_convergence = 0;
+  double new_convergence = 0;
 
   for(iterations = 1; iterations < 10000; iterations++){
 
@@ -492,7 +459,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
         int r_y = (root / mesh_geometry.root_x_len) % mesh_geometry.root_y_len;
         int r_z = root / (mesh_geometry.root_x_len * mesh_geometry.root_y_len);
 
-        std::vector<float> this_potential_submesh = potentials[root];
+        std::vector<double> this_potential_submesh = potentials[root];
 
         for(int x = 0; x < this_submesh_side_length; x++){ //first do the edges, including the boundary check
           for(int y = 0; y < this_submesh_side_length; y++){ // this could be made even more efficient by doing a side at a time
@@ -520,7 +487,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
                   */
 
                   int stencil_divisor = 6;
-                  float stencil_value = 0;
+                  double stencil_value = 0;
                   bool valid = false;
 
                   // stencil_value += value_plus_x(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
@@ -585,7 +552,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  std::vector<std::vector<float>> residuals = potentials;
+  std::vector<std::vector<double>> residuals = potentials;
   for(uint32_t root = 0; root < potentials.size(); root++){
     for(uint32_t sub = 0; sub < potentials[root].size(); sub++){
       residuals[root][sub] = (potentials[root][sub] - potentials_copy[root][sub]);
@@ -593,7 +560,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
   }
 
 
-  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(float) iterations << " ms each" << "\n";
+  std::cout << iterations << " iterations, " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count())/(double) iterations << " ms each" << "\n";
   std::cout << "total time " << (std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count()) << " ms" << "\n";
 
   return residuals;
@@ -602,7 +569,7 @@ std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &po
 
 //
 //
-// void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]){
+// void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], double mesh_scale[3], double bounds[6]){
   // /*
   // Deposit a mesh onto a uniform grid.
   // Inputs are filename c_string, a 1-D mesh with length

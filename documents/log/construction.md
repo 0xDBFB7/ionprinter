@@ -1551,3 +1551,9 @@ Oh! rather, this can be integrated with the software telemetry. On first startup
 
 Interesting for later use: compiling in a ramdisk can often improve performance.
 
+
+
+Barium Ferrite is a good high-temperature magnet material; good to ~300c, sinterable,  pretty spicy in terms of toxicity.  See <https://patentimages.storage.googleapis.com/b2/26/d8/8714585053693a/US4457851.pdf>
+
+Requires ~10K Oersted magnetizing field.
+

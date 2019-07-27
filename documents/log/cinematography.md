@@ -301,3 +301,8 @@ aa:extended works too
 Overlay ascii'd video with transparency fade in 
 
 moviepy perhaps
+
+
+
+We choose to do these things not because they are easy, but because they're totally rad.
+

@@ -40,49 +40,42 @@
 
 
 
-template<typename T>
-int submesh_side_length(std::vector<T> &input_vector);
+int submesh_side_length(std::vector<double> &input_vector);
 
 //
-// void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], float mesh_scale[3], double bounds[6]);
+// void import_mesh(const char* filename, std::vector<bool> &mesh_present, int mesh_geometry[3], double mesh_scale[3], double bounds[6]);
 
 // template<typename T>
-// float get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
+// double get_mesh_value(int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
 //
 // template<typename T>
-// void set_mesh_value(float val, int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
+// void set_mesh_value(double val, int v_x, int v_y, int v_z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
 
 // template<typename T>
-// float get_mesh_value_world_point(float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
+// double get_mesh_value_world_point(double x, double y, double z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
 //
 // template<typename T>
-// void set_mesh_value_world_point(float val, float x, float y, float z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
+// void set_mesh_value_world_point(double val, double x, double y, double z, std::vector<std::vector<T>> &mesh, root_mesh_geometry mesh_geometry);
 
-template<typename T>
-void enable_mesh_region(std::vector<std::vector<T>> &input_mesh, float bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
+void enable_mesh_region(std::vector<std::vector<double>> &input_mesh, double bounds[6], root_mesh_geometry mesh_geometry, int submesh_side_length);
 
-template<typename T>
-void coarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
+void coarsen_mesh(std::vector<std::vector<double>> &original, std::vector<std::vector<double>> &coarsened, root_mesh_geometry original_geometry, int scale_divisor);
 
-template<typename T>
-void decoarsen_mesh(std::vector<std::vector<T>> &original, std::vector<std::vector<T>> &decoarsened, root_mesh_geometry decoarsened_geometry, int scale_divisor);
+void decoarsen_mesh(std::vector<std::vector<double>> &original, std::vector<std::vector<double>> &decoarsened, root_mesh_geometry decoarsened_geometry, int scale_divisor);
 
-template<typename T>
-float relative_mesh_value(std::vector<std::vector<T>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
+double relative_mesh_value(std::vector<std::vector<double>>& input_mesh, int root, int s_x, int s_y, int s_z, int x_rel, int y_rel, int z_rel, root_mesh_geometry mesh_geometry, bool &valid);
 
 
+std::vector<std::vector<double>> fast_relax_laplace_potentials(std::vector<std::vector<double>> &potentials_vector,
+                                        std::vector<std::vector<double>> &boundaries_vector, root_mesh_geometry mesh_geometry, double tolerance, bool field);
 
-std::vector<std::vector<float>> fast_relax_laplace_potentials(std::vector<std::vector<float>> &potentials_vector,
-                                        std::vector<std::vector<int>> &boundaries_vector, root_mesh_geometry mesh_geometry, float tolerance, bool field);
 
+std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &potentials, std::vector<std::vector<int>> &boundaries,
+    root_mesh_geometry mesh_geometry, double tolerance, bool field, bool ignore_boundaries);
 
-std::vector<std::vector<float>> gauss_seidel(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries,
-    root_mesh_geometry mesh_geometry, float tolerance, bool field, bool ignore_boundaries);
+void v_cycle(std::vector<std::vector<double>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, double tolerance, int i);
 
-void v_cycle(std::vector<std::vector<float>> &potentials, std::vector<std::vector<int>> &boundaries, root_mesh_geometry mesh_geometry, float tolerance, int i);
-template<typename T>
-float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry);
-template<typename T>
-float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry);
+double mesh_min(std::vector<std::vector<double>> &input_mesh, root_mesh_geometry mesh_geometry);
+double mesh_max(std::vector<std::vector<double>> &input_mesh, root_mesh_geometry mesh_geometry);
 
 #endif
