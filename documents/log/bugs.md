@@ -123,4 +123,35 @@ The issue was obvious once the 3D opengl viewer was functional.
 
 ##### Solution
 
-Ensure that unit tests also test for physical correctness. Ensure also that the success state can only be attained in the correct way.
+Ensure that unit tests also test for physical correctness. Ensure also that the success state can only be attained in the correct way; that no other combination of errors can lead to the asserted result.
+
+For instance, if all values in an array are set to 1, any malformed array index will yield 1. Instead, all values should be initialized to zero, and only the requested point should be set.
+
+<hr>
+
+#### Issue:
+
+Math within macro call subtly broken by order-of-operations
+
+```
+#define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
+idx(r_x,r_y,r_z+1,root_x_len,root_y_len) //13
+idx(r_x,r_y,r_z+1,root_x_len,root_y_len) //14
+r_z + 1 //22
+idx(r_x,r_y,,root_x_len,root_y_len) 
+```
+
+##### Discovery
+
+Rewritten relative mesh indexing function broke for edge cases. Issue only discovered due to extra time spent on unit test function; must be more disciplined in the future. 
+
+Sprinkling printfs made the issue apparent.
+
+##### Solution
+
+Convert from macro to inline function to avoid such issues in the future. 
+
+-E would be a useful troubleshooting feature, but it's breaking cmake.
+
+
+

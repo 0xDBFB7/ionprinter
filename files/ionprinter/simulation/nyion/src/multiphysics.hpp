@@ -1,3 +1,5 @@
+
+
 #include <vector>
 #include <math.h>
 #include <iostream>
@@ -17,6 +19,10 @@
 
 #include "visualize.hpp"
 
+#ifndef MULTIPHYSICS_H
+#define MULTIPHYSICS_H
+
+
 #define X 0
 #define Y 1
 #define Z 2
@@ -29,8 +35,9 @@
 #define Z2 5
 
 
-#define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
-#define root_idx(x,y,z,mesh_geometry) ((mesh_geometry.root_x_len*mesh_geometry.root_y_len*z) + (mesh_geometry.root_x_len*y) + x)
+// #define idx(x,y,z,x_len,y_len) ((x_len*y_len*z) + (x_len*y) + x)
+// #define root_idx(x,y,z,mesh_geometry) ((mesh_geometry.root_x_len*mesh_geometry.root_y_len*z) + (mesh_geometry.root_x_len*y) + x)
+
 
 
 template<typename T>
@@ -77,3 +84,5 @@ template<typename T>
 float mesh_min(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry);
 template<typename T>
 float mesh_max(std::vector<std::vector<T>> &input_mesh, root_mesh_geometry mesh_geometry);
+
+#endif

@@ -1,6 +1,7 @@
 #include "multiphysics.hpp"
 #include "visualize.hpp"
 #include <thread>
+#include "stencils.hpp"
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -93,7 +94,7 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
 
   opengl_switch_to_mesh_window();
 
-  
+
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClearDepth(1.0f);
   // glEnable(GL_DEPTH_TEST);

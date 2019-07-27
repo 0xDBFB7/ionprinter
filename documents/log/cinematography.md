@@ -296,3 +296,8 @@ using AALIB, one can vary the contrast to great effect. OSD can be removed.
 
 aa:extended works too
 
+
+
+Overlay ascii'd video with transparency fade in 
+
+moviepy perhaps

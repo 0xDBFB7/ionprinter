@@ -1533,3 +1533,21 @@ Previously, I have shirked bounds-checking on arrays for performance reasons. Ho
 
 Ionization electrons can be siphoned off and used 
 
+
+
+==Nyion can be used as integration test + HITL simulation software! This is big. A library should be integrated with the firmware component and used as mocks.== 
+
+Oh ho ho ho that is HUGE
+
+We want a gradient from software to hardware, rather than a sharp, brittle distinction.
+
+Sticker: "Hi! Thanks for buying Ionolith. I'd appreciate it if you post *any* flaws you find (down to "there's a small scratch on the back panel") on the Discourse."
+
+Oh! rather, this can be integrated with the software telemetry. On first startup of a new machine, the user can upload a picture of any flaws.
+
+"report a hardware flaw" command
+
+
+
+Interesting for later use: compiling in a ramdisk can often improve performance.
+
