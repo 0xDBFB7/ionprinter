@@ -185,7 +185,7 @@ TEST(laplace_tests,relative_indexing){
   ----------------------------------------------------------------------------- */
   value = value_plus_z(potentials, 2, 2, 2,
                                   9, 9, 9,
-                                  10, 3, 3, 3, valid);
+                                  10, 3, 3, 3, valid); 
   CHECK_EQUAL(valid,false);
   DOUBLES_EQUAL(0,value,1 e-5);
   /* -----------------------------------------------------------------------------
