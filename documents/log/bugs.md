@@ -70,8 +70,7 @@ Memory fuzzer testing would probably have caught this earlier.
 
 #### Issue:
 
-
-Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing. It seemed that the mode change ruined the perspective rotation somehow.
+###Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing. It seemed that the mode change ruined the perspective rotation somehow.
 
 ##### Discovery
 
@@ -105,12 +104,23 @@ Surprisingly, g++ did not take issue with this code, despite the use of `-Wall -
 
 ##### Solution
 
-All compiler warnings were disabled.
+All compiler warnings were disabled; they were promptly re-enabled.
 
 <hr>
+
 #### Issue:
 
+Relative mesh indexing functions handle root boundaries incorrectly.
 
 
 This bug somehow survived some ten rewrites of the relevant function.
 
+##### Discovery
+
+Convergence was very slow, even with multigrid methods.
+
+The issue was obvious once the 3D opengl viewer was functional.
+
+##### Solution
+
+Ensure that unit tests also test for physical correctness. Ensure also that the success state can only be attained in the correct way.

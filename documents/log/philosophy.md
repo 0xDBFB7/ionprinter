@@ -207,3 +207,60 @@ There is one exception to these concepts, however.
 
 
 "time is money" is true; however, I think that means that you should spend more time.
+
+
+
+
+
+
+
+<hr>
+
+
+
+> What it means really to understand an equation—that is, in more than a strictly mathematical sense—was described by Dirac. He said: “I understand what an equation means if I have a way of figuring out the characteristics of its solution without actually solving it.” 
+>
+> So if we have a way of knowing what should happen in given circumstances without actually solving the equations, then we “understand” the equations, as applied to these circumstances. 
+>
+> A physical understanding is a completely unmathematical, imprecise, and inexact thing, but absolutely necessary for a physicist.
+
+*- Feynman*
+
+Having recently worked at length with a mathematician, I am beginning to realize the depth of the difference in philosophy between the mathematician and the physicist.
+
+The mathematician in question has stated that they have not learned anything the required course material. Even the physical properties that I find most captivating (the confusing, contradictory principles that drive a Crooke's Radiometer, for instance) were met with only a blank stare. 
+
+> "What's this?", she says, picking up the worn, cracked radiometer. She tries blowing at it like a pinwheel.
+>
+> "It's powered by light!", I exclaim, holding it to the nearest lamp. The vanes turn ever so gently, almost imperceptible against the shaking of my hand.
+>
+> "Oh."
+>
+> "Ah, but see which way it rotates! You can see that the darkened faces trail, whereas one would expect that the white face would see double the impulse."
+>
+> "No - I'd expect the black face to "
+
+Of course, this is cheating; I'd already been primed; I could cross-reference with, say, solar-sails, whose reflective mylar sheets are clearly tuned to 
+
+the photonic 
+
+
+
+As an example, we once analyzed the differential property of two powers. My colleague wrote a magnificent and almost incomprehensible 3-page proof of the equation, which we both parsed through gradually. When the work was complete, however, I found the proof to be tremendously unsatisfying. 
+
+The whole lot seemed as circular reasoning; I got the distinct impression that if I spent more time, if I really, truly understood the equation, there would be a deeper, more prosaic explanation that would seem almost obvious once stated. 
+
+However, if I attempted to gain a geometric understanding of these calculus concepts, I found that I could 
+
+To quote Feynman once again,
+
+> It is better to learn concepts, rather than facts.
+
+If one has a sufficient understanding of the underlying principles, the manifestations of these principles often become self-evident. There is no formula-sheet for the universe; at some time, someone derived each concept from lesser theory.
+
+Many physical expressions are of this form. For instance, 
+
+Of course, this is not a more 'correct' or 'better' philosophy; and indeed, as the subject in question becomes more and more complex, intuition becomes a poor or misleading guide. Using some convoluted corpuscle analogy to explain the behavior of photons will see you made a fool of in short order. However, I do not believe that it is wise to abandon the manner in which our brains seem to best visualize.
+
+Rather, I think intuition is malleable enough to cope with even the most perverse principles. As long as the   strict character of the defining equation is strictly followed, 
+

@@ -230,7 +230,7 @@ VCR camcorder is upstairs; might be cool for some retro-style effects. Over-reco
 
 mdp or tpp or vimdeck closing credits?
 
-
+ 
 
 This technology has a long and sordid family tree - it's hard to know exactly what to call it.
 
@@ -265,4 +265,34 @@ Face mask monitor reflection like 2001?
 
 
 manual tilt-shift by removing lens
+
+
+
+Black laptop, no sound, 30 FPS, 1080P, "raw output", USB3 cable in usb2 port, MJPEG camera setting
+
+Video setting 'hardware defaults'. PORTAUDIO internal mic worked, but audio quality quite poor.
+
+Guvcview 2.0.2.
+
+
+
+Playing ASCII art video looks really cool
+
+`mplayer -vo aa -monitorpixelaspect 0.5 VID_20180804_125425.mp4`
+
+or 
+
+`mplayer -vo caca VID_20180804_125425.mp4`
+
+```
+CACA_GEOMETRY=80x25
+```
+
+ffmpeg works too 
+
+using AALIB, one can vary the contrast to great effect. OSD can be removed.
+
+<http://www.mplayerhq.hu/DOCS/HTML/en/aalib.html>
+
+aa:extended works too
 
