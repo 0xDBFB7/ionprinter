@@ -16,7 +16,8 @@ double value_plus_z(std::vector<std::vector<double>>& input_mesh, int r_x, int r
   if(s_z == sub_len-1){
     int root_i = idx(r_x,r_y,r_z+1,root_x_len,root_y_len);
     if(r_z < root_z_len-1 && input_mesh[root_i].size()){
-      double size_scalar = ((double)submesh_side_length(input_mesh[root_i]))/sub_len;
+      int new_sub_len = submesh_side_length(input_mesh[root_i]);
+      double size_scalar = ((double)new_sub_len)/sub_len;
       valid = true;
       return input_mesh[root_i][idx((int)(s_x*size_scalar),(int)(s_y*size_scalar),0,(sub_len*size_scalar),(sub_len*size_scalar))];
     }
@@ -37,7 +38,8 @@ double value_plus_y(std::vector<std::vector<double>>& input_mesh, int r_x, int r
   if(s_y == sub_len-1){
     int root_i = idx(r_x,r_y+1,r_z,root_x_len,root_y_len);
     if(r_y < root_y_len-1 && input_mesh[root_i].size()){
-      double size_scalar = ((double)submesh_side_length(input_mesh[root_i]))/sub_len;
+      int new_sub_len = submesh_side_length(input_mesh[root_i]);
+      double size_scalar = ((double)new_sub_len)/sub_len;
       valid = true;
       return input_mesh[root_i][idx((int)(s_x*size_scalar),0,(int)(s_z*size_scalar),(sub_len*size_scalar),(sub_len*size_scalar))];
     }
@@ -58,7 +60,8 @@ double value_plus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int r
   if(s_x == sub_len-1){
     int root_i = idx(r_x+1,r_y,r_z,root_x_len,root_y_len);
     if(r_x < root_x_len-1 && input_mesh[root_i].size()){
-      double size_scalar = ((double)submesh_side_length(input_mesh[root_i]))/sub_len;
+      int new_sub_len = submesh_side_length(input_mesh[root_i]);
+      double size_scalar = ((double)new_sub_len)/sub_len;
       valid = true;
       return input_mesh[root_i][idx(0,(int)(s_y*size_scalar),(int)(s_z*size_scalar),(sub_len*size_scalar),(sub_len*size_scalar))];
     }
@@ -73,7 +76,6 @@ double value_plus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int r
   }
 }
 
-
 double value_minus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
                                                             int s_x, int s_y, int s_z,
                                                             int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid){
@@ -83,7 +85,7 @@ double value_minus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int 
       int new_sub_len = submesh_side_length(input_mesh[root_i]);
       double size_scalar = ((double)new_sub_len)/sub_len;
       valid = true;
-      return input_mesh[root_i][idx(0,(int)(s_y*size_scalar),(int)(s_z*size_scalar),new_sub_len,new_sub_len)];
+      return input_mesh[root_i][idx(new_sub_len-1,(int)(s_y*size_scalar),(int)(s_z*size_scalar),new_sub_len,new_sub_len)];
     }
     else{
       valid = false;
@@ -99,12 +101,13 @@ double value_minus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int 
 double value_minus_y(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
                                                             int s_x, int s_y, int s_z,
                                                             int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid){
-  if(s_x == 0){
-    int root_i = idx(r_x-1,r_y,r_z,root_x_len,root_y_len);
-    if(r_x > 0 && input_mesh[root_i].size()){
-      double size_scalar = ((double)submesh_side_length(input_mesh[root_i]))/sub_len;
+  if(s_y == 0){
+    int root_i = idx(r_x,r_y-1,r_z,root_x_len,root_y_len);
+    if(r_y > 0 && input_mesh[root_i].size()){
+      int new_sub_len = submesh_side_length(input_mesh[root_i]);
+      double size_scalar = ((double)new_sub_len)/sub_len;
       valid = true;
-      return input_mesh[root_i][idx(0,(int)(s_y*size_scalar),(int)(s_z*size_scalar),(sub_len*size_scalar),(sub_len*size_scalar))];
+      return input_mesh[root_i][idx((int)(s_x*size_scalar),new_sub_len-1,(int)(s_z*size_scalar),(sub_len*size_scalar),(sub_len*size_scalar))];
     }
     else{
       valid = false;
@@ -113,9 +116,33 @@ double value_minus_y(std::vector<std::vector<double>>& input_mesh, int r_x, int 
   }
   else{
     valid = true;
-    return input_mesh[idx(r_x,r_y,r_z,root_x_len,root_y_len)][idx(s_x-1,s_y,s_z,sub_len,sub_len)];
+    return input_mesh[idx(r_x,r_y,r_z,root_x_len,root_y_len)][idx(s_x,s_y-1,s_z,sub_len,sub_len)];
   }
 }
+
+double value_minus_z(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
+                                                            int s_x, int s_y, int s_z,
+                                                            int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid){
+  if(s_z == 0){
+    int root_i = idx(r_x,r_y,r_z-1,root_x_len,root_y_len);
+    if(r_z > 0 && input_mesh[root_i].size()){
+      int new_sub_len = submesh_side_length(input_mesh[root_i]);
+      double size_scalar = ((double)new_sub_len)/sub_len;
+      valid = true;
+      printf("%i,%i,%i,%i,%f\n",root_i,idx(r_x,r_y,r_z,root_x_len,root_y_len),(int)(s_x*size_scalar),new_sub_len-1,size_scalar);
+      return input_mesh[root_i][idx((int)(s_x*size_scalar),(int)(s_y*size_scalar),new_sub_len-1,new_sub_len,new_sub_len)];
+    }
+    else{
+      valid = false;
+      return 0;
+    }
+  }
+  else{
+    valid = true;
+    return input_mesh[idx(r_x,r_y,r_z,root_x_len,root_y_len)][idx(s_x,s_y,s_z-1,sub_len,sub_len)];
+  }
+}
+
 
 // double value_minus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
 //                                                             int s_x, int s_y, int s_z,

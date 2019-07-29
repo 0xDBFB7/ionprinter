@@ -1557,3 +1557,31 @@ Barium Ferrite is a good high-temperature magnet material; good to ~300c, sinter
 
 Requires ~10K Oersted magnetizing field.
 
+
+
+<hr>
+
+Going to switch Nyion to use only double values, negating the need for 
+
+
+
+<hr>
+
+#### Conductive alumina-graphite nanocomposite test 1
+
+0.06g graphite (powder obtained from block)
+
++0.96g Al2O3 (delta)
+
++0.08g white PVA glue (delta)
+
++0.25g water.
+
+Putty formed normally, gray color. Sintered at 126v for 12 minutes. Temperature may have been slightly lower than normal due to gap in kiln. 
+
+Gray color disappeared after sintering; graphite was presumably oxidized to CO2, leaving behind a pure white crumbly alumina powder that was completely nonconductive.
+
+Additionally, the 100% alumina mix appears to have failed; there was no structural integrity. This may have been due to the foreshortened sinter duration and low temp, however.
+
+Planning on flooding the kiln with argon for the next test. This should prevent the oxidation issues, and also avoid the element degradation that was previously observed.
+

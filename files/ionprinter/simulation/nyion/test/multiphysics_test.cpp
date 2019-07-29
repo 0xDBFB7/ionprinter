@@ -9,8 +9,7 @@
 TEST_GROUP(idx_tests){};
 
 
-TEST(idx_tests, geometry_construct_test)
-{
+TEST(idx_tests, geometry_construct_test){
 
   double mesh_bounds[6] = {0.1,0.3,0.05,0.1,0,0.5};
 
@@ -29,7 +28,6 @@ TEST(idx_tests, geometry_construct_test)
   DOUBLES_EQUAL(0.501,test.z_max_bound,1e-6);
 
 }
-
 
 TEST_GROUP(laplace_tests){};
 
@@ -53,8 +51,6 @@ TEST(laplace_tests,submesh_side){
       CHECK_EQUAL(i, submesh_side_length(potentials[0]));
     }
 }
-
-
 
 TEST(laplace_tests,activate_submesh_even){
 
@@ -92,61 +88,6 @@ TEST(laplace_tests,activate_submesh_round){
   CHECK_EQUAL(0,potentials[root_idx(0,1,0,mesh_geometry)].size());
 }
 
-//
-// TEST(laplace_tests,relative_indexing){
-//
-//   double mesh_bounds[6] = {0,0.009,0,0.009,0,0.009};
-//
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-//
-//   std::vector<std::vector<double>> potentials;
-//
-//   double mesh_active_bounds[6] = {0.000,0.009,0,0.009,0,0.009}; // a 3x3x3 mesh
-//
-//   enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,10);
-//
-//   //we'll make the upper-right-corner tests go across a submesh length boundary
-//   potentials[root_idx(1,1,2,mesh_geometry)].resize(5*5*5);
-//
-//   int number_of_points = 9;
-//   //format:
-//   //relative root, relative sub, relative delta, actual root, actual sub, valid
-//   int test_points[][16] = {
-//             {1,1,1, 0,0,0, 0,0,0, 1,1,1, 0,0,0, 1}, //no movement
-//             {1,1,1, 0,0,0, 0,0,-1, 1,1,0, 0,0,9, 1}, //down in z across boundary
-//             {1,1,1, 0,0,0, 0,0,1, 1,1,1, 0,0,1, 1}, // up in z
-//             {1,1,1, 0,0,0, 0,-1,0, 1,0,1, 0,9,0, 1}, // -y, across boundary
-//             {1,1,1, 0,0,0, 0,1,0, 1,1,1, 0,1,0, 1}, // +y
-//             {1,1,1, 0,0,0, -1,0,0, 0,1,1, 9,0,0, 1}, // -x, across boundary
-//             {1,1,1, 0,0,0, 1,0,0, 1,1,1, 1,0,0, 1}, // +x
-//
-//             {1,1,1, 9,9,9, 0,0,1, 1,1,2, 4,4,0, 1}, //top corner, up in z, across size boundary
-//
-//             {0,0,0, 0,0,0, 0,0,-1, 1,1,2, 4,4,0, 0} //invalid
-//             };
-//
-//   bool valid = false;
-//
-//
-//   for(int i = 0; i < number_of_points; i++){
-//     int root = root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry);
-//     int side_len = submesh_side_length(potentials[root]);
-//     potentials[root][idx(test_points[i][12],test_points[i][13],test_points[i][14],side_len,side_len)] = i+1;
-//
-//
-//     double value = relative_mesh_value(potentials,
-//                       root_idx(test_points[i][0],test_points[i][1],test_points[i][2],mesh_geometry),
-//                             test_points[i][3],test_points[i][4],test_points[i][5],
-//                             test_points[i][6],test_points[i][7],test_points[i][8], mesh_geometry, valid);
-//
-//     CHECK_EQUAL((i+1)*valid, value);
-//
-//     CHECK_EQUAL((bool) test_points[i][15], valid);
-//   }
-//
-// }
-
-
 TEST(laplace_tests,relative_indexing){
 
   double mesh_bounds[6] = {0,0.009,0,0.009,0,0.009};
@@ -165,6 +106,7 @@ TEST(laplace_tests,relative_indexing){
   bool valid = false;
   double value = 0;
 
+  { //+z init
   /* -----------------------------------------------------------------------------
   +z init
   ----------------------------------------------------------------------------- */
@@ -174,12 +116,12 @@ TEST(laplace_tests,relative_indexing){
   /* -----------------------------------------------------------------------------
   A valid point
   ----------------------------------------------------------------------------- */
-  potentials[root_idx(1,1,2,mesh_geometry)][idx(4,4,0,5,5)] = 10;
+  potentials[root_idx(0,0,0,mesh_geometry)][idx(0,0,1,10,10)] = 10;
   value = value_plus_z(potentials, 0, 0, 0,
                                   0, 0, 0,
                                   10, 3, 3, 3, valid);
   CHECK_EQUAL(valid,true);
-  DOUBLES_EQUAL(1,value,1e-5);
+  DOUBLES_EQUAL(10,value,1e-5);
   /* -----------------------------------------------------------------------------
   An invalid point
   ----------------------------------------------------------------------------- */
@@ -192,20 +134,51 @@ TEST(laplace_tests,relative_indexing){
   A point that crosses a submesh length boundary
   ----------------------------------------------------------------------------- */
   potentials[root_idx(1,1,2,mesh_geometry)][idx(4,4,0,5,5)] = 10;
-  printf("%i\n",root_idx(1,1,2,mesh_geometry));
   value = value_plus_z(potentials, 1, 1, 1,
                                   9, 9, 9,
                                   10, 3, 3, 3, valid);
   CHECK_EQUAL(valid,true);
   DOUBLES_EQUAL(10,value,1e-5);
+  }
 
-
+  { //-z init
+  /* -----------------------------------------------------------------------------
+  -z init
+  ----------------------------------------------------------------------------- */
+  for(int i = 0; i < mesh_geometry.root_size; i++){
+    std::fill(potentials[i].begin(), potentials[i].end(), 1);
+  }
+  /* -----------------------------------------------------------------------------
+  A valid point
+  ----------------------------------------------------------------------------- */
+  potentials[root_idx(0,0,0,mesh_geometry)][idx(0,0,0,10,10)] = 10;
+  value = value_minus_z(potentials, 0, 0, 0,
+                                  0, 0, 1,
+                                  10, 3, 3, 3, valid);
+  CHECK_EQUAL(valid,true);
+  DOUBLES_EQUAL(10,value,1e-5);
+  /* -----------------------------------------------------------------------------
+  An invalid point
+  ----------------------------------------------------------------------------- */
+  value = value_minus_z(potentials, 0, 0, 0,
+                                  0, 0, 0,
+                                  10, 3, 3, 3, valid);
+  CHECK_EQUAL(false,valid);
+  DOUBLES_EQUAL(0,value,1e-5);
   /* -----------------------------------------------------------------------------
   A point that crosses a submesh length boundary
   ----------------------------------------------------------------------------- */
+  potentials[root_idx(1,1,1,mesh_geometry)][idx(8,8,9,10,10)] = 10;
+  value = value_minus_z(potentials, 1, 1, 2,
+                                  4, 4, 0,
+                                  5, 3, 3, 3, valid);
+  CHECK_EQUAL(valid,true);
+  DOUBLES_EQUAL(10,value,1e-5);
+  }
+
+
 
 }
-
 
 
 TEST(laplace_tests,relative_timing){
@@ -233,9 +206,6 @@ TEST(laplace_tests,relative_timing){
   std::cout << "relative mesh lookup takes " << (std::chrono::duration_cast<std::chrono::microseconds>(t2-t1).count())/(double) 100.0 << " us" << "\n";
 
 }
-
-
-
 
 TEST(laplace_tests,coarsen){
   /* -----------------------------------------------------------------------------
@@ -282,7 +252,6 @@ TEST(laplace_tests,coarsen){
 
 
 }
-
 
 TEST(laplace_tests,refine){
 
@@ -344,47 +313,6 @@ TEST(laplace_tests,refine){
 
 }
 
-
-
-
-//
-//
-// TEST(laplace_tests,fast_laplace_convergence_1_big){
-//
-//
-//   double mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
-//
-//   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
-//
-//   std::vector<std::vector<double>> potentials;
-//   std::vector<std::vector<int>> boundaries;
-//
-//   double mesh_active_bounds[6] = {0,0.01,0,0.01,0,0.01};
-//
-//   enable_mesh_region(potentials,boundaries,mesh_active_bounds,mesh_geometry,30);
-//
-//   // for(uint32_t root = 0; root < 1; root++){
-//     for(uint32_t sub = 0; sub < potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)].size()/2; sub++){
-//       potentials[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)][sub] = 1000.0;
-//       boundaries[idx(1,1,1,mesh_geometry.root_x_len,mesh_geometry.root_y_len)][sub] = 1;
-//     }
-//   // }
-//
-//   fast_relax_laplace_potentials(potentials, boundaries, mesh_geometry, 1, 1, 1);
-//   //takes 47 seconds ATM
-//   // to_csv(potentials,mesh_geometry);
-//
-//
-//   // printf("%f\n", get_mesh_value_world_point(0.007,0.007,0.007,potentials,mesh_geometry));
-//   //
-//   // for(double x = 0.0; x < 0.01; x+=mesh_geometry.sub_scale){
-//   //     printf("%f\n", get_mesh_value_world_point(x,0.005,0.005,potentials,mesh_geometry));
-//   // }
-//   //
-//   // DOUBLES_EQUAL(0.58823, get_mesh_value(10,10,10,potentials,mesh_geometry), 1e-2);
-// }
-//
-
 TEST(laplace_tests,gauss_seidel_point_tests){
   double mesh_bounds[6] = {0,0.1,0,0.1,0,0.1};
   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
@@ -411,7 +339,7 @@ TEST(laplace_tests,gauss_seidel_point_tests){
   // }
 
 }
-//
+
 // TEST(laplace_tests,v_cycle_tests){
 //   double mesh_bounds[6] = {0,0.05,0,0.05,0,0.3};
 //   root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);

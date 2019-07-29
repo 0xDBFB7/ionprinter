@@ -264,3 +264,51 @@ Of course, this is not a more 'correct' or 'better' philosophy; and indeed, as t
 
 Rather, I think intuition is malleable enough to cope with even the most perverse principles. As long as the   strict character of the defining equation is strictly followed, 
 
+
+
+
+
+<hr>
+
+Sandman, I'm so alone
+Stuck in this tin-can I thought was my home
+Please turn on your Chem-Cam beam
+Mr. Sandman bring me a dream
+
+Mr. Sandman, bring me a dream
+Make it the cutest that I've ever seen
+Give it the word that I'm not a rover
+Then tell it that its lonesome nights are over
+
+Sandman, I'm so alone
+Only these perchlorate seas to roam
+Stooped at this breccia a thousand times
+Still not sure just what I'm trying to find
+
+Mr. Sandman  (Yes?)
+Bring me a dream
+Give it a pair of eyes with analytic gleam
+Give it a lonely heart like Sojourner
+And a spirit like Cur-io-sity
+
+Sandman, I'm so alone
+low on O2
+(so says the warning tone)
+Checklist states I should conserve my breath
+but I think that'd just prolong my
+
+Mr. Sandman, can't contact base
+separated by 
+interminable space
+Bring me nearer that softer wor-ld
+Fear this chute is never to un-fu-rl
+
+Mr. Sandman, in creeps the cold
+(in creeps the cold)
+This RTG is just getting too old
+So please turn on your laser beam
+Mr. Sandman bring me
+please please bring me
+Mr. Sandman bring me
+a dream
+
