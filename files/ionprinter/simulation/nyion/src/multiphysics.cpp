@@ -498,7 +498,8 @@ std::vector<std::vector<double>> gauss_seidel(std::vector<std::vector<double>> &
                   // if(!valid) stencil_divisor--;
                   // stencil_value += value_minus_y(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
                   // if(!valid) stencil_divisor--;
-                  stencil_value += value_plus_z(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
+                  stencil_value += relative_value(potentials, r_x,r_y,r_z ,x,y,z, 0,0,-1,
+                                                                      this_submesh_side_length,root_x,root_y,root_z,valid);
                   if(!valid) stencil_divisor--;
                   // stencil_value += value_minus_z(potentials,r_x,r_y,r_z,x,y,z,this_submesh_side_length,root_x,root_y,root_z,valid);
                   // if(!valid) stencil_divisor--;

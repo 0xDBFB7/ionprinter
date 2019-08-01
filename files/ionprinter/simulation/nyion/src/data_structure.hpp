@@ -22,6 +22,24 @@ class root_mesh_geometry{
     double z_max_bound; //f*** getters and setters.
 
 };
+
+class mesh_position{
+  public:
+
+    mesh_position();
+
+    int r_x;
+    int r_y;
+    int r_z;
+    
+
+    int s_x;
+    int s_y;
+    int s_z;
+
+}
+
+
 //
 // class macroparticle{
 //   public:

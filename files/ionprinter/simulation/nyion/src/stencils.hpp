@@ -4,26 +4,8 @@ int idx(int x, int y, int z, int x_len, int y_len);
 
 int root_idx(int x, int y, int z, root_mesh_geometry mesh_geometry);
 
-double value_plus_z(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
+double relative_value(std::vector<std::vector<double>>& input_mesh,
+                                                            int r_x, int r_y, int r_z,
                                                             int s_x, int s_y, int s_z,
+                                                            int x_rel, int y_rel, int z_rel,
                                                             int sub_len, int root_x_len, int root_y_len, int root_z_len, bool &valid);
-
-double value_minus_z(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
-                                                            int s_x, int s_y, int s_z,
-                                                            int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid);
-
-double value_plus_y(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
-                                                            int s_x, int s_y, int s_z,
-                                                            int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid);
-
-double value_minus_y(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
-                                                            int s_x, int s_y, int s_z,
-                                                            int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid);
-
-double value_plus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
-                                                            int s_x, int s_y, int s_z,
-                                                            int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid);
-
-double value_minus_x(std::vector<std::vector<double>>& input_mesh, int r_x, int r_y, int r_z,
-                                                            int s_x, int s_y, int s_z,
-                                                            int sub_len, int root_x_len, int root_y_len, __attribute__((unused)) int root_z_len, bool &valid);

@@ -130,4 +130,8 @@ double relative_value(std::vector<std::vector<double>>& input_mesh,
       return input_mesh[idx(r_x,r_y,r_z,root_x_len,root_y_len)][idx(s_x-1,s_y,s_z,sub_len,sub_len)];
     }
   }
+
+  throw std::invalid_argument("Relative mesh lookup recieved invalid rel command");
+
+
 }

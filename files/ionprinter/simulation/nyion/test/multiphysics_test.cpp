@@ -111,27 +111,23 @@ TEST(laplace_tests,relative_indexing){
   //format:
   //relative root, relative sub, relative delta, actual root, actual sub, valid
   int test_points[][16] = {
-            {1,1,1, 0,0,0, 0,0,0, 1,1,1, 0,0,0, 1}, //no movement
-            {1,1,1, 0,0,0, 0,0,-1, 1,1,0, 0,0,9, 1}, //down in z across boundary
-            {1,1,1, 0,0,0, 0,0,1, 1,1,1, 0,0,1, 1}, // up in z
-            {1,1,1, 0,0,0, 0,-1,0, 1,0,1, 0,9,0, 1}, // -y, across boundary
-            {1,1,1, 0,0,0, 0,1,0, 1,1,1, 0,1,0, 1}, // +y
-            {1,1,1, 0,0,0, -1,0,0, 0,1,1, 9,0,0, 1}, // -x, across boundary
-            {1,1,1, 0,0,0, 1,0,0, 1,1,1, 1,0,0, 1}, // +x
-
-            {1,1,1, 9,9,9, 0,0,1, 1,1,2, 4,4,0, 1}, //top corner, up in z, across size boundary
-
-            {0,0,0, 0,0,0, 0,0,-1, 1,1,2, 4,4,0, 0} //invalid
             };
 
   bool valid = false;
 
   for(int i = 0; i < number_of_points; i++){
+
     for(int i = 0; i < mesh_geometry.root_size; i++){
       std::fill(potentials[i].begin(), potentials[i].end(), 1);
     }
+
     int root = root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry);
-    potentials[root][idx(test_points[i][12],test_points[i][13],test_points[i][14],side_len,side_len)] = i+1;
+
+    int submesh_side_length
+    
+    potentials[root][idx(test_points[i][12],test_points[i][13],test_points[i][14],side_len,side_len)] = i+2;
+
+    relative_value(potentials)
 
     CHECK_EQUAL((i+1)*valid, value);
     CHECK_EQUAL((bool) test_points[i][15], valid);

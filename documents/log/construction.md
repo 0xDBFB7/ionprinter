@@ -1585,3 +1585,30 @@ Additionally, the 100% alumina mix appears to have failed; there was no structur
 
 Planning on flooding the kiln with argon for the next test. This should prevent the oxidation issues, and also avoid the element degradation that was previously observed.
 
+This burnoff property could be harnessed. A low-emissivity non-conductive shell could be made by
+
+- Sintering fully in argon, at which point the ceramic is now impermeable to oxygen.
+- Burning off the outer graphite layer in oxygen.
+
+<hr>
+
+However, we're still not done, because this fledgling beam does not like to exist; and as soon as it leaves the carefully controlled fields within the emitter, it does this:
+
+Which is unhelpful. This problem is usually alleviated by increasing the beam energy, but the end user typically doesn't have the luxury of a personal nuclear reactor. The beam would also turn into a merciless death ray, slicing through the wall of the chamber and anything else in its path. 
+
+This is an issue that Feynman thought was intractable in his 1969 lecture on nanotech.
+
+So instead, we keep the beam energy very, very low and give the beam a friend, in the form of a neutralizing electron beam. This accompanies the beam all the way to the build platform.
+
+
+
+It is important to emphasize that I did not invent any of these concepts.
+
+<hr>
+
+
+
+
+
+
+
