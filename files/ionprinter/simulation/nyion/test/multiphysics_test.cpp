@@ -106,6 +106,38 @@ TEST(laplace_tests,relative_indexing){
   bool valid = false;
   double value = 0;
 
+
+  int number_of_points = 9;
+  //format:
+  //relative root, relative sub, relative delta, actual root, actual sub, valid
+  int test_points[][16] = {
+            {1,1,1, 0,0,0, 0,0,0, 1,1,1, 0,0,0, 1}, //no movement
+            {1,1,1, 0,0,0, 0,0,-1, 1,1,0, 0,0,9, 1}, //down in z across boundary
+            {1,1,1, 0,0,0, 0,0,1, 1,1,1, 0,0,1, 1}, // up in z
+            {1,1,1, 0,0,0, 0,-1,0, 1,0,1, 0,9,0, 1}, // -y, across boundary
+            {1,1,1, 0,0,0, 0,1,0, 1,1,1, 0,1,0, 1}, // +y
+            {1,1,1, 0,0,0, -1,0,0, 0,1,1, 9,0,0, 1}, // -x, across boundary
+            {1,1,1, 0,0,0, 1,0,0, 1,1,1, 1,0,0, 1}, // +x
+
+            {1,1,1, 9,9,9, 0,0,1, 1,1,2, 4,4,0, 1}, //top corner, up in z, across size boundary
+
+            {0,0,0, 0,0,0, 0,0,-1, 1,1,2, 4,4,0, 0} //invalid
+            };
+
+  bool valid = false;
+
+  for(int i = 0; i < number_of_points; i++){
+    for(int i = 0; i < mesh_geometry.root_size; i++){
+      std::fill(potentials[i].begin(), potentials[i].end(), 1);
+    }
+    int root = root_idx(test_points[i][9],test_points[i][10],test_points[i][11],mesh_geometry);
+    potentials[root][idx(test_points[i][12],test_points[i][13],test_points[i][14],side_len,side_len)] = i+1;
+
+    CHECK_EQUAL((i+1)*valid, value);
+    CHECK_EQUAL((bool) test_points[i][15], valid);
+  }
+
+
   { //+z init
   /* -----------------------------------------------------------------------------
   +z init
@@ -176,6 +208,38 @@ TEST(laplace_tests,relative_indexing){
   DOUBLES_EQUAL(10,value,1e-5);
   }
 
+  { //+x init
+  /* -----------------------------------------------------------------------------
+  -z init
+  ----------------------------------------------------------------------------- */
+
+  /* -----------------------------------------------------------------------------
+  A valid point
+  ----------------------------------------------------------------------------- */
+  potentials[root_idx(0,0,0,mesh_geometry)][idx(0,0,0,10,10)] = 10;
+  value = value_minus_z(potentials, 0, 0, 0,
+                                  0, 0, 1,
+                                  10, 3, 3, 3, valid);
+  CHECK_EQUAL(valid,true);
+  DOUBLES_EQUAL(10,value,1e-5);
+  /* -----------------------------------------------------------------------------
+  An invalid point
+  ----------------------------------------------------------------------------- */
+  value = value_minus_z(potentials, 0, 0, 0,
+                                  0, 0, 0,
+                                  10, 3, 3, 3, valid);
+  CHECK_EQUAL(false,valid);
+  DOUBLES_EQUAL(0,value,1e-5);
+  /* -----------------------------------------------------------------------------
+  A point that crosses a submesh length boundary
+  ----------------------------------------------------------------------------- */
+  potentials[root_idx(1,1,1,mesh_geometry)][idx(8,8,9,10,10)] = 10;
+  value = value_minus_z(potentials, 1, 1, 2,
+                                  4, 4, 0,
+                                  5, 3, 3, 3, valid);
+  CHECK_EQUAL(valid,true);
+  DOUBLES_EQUAL(10,value,1e-5);
+  }
 
 
 }
