@@ -1606,7 +1606,127 @@ It is important to emphasize that I did not invent any of these concepts.
 
 <hr>
 
+Okay, we've got another issue: timescales. Nyion must be able to simulate bowtie transient heating, the diff. pump, the heavy beam, and the electron beam. 
 
+
+
+Heavy beam: ~30 km/s in 0.05 mm cell, 1e-9 s timescale, total runtime 1e-5 s.
+
+E beam: 5000 km/s in 0.05mm cell, 1e-12s timescale, total runtime 1e-5 s.
+
+Beam buttons and modulation: 20 khz, total runtime ~1e-4.
+
+~8M mesh stencils per multigrid, 10 multigrids per cycle, ~100M cycles. Let's say we want this to run in an hour, since we'll have yet another layer for optimization. 
+
+
+
+
+
+Bowtie / thermal sim: 1e-4s timescale, runtime 10s+
+
+Diffusion boiler: 1e-4s timescale, runtime 30s+
+
+Diffusion DSMC: 1e-
+
+
+
+
+
+Acceleration of Full-PIC Simulation on a CPU-FPGA Tightly Coupled Environment
+
+<https://github.com/3cHeLoN/cupoisson/blob/master/poisson.cu>
+
+<https://wrf.ecse.rpi.edu/Teaching/parallel-s2018/stanford/lectures/lecture_10/solving_pdes_with_cuda.pdf>
+
+<http://users.umiacs.umd.edu/~joseph/IPDPS-2013-final.pdf>
+
+
+
+Okay, faint glimmer of something based on 2.txt, a paper by the amazing SigFig. This is going to sound crazy, but it might just work.
+
+What if we built an analog computer?
+
+So the main concern with FPGAs is memory and transfer bandwidth. What if we just put together 200 boards, each with 200x200 summing op-amps?
+
+I guess not. GPGPUs are essentially that but better.
+
+
+
+Wait! Hol'up! We don't need to transfer the whole array each cycle, just the new particles! The (presumably static) boundaries can be pre-initialized slowly and saved.
+
+
+
+<hr>
+
+Uni is finished again. I have 3 weeks.
+
+<hr>
+
+Spent a while thinking about FPGA acceleration while studying for calc 3. 
+
+table storing cell relationships (linked-list-like) 
+
+200^3 array, about 200ms fast test.c
+using openmp, g++ test.cpp -o testout -std=c++11 -fopenmp,
+126 ms with 16 threads, 
+80 ms with 50; 30 ms with -O3.
+
+26 ms on 64-core GCE instance with 150 threads. With -O3, 14 ms.
+
+
+
+Where are we going to get good entropy from on an fpga?
+
+The computational architecture required to solve this problem does not seem to exist?
+
+I am to leave CPU Circe's company and ride the styx to the land of misinformed ideas,
+
+<hr>
+
+pre-compute field that would be caused by a single particle in each cell, scale by number of particles in cell, and sum
+
+wait, that's just basically the same as using f=kQQ/r^2
+
+That would take, say, 50x50x50 around each cell, and there are a few million 
+
+To ease routing and layout, one fpga+ram per board with fat bus interconnecting
+
+pseudo-SRAM looks to be much easier to use, very interesting
+
+access times for easily available DDR3 memory seem to be quite long - 15 ns write or so
+
+This is such an interesting problem. Every time you look at it, it looks slightly different - it's limited in almost every possible way, yet still embarrassingly parallel.
+
+hang on one goddamn minute. Where the hell did I get 2 GB from? We need 8M points, 4 bytes each, plus a boundary array. That's 64 MB, tops. The DE0-nano that I have is indeed cutting it short, with only 32 MB. A DE10
+
+ <https://developer.nvidia.com/amgx> - only professes a 10x speedup though.
+
+
+PSRAM is ~$0.2/MBit, with 50 Mhz access times.
+
+SRAM is ~$1/MBit, with 100 Mhz access times.
+
+<hr>
+
+PSRAM latencies are advertised at ~70ns. However, many mobile PSRAMs feature a "burst" mode for sequential reads or writes, allowing ~10ns access. 
+
+<hr>
+
+There's a technique called SLPIC that claims to maintain accuracy despite artificially slowing fast particles. I am wary of it.
+
+
+
+<hr> 
+
+*Nyion Accelerator*
+
+It would be desirable for all who own an ionolith to have the capability to carry out these simulations and improve the design. Using a dedicated piece of hardware countermands this to some degree, and will introduce tremendous complexity at a critical time.
+
+On the other hand, I do not believe that companies have time to *not* innovate. This shortsighted bias towards results is, I think, the downfall of many. Though reasonably specialized, this device would still be of some utility to the larger ion community.
+
+Let us first attempt to reject the justification for constructing the device, and convince ourselves that it is not worth pursuing.
+
+Assume a best-case beam runtime of 1e-5 s, a beamline distance of 0.3m, a best-case cell of 0.1mm, and an SLPIC electron slowdown on the order of 200x. Heavy beam velocity is 30 km/s; electron, 5000 km/s.
 
 
 

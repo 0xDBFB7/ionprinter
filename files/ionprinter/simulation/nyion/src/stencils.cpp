@@ -38,6 +38,7 @@ double relative_value(std::vector<std::vector<double>>& input_mesh,
   else if(z_rel == -1){
     if(s_z == 0){
       int root_i = idx(r_x,r_y,r_z-1,root_x_len,root_y_len);
+      
       if(r_z > 0 && input_mesh[root_i].size()){
         int new_sub_len = submesh_side_length(input_mesh[root_i]);
         double size_scalar = ((double)new_sub_len)/sub_len;
