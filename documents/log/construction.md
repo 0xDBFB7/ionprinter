@@ -1714,6 +1714,8 @@ PSRAM latencies are advertised at ~70ns. However, many mobile PSRAMs feature a "
 
 There's a technique called SLPIC that claims to maintain accuracy despite artificially slowing fast particles. I am wary of it.
 
+Also, my mesh refinement routine is total garbage.
+
 
 
 <hr> 
@@ -1726,9 +1728,28 @@ On the other hand, I do not believe that companies have time to *not* innovate. 
 
 Let us first attempt to reject the justification for constructing the device, and convince ourselves that it is not worth pursuing.
 
-Assume a best-case beam runtime of 1e-5 s, a beamline distance of 0.3m, a best-case cell of 0.1mm, and an SLPIC electron slowdown on the order of 200x. Heavy beam velocity is 30 km/s; electron, 5000 km/s.
+Assume a best-case beam runtime of 1e-5 s, a beamline distance of 0.3m, a best-case cell of 0.1mm, and an SLPIC electron slowdown on the order of 200x. Heavy beam velocity is 30 km/s; electron, 5000 km/s. 
+
+dt=4e-9 (with slowed e-), 2500 cycles. 
+
+Without slowed e-, dt=2e-11; 500k cycles. At 10 ms / cycle, this will require on the order of an hour on a Ryzen.
+
+There is no longer a convincing argument for the necessity of FPGAs. Figures oft disappoint.
+
+For naught but amusement, shall we compute the estimated speedup?
+
+Assume a \$300 budget. Assume 32-bit words, 8M x16b PSRAM packages (\$7). Assume a mesh of 8M 4-byte points, x2 for multigrid, x2 for convenience + 1M particles of 32 bytes each.
+
+This makes 160 MBytes. Now assume 2x replication for bus width.
+
+<hr>
+
+Let's do this differently. 
+
+There are 6 read ops and 1 write op per stencil. 8 memory modules per card would be quite ideal, then. In terms of I/O, 16 for addressing + 32 for data - almost 200 pins. That necessitates a $35 Cyclone-class or equivalent. Damn.
+
+How about 2 modules per card? Still 80 I/O. ~50 I/O seems to be the crossover between hobbyist-class 3.3v arrays and pro 1.2v devices.
 
 
 
-
-
+I'm such a fucking idiot. Why did I waste all this time screwing with custom fast stencils etc
