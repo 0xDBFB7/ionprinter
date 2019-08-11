@@ -306,3 +306,7 @@ moviepy perhaps
 
 We choose to do these things not because they are easy, but because they're totally rad.
 
+
+
+"The pressure in each emitter is only about x Pa, so the part is quite literally formed out of thin air."
+

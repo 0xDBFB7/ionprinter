@@ -1750,6 +1750,121 @@ There are 6 read ops and 1 write op per stencil. 8 memory modules per card would
 
 How about 2 modules per card? Still 80 I/O. ~50 I/O seems to be the crossover between hobbyist-class 3.3v arrays and pro 1.2v devices.
 
+One module? 64 I/O. \$10 FPGA + \$10 in RAM. *16.
+
+<hr>
+
+Conrad Sanderson and Ryan Curtin. 
+*Armadillo: a template-based C++ library for linear algebra*. 
+Journal of Open Source Software, Vol. 1, pp. 26, 2016. 
+
+Conrad Sanderson and Ryan Curtin. 
+*Practical Sparse Matrices in C++ with Hybrid Storage and Template-Based Expression Optimisation*. 
+Mathematical and Computational Applications, Vol. 24, No. 3, 2019.
+
+<hr>
+<http://on-demand.gputechconf.com/gtc/2015/video/S5398.html> is a very valuable resource indeed.
+
+<hr>
+
+Toying with the idea of using the slow micros on each emitter tile as a massively multicore machine - probably not a good idea.
+
+<hr>
+
+I can hear you screaming at this document, begging me to use PETSc or some other pre-existing solution rather than rolling my own. I very probably will end up using such a library, and am ultimately being very dumb wasting time on this. However, I need a bunch of special features like complex numbers and dielectrics, and I think this'll be hard to handle with existing techniques.
+
+<hr>
+
+200^3 array, 100 iterations.
+
+```C++
+	for(int coord=1; coord < SIZE*SIZE*SIZE-1; coord++){
+		potentials_out[coord] = (potentials[coord+1] +
+            				     potentials[coord-1])/6.0;
+	}
+```
+
+32 ms on one core.
+
+```c++
+for(int coord=1; coord < SIZE*SIZE*SIZE-1; coord++){
+	potentials_out[coord] = potentials[coord];
+}
+```
+2.8ms. 
+
+Adding /6: 4.6ms.
+
+<https://stackoverflow.com/questions/25179738/measuring-memory-bandwidth-from-the-dot-product-of-two-arrays>
+
+<hr>
+
+```
+		potentials[coord] = potentials[coord]/6;
+
+```
+
+-O0, single core: 58 ms.
+
+-O0, 100 threads: 7.2 ms.
+
+-O3, single core: 3.6 ms.
+
+-O3, 100 threads: 2.5 ms.
 
 
-I'm such a fucking idiot. Why did I waste all this time screwing with custom fast stencils etc
+
+```c++
+	for(int coord=SIZE*SIZE; coord < SIZE*SIZE*SIZE-(SIZE*SIZE); coord++){
+    potentials[coord] = (potentials[coord+1] +
+             potentials[coord-1] +
+             potentials[coord+SIZE] +
+             potentials[coord-SIZE] +
+             potentials[coord+(SIZE*SIZE)] +
+             potentials[coord-(SIZE*SIZE)])/6.0;
+	}
+```
+
+-O3, 1 core, 63 ms.
+
+-O3, 30 threads, 6 ms.
+
+As always, I have entirely misjudged the problem LIKE A DUM DUM. We're not encountering memory bandwidth bottlenecks, cache latencies, etc. IT'S JUST MY BAD CODE.
+
+okay, fine. Let's re-write everything, toss out this stupid two-level mesh refinement thing, and get some real performance here. I think a major advantage may come from the use of ghost points rather than guard clauses on the edges.
+
+<https://www.agner.org/optimize/#instructionset>
+
+
+
+On the ceramics side, I should try out tapecasting.
+
+The screen-printing system used to tapecast cofired PCBs is quite intense; a UV crosslinker might be helpful. To this end, purchased some sodium benzoate from some herbal store in TO; apparently it's an effective uv sensitizer for PVA.
+
+sodium trimetaphosphate 
+
+Ultraviolet‐induced crosslinking of poly(vinyl alcohol) in the presence of sensitizers
+
+Boron carbide might be another thing to try. Melts at 2700c.
+
+Noope, seems to react with aluminum and is fiendishly brittle.
+
+SiALON: "and exceptional resistance to wetting or corrosion by molten non-ferrous metals, compared to other refractory materials such as, for example, alumina" - melts at 1200c though.
+
+After cofiring, it would be useful to determine dielectric constant.
+
+```
+lstopo-no-graphics
+```
+
+<hr>
+
+For a number of reasons, the allowable timeline just became a bit shorter.
+
+
+
+
+
+250^3 - 4 ms (9 on Ryzen)
+
+400^3, 150 threads - 14ms (48 on Ryzen). 
