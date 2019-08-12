@@ -1719,7 +1719,6 @@ Also, my mesh refinement routine is total garbage.
 
 
 <hr> 
-
 *Nyion Accelerator*
 
 It would be desirable for all who own an ionolith to have the capability to carry out these simulations and improve the design. Using a dedicated piece of hardware countermands this to some degree, and will introduce tremendous complexity at a critical time.
@@ -1764,6 +1763,7 @@ Mathematical and Computational Applications, Vol. 24, No. 3, 2019.
 
 <hr>
 <http://on-demand.gputechconf.com/gtc/2015/video/S5398.html> is a very valuable resource indeed.
+
 
 <hr>
 
@@ -1868,3 +1868,17 @@ For a number of reasons, the allowable timeline just became a bit shorter.
 250^3 - 4 ms (9 on Ryzen)
 
 400^3, 150 threads - 14ms (48 on Ryzen). 
+
+
+
+<hr>
+
+Set up OpenCL with a basic stencil kernel to test some stuff. 
+
+Just hit 2733750000 stencils per second (3 cycles)
+
+I'm really, really happy.
+
+
+
+Two showerthoughts: distant blocks that don't contain particles needn't be recomputed every cycle. This should massively accelerate the startup heat-transfer phase.
