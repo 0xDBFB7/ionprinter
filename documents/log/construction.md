@@ -1873,12 +1873,24 @@ For a number of reasons, the allowable timeline just became a bit shorter.
 
 <hr>
 
-Set up OpenCL with a basic stencil kernel to test some stuff. 
+Set up OpenCL with a basic stencil kernel to test some stuff.  <http://simpleopencl.blogspot.com/2013/06/tutorial-simple-start-with-opencl-and-c.html>
 
-Just hit 2733750000 stencils per second (3 cycles)
+Just hit 2733750000 stencils per second (3 cycles).
+
+Unreal.
 
 I'm really, really happy.
 
 
 
-Two showerthoughts: distant blocks that don't contain particles needn't be recomputed every cycle. This should massively accelerate the startup heat-transfer phase.
+Two showerthoughts: 
+
+1. distant blocks that don't contain particles needn't be recomputed every cycle. This should massively accelerate the startup heat-transfer phase.
+
+2. Previous iterations will be well-preconditioned for future iterations.
+
+   
+
+Using float over double tripled the speed yet again.
+
+May want to drop $300 on a second dedicated compute GPU, as the visualizer and desktop may interfere.

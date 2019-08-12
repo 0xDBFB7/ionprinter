@@ -1,7 +1,7 @@
-#define SIZE 450
+#define SIZE 400
 
 
-void kernel simple_add(global const double* potentials, global double* potentials_out, global const int* boundaries){
+void kernel simple_add(global const float* potentials, global float* potentials_out, global const int* boundaries){
   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){
     potentials_out[get_global_id(0)] = (potentials[get_global_id(0)+1] +
                                         potentials[get_global_id(0)-1] +

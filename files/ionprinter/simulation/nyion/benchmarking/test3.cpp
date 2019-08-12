@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <chrono>
 
-#define SIZE 450
+#define SIZE 400
 
 int main(){
     /* -----------------------------------------------------------------------------
@@ -51,13 +51,13 @@ int main(){
 
 
     // create buffers on the device
-    cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(double)*(SIZE*SIZE*SIZE));
-    cl::Buffer buffer_potentials_out(context,CL_MEM_READ_WRITE,sizeof(double)*(SIZE*SIZE*SIZE));
+    cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE*SIZE*SIZE));
+    cl::Buffer buffer_potentials_out(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE*SIZE*SIZE));
     cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE*SIZE*SIZE));
 
 
-    double * potentials = new double[(SIZE*SIZE*SIZE)];
-    double * potentials_out = new double[(SIZE*SIZE*SIZE)];
+    float * potentials = new float[(SIZE*SIZE*SIZE)];
+    float * potentials_out = new float[(SIZE*SIZE*SIZE)];
     int * boundaries = new int[(SIZE*SIZE*SIZE)];
 
     potentials[(SIZE*SIZE)+5] = 100;
@@ -67,13 +67,14 @@ int main(){
     cl::CommandQueue queue(context,default_device);
 
     //write arrays A and B to the device
-    queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(double)*(SIZE*SIZE*SIZE),potentials);
+    queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE*SIZE*SIZE),potentials);
     queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE*SIZE*SIZE),boundaries);
 
     cl::Kernel simple_add(program, "simple_add");
     simple_add.setArg(0, buffer_potentials);
     simple_add.setArg(1, buffer_potentials_out);
     simple_add.setArg(2, buffer_boundaries);
+    
     auto t1 = std::chrono::high_resolution_clock::now();
 
     queue.enqueueNDRangeKernel(simple_add,cl::NullRange,cl::NDRange((SIZE*SIZE*SIZE)),cl::NullRange);
@@ -93,7 +94,7 @@ int main(){
 
 
     //read result C from the device to array C
-    queue.enqueueReadBuffer(buffer_potentials_out,CL_TRUE,0,sizeof(double)*(SIZE*SIZE*SIZE),potentials_out);
+    queue.enqueueReadBuffer(buffer_potentials_out,CL_TRUE,0,sizeof(float)*(SIZE*SIZE*SIZE),potentials_out);
 
 
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
