@@ -1,7 +1,5 @@
-#include "multiphysics.hpp"
+#include "nyion.hpp"
 #include "visualize.hpp"
-#include <thread>
-#include "stencils.hpp"
 
 #include <GL/glew.h>
 #include <GL/glut.h>

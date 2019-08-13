@@ -30,7 +30,6 @@ void kernel weighted_restrict_potentials(global float* potentials, global float*
   Full-weighting 27-point scheme as described in
   "Three Dimensional Monte Carlo Device Simulation with Parallel Multigrid Solver" -
   "In our experience, a full weighting residual transfer operator is necessary for a stable solution."
-  - may not actually be required
   ----------------------------------------------------------------------------- */
 
   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){
@@ -66,6 +65,7 @@ void kernel weighted_restrict_potentials(global float* potentials, global float*
                             (potentials[get_global_id(0)-1-SIZE-(SIZE*SIZE)]*0.015625);
   }
 }
+
 
 void kernel jacobi(global const float* potentials, global float* potentials_out, global const int* boundaries){
   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){

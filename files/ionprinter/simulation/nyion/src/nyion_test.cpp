@@ -1,6 +1,5 @@
-#include "multiphysics.hpp"
-#include "visualize.hpp"
-#include "stencils.hpp"
+#include "nyion.hpp"
+// #include "visualize.hpp"
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 
