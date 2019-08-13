@@ -1917,5 +1917,38 @@ Some sort of routine would be required to initially find the relations between p
 
 
 
+<hr>
 
+Abandoning mesh refinement. Throwing everything out. It's all dumb af. Meshes can be solved separately and particles communicated. 
+
+The huge compute boost from the GPU means we can afford to be less geometrically efficient.
+
+<hr>
+
+asked <https://scicomp.stackexchange.com/questions/33237/efficient-data-structure-for-block-or-otherwise-non-square-structured-grids>
+
+> I'm trying to perform a particle-in-cell simulation in an L-shaped region. I'm currently representing the electric field as a large 1d array, indexed as a 3d rectangle in the traditional manner. A uniform structured grid fully suffices for this problem; however, most of the points are wasted because of the non-rectangular shape of the array.
+>
+> Is there a simple data structure that allows for these shapes while
+>
+> - Maintaining fast relationships for stencils (+x, -x, etc)
+> - Playing well with multigrid operators
+> - Allowing fast world-space lookups for depositing charge from particles
+> - Representable by something like a simple 1d array (the solver is implemented on a GPGPU and anything more complex would be quite painful to handle)
+>
+> The paper *Block-structured grids for Eulerian gyrokinetic simulations* describes the use of multiple regions with ghost points connecting them. It seems like there should be a simpler way if mesh refinement is not required, however.
+>
+> The best solution I could come up with was to use a very coarse rectangular mesh containing pointers to finer meshes in the region of interest; but stenciling across sub-mesh boundaries was slow and this seems very inelegant.
+>
+> (sorry for the somewhat open-ended noob question!)
+
+<http://www.math.ust.hk/~mamu/courses/531/tutorial_with_corrections.pdf>
+
+<hr>
+
+Of course, I forgot the high-level impetus behind the refinement system. The final printer will probably require a new file format to accommodate the extreme printer resolution. It would be very helpful if this structure matched that of Nyion.
+
+Ah, screw it. We'll burn those bridges when we get to them.
+
+<https://github.com/marmakoide/inside-3d-mesh>
 

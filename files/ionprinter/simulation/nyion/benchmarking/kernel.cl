@@ -1,4 +1,4 @@
-#define SIZE 250
+#define SIZE 400
 
 
 void kernel gauss_seidel(global float* potentials, global const int* boundaries){

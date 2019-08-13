@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <chrono>
 
-#define SIZE 250
+#define SIZE 400
 
 int main(){
     /* -----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ int main(){
 
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    for(int i = 0; i < 10000; i++){
+    for(int i = 0; i < 1000; i++){
       queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE*SIZE*SIZE)),cl::NullRange);
       queue.finish();
     }
@@ -88,7 +88,7 @@ int main(){
     queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE*SIZE*SIZE),potentials);
 
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/500.0;
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/1000.0;
     std::cout << duration;
 
     std::cout<<" result: \n";
