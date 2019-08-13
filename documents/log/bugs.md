@@ -70,7 +70,7 @@ Memory fuzzer testing would probably have caught this earlier.
 
 #### Issue:
 
-###Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing. It seemed that the mode change ruined the perspective rotation somehow.
+Trying to switch OpenGL mode between Perspective to Ortho expended several hours of testing. It seemed that the mode change ruined the perspective rotation somehow.
 
 ##### Discovery
 

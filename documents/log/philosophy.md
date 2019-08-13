@@ -125,7 +125,7 @@ Third, if someone succeeds in overtaking me, in developing more effective and ef
 
 Fourth, I grow restless. I must not be content to rest on the laurels of this product, with fame and fortune delivered to me; that way lies only obsolescence, madness, and the dirty tricks and shrewd bankers of business. I require an impetus to continue to do my duty and must be forced to contribute to society in whatever negligible fashion I am able to. If that impetus includes bankruptcy, so be it.
 
-> 
+
 
 In essence, I do not wish to be an entrepreneur, but a scientist. My biases should be ever in the favor of truth, not public relations and economic incentives, and I hope that open-sourcing all I learn posthaste will assist me with this. Any companies I may form - and any money I may make - should exist purely to drive knowledge, under punishment of doom.
 
@@ -228,7 +228,7 @@ There is one exception to these concepts, however.
 
 Having recently worked at length with a mathematician, I am beginning to realize the depth of the difference in philosophy between the mathematician and the physicist.
 
-The mathematician in question has stated that they have not learned anything the required course material. Even the physical properties that I find most captivating (the confusing, contradictory principles that drive a Crooke's Radiometer, for instance) were met with only a blank stare. 
+The mathematician in question has stated that they have not learned anything beyond the required course material. Even the physical properties that I find most captivating (the confusing, contradictory principles that drive a Crooke's Radiometer, for instance) were met with only a blank stare. 
 
 > "What's this?", she says, picking up the worn, cracked radiometer. She tries blowing at it like a pinwheel.
 >

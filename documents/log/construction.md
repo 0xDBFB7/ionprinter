@@ -1894,3 +1894,28 @@ Two showerthoughts:
 Using float over double tripled the speed yet again.
 
 May want to drop $300 on a second dedicated compute GPU, as the visualizer and desktop may interfere.
+
+Special "interconnect" ghost boundary points could be added which contain the indices of the corresponding points.
+
+'overlapping or overset' grids
+
+
+
+Grid structures'll add complexity. We will put this on hold for now.
+
+Huh, both gauss-seidel and Jacobi run in the same 11ms for a 450^3 mesh. That's quite odd, since g-s shouldn't be highly parallel. I guess GPGPUs are just so fiendishly fast that even such a sequential operation is almost instantaneous? In any case, it works just fine.
+
+
+
+<hr>
+
+Mesh refinement scheme that doesn't require a convoluted iterator - like *"Block-structured grids for Eulerian gyrokinetic simulations"*
+
+All meshes are concatenated in one 1d array. A separator row (must be at least 1 z-axis long) prevents stencils from performing operations between meshes. Communication between meshes is performed via imc ghost points, which have values as normal and contain indexes or pointers of the corresponding point in another mesh. A routine is called to update these ghost point values periodically. 
+
+Some sort of routine would be required to initially find the relations between points. Also, how the hell do you do worldspace lookups?
+
+
+
+
+

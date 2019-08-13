@@ -6,7 +6,7 @@
 #include <cstdio>
 #include <chrono>
 
-#define SIZE 400
+#define SIZE 250
 
 int main(){
     /* -----------------------------------------------------------------------------
@@ -60,8 +60,8 @@ int main(){
     float * potentials_out = new float[(SIZE*SIZE*SIZE)];
     int * boundaries = new int[(SIZE*SIZE*SIZE)];
 
-    potentials[(SIZE*SIZE)+5] = 100;
-    boundaries[(SIZE*SIZE)+5] = 1;
+    potentials[(SIZE*SIZE)+200] = 100;
+    boundaries[(SIZE*SIZE)+200] = 1;
 
     //create queue to which we will push commands for the device.
     cl::CommandQueue queue(context,default_device);
@@ -70,39 +70,30 @@ int main(){
     queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE*SIZE*SIZE),potentials);
     queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE*SIZE*SIZE),boundaries);
 
-    cl::Kernel simple_add(program, "simple_add");
-    simple_add.setArg(0, buffer_potentials);
-    simple_add.setArg(1, buffer_potentials_out);
-    simple_add.setArg(2, buffer_boundaries);
-    
+    cl::Kernel gauss_seidel(program, "gauss_seidel");
+    gauss_seidel.setArg(0, buffer_potentials);
+    gauss_seidel.setArg(1, buffer_boundaries);
+
     auto t1 = std::chrono::high_resolution_clock::now();
 
-    queue.enqueueNDRangeKernel(simple_add,cl::NullRange,cl::NDRange((SIZE*SIZE*SIZE)),cl::NullRange);
-    queue.finish();
-    simple_add.setArg(0, buffer_potentials_out);
-    simple_add.setArg(1, buffer_potentials);
-    simple_add.setArg(2, buffer_boundaries);
-    queue.enqueueNDRangeKernel(simple_add,cl::NullRange,cl::NDRange((SIZE*SIZE*SIZE)),cl::NullRange);
-    queue.finish();
-    simple_add.setArg(0, buffer_potentials);
-    simple_add.setArg(1, buffer_potentials_out);
-    simple_add.setArg(2, buffer_boundaries);
-    queue.enqueueNDRangeKernel(simple_add,cl::NullRange,cl::NDRange((SIZE*SIZE*SIZE)),cl::NullRange);
-    queue.finish();
+    for(int i = 0; i < 10000; i++){
+      queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE*SIZE*SIZE)),cl::NullRange);
+      queue.finish();
+    }
 
     auto t2 = std::chrono::high_resolution_clock::now();
 
 
     //read result C from the device to array C
-    queue.enqueueReadBuffer(buffer_potentials_out,CL_TRUE,0,sizeof(float)*(SIZE*SIZE*SIZE),potentials_out);
+    queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE*SIZE*SIZE),potentials);
 
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/500.0;
     std::cout << duration;
 
     std::cout<<" result: \n";
-    for(int i=(SIZE*SIZE);i<(SIZE*SIZE)+10;i++){
-        std::cout<<potentials_out[i]<<" ";
+    for(int i=(SIZE*SIZE)+200;i<(SIZE*SIZE)+300;i++){
+        std::cout<<potentials[i]<<" ";
     }
 
     return 0;
