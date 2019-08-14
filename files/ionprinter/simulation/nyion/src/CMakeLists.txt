@@ -21,5 +21,3 @@ if(VTK_LIBRARIES)
 else()
   target_link_libraries(nyion vtkHybrid vtkWidgets nyion_lib ${MPI_LIBRARIES} ${OpenCL_LIBRARY})
 endif()
-
-configure_file(kernel.cl /tmp/kernel.cl COPYONLY)

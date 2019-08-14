@@ -20,8 +20,10 @@
 #include <cstdio>
 #include <chrono>
 
+
 extern cl::Program program;
 extern cl::CommandQueue queue;
 extern cl::Context context;
+extern cl::Device default_device;
 
 void init_OpenCL();
