@@ -32,7 +32,7 @@ int main(){
     cl::Program::Sources sources;
 
 
-    std::fstream kernelFile("kernel.cl");
+    std::fstream kernelFile("tmp/kernel.cl"); //ULTRADUMB, FIXME
     std::string content(
       (std::istreambuf_iterator<char>(kernelFile)),
       std::istreambuf_iterator<char>()

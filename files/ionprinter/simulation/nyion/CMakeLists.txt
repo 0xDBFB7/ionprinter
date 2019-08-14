@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-PROJECT(multiphysics)
+PROJECT(nyion)
 
 add_compile_options(-Wall -Wextra -pedantic -Werror -std=c++17 -O3)
 
