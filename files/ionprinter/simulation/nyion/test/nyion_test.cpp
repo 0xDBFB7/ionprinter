@@ -15,8 +15,8 @@ TEST(MG_GPU_OPERATORS, gauss_seidel_test)
   float * potentials = new float[(SIZE_XYZ)];
   int * boundaries = new int[(SIZE_XYZ)];
 
-  potentials[(SIZE_XY)+200] = 100;
-  boundaries[(SIZE_XY)+200] = 1;
+  potentials[(SIZE_XY)+SIZE_X+1] = 10;
+  boundaries[(SIZE_XY)+SIZE_X+1] = 1;
 
   queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
   queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
@@ -28,7 +28,7 @@ TEST(MG_GPU_OPERATORS, gauss_seidel_test)
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < 10; i++){
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_XYZ)),cl::NullRange);
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(SIZE_X-2,SIZE_Y-2,SIZE_Z-2),cl::NullRange);
     queue.finish();
   }
 
@@ -37,16 +37,14 @@ TEST(MG_GPU_OPERATORS, gauss_seidel_test)
   //read result C from the device to array C
   queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
 
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
-  std::cout << duration;
 
-  std::cout<<" result: \n";
-  for(int i=(SIZE_XY)+200;i<(SIZE_XY)+500;i++){
-    for(int i=(SIZE_XY)+200;i<(SIZE_XY)+500;i++){
-      std::cout<<potentials[i]<<" ";
-    }
-    std::cout<<"\n";
-  }
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
+  std::cout << "Gauss-Seidel on " << SIZE_X <<  " took " << duration << " ms\n";
+
+  display_array(potentials);
+
+  //
+
   delete[] potentials;
   delete[] boundaries;
 }

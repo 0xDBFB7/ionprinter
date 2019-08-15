@@ -32,4 +32,6 @@ extern cl::CommandQueue queue;
 extern cl::Context context;
 extern cl::Device default_device;
 
+int idx(int x, int y, int z, int x_len, int y_len);
 void init_OpenCL();
+void display_array(float potentials[]);
