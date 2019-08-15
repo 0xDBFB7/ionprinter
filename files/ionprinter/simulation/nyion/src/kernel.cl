@@ -45,8 +45,9 @@ void kernel weighted_restrict(global float* input, global float* output){
   "Three Dimensional Monte Carlo Device Simulation with Parallel Multigrid Solver" -
   "In our experience, a full weighting residual transfer operator is necessary for a stable solution."
   ----------------------------------------------------------------------------- */
-
-    output[get_global_id(0)] =
+  int input_coord = idx(get_global_id(0)+1,get_global_id(1)+1,get_global_id(2)+1,(get_global_size(0)+2),(get_global_size(1)+2));
+  int output_coord = idx(get_global_id(0),get_global_id(1),get_global_id(2),get_global_size(0),get_global_size(1));
+    output[output_coord] =
                             (input[get_global_id(0)]*0.125)  +
                             (input[get_global_id(0)+1]*0.0625)+
                             (input[get_global_id(0)-1]*0.0625)+

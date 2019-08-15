@@ -9,11 +9,14 @@ TEST_GROUP(MG_GPU_OPERATORS)
 
 TEST(MG_GPU_OPERATORS, gauss_seidel_test)
 {
+  //test on non-square array
   cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
   cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
 
   float * potentials = new float[(SIZE_XYZ)];
   int * boundaries = new int[(SIZE_XYZ)];
+  memset (potentials, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
+  memset (boundaries, 0, sizeof (int) * SIZE_XYZ);
 
   potentials[(SIZE_XY)+SIZE_X+1] = 10;
   boundaries[(SIZE_XY)+SIZE_X+1] = 1;
@@ -37,13 +40,10 @@ TEST(MG_GPU_OPERATORS, gauss_seidel_test)
   //read result C from the device to array C
   queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
 
-
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
   std::cout << "Gauss-Seidel on " << SIZE_X <<  " took " << duration << " ms\n";
 
   display_array(potentials);
-
-  //
 
   delete[] potentials;
   delete[] boundaries;
