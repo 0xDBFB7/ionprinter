@@ -20,6 +20,12 @@
 #include <cstdio>
 #include <chrono>
 
+#define SIZE_X 400
+#define SIZE_Y 400
+#define SIZE_Z 400
+
+const int SIZE_XY = (SIZE_X*SIZE_Y);
+const int SIZE_XYZ = (SIZE_X*SIZE_Y*SIZE_Z);
 
 extern cl::Program program;
 extern cl::CommandQueue queue;
