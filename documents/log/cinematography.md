@@ -314,3 +314,9 @@ potting compound looks pretty cool
 
 
 
+An explanation for each sequence could be put in the subtitles, or as an overlay card if it wouldn't be too distracting
+
+
+
+30s/40s public-domain swing/jazz for plasma interlude
+

@@ -30,18 +30,18 @@ int idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
 }
 
-void display_array(float potentials[]){
-  double max = *std::max_element(potentials, potentials+SIZE_XYZ);
-  double min = *std::min_element(potentials, potentials+SIZE_XYZ);
-  for(int y=0;y<100;y++){
-    for(int x=0;x<100;x++){
+void display_array(float potentials[],int s_x, int s_y, int s_z){
+  double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
+  double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
+  for(int y=0;y<s_y/4;y++){
+    for(int x=0;x<s_x/4;x++){
       // std::cout<<potentials[idx(x,y,1,SIZE_X,SIZE_Y)]<<" ";
       int r = 0;
       int g = 0;
       int b = 0;
       if(max-min != 0){
-        r = (potentials[idx(x,y,1,SIZE_X,SIZE_Y)]/((max-min)/2.0))*255.0 * (float)(potentials[idx(x,y,1,SIZE_X,SIZE_Y)] > 0);
-        g = (potentials[idx(x,y,1,SIZE_X,SIZE_Y)]/((max-min)/2.0))*-255.0 * (float)(potentials[idx(x,y,1,SIZE_X,SIZE_Y)] < 0);
+        r = (potentials[idx(x,y,1,s_x,s_y)]/((max-min)/2.0))*255.0 * (float)(potentials[idx(x,y,1,s_x,s_y)] > 0);
+        g = (potentials[idx(x,y,1,s_x,s_y)]/((max-min)/2.0))*-255.0 * (float)(potentials[idx(x,y,1,s_x,s_y)] < 0);
         b = 0;
       }
       printf("\x1b[38;2;%i;%i;%im# ",r,g,b);

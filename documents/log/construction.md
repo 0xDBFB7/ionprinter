@@ -1954,6 +1954,20 @@ Ah, screw it. We'll burn those bridges when we get to them.
 
 
 
-I'm going to run out of time aren't I
+<hr>
 
-fuck
+Mesh refinement redux.
+
+Meshes are concatenated into a single 1d array. One row of buffer boundary points is used as a separator.  A third array (besides potentials and boundaries) stores a mesh ID for every point. This indexes into a short table containing the start and end indices, side lengths, and world-space position.
+
+Inter-mesh ghost points are both indices to the same, different memory location. 
+
+This 
+
+
+
+- preserves simple iterations
+
+
+
+<http://mathworld.wolfram.com/HeartCurve.html> #6 looks like a good test print.
