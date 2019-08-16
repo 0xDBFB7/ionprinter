@@ -32,3 +32,13 @@ Still not sure whether first- or third-person
 
 Keep it whimsical. 
 
+
+
+<hr>
+
+Here's something interesting.
+
+Plugging Feynman's caltech address into the 'Hemingway Editor' yields grade 7 prose. Some snippets from FLP Vol. III: Grade 5 to 8. experiments.md: grade 12.
+
+Griffiths QM is between 10 and 14.
+

@@ -43,39 +43,52 @@ void kernel weighted_restrict(global float* input, global float* output){
   Full-weighting 27-point scheme as described in
   "Three Dimensional Monte Carlo Device Simulation with Parallel Multigrid Solver" -
   "In our experience, a full weighting residual transfer operator is necessary for a stable solution."
+  Large input -> small output.
   ----------------------------------------------------------------------------- */
-  int input_coord = idx(get_global_id(0)+1,get_global_id(1)+1,get_global_id(2)+1,(get_global_size(0)+2),(get_global_size(1)+2));
-  int output_coord = idx((get_global_id(0)/2)+1,(get_global_id(1)/2)+1,(get_global_id(2)/2)+1,(get_global_size(0)/2)+1,get_global_size(1));
-    output[output_coord] =
-                            (input[get_global_id(0)]*0.125)  +
-                            (input[get_global_id(0)+1]*0.0625)+
-                            (input[get_global_id(0)-1]*0.0625)+
-                            (input[get_global_id(0)+SIZE_X]*0.0625)+
-                            (input[get_global_id(0)-SIZE_X]*0.0625)+
-                            (input[get_global_id(0)+(SIZE_X*SIZE_Y)]*0.0625)+
-                            (input[get_global_id(0)-(SIZE_X*SIZE_Y)]*0.0625)+
+  int IN_X_SIZE = ((get_global_size(0)+2)*2);
+  int IN_Y_SIZE = ((get_global_size(1)+2)*2);
+  int OUT_X_SIZE = get_global_size(0)+2;
+  int OUT_Y_SIZE = get_global_size(1)+2;
 
-                            (input[get_global_id(0)+1+SIZE_X]*0.03125)+
-                            (input[get_global_id(0)-1+SIZE_X]*0.03125)+
-                            (input[get_global_id(0)+1-SIZE_X]*0.03125)+
-                            (input[get_global_id(0)-1-SIZE_X]*0.03125)+
-                            (input[get_global_id(0)+1+(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)-1+(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)+1-(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)-1-(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)+SIZE_X+(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)-SIZE_X+(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)+SIZE_X-(SIZE_X*SIZE_Y)]*0.03125)+
-                            (input[get_global_id(0)-SIZE_X-(SIZE_X*SIZE_Y)]*0.03125)+
+  int o_x = get_global_id(0)+1; //subtract first row
+  int o_y = get_global_id(1)+1;
+  int o_z = get_global_id(2)+1;
 
-                            (input[get_global_id(0)+1+SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)-1+SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)+1-SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)-1-SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)+1+SIZE_X-(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)-1+SIZE_X-(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)+1-SIZE_X-(SIZE_X*SIZE_Y)]*0.015625)+
-                            (input[get_global_id(0)-1-SIZE_X-(SIZE_X*SIZE_Y)]*0.015625);
+  int i_x = ((get_global_id(0)+1)*2);
+  int i_y = ((get_global_id(1)+1)*2);
+  int i_z = ((get_global_id(2)+1)*2);
+
+  output[idx(o_x,o_y,o_z,OUT_X_SIZE,OUT_Y_SIZE)] =
+                            (input[idx(i_x,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.125)   +
+
+                            (input[idx(i_x+1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+                            (input[idx(i_x-1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+                            (input[idx(i_x,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+                            (input[idx(i_x,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+                            (input[idx(i_x,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+                            (input[idx(i_x,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+
+                            (input[idx(i_x+1,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x-1,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x+1,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x-1,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x+1,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x-1,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x+1,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x-1,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            (input[idx(i_x,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+
+                            (input[idx(i_x+1,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x-1,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x+1,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x-1,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x+1,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x-1,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x+1,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
+                            (input[idx(i_x-1,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625);
 }
 
 void kernel interpolate(global float* input, global float* output){
@@ -132,7 +145,7 @@ void kernel interpolate(global float* input, global float* output){
         input[idx(get_global_id(0)+1,get_global_id(1)+1,get_global_id(2)+1,IN_X_SIZE,IN_Y_SIZE)])/8.0;
 }
 
-
+//
 //
 // void kernel simple_restrict(global float* input, global float* output){
 //   /* -----------------------------------------------------------------------------
