@@ -60,7 +60,7 @@ void kernel weighted_restrict(global float* input, global float* output){
 
   output[idx(o_x,o_y,o_z,OUT_X_SIZE,OUT_Y_SIZE)] =
                             (input[idx(i_x,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.125)   +
-
+                            
                             ((input[idx(i_x+1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]+
                             input[idx(i_x-1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]+
                             input[idx(i_x,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
