@@ -61,34 +61,34 @@ void kernel weighted_restrict(global float* input, global float* output){
   output[idx(o_x,o_y,o_z,OUT_X_SIZE,OUT_Y_SIZE)] =
                             (input[idx(i_x,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.125)   +
 
-                            (input[idx(i_x+1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
-                            (input[idx(i_x-1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
-                            (input[idx(i_x,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
-                            (input[idx(i_x,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
-                            (input[idx(i_x,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
-                            (input[idx(i_x,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.0625)+
+                            ((input[idx(i_x+1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)])*0.5)+
 
-                            (input[idx(i_x+1,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x-1,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x+1,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x-1,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x+1,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x-1,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x+1,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x-1,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
-                            (input[idx(i_x,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.03125)+
+                            ((input[idx(i_x+1,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x+1,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y-1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x+1,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x+1,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y,i_z-1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)])*0.375)+
 
-                            (input[idx(i_x+1,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x-1,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x+1,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x-1,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x+1,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x-1,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x+1,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625)+
-                            (input[idx(i_x-1,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]*0.015625);
+                            ((input[idx(i_x+1,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y+1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x+1,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y-1,i_z+1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x+1,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y+1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x+1,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)]+
+                            input[idx(i_x-1,i_y-1,i_z-1,IN_X_SIZE,IN_Y_SIZE)])*0.125);
 }
 
 void kernel interpolate(global float* input, global float* output){
