@@ -25,19 +25,6 @@ void kernel gauss_seidel(global float* potentials, global const int* boundaries)
     }
 }
 
-//
-// void kernel prolongate_potentials(global float* potentials, global const int* boundaries){
-//   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){
-//     potentials[get_global_id(0)] = (potentials[get_global_id(0)+1] +
-//                                         potentials[get_global_id(0)-1] +
-//                                         potentials[get_global_id(0)+SIZE] +
-//                                         potentials[get_global_id(0)-SIZE] +
-//                                         potentials[get_global_id(0)+(SIZE*SIZE)] +
-//                                         potentials[get_global_id(0)-(SIZE*SIZE)])/6.0;
-//   }
-// }
-
-
 void kernel weighted_restrict(global float* input, global float* output){
   /* -----------------------------------------------------------------------------
   Full-weighting 27-point scheme as described in
@@ -60,7 +47,7 @@ void kernel weighted_restrict(global float* input, global float* output){
 
   output[idx(o_x,o_y,o_z,OUT_X_SIZE,OUT_Y_SIZE)] =
                             (input[idx(i_x,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]*0.125)   +
-                            
+
                             ((input[idx(i_x+1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]+
                             input[idx(i_x-1,i_y,i_z,IN_X_SIZE,IN_Y_SIZE)]+
                             input[idx(i_x,i_y+1,i_z,IN_X_SIZE,IN_Y_SIZE)]+
@@ -95,6 +82,7 @@ void kernel interpolate(global float* input, global float* output){
   /* -----------------------------------------------------------------------------
   NDRange must be between 0 and input-1.
   See Chapter 8, Page 35, "A multigrid tutorial", Briggs et al.
+  Small input -> large output.
   ----------------------------------------------------------------------------- */
   int OUT_X_SIZE = ((get_global_size(0)+1)*2);
   int OUT_Y_SIZE = ((get_global_size(1)+1)*2);
@@ -145,47 +133,14 @@ void kernel interpolate(global float* input, global float* output){
         input[idx(get_global_id(0)+1,get_global_id(1)+1,get_global_id(2)+1,IN_X_SIZE,IN_Y_SIZE)])/8.0;
 }
 
-//
-//
-// void kernel simple_restrict(global float* input, global float* output){
-//   /* -----------------------------------------------------------------------------
-//   Full-weighting 27-point scheme as described in
-//   "Three Dimensional Monte Carlo Device Simulation with Parallel Multigrid Solver" -
-//   "In our experience, a full weighting residual transfer operator is necessary for a stable solution."
-//   ----------------------------------------------------------------------------- */
-//   int input_coord = idx(get_global_id(0)+1,get_global_id(1)+1,get_global_id(2)+1,(get_global_size(0)+2),(get_global_size(1)+2));
-//   int output_coord = idx((get_global_id(0)/2)+1,get_global_id(1)/2)+1,get_global_id(2)/2)+1,(get_global_size(0)/2)+1,get_global_size(1));
-//     output[output_coord] =
-//                             (input[get_global_id(0)]*0.125)  +
-//                             (input[get_global_id(0)+1]*0.0625)+
-//                             (input[get_global_id(0)-1]*0.0625)+
-//                             (input[get_global_id(0)+SIZE_X]*0.0625)+
-//                             (input[get_global_id(0)-SIZE_X]*0.0625)+
-//                             (input[get_global_id(0)+(SIZE_X*SIZE_Y)]*0.0625)+
-//                             (input[get_global_id(0)-(SIZE_X*SIZE_Y)]*0.0625)+
-//
-//                             (input[get_global_id(0)+1+SIZE_X]*0.03125)+
-//                             (input[get_global_id(0)-1+SIZE_X]*0.03125)+
-//                             (input[get_global_id(0)+1-SIZE_X]*0.03125)+
-//                             (input[get_global_id(0)-1-SIZE_X]*0.03125)+
-//                             (input[get_global_id(0)+1+(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)-1+(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)+1-(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)-1-(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)+SIZE_X+(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)-SIZE_X+(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)+SIZE_X-(SIZE_X*SIZE_Y)]*0.03125)+
-//                             (input[get_global_id(0)-SIZE_X-(SIZE_X*SIZE_Y)]*0.03125);
-//
-//                             (input[get_global_id(0)+1+SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)-1+SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)+1-SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)-1-SIZE_X+(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)+1+SIZE_X-(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)-1+SIZE_X-(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)+1-SIZE_X-(SIZE_X*SIZE_Y)]*0.015625)+
-//                             (input[get_global_id(0)-1-SIZE_X-(SIZE_X*SIZE_Y)]*0.015625);
-// }
+void kernel add(global float* input_1, global float* input_2, global float* output){
+  output[get_global_id(0)] = input_1[get_global_id(0)]+input_2[get_global_id(0)];
+}
+
+
+void kernel subtract(global float* input_1, global float* input_2, global float* output){
+  output[get_global_id(0)] = input_1[get_global_id(0)]-input_2[get_global_id(0)];
+}
 
 //
 // void kernel jacobi(global const float* potentials, global float* potentials_out, global const int* boundaries){

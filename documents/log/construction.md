@@ -1971,3 +1971,15 @@ This
 
 
 <http://mathworld.wolfram.com/HeartCurve.html> #6 looks like a good test print.
+
+
+
+> Achi Brandt has said that “the amount of computational work should be proportional to the amount of real physical changes in the computed system” and
+> “stalling numerical processes must be wrong.”
+
+
+
+> Writing, at its best, is a lonely life. Organizations for writers palliate the writer's loneliness but I doubt if they improve his writing. He grows in public stature as he sheds his loneliness and often his work deteriorates. For he does his work alone and if he is a good enough writer he must face eternity, or the lack of it, each day.
+
+- Hemingway
+
