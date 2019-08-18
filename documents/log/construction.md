@@ -1983,3 +1983,80 @@ This
 
 - Hemingway
 
+<hr>
+
+```
+Using platform: NVIDIA CUDA
+Using device: GeForce GTX 1060 3GB
+256^3 Mesh
+..PCIe write took 10113 us
+PCIe read took 27586 us
+Buffer copy took 1319 us
+.Interpolate on 256 took 675.9 us
+.Weighted restrict on 256 took 747.8 us
+.Gauss-Seidel on 256 took 1440.5 us
+```
+
+
+
+As a simple copy operation takes the same time as a gauss-seidel sweep, I can only assume that we're hitting memory bandwidth limits. This card purports a 192 GB/s bus, but we're only seeing about 48 GB/s.
+
+I thought perhaps GNOME desktop was consuming some memory bandwidth, but
+
+```
+nvidia-smi --query-gpu=utilization.memory --format=csv -l 1
+1 %
+```
+
+```
+Sat Aug 17 13:13:52 2019       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 410.73       Driver Version: 410.73       CUDA Version: 10.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 106...  Off  | 00000000:22:00.0  On |                  N/A |
+| 54%   34C    P0    34W / 120W |   1539MiB /  3019MiB |      0%      Default |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                       GPU Memory |
+|  GPU       PID   Type   Process name                             Usage      |
+|=============================================================================|
+|    0      1060      G   /usr/lib/xorg/Xorg                            34MiB |
+|    0      2352      G   /usr/lib/xorg/Xorg                           382MiB |
+|    0      3623      G   ...uest-channel-token=15340780761042744927   742MiB |
+|    0      6799      G   ...-token=DCBFECE4F5B79312603529837A7A3C98    57MiB |
+|    0     10846      G   ...-token=10F6FE0D68C9FE7DA9D7D8D942958C57    50MiB |
+|    0     26206      G   /usr/bin/gnome-shell                         231MiB |
++-----------------------------------------------------------------------------+
+
+```
+
+Averaging over 1000 copy cycles decreases timing to 850 us; (4*(256^3) bytes ) / 0.00085 s = 78 GB/s. Quite respectable, but still far from ideal.
+
+GPUs are *fast*.
+
+<hr>
+
+The sodium benzoate arrived. For a change of pace, did some testing with PVA+UV. 
+
+Tried 0.4g water+0.05g benzoate+0.08g Elmer's PVA, 30 seconds, 1 minute, 1.5 minutes - no change
+
+Added ~0.03g borax; solution instantly became sticky due to crosslinking
+
+Played with benzoate concentrations, nothing seemed to work
+
+Then I went back and re-read the second paper; it also requires the addition of DMSO as the grafted molecule.
+
+The original paper requires several hours of UV exposure after drying. I'll try that in a bit. 
+
+
+
+
+
+
+
+
+

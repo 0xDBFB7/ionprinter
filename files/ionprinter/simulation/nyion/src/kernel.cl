@@ -5,6 +5,17 @@
 #define SIZE_XY (SIZE_X*SIZE_Y)
 #define SIZE_XYZ (SIZE_X*SIZE_Y*SIZE_Z)
 
+#pragma OPENCL EXTENSION cl_khr_global_int32_base_atomics : enable
+
+void float_atomic_add(__global float *loc, const float f){
+private float old = *loc;
+private float sum = old + f;
+while(atomic_cmpxchg((__global int*)loc, *((int*)&old), *((int*)&sum)) !=              *((int*)&old)){
+    old = *loc;
+    sum = old + f;
+}
+}
+
 inline int idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
 }
@@ -142,7 +153,7 @@ void kernel subtract(global float* input_1, global float* input_2, global float*
   output[get_global_id(0)] = input_1[get_global_id(0)]-input_2[get_global_id(0)];
 }
 
-//
+
 // void kernel jacobi(global const float* potentials, global float* potentials_out, global const int* boundaries){
 //   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){
 //     potentials_out[get_global_id(0)] = (potentials[get_global_id(0)+1] +
