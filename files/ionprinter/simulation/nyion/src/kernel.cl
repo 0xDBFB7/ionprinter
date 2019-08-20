@@ -36,6 +36,21 @@ void kernel gauss_seidel(global float* potentials, global const int* boundaries)
     }
 }
 
+void kernel multires_gauss_seidel(global float* potentials, global const int* boundaries, const int res){
+    /* -----------------------------------------------------------------------------
+    Call with a 3d NDRange of DIM_SIZE - 2.
+    The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
+
+    ----------------------------------------------------------------------------- */
+    int X_SIZE = 64;
+    int Y_SIZE = 64;
+    int coord = idx((get_global_id(0)*res)+res,(get_global_id(1)*res)+res,(get_global_id(2)*res)+res,X_SIZE,Y_SIZE);
+    if(!boundaries[coord]){
+      potentials[coord] = 100;
+    }
+}
+
+
 void kernel weighted_restrict(global float* input, global float* output){
   /* -----------------------------------------------------------------------------
   Full-weighting 27-point scheme as described in

@@ -2052,6 +2052,12 @@ Then I went back and re-read the second paper; it also requires the addition of 
 
 The original paper requires several hours of UV exposure after drying. I'll try that in a bit. 
 
+<hr>
+
+I've been stuck on this multigrid solver for weeks. Found a paper on 'unigrid', a simplified multigrid.
+
+
+
 
 
 
