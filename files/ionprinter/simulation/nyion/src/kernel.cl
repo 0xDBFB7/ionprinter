@@ -153,6 +153,14 @@ void kernel subtract(global float* input_1, global float* input_2, global float*
   output[get_global_id(0)] = input_1[get_global_id(0)]-input_2[get_global_id(0)];
 }
 
+void kernel simple_injection(global float* input, global float* output){
+  int o_idx = idx((get_global_id(0)+1),
+                  (get_global_id(1)+1),
+                  (get_global_id(2)+1),get_global_size(0)+2,get_global_size(1)+2);
+  output[o_idx] = input[idx(2*(get_global_id(0)+1),
+                                        2*(get_global_id(1)+1),
+                                        2*(get_global_id(2)+1),get_global_size(0)+2,get_global_size(1)+2)];
+}
 
 // void kernel jacobi(global const float* potentials, global float* potentials_out, global const int* boundaries){
 //   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){

@@ -244,7 +244,7 @@ TEST(MG_GPU_OPERATORS, transfer_timing_test)
 TEST(MG_GPU_OPERATORS, multigrid_test)
 {
 
-  const int MG_LEVELS = 5;//level 0 is the finest.
+  const int MG_LEVELS = 6;//level 0 is the finest.
 
   float * potentials = new float[(SIZE_XYZ)];
   int * boundaries = new int[(SIZE_XYZ)];
@@ -256,35 +256,95 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
   queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries); //write the problem to the finest grid
 
+  cl::Buffer buffer_empty_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
+  queue.enqueueFillBuffer(buffer_empty_boundaries,0.0,0,sizeof(int)*(SIZE_XYZ));
+
+
+  cl::Kernel gauss_seidel(program, "gauss_seidel");
+  cl::Kernel subtract(program, "subtract");
+  cl::Kernel weighted_restrict(program, "weighted_restrict");
+  cl::Kernel interpolate(program, "interpolate");
+
   std::vector<cl::Buffer> buffer_potentials(MG_LEVELS);
+  std::vector<cl::Buffer> buffer_potentials_copy(MG_LEVELS);
   std::vector<cl::Buffer> buffer_residuals(MG_LEVELS);
 
   for(int level = 0; level < MG_LEVELS; level++){
-    buffer_potentials[level] = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
-    buffer_residuals[level] = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
-    queue.enqueueFillBuffer(buffer_potentials[level],0.0,0,sizeof(float)*(SIZE_XYZ));
-    queue.enqueueFillBuffer(buffer_residuals[level],0.0,0,sizeof(float)*(SIZE_XYZ)); //just establish a defined state
+    int level_size = (SIZE_X/(pow(2,level)))*(SIZE_Y/(pow(2,level)))*(SIZE_Z/(pow(2,level)));
+    buffer_potentials_copy[level] = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*level_size);
+    buffer_potentials[level] = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*level_size);
+    buffer_residuals[level] = cl::Buffer(context,CL_MEM_READ_WRITE,sizeof(float)*level_size);
+    queue.enqueueFillBuffer(buffer_potentials[level],0.0,0,sizeof(float)*level_size);
+    queue.enqueueFillBuffer(buffer_residuals[level],0.0,0,sizeof(float)*level_size); //just establish a defined state
   }
 
-  // potentials[(SIZE_XY)+SIZE_X+1] = 10;
-  // boundaries[(SIZE_XY)+SIZE_X+1] = 1;
-  //
+  for(int x = 0; x < SIZE_X*5; x++){
+    potentials[(SIZE_XY)+SIZE_X+x] = 1000;
+    boundaries[(SIZE_XY)+SIZE_X+x] = 1;
+  }
+
   queue.enqueueWriteBuffer(buffer_potentials[0],CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials); //write the problem to the finest grid
   queue.finish();
 
-  // const int GS_CYCLES = 5; //level 0 is the finest.
 
+  int level = 0;
+  int level_size = (SIZE_X/(pow(2,level)))*(SIZE_Y/(pow(2,level)))*(SIZE_Z/(pow(2,level)));
+  const int GS_CYCLES = 2;
 
-  // for(int level = 0; level < MG_LEVELS; level++){
-
-  cl::Kernel gauss_seidel(program, "gauss_seidel");
-  gauss_seidel.setArg(0, buffer_potentials);
+  queue.enqueueCopyBuffer(buffer_potentials[level],buffer_potentials_copy[level],0,0,sizeof(float)*(SIZE_XYZ)); //save a copy for residuals
+  queue.finish();
+  gauss_seidel.setArg(0, buffer_potentials[level]);
   gauss_seidel.setArg(1, buffer_boundaries);
+  for(int cycle = 0; cycle < GS_CYCLES; cycle++){
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,
+                              cl::NDRange((SIZE_X/(pow(2,level)))-2,(SIZE_Y/(pow(2,level)))-2,(SIZE_Z/(pow(2,level)))-2),cl::NullRange); //perform g-s sweep
+
+    queue.finish();
+  }
+  subtract.setArg(0, buffer_potentials[level]);
+  subtract.setArg(1, buffer_potentials_copy[level]);
+  subtract.setArg(2, buffer_residuals[level]);
+  queue.enqueueNDRangeKernel(subtract,cl::NullRange,cl::NDRange(level_size),cl::NullRange); //subtract to get residuals
+  queue.finish();
+
+
+
+  //
+  // for(level = 0; level < MG_LEVELS-1; level++){
+  //   level_size = (SIZE_X/(pow(2,level)))*(SIZE_Y/(pow(2,level)))*(SIZE_Z/(pow(2,level)));
+  //
+  //   weighted_restrict.setArg(0, buffer_residuals[level]);
+  //   weighted_restrict.setArg(1, buffer_residuals[level+1]);
+  //   queue.enqueueNDRangeKernel(weighted_restrict,cl::NullRange,
+  //                           cl::NDRange(((SIZE_X/(pow(2,level+1))))-2,
+  //                                       ((SIZE_Y/(pow(2,level+1))))-2,
+  //                                       ((SIZE_Z/(pow(2,level+1))))-2),cl::NullRange);
+  //   queue.finish();
+  //
+  //
+  //   queue.enqueueCopyBuffer(buffer_residuals[level+1],buffer_potentials_copy[level+1],0,0,sizeof(float)*level_size); //save a copy for residuals
+  //   queue.finish();
+  //   gauss_seidel.setArg(0, buffer_residuals[level+1]);
+  //   gauss_seidel.setArg(1, buffer_empty_boundaries);
+  //   for(int cycle = 0; cycle < GS_CYCLES; cycle++){
+  //     queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,
+  //                                   cl::NDRange((SIZE_X/(pow(2,level+1)))-2,(SIZE_Y/(pow(2,level+1)))-2,(SIZE_Z/(pow(2,level+1)))-2),cl::NullRange); //perform g-s sweep
+  //     queue.finish();
+  //   }
+  //
+  // }
+
+
+    // interpolate.setArg(0, buffer_input);
+    // interpolate.setArg(1, buffer_output);
+    // queue.enqueueNDRangeKernel(interpolate,cl::NullRange,cl::NDRange((SIZE_X/2)-1,(SIZE_Y/2)-1,(SIZE_Z/2)-1),cl::NullRange);
+    // queue.finish();
+
+
 
   // auto t1 = std::chrono::high_resolution_clock::now();
   //
   // for(int i = 0; i < 10; i++){
-  //   queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(SIZE_X-2,SIZE_Y-2,SIZE_Z-2),cl::NullRange);
   //   queue.finish();
   // }
   //
@@ -296,8 +356,11 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   // auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
   // std::cout << "Gauss-Seidel on " << SIZE_X <<  " took " << duration << " us\n";
   //
-  // // display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z);
+  // display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z);
   //
+  // double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
+  // double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
+
   delete[] potentials;
   delete[] boundaries;
 }
