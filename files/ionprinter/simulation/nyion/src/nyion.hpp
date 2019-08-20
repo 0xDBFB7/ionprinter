@@ -20,9 +20,9 @@
 #include <cstdio>
 #include <chrono>
 
-#define SIZE_X 64
-#define SIZE_Y 64
-#define SIZE_Z 64
+#define SIZE_X 256
+#define SIZE_Y 256
+#define SIZE_Z 256
 
 const int SIZE_XY = (SIZE_X*SIZE_Y);
 const int SIZE_XYZ = (SIZE_X*SIZE_Y*SIZE_Z);

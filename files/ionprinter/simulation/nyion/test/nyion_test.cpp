@@ -62,8 +62,8 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   memset (potentials, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
   memset (boundaries, 0, sizeof (int) * SIZE_XYZ);
 
-  potentials[(SIZE_XY)+SIZE_X+1] = 200;
-  boundaries[(SIZE_XY)+SIZE_X+1] = 1;
+  potentials[(SIZE_XY)*2+SIZE_X*2+2] = 200;
+  boundaries[(SIZE_XY)*2+SIZE_X*2+2] = 1;
   // potentials[(SIZE_XY)+SIZE_X+2] = 1000;
   // boundaries[(SIZE_XY)+SIZE_X+2] = 1;
 
