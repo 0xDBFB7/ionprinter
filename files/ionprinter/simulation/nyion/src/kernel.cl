@@ -69,14 +69,19 @@ void kernel multires_interpolate(global float* potentials, const int res, const 
         float f_y = (((float)y)/res);
         float f_z = (((float)z)/res);
 
+        float inverse_x = 1.0-f_x;
+        float inverse_y = 1.0-f_y;
+        float inverse_z = 1.0-f_z;
+
         float value = 0;
-        value += V000*(1.0-f_x)*(1.0-f_y)*(1.0-f_z);
-        value += V100*(f_x)*(1.0-f_y)*(1.0-f_z);
-        value += V010*(1.0-f_x)*(f_y)*(1.0-f_z);
-        value += V001*(1.0-f_x)*(1.0-f_y)*(f_z);
-        value += V101*(f_x)*(1.0-f_y)*(f_z);
-        value += V011*(1.0-f_x)*(f_y)*(f_z);
-        value += V110*(f_x)*(f_y)*(1.0-f_z);
+
+        value += V000*(inverse_x)*(inverse_y)*(inverse_z);
+        value += V100*(f_x)*(inverse_y)*(inverse_z);
+        value += V010*(inverse_x)*(f_y)*(inverse_z);
+        value += V001*(inverse_x)*(inverse_y)*(f_z);
+        value += V101*(f_x)*(inverse_y)*(f_z);
+        value += V011*(inverse_x)*(f_y)*(f_z);
+        value += V110*(f_x)*(f_y)*(inverse_z);
         value += V111*(f_x)*(f_y)*(f_z);
 
         potentials[idx(g_x+x,g_y+y,g_z+z,X_SIZE,Y_SIZE)] = value;

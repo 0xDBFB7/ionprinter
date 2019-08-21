@@ -119,7 +119,7 @@ TEST(MG_GPU_OPERATORS, multires_linterp_test)
   queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
   queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
 
-  int res = 4;
+  int res = 2;
 
   cl::Kernel linterp(program, "multires_interpolate");
   linterp.setArg(0, buffer_potentials);
