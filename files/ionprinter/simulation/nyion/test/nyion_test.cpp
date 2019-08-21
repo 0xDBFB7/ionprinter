@@ -70,7 +70,7 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
   queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
 
-  int res = 4;
+  int res = 1;
 
   cl::Kernel gauss_seidel(program, "multires_gauss_seidel");
   gauss_seidel.setArg(0, buffer_potentials);
@@ -80,7 +80,7 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   gauss_seidel.setArg(4, SIZE_Y);
   auto t1 = std::chrono::high_resolution_clock::now();
 
-  for(int i = 0; i < 1000; i++){
+  for(int i = 0; i < 10; i++){
     queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
     queue.finish();
   }
@@ -90,7 +90,7 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   //read result C from the device to array C
   queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
 
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/1000.0;
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
   std::cout << "Gauss-Seidel on " << SIZE_X <<  " took " << duration << " us\n";
 
   display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z);
@@ -98,6 +98,55 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   delete[] potentials;
   delete[] boundaries;
 }
+
+
+TEST(MG_GPU_OPERATORS, multires_linterp_test)
+{
+  //test on non-square array
+  cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
+  cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
+
+  float * potentials = new float[(SIZE_XYZ)];
+  int * boundaries = new int[(SIZE_XYZ)];
+  memset (potentials, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
+  memset (boundaries, 0, sizeof (int) * SIZE_XYZ);
+
+  potentials[(SIZE_XY)*2+SIZE_X*2+2] = 200;
+  boundaries[(SIZE_XY)*2+SIZE_X*2+2] = 1;
+  // potentials[(SIZE_XY)+SIZE_X+2] = 1000;
+  // boundaries[(SIZE_XY)+SIZE_X+2] = 1;
+
+  queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
+  queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
+
+  int res = 2;
+
+  cl::Kernel linterp(program, "multires_interpolate");
+  linterp.setArg(0, buffer_potentials);
+  linterp.setArg(1, res);
+  linterp.setArg(2, SIZE_X);
+  linterp.setArg(3, SIZE_Y);
+  auto t1 = std::chrono::high_resolution_clock::now();
+
+  for(int i = 0; i < 10; i++){
+    queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    queue.finish();
+  }
+
+  auto t2 = std::chrono::high_resolution_clock::now();
+
+  //read result C from the device to array C
+  queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
+  std::cout << "Linterp on " << SIZE_X <<  " took " << duration << " us\n";
+
+  display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z);
+
+  delete[] potentials;
+  delete[] boundaries;
+}
+
 
 
 TEST(MG_GPU_OPERATORS, weighted_restrict_test)

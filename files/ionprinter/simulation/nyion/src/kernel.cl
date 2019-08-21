@@ -168,6 +168,49 @@ void kernel interpolate(global float* input, global float* output){
         input[idx(get_global_id(0)+1,get_global_id(1)+1,get_global_id(2)+1,IN_X_SIZE,IN_Y_SIZE)])/8.0;
 }
 
+
+void kernel multires_interpolate(global float* potentials, const int res, const int X_SIZE, const int Y_SIZE){
+  /* -----------------------------------------------------------------------------
+  http://paulbourke.net/miscellaneous/interpolation/
+  ----------------------------------------------------------------------------- */
+  int g_x = (get_global_id(0)*res)+res;
+  int g_y = (get_global_id(1)*res)+res;
+  int g_z = (get_global_id(2)*res)+res;
+
+  float V000 = (potentials[idx(g_x,g_y,g_z,X_SIZE,Y_SIZE)]);
+  float V001 = (potentials[idx(g_x,g_y,g_z+res,X_SIZE,Y_SIZE)]);
+  float V010 = (potentials[idx(g_x,g_y+res,g_z,X_SIZE,Y_SIZE)]);
+  float V100 = (potentials[idx(g_x+res,g_y,g_z,X_SIZE,Y_SIZE)]);
+  float V101 = (potentials[idx(g_x+res,g_y,g_z+res,X_SIZE,Y_SIZE)]);
+  float V110 = (potentials[idx(g_x+res,g_y+res,g_z,X_SIZE,Y_SIZE)]);
+  float V011 = (potentials[idx(g_x,g_y+res,g_z+res,X_SIZE,Y_SIZE)]);
+  float V111 = (potentials[idx(g_x+res,g_y+res,g_z+res,X_SIZE,Y_SIZE)]);
+
+  for(int x = 0; x < res; x++){
+    for(int y = 0; y < res; y++){
+      for(int z = 0; z < res; z++){
+
+        float f_x = (((float)x)/res);
+        float f_y = (((float)y)/res);
+        float f_z = (((float)z)/res);
+
+        float value = 0;
+        value += V000*(1.0-f_x)*(1.0-f_y)*(1.0-f_z);
+        value += V100*(f_x)*(1.0-f_y)*(1.0-f_z);
+        value += V010*(1.0-f_x)*(f_y)*(1.0-f_z);
+        value += V001*(1.0-f_x)*(1.0-f_y)*(f_z);
+        value += V101*(f_x)*(1.0-f_y)*(f_z);
+        value += V011*(1.0-f_x)*(f_y)*(f_z);
+        value += V110*(f_x)*(f_y)*(1.0-f_z);
+        value += V111*(f_x)*(f_y)*(f_z);
+
+        potentials[idx(g_x+x,g_y+y,g_z+z,X_SIZE,Y_SIZE)] = value;
+      }
+    }
+  }
+
+}
+
 void kernel add(global float* input_1, global float* input_2, global float* output){
   output[get_global_id(0)] = input_1[get_global_id(0)]+input_2[get_global_id(0)];
 }
@@ -177,14 +220,6 @@ void kernel subtract(global float* input_1, global float* input_2, global float*
   output[get_global_id(0)] = input_1[get_global_id(0)]-input_2[get_global_id(0)];
 }
 
-void kernel simple_injection(global float* input, global float* output){
-  int o_idx = idx((get_global_id(0)+1),
-                  (get_global_id(1)+1),
-                  (get_global_id(2)+1),get_global_size(0)+2,get_global_size(1)+2);
-  output[o_idx] = input[idx(2*(get_global_id(0)+1),
-                                        2*(get_global_id(1)+1),
-                                        2*(get_global_id(2)+1),get_global_size(0)+2,get_global_size(1)+2)];
-}
 
 // void kernel jacobi(global const float* potentials, global float* potentials_out, global const int* boundaries){
 //   if(get_global_id(0) > (SIZE*SIZE) && get_global_id(0) < (SIZE*SIZE*SIZE)-((SIZE*SIZE)+1) && !boundaries[get_global_id(0)]){
