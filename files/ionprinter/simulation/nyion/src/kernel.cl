@@ -91,5 +91,5 @@ void kernel subtract(global float* input_1, global float* input_2, global float*
 }
 
 void kernel dist(global float* input_1, global float* input_2, global float* output){
-  output[get_global_id(0)] = dist(input_1[get_global_id(0)]-input_2[get_global_id(0)]);
+  output[get_global_id(0)] = fabs(input_1[get_global_id(0)]-input_2[get_global_id(0)]);
 }
