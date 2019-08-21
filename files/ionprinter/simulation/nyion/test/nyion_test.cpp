@@ -70,17 +70,18 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
   queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
 
-  int res = 2;
+  int res = 4;
 
   cl::Kernel gauss_seidel(program, "multires_gauss_seidel");
   gauss_seidel.setArg(0, buffer_potentials);
   gauss_seidel.setArg(1, buffer_boundaries);
   gauss_seidel.setArg(2, res);
-
+  gauss_seidel.setArg(3, SIZE_X);
+  gauss_seidel.setArg(4, SIZE_Y);
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < 1000; i++){
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X/res)-res,(SIZE_Y/res)-res,(SIZE_Z/res)-res),cl::NullRange);
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
     queue.finish();
   }
 

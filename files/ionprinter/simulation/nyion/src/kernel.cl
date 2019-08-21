@@ -36,14 +36,14 @@ void kernel gauss_seidel(global float* potentials, global const int* boundaries)
     }
 }
 
-void kernel multires_gauss_seidel(global float* potentials, global const int* boundaries, const int res){
+void kernel multires_gauss_seidel(global float* potentials, global const int* boundaries, const int res, const int X_SIZE, const int Y_SIZE){
     /* -----------------------------------------------------------------------------
     Call with a 3d NDRange of DIM_SIZE - 2.
     The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
 
     ----------------------------------------------------------------------------- */
-    int X_SIZE = (get_global_size(0)+res)*res;
-    int Y_SIZE = (get_global_size(1)+res)*res;
+    // int X_SIZE = (get_global_size(0)*res+(2*res);
+    // int Y_SIZE = (get_global_size(1)+res)*res;
     int x = (get_global_id(0)*res)+res;
     int y = (get_global_id(1)*res)+res;
     int z = (get_global_id(2)*res)+res;
@@ -51,11 +51,11 @@ void kernel multires_gauss_seidel(global float* potentials, global const int* bo
     int coord = idx(x,y,z,X_SIZE,Y_SIZE);
     if(!boundaries[coord]){
       potentials[coord] =     (potentials[idx(x+res,y,z,X_SIZE,Y_SIZE)] +
-                                potentials[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
-                                potentials[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
-                                potentials[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
-                                potentials[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
-                                potentials[idx(x,y,z-res,X_SIZE,Y_SIZE)])/6.0;
+                                  potentials[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
+                                  potentials[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
+                                  potentials[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
+                                  potentials[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
+                                  potentials[idx(x,y,z-res,X_SIZE,Y_SIZE)])/6.0;
     }
 }
 
