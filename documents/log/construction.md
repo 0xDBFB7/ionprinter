@@ -2069,5 +2069,6 @@ I've been stuck on this multigrid solver for weeks. Found a paper on 'unigrid', 
 
 
 
+Hey, could we apply some sort of compression scheme? I know SpaceX uses wavelet compression; I'm wondering if we could choose which points to apply g-s updated smoothing to based on the beam position. Something to consider.
 
-
+In general, unigrid will converge a bit slower than multigrid because the weighting operator isn't used. On the other hand, the extreme simplicity makes everything run faster in practice.
