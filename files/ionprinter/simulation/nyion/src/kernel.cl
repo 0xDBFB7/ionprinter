@@ -20,7 +20,7 @@ inline int idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
 }
 
-void kernel multires_gauss_seidel(global float* potentials, global const int* boundaries, const int res, const int X_SIZE, const int Y_SIZE){
+void kernel multires_gauss_seidel(global float* potentials, global const int* boundaries, int res, const int X_SIZE, const int Y_SIZE){
     /* -----------------------------------------------------------------------------
     Call with a 3d NDRange of DIM_SIZE - 2.
     The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
@@ -44,7 +44,7 @@ void kernel multires_gauss_seidel(global float* potentials, global const int* bo
 }
 
 
-void kernel multires_interpolate(global float* potentials, const int res, const int X_SIZE, const int Y_SIZE){
+void kernel multires_interpolate(global float* potentials, const global int* boundaries, int res, const int X_SIZE, const int Y_SIZE){
   /* -----------------------------------------------------------------------------
   http://paulbourke.net/miscellaneous/interpolation/
   ----------------------------------------------------------------------------- */
@@ -64,7 +64,6 @@ void kernel multires_interpolate(global float* potentials, const int res, const 
   for(int x = 0; x < res; x++){
     for(int y = 0; y < res; y++){
       for(int z = 0; z < res; z++){
-
         float f_x = (((float)x)/res);
         float f_y = (((float)y)/res);
         float f_z = (((float)z)/res);
@@ -84,11 +83,17 @@ void kernel multires_interpolate(global float* potentials, const int res, const 
         value += V110*(f_x)*(f_y)*(inverse_z);
         value += V111*(f_x)*(f_y)*(f_z);
 
-        potentials[idx(g_x+x,g_y+y,g_z+z,X_SIZE,Y_SIZE)] = value;
+        if(!boundaries[idx(g_x+x,g_y+y,g_z+z,X_SIZE,Y_SIZE)]){
+          potentials[idx(g_x+x,g_y+y,g_z+z,X_SIZE,Y_SIZE)] = value;
+        }
       }
     }
   }
 
+}
+
+void kernel add(global float* input_1, global float* input_2, global float* output){
+  output[get_global_id(0)] = input_1[get_global_id(0)]+input_2[get_global_id(0)];
 }
 
 void kernel subtract(global float* input_1, global float* input_2, global float* output){

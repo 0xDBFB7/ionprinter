@@ -20,6 +20,8 @@
 #include <sstream>
 #include <cstdio>
 #include <chrono>
+#include <unistd.h>
+
 
 #define SIZE_X 64
 #define SIZE_Y 64

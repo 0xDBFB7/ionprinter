@@ -178,65 +178,65 @@ void opengl_draw_axis_cross(){
   glEnd();
 }
 
-
-void draw_geometry_outline(root_mesh_geometry mesh_geometry){
-  /* -----------------------------------------------------------------------------
-  Draw a wireframe box encompassing mesh_geometry.
-  GL_LINE_STRIPs should be drawn between pixels; hence the +0.5.
-  ----------------------------------------------------------------------------- */
-  glColor3f(1.0f, 1.0f, 0.0f);
-    glBegin(GL_LINE_STRIP);
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-    glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-                          ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-  glEnd();
-
-}
+//
+// void draw_geometry_outline(root_mesh_geometry mesh_geometry){
+//   /* -----------------------------------------------------------------------------
+//   Draw a wireframe box encompassing mesh_geometry.
+//   GL_LINE_STRIPs should be drawn between pixels; hence the +0.5.
+//   ----------------------------------------------------------------------------- */
+//   glColor3f(1.0f, 1.0f, 0.0f);
+//     glBegin(GL_LINE_STRIP);
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
+//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
+//   glEnd();
+//
+// }
 
 void draw_mesh(std::vector<std::vector<double>>& input_mesh, root_mesh_geometry mesh_geometry){
   /* -----------------------------------------------------------------------------
@@ -423,41 +423,4 @@ void update_screen(){
 // 	fclose(out_file);
 // 	free(buffer);
 // 	shot_counter++;
-// }
-
-
-
-//
-// void to_csv(std::vector<std::vector<double>> &original, root_mesh_geometry mesh_geometry){
-//   std::ofstream output_file;
-//   output_file.open ("out.csv");
-//
-//   for(int r_x = 0; r_x < mesh_geometry.root_x_len; r_x++){
-//     for(int r_y = 0; r_y < mesh_geometry.root_y_len; r_y++){
-//       for(int r_z = 0; r_z < mesh_geometry.root_z_len; r_z++){
-//         int root_idx = (mesh_geometry.root_x_len*mesh_geometry.root_y_len*r_z) + (mesh_geometry.root_x_len*r_y) + r_x;
-//
-//         if(original[root_idx].size()){
-//           int fine_sub_len = submesh_side_length(original[root_idx]);
-//           for(int x = 0; x < fine_sub_len; x++){
-//             for(int y = 0; y < fine_sub_len; y++){
-//               for(int z = 0; z < fine_sub_len; z++){
-//                 int sub_idx = (fine_sub_len*fine_sub_len*z) + (fine_sub_len*y) + x;
-//                 double world_x = (r_x*mesh_geometry.root_scale)+(x*(mesh_geometry.root_scale/fine_sub_len));
-//                 double world_y = (r_y*mesh_geometry.root_scale)+(y*(mesh_geometry.root_scale/fine_sub_len));
-//                 double world_z = (r_z*mesh_geometry.root_scale)+(z*(mesh_geometry.root_scale/fine_sub_len));
-//                 // if(original[root_idx][sub_idx]){
-//                   output_file << world_x << ","
-//                               << world_y << ","
-//                               << world_z << ","
-//                               << original[root_idx][sub_idx] << "," << "\n";
-//                 // }
-//               }
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-//   output_file.close();
 // }
