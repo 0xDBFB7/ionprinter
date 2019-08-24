@@ -203,60 +203,66 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
 
   double max = *std::max_element(residuals, residuals+SIZE_XYZ);
 
+
+
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
     printf("Cycle start\n\n");
-
     res = 1;
 
-    gauss_seidel.setArg(2, res);
-    gauss_seidel.setArg(0, buffer_potentials);
-    gauss_seidel.setArg(1, buffer_boundaries);
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
 
-    queue.enqueueCopyBuffer(buffer_potentials,buffer_residuals,0,0,sizeof(float)*(SIZE_XYZ));
-    queue.finish();
-
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-
-    residual_subtract.setArg(0, buffer_potentials);
-    residual_subtract.setArg(1, buffer_residuals);
-    residual_subtract.setArg(2, buffer_residuals);
-    queue.enqueueNDRangeKernel(residual_subtract,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
-    queue.enqueueReadBuffer(buffer_residuals,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),residuals);
-    queue.finish();
-    max = *std::max_element(residuals, residuals+SIZE_XYZ);
-    printf("Residual: %f\n",max);
-    display_array(residuals,SIZE_X,SIZE_Y,SIZE_Z,8);
-
-    for(int level = MG_LEVELS; level > -1; level--){
-      res = pow(2,level);
-      gauss_seidel.setArg(2, res);
-      linterp.setArg(2, res);
-      gauss_seidel.setArg(0, buffer_residuals);
-      gauss_seidel.setArg(1, buffer_boundaries);
-
-      for(int i = 0; i < GS_CYCLES_PER_LEVEL; i++){
-        printf("Relaxing on %i\n",res);
-        queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-      }
-
-      if(res > 1){
-        queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-      }
-      queue.finish();
-
-      queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
-      queue.enqueueReadBuffer(buffer_residuals,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),residuals);
+    
 
 
-    }
-    display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z,8);
-
-
-    residual_add.setArg(0, buffer_potentials);
-    residual_add.setArg(1, buffer_residuals);
-    residual_add.setArg(2, buffer_potentials);
-    queue.enqueueNDRangeKernel(residual_add,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
+    //
+    // gauss_seidel.setArg(2, res);
+    // gauss_seidel.setArg(0, buffer_potentials);
+    // gauss_seidel.setArg(1, buffer_boundaries);
+    // queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    //
+    // queue.enqueueCopyBuffer(buffer_potentials,buffer_residuals,0,0,sizeof(float)*(SIZE_XYZ));
+    // queue.finish();
+    //
+    // queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    //
+    // residual_subtract.setArg(0, buffer_potentials);
+    // residual_subtract.setArg(1, buffer_residuals);
+    // residual_subtract.setArg(2, buffer_residuals);
+    // queue.enqueueNDRangeKernel(residual_subtract,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
+    // queue.enqueueReadBuffer(buffer_residuals,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),residuals);
+    // queue.finish();
+    // max = *std::max_element(residuals, residuals+SIZE_XYZ);
+    // printf("Residual: %f\n",max);
+    // display_array(residuals,SIZE_X,SIZE_Y,SIZE_Z,8);
+    //
+    // for(int level = MG_LEVELS; level > -1; level--){
+    //   res = pow(2,level);
+    //   gauss_seidel.setArg(2, res);
+    //   linterp.setArg(2, res);
+    //   gauss_seidel.setArg(0, buffer_residuals);
+    //   gauss_seidel.setArg(1, buffer_boundaries);
+    //
+    //   for(int i = 0; i < GS_CYCLES_PER_LEVEL; i++){
+    //     printf("Relaxing on %i\n",res);
+    //     queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    //   }
+    //
+    //   if(res > 1){
+    //     queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    //   }
+    //   queue.finish();
+    //
+    //   queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
+    //   queue.enqueueReadBuffer(buffer_residuals,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),residuals);
+    //
+    //
+    // }
+    // display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z,8);
+    //
+    //
+    // residual_add.setArg(0, buffer_potentials);
+    // residual_add.setArg(1, buffer_residuals);
+    // residual_add.setArg(2, buffer_potentials);
+    // queue.enqueueNDRangeKernel(residual_add,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
   }
 
   auto t2 = std::chrono::high_resolution_clock::now();
