@@ -2072,3 +2072,20 @@ I've been stuck on this multigrid solver for weeks. Found a paper on 'unigrid', 
 Hey, could we apply some sort of compression scheme? I know SpaceX uses wavelet compression; I'm wondering if we could choose which points to apply g-s updated smoothing to based on the beam position. Something to consider.
 
 In general, unigrid will converge a bit slower than multigrid because the weighting operator isn't used. On the other hand, the extreme simplicity makes everything run faster in practice.
+
+
+
+<hr>
+
+Okay, so I did a bunch of playing around with OpenCL in an attempt to get Hunt's single-level mg working. I decided to implement a basic 2d solver in Python, just to have a known-good reference implementation.
+
+While implementing this, I realized I had no idea what the notation v=G(v,r) meant.
+
+Moreover, I'd always been hung up on just where the boundaries went when relaxing on the residuals. If you apply g-s to the residual grid with no boundaries, it just converges to zero, which is unhelpful.
+
+However, there was a term I missed in the definition of g-s. You don't just 'ignore points where boundaries exist', as I had been doing. Instead, *the boundaries are an extra term in the stencil*.
+
+<https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html>
+
+Consider the linear equation P*U=b. b contains a certain number of fixed solutions; boundaries on the fine grid, residuals on coarser grids.
+
