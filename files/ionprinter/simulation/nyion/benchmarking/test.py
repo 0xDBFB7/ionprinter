@@ -12,40 +12,82 @@ b[5,5] = 1
 
 def gauss_seidel(U,b,theta):
     rows = U.shape[0]
-    cols = b.shape[1]
+    cols = U.shape[1]
 
-    for x in range(1, cols - 2):
-        for y in range(1, rows - 2):
-            U[x,y] = (U[x+1,y] +
-                        U[x-1,y] +
-                        U[x,y+1] +
-                        U[x,y-1] + b[x,y])/4.0
+    for x in range(theta, (rows - theta)-1,theta):
+        for y in range(theta, (cols - theta)-1,theta):
+            U[x,y] = (U[x+theta,y] +
+                        U[x-theta,y] +
+                        U[x,y+theta] +
+                        U[x,y-theta] + b[x,y])/4.0
 
-# def prolongate(potentials, theta):
-#     rows = potentials.shape[0]
-#     cols = boundaries.shape[1]
-#     for x in range(1, cols - 2,theta):
-#         for y in range(theta, rows - 2*theta,theta):
+def restriction(X, theta):
+    rows = X.shape[0]
+    cols = X.shape[1]
+
+    for x in range(theta, (rows - theta)-1,theta):
+        for y in range(theta, (cols - theta)-1,theta):
+            sum = 0
+            for i in range(0,theta):
+                for j in range(0,theta):
+                    sum += X[x+i,y+j]
+            X[x,y] = sum
+
+
+def prolongate(X, theta):
+    rows = X.shape[0]
+    cols = X.shape[1]
+
+    for x in range(theta, (rows - theta)-1,theta):
+        for y in range(theta, (cols - theta)-1,theta):
+            V00 = X[x,y]
+            V01 = X[x,y+theta]
+            V10 = X[x+theta,y]
+            V11 = X[x+theta,y+theta]
+            for i in range(0,theta):
+                for j in range(0,theta):
+                    f_x = float(i)/theta
+                    f_y = float(j)/theta
+                    X[x+i,y+j] = 0
+                    X[x+i,y+j] += V00*(1.0-f_x)*(1.0-f_y)
+                    X[x+i,y+j] += V01*(f_x)*(1.0-f_y)
+                    X[x+i,y+j] += V10*(1.0-f_x)*(f_y)
+                    X[x+i,y+j] += V11*(f_x)*(f_y)
 
 # Precondition.
 for i in range(0,10):
-    gauss_seidel(u,b)
+    gauss_seidel(u,b,1)
 
-# Step 1: Residual Calculation.
-v1 = u.copy()
-gauss_seidel(u,b)
-r = u - v1
-# Step 2: Restriction.
-v = numpy.zeros((SIZE_X, SIZE_Y))
-for i in range(0,10):
-    gauss_seidel(v,r)
+convergence = []
 
+while True:
 
+    # Step 1: Residual Calculation.
+    v1 = u.copy()
+    gauss_seidel(u,b,1)
+    r = u - v1
+    # Step 2: Restriction.
+    v = numpy.zeros((SIZE_X, SIZE_Y))
+    for level in range(4,-1,-1):
+        resolution = 2**level
+        restriction(v,resolution)
+        gauss_seidel(v,r,resolution)
+        prolongate(v,resolution)
 
-print(numpy.linalg.norm(r))
-plt.subplot(2, 1, 1)
-plt.imshow(u)
-plt.subplot(2, 1, 2)
+    convergence.append(numpy.linalg.norm(r))
+    print(numpy.linalg.norm(r))
 
-plt.imshow(r)
-plt.show()
+    plt.subplot(2, 2, 1)
+    plt.imshow(u)
+
+    u = u + v
+
+    plt.subplot(2, 2, 2)
+    plt.imshow(r)
+    plt.subplot(2, 2, 3)
+    plt.imshow(v)
+    plt.subplot(2, 2, 4)
+    plt.plot(convergence)
+
+    plt.draw()
+    plt.pause(0.001)

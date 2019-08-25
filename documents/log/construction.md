@@ -2089,3 +2089,6 @@ However, there was a term I missed in the definition of g-s. You don't just 'ign
 
 Consider the linear equation P*U=b. b contains a certain number of fixed solutions; boundaries on the fine grid, residuals on coarser grids.
 
+
+
+There's a 'charge-conservation' scheme that avoids solving the poisson equation. I can't even imagine how that would work.
