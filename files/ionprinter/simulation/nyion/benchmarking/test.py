@@ -1,14 +1,16 @@
 import numpy
 import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
-SIZE_X = 64
-SIZE_Y = 64
+SIZE_X = 128
+SIZE_Y = 128
 
 u = numpy.zeros((SIZE_X, SIZE_Y))
 b = numpy.zeros((SIZE_X, SIZE_Y))
 
-u[5,5] = 10
-b[5,5] = 1
+for x in range(40,50):
+    for y in range(40,50):
+        b[x,y] = 1
 
 def gauss_seidel(U,b,theta):
     rows = U.shape[0]
@@ -59,7 +61,8 @@ for i in range(0,10):
     gauss_seidel(u,b,1)
 
 convergence = []
-
+ims = []
+t = 0
 while True:
 
     # Step 1: Residual Calculation.
@@ -70,24 +73,34 @@ while True:
     v = numpy.zeros((SIZE_X, SIZE_Y))
     for level in range(4,-1,-1):
         resolution = 2**level
-        restriction(v,resolution)
-        gauss_seidel(v,r,resolution)
+        r1 = r.copy()
+        restriction(r1,resolution)
+        for i in range(0,2**level):
+            gauss_seidel(v,r1,resolution)
+            gauss_seidel(v,r1,resolution)
+
         prolongate(v,resolution)
 
     convergence.append(numpy.linalg.norm(r))
     print(numpy.linalg.norm(r))
 
     plt.subplot(2, 2, 1)
+    plt.gca().set_title('Potentials')
     plt.imshow(u)
 
     u = u + v
 
     plt.subplot(2, 2, 2)
+    plt.gca().set_title('Residual')
     plt.imshow(r)
     plt.subplot(2, 2, 3)
+    plt.gca().set_title('Correction')
     plt.imshow(v)
     plt.subplot(2, 2, 4)
+    plt.yscale('log')
+    plt.gca().set_title('Convergence')
     plt.plot(convergence)
-
-    plt.draw()
-    plt.pause(0.001)
+    plt.savefig(str(t) + '.png')
+    t+=1
+    # plt.draw()
+    # plt.pause(0.001)
