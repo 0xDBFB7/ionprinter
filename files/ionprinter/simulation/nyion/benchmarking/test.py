@@ -1,7 +1,7 @@
 import numpy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-
+import math
 SIZE_X = 128
 SIZE_Y = 128
 
@@ -63,6 +63,7 @@ for i in range(0,10):
 convergence = []
 ims = []
 t = 0
+c1 = 1
 while True:
 
     # Step 1: Residual Calculation.
@@ -70,19 +71,21 @@ while True:
     gauss_seidel(u,b,1)
     r = u - v1
     # Step 2: Restriction.
+    res = [32,16,8,16,8,4,8,4,2,4,2,1]
     v = numpy.zeros((SIZE_X, SIZE_Y))
-    for level in range(4,-1,-1):
-        resolution = 2**level
+    for level in range(0,len(res),1):
+        resolution = res[level]
         r1 = r.copy()
-        restriction(r1,resolution)
-        for i in range(0,2**level):
+        if(level != 0):
+            restriction(r1,resolution)
+        for i in range(0,res[level]):
             gauss_seidel(v,r1,resolution)
             gauss_seidel(v,r1,resolution)
+        if(level != 0):
+            prolongate(v,resolution)
 
-        prolongate(v,resolution)
 
     convergence.append(numpy.linalg.norm(r))
-    print(numpy.linalg.norm(r))
 
     plt.subplot(2, 2, 1)
     plt.gca().set_title('Potentials')
@@ -100,7 +103,10 @@ while True:
     plt.yscale('log')
     plt.gca().set_title('Convergence')
     plt.plot(convergence)
-    plt.savefig(str(t) + '.png')
+    # plt.savefig(str(t) + '.png')
     t+=1
+    print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
+    c1 = numpy.linalg.norm(r)
+
     # plt.draw()
     # plt.pause(0.001)

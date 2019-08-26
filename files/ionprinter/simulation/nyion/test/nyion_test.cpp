@@ -157,12 +157,15 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   ----------------------------------------------------------------------------- */
   cl::Kernel gauss_seidel(program, "multires_gauss_seidel");
   cl::Kernel linterp(program, "multires_interpolate");
+  cl::Kernel multires_restrict(program, "multires_restrict");
   cl::Kernel residual_subtract(program, "subtract");
   cl::Kernel residual_add(program, "add");
   gauss_seidel.setArg(3, SIZE_X);
   gauss_seidel.setArg(4, SIZE_Y);
   linterp.setArg(2, SIZE_X);
   linterp.setArg(3, SIZE_Y);
+  multires_restrict.setArg(2, SIZE_X);
+  multires_restrict.setArg(3, SIZE_Y);
   /* -----------------------------------------------------------------------------
   GPU buffer allocation
   ----------------------------------------------------------------------------- */
@@ -188,73 +191,75 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
     b[(SIZE_XY*8)+SIZE_X*8+i+8] = 200;
   }
   /* -----------------------------------------------------------------------------
-  Problem copied to GPU memory
+  Copy problem to GPU memory
   ----------------------------------------------------------------------------- */
   queue.enqueueWriteBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
   queue.enqueueWriteBuffer(buffer_b,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),b);
-
+  /* -----------------------------------------------------------------------------
+  Max stores the greatest value in the residual; this is cheaper than finding the norm
+  ----------------------------------------------------------------------------- */
   double max = 0;
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
-    printf("Cycle start\n\n");
-
-    for(int level = 0; level < 4; level++){
-
-      int res = 1; //a full resolution fine grid cycle
-      gauss_seidel.setArg(0, buffer_U);
-      gauss_seidel.setArg(1, buffer_b);
-      gauss_seidel.setArg(2, res);
-      queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-      queue.enqueueCopyBuffer(buffer_U,buffer_r,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-      queue.finish();
-      queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-
-      residual_subtract.setArg(0, buffer_U);
-      residual_subtract.setArg(1, buffer_r);
-      residual_subtract.setArg(2, buffer_r);
-      queue.enqueueNDRangeKernel(residual_subtract,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
-      queue.enqueueReadBuffer(buffer_r,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),r);
-      queue.finish();
-      max = *std::max_element(r, r+SIZE_XYZ);
-      printf("Residual: %f\n",max);
-
-        res = pow(2,level);
-        linterp.setArg(0, buffer_v);
-        linterp.setArg(1, res);
-        gauss_seidel.setArg(0, buffer_v);
-        gauss_seidel.setArg(1, buffer_r);
-        gauss_seidel.setArg(2, res);
-        for(int i = 0; i < 2; i++){
-          printf("Relaxing on %i\n",res);
-          queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-        }
-        queue.enqueueReadBuffer(buffer_v,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),v);
-        queue.finish();
-
-        display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
-        if(res > 1){
-          queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-        }
-        queue.finish();
-      
-
-      /* -----------------------------------------------------------------------------
-      Apply correction to fine grid.
-      ----------------------------------------------------------------------------- */
-      residual_add.setArg(0, buffer_U);
-      residual_add.setArg(1, buffer_v);
-      residual_add.setArg(2, buffer_U);
-      queue.enqueueNDRangeKernel(residual_add,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
-    }
+    queue.enqueueFillBuffer(buffer_v,0,0,sizeof(float)*(SIZE_XYZ)); //wipe correction buffer
     /* -----------------------------------------------------------------------------
-    Cycle complete.
+    Store a copy of the previous iteration
     ----------------------------------------------------------------------------- */
+    queue.enqueueCopyBuffer(buffer_U,buffer_r,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
+    /* -----------------------------------------------------------------------------
+    Compute the finest gauss-seidel iteration
+    ----------------------------------------------------------------------------- */
+    int res = 1; //a full resolution fine grid cycle
+    gauss_seidel.setArg(0, buffer_U);
+    gauss_seidel.setArg(1, buffer_b);
+    gauss_seidel.setArg(2, res);
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    /* -----------------------------------------------------------------------------
+    Subtract the first iteration from the new potentials to obtain the residuals
+    ----------------------------------------------------------------------------- */
+    residual_subtract.setArg(0, buffer_U);
+    residual_subtract.setArg(1, buffer_r);
+    residual_subtract.setArg(2, buffer_r);
+    queue.enqueueNDRangeKernel(residual_subtract,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
+    /* -----------------------------------------------------------------------------
+    Read residuals from GPU for diagnostics (optional)
+    ----------------------------------------------------------------------------- */
+    queue.enqueueReadBuffer(buffer_r,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),r);
+    queue.finish();
+    max = *std::max_element(r, r+SIZE_XYZ);
+    printf("Residual: %f\n",max);
+
+    /* -----------------------------------------------------------------------------
+    Cycle down from coarse level
+    ----------------------------------------------------------------------------- */
+    linterp.setArg(0, buffer_v);
+    linterp.setArg(1, res);
+    gauss_seidel.setArg(0, buffer_v);
+    gauss_seidel.setArg(1, buffer_r);
+    gauss_seidel.setArg(2, res);
+    for(int level = 4; level > -1; level--){
+      res = pow(2,level);
+      for(int i = 0; i < res; i++){ //as many cycles as the resolution is a good approximation
+        queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+      }
+      if(res > 1){
+        queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+      }
+      queue.finish();
+    }
+
+    /* -----------------------------------------------------------------------------
+    Apply correction to fine grid.
+    ----------------------------------------------------------------------------- */
+    residual_add.setArg(0, buffer_U);
+    residual_add.setArg(1, buffer_v);
+    residual_add.setArg(2, buffer_U);
+    queue.enqueueNDRangeKernel(residual_add,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
   }
 
 
-
-
+  display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
 
 
   auto t2 = std::chrono::high_resolution_clock::now();

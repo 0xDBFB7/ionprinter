@@ -2092,3 +2092,10 @@ Consider the linear equation P*U=b. b contains a certain number of fixed solutio
 
 
 There's a 'charge-conservation' scheme that avoids solving the poisson equation. I can't even imagine how that would work.
+
+
+
+
+
+Got it!
+

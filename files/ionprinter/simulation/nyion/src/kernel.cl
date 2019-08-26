@@ -48,6 +48,25 @@ void kernel multires_gauss_seidel(global float* U, global const float* b, int re
 // }
 
 
+void kernel multires_restrict(global float* U, int res, const int X_SIZE, const int Y_SIZE){
+  /* -----------------------------------------------------------------------------
+  http://paulbourke.net/miscellaneous/interpolation/
+  ----------------------------------------------------------------------------- */
+  int g_x = (get_global_id(0)*res)+res;
+  int g_y = (get_global_id(1)*res)+res;
+  int g_z = (get_global_id(2)*res)+res;
+
+  float value = 0;
+  for(int x = 0; x < res; x++){
+    for(int y = 0; y < res; y++){
+      for(int z = 0; z < res; z++){
+        value += U[idx(g_x+x,g_y+y,g_z+z,X_SIZE,Y_SIZE)];
+      }
+    }
+  }
+  U[idx(g_x,g_y,g_z,X_SIZE,Y_SIZE)] = value;
+}
+
 void kernel multires_interpolate(global float* U, int res, const int X_SIZE, const int Y_SIZE){
   /* -----------------------------------------------------------------------------
   http://paulbourke.net/miscellaneous/interpolation/
@@ -100,8 +119,4 @@ void kernel add(global float* input_1, global float* input_2, global float* outp
 
 void kernel subtract(global float* input_1, global float* input_2, global float* output){
   output[get_global_id(0)] = input_1[get_global_id(0)]-input_2[get_global_id(0)];
-}
-
-void kernel dist(global float* input_1, global float* input_2, global float* output){
-  output[get_global_id(0)] = fabs(input_1[get_global_id(0)]-input_2[get_global_id(0)]);
 }
