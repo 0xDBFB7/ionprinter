@@ -2,15 +2,18 @@ import numpy
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import math
-SIZE_X = 128
-SIZE_Y = 128
 
-u = numpy.zeros((SIZE_X, SIZE_Y))
-b = numpy.zeros((SIZE_X, SIZE_Y))
+SIZE_X = 64
+SIZE_Y = 64
+SIZE_Z = 64
+
+
+u = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
+b = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
 
 for x in range(40,50):
     for y in range(40,50):
-        b[x,y] = 1
+        b[x,y,8] = 1
 
 def gauss_seidel(U,b,theta):
     rows = U.shape[0]
@@ -18,10 +21,13 @@ def gauss_seidel(U,b,theta):
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            U[x,y] = (U[x+theta,y] +
-                        U[x-theta,y] +
-                        U[x,y+theta] +
-                        U[x,y-theta] + b[x,y])/4.0
+            for z in range(theta, (cols - theta)-1,theta):
+                U[x,y,z] = (U[x+theta,y,z] +
+                            U[x-theta,y,z] +
+                            U[x,y+theta,z] +
+                            U[x,y-theta,z] +
+                            U[x,y,z+theta] +
+                            U[x,y,z-theta] + b[x,y,z])/6.0
 
 def restriction(X, theta):
     rows = X.shape[0]
@@ -29,11 +35,13 @@ def restriction(X, theta):
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            sum = 0
-            for i in range(0,theta):
-                for j in range(0,theta):
-                    sum += X[x+i,y+j]
-            X[x,y] = sum
+            for z in range(theta, (cols - theta)-1,theta):
+                sum = 0
+                for i in range(0,theta):
+                    for j in range(0,theta):
+                        for k in range(0,theta):
+                            sum += X[x+i,y+j,z+k]
+                X[x,y,z] = sum
 
 
 def prolongate(X, theta):
@@ -42,19 +50,30 @@ def prolongate(X, theta):
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            V00 = X[x,y]
-            V01 = X[x,y+theta]
-            V10 = X[x+theta,y]
-            V11 = X[x+theta,y+theta]
-            for i in range(0,theta):
-                for j in range(0,theta):
-                    f_x = float(i)/theta
-                    f_y = float(j)/theta
-                    X[x+i,y+j] = 0
-                    X[x+i,y+j] += V00*(1.0-f_x)*(1.0-f_y)
-                    X[x+i,y+j] += V01*(f_x)*(1.0-f_y)
-                    X[x+i,y+j] += V10*(1.0-f_x)*(f_y)
-                    X[x+i,y+j] += V11*(f_x)*(f_y)
+            for z in range(theta, (cols - theta)-1,theta):
+                V000 = X[x,y,z]
+                V001 = X[x,y,z+theta]
+                V010 = X[x,y+theta,z]
+                V100 = X[x+theta,y,z]
+                V101 = X[x+theta,y,z+theta]
+                V110 = X[x+theta,y+theta,z]
+                V111 = X[x+theta,y+theta,z+theta]
+                for i in range(0,theta):
+                    for j in range(0,theta):
+                        for k in range(0,theta):
+                            f_x = float(i)/theta
+                            f_y = float(j)/theta
+                            f_z = float(k)/theta
+
+                            X[x+i,y+j,z+k] = 0
+                            X[x+i,y+j,z+k] += V000*(1.0-f_x)*(1.0-f_y)*(1.0-f_z)
+                            X[x+i,y+j,z+k] += V001*(1.0-f_x)*(1.0-f_y)*(f_z)
+                            X[x+i,y+j,z+k] += V010*(1.0-f_x)*(f_y)*(1.0-f_z)
+                            X[x+i,y+j,z+k] += V100*(f_x)*(1.0-f_y)*(1.0-f_z)
+                            X[x+i,y+j,z+k] += V101*(f_x)*(1.0-f_y)*(f_z)
+                            X[x+i,y+j,z+k] += V110*(f_x)*(f_y)*(1.0-f_z)
+                            X[x+i,y+j,z+k] += V111*(f_x)*(f_y)*(f_z)
+
 
 # Precondition.
 for i in range(0,10):
@@ -72,33 +91,31 @@ while True:
     r = u - v1
     # Step 2: Restriction.
     res = [32,16,8,16,8,4,8,4,2,4,2,1]
-    v = numpy.zeros((SIZE_X, SIZE_Y))
+    v = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
     for level in range(0,len(res),1):
         resolution = res[level]
         r1 = r.copy()
         if(level != 0):
             restriction(r1,resolution)
-        for i in range(0,res[level]):
+        for i in range(0,int(math.sqrt(res[level]))):
             gauss_seidel(v,r1,resolution)
             gauss_seidel(v,r1,resolution)
         if(level != 0):
             prolongate(v,resolution)
 
+    u = u + v
 
     convergence.append(numpy.linalg.norm(r))
 
     plt.subplot(2, 2, 1)
     plt.gca().set_title('Potentials')
-    plt.imshow(u)
-
-    u = u + v
-
+    plt.imshow(u[:,:,8])
     plt.subplot(2, 2, 2)
     plt.gca().set_title('Residual')
-    plt.imshow(r)
+    plt.imshow(r[:,:,8])
     plt.subplot(2, 2, 3)
     plt.gca().set_title('Correction')
-    plt.imshow(v)
+    plt.imshow(v[:,:,8])
     plt.subplot(2, 2, 4)
     plt.yscale('log')
     plt.gca().set_title('Convergence')
@@ -108,5 +125,5 @@ while True:
     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
     c1 = numpy.linalg.norm(r)
 
-    # plt.draw()
-    # plt.pause(0.001)
+    plt.draw()
+    plt.pause(0.001)

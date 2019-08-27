@@ -155,3 +155,13 @@ Convert from macro to inline function to avoid such issues in the future.
 
 
 
+<hr>
+
+#### Issue:
+
+Nearly a month of testing still did not yield a functional multigrid implementation.
+
+#### Solution
+
+Writing a proof-of-concept recipe in Python without regard to optimization very rapidly exposed the problem. This is definitely something to keep in mind; it's much easier to troubleshoot something if you know precisely the expected behavior. 
+

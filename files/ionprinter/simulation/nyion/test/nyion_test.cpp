@@ -148,9 +148,8 @@ TEST(MG_GPU_OPERATORS, transfer_timing_test)
 
 TEST(MG_GPU_OPERATORS, multigrid_test)
 {
-  // int MG_LEVELS = 4;//level 0 is the finest.
   // const int GS_CYCLES_PER_LEVEL = 2;//level 0 is the finest.
-  const int MG_CYCLES = 30;
+
 
   /* -----------------------------------------------------------------------------
   GPU kernel initialization
@@ -172,6 +171,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   cl::Buffer buffer_U(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_b(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
   cl::Buffer buffer_r(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //residuals
+  cl::Buffer buffer_r1(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //residuals, copy - slmg doesn't require this array, but
   cl::Buffer buffer_v(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //correction
   /* -----------------------------------------------------------------------------
   Local buffer allocation
@@ -187,8 +187,10 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   /* -----------------------------------------------------------------------------
   Demo problem setup
   ----------------------------------------------------------------------------- */
-  for(int i = 0; i < SIZE_X/2; i++){
-    b[(SIZE_XY*8)+SIZE_X*8+i+8] = 200;
+  for(int x = 30; x < 40; x++){
+    for(int y = 30; y < 40; y++){
+      b[(SIZE_XY*8)+SIZE_X*y+x] = 1;
+    }
   }
   /* -----------------------------------------------------------------------------
   Copy problem to GPU memory
@@ -198,7 +200,23 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   /* -----------------------------------------------------------------------------
   Max stores the greatest value in the residual; this is cheaper than finding the norm
   ----------------------------------------------------------------------------- */
-  double max = 0;
+  // double max = 0;
+
+  const int MG_CYCLES = 30;
+  int MG_LEVELS = 12;//level 0 is the finest.
+  int resolutions[] = {32,16,8,16,8,4,8,4,2,4,2,1};
+  int smooths[] = {32,16,8,16,8,4,8,4,4,4,4,4};
+
+  residual_add.setArg(0, buffer_U);
+  residual_add.setArg(1, buffer_v);
+  residual_add.setArg(2, buffer_U);
+
+  residual_subtract.setArg(0, buffer_U);
+  residual_subtract.setArg(1, buffer_r);
+  residual_subtract.setArg(2, buffer_r);
+
+  float previous_norm = 1;
+
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
@@ -218,29 +236,37 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
     /* -----------------------------------------------------------------------------
     Subtract the first iteration from the new potentials to obtain the residuals
     ----------------------------------------------------------------------------- */
-    residual_subtract.setArg(0, buffer_U);
-    residual_subtract.setArg(1, buffer_r);
-    residual_subtract.setArg(2, buffer_r);
+
     queue.enqueueNDRangeKernel(residual_subtract,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
     /* -----------------------------------------------------------------------------
     Read residuals from GPU for diagnostics (optional)
     ----------------------------------------------------------------------------- */
     queue.enqueueReadBuffer(buffer_r,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),r);
     queue.finish();
-    max = *std::max_element(r, r+SIZE_XYZ);
-    printf("Residual: %f\n",max);
-
+    // max = *std::max_element(r, r+SIZE_XYZ);
+    float norm = sqrt(std::inner_product(r, r+SIZE_XYZ, r, 0.0L));
+    printf("Residual: %f\nConvergence Factor: %f\n",norm,norm/previous_norm);
+    previous_norm = norm;
     /* -----------------------------------------------------------------------------
     Cycle down from coarse level
     ----------------------------------------------------------------------------- */
     linterp.setArg(0, buffer_v);
-    linterp.setArg(1, res);
+    multires_restrict.setArg(0, buffer_r1);
     gauss_seidel.setArg(0, buffer_v);
-    gauss_seidel.setArg(1, buffer_r);
-    gauss_seidel.setArg(2, res);
-    for(int level = 4; level > -1; level--){
-      res = pow(2,level);
-      for(int i = 0; i < res; i++){ //as many cycles as the resolution is a good approximation
+    gauss_seidel.setArg(1, buffer_r1);
+
+    for(int level = 0; level < MG_LEVELS; level++){
+      res = resolutions[level];
+      printf("res: %i\n",res);
+      gauss_seidel.setArg(2, res);
+      linterp.setArg(1, res);
+      multires_restrict.setArg(1, res);
+      queue.enqueueCopyBuffer(buffer_r,buffer_r1,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
+      //todo: faster copy could be implemented - theta subtract?
+      if(res > 1){
+        queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+      }
+      for(int i = 0; i < smooths[level]; i++){ //as many cycles as the resolution is a good approximation
         queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
       }
       if(res > 1){
@@ -249,23 +275,23 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
       queue.finish();
     }
 
+    queue.enqueueReadBuffer(buffer_v,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),v);
+    queue.enqueueReadBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
+    queue.finish();
+    display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
+
     /* -----------------------------------------------------------------------------
     Apply correction to fine grid.
     ----------------------------------------------------------------------------- */
-    residual_add.setArg(0, buffer_U);
-    residual_add.setArg(1, buffer_v);
-    residual_add.setArg(2, buffer_U);
     queue.enqueueNDRangeKernel(residual_add,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
   }
 
 
-  display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
-
-
   auto t2 = std::chrono::high_resolution_clock::now();
 
+  // display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
 
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/1.0;
   std::cout << "Multigrid on " << SIZE_X <<  "^3 took " << duration << " us\n";
 
 
