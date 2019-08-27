@@ -29,6 +29,21 @@ def gauss_seidel(U,b,theta):
                             U[x,y,z+theta] +
                             U[x,y,z-theta] + b[x,y,z])/6.0
 
+
+def jacobi(U,T,b,theta):
+    rows = U.shape[0]
+    cols = U.shape[1]
+    for x in range(theta, (rows - theta)-1,theta):
+        for y in range(theta, (cols - theta)-1,theta):
+            for z in range(theta, (cols - theta)-1,theta):
+                T[x,y,z] = (U[x+theta,y,z] +
+                            U[x-theta,y,z] +
+                            U[x,y+theta,z] +
+                            U[x,y-theta,z] +
+                            U[x,y,z+theta] +
+                            U[x,y,z-theta] + b[x,y,z])/6.0
+
+
 def restriction(X, theta):
     rows = X.shape[0]
     cols = X.shape[1]
@@ -83,11 +98,13 @@ convergence = []
 ims = []
 t = 0
 c1 = 1
+T = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
 while True:
 
     # Step 1: Residual Calculation.
     v1 = u.copy()
-    gauss_seidel(u,b,1)
+    jacobi(u,T,b,1)
+    u=T.copy()
     print(numpy.linalg.norm(b))
 
     r = u - v1
@@ -100,7 +117,8 @@ while True:
         if(level != 0):
             restriction(r1,resolution)
         for i in range(0,2*int(math.sqrt(res[level]))):
-            gauss_seidel(v,r1,resolution)
+            jacobi(v,T,r1,resolution)
+            v=T.copy()
         if(level != 0):
             prolongate(v,resolution)
 

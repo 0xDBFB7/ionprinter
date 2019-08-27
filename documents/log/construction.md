@@ -2127,3 +2127,9 @@ Much of the trouble in unit testing these matrix techniques is in constructing t
 
 <hr>
 
+Tried comparing the Python implementation with the OpenCL one, got a slightly different result for both.
+
+Of course! The GPU was running the gauss-seidel kernels in a non-deterministic order. Running in a simple loop solved the problem, at the cost of a tremendous slowdown.
+
+In fact, the accidentally non-atomic results are often precisely the same as Jacobi. Switching the Python implementation to Jacobi also produces the poor convergence seen.
+
