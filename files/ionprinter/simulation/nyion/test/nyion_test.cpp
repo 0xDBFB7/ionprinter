@@ -187,8 +187,8 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   /* -----------------------------------------------------------------------------
   Demo problem setup
   ----------------------------------------------------------------------------- */
-  for(int x = 30; x < 40; x++){
-    for(int y = 30; y < 40; y++){
+  for(int x = 40; x < 50; x++){
+    for(int y = 40; y < 50; y++){
       b[(SIZE_XY*8)+SIZE_X*y+x] = 1;
     }
   }
@@ -205,7 +205,6 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   const int MG_CYCLES = 30;
   int MG_LEVELS = 12;//level 0 is the finest.
   int resolutions[] = {32,16,8,16,8,4,8,4,2,4,2,1};
-  int smooths[] = {32,16,8,16,8,4,8,4,4,4,4,4};
 
   residual_add.setArg(0, buffer_U);
   residual_add.setArg(1, buffer_v);
@@ -266,7 +265,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
       if(res > 1){
         queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
       }
-      for(int i = 0; i < smooths[level]; i++){ //as many cycles as the resolution is a good approximation
+      for(int i = 0; i < resolutions[level]; i++){ //as many cycles as the resolution is a good approximation
         queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
       }
       if(res > 1){
@@ -300,6 +299,67 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   delete[] v;
   delete[] b;
 }
+
+
+
+// TEST(laplace_tests,opengl_simple_boundary){
+//     double mesh_bounds[6] = {0,0.05,0,0.05,0,0.05};
+//     root_mesh_geometry mesh_geometry(mesh_bounds, 0.003);
+//
+//     std::vector<std::vector<double>> potentials;
+//     std::vector<std::vector<int>> boundaries;
+//
+//     double mesh_active_bounds[6] = {0,0.05,0,0.06,0,0.05};
+//
+//     enable_mesh_region(potentials,mesh_active_bounds,mesh_geometry,2);
+//     enable_mesh_region(boundaries,mesh_active_bounds,mesh_geometry,2);
+//
+//     potentials[0][1] = -1000;
+//     boundaries[0][1] = 1;
+//     potentials[10][1] = 1000;
+//     boundaries[10][1] = 1;
+//     initialize_opengl(mesh_geometry);
+//     std::vector<double> test_graph = {10,-10,0.3};
+//
+//     while(true){
+//
+//       opengl_switch_to_graph_window();
+//       test_graph.push_back(10);
+//       opengl_graph_1d_vector(test_graph,"Test",0);
+//
+//       opengl_2d_mode();
+//
+//       opengl_switch_to_mesh_window();
+//
+//       opengl_3d_mode();
+//
+//       opengl_apply_camera_rotation();
+//
+//       opengl_draw_axis_cross();
+//
+//       draw_geometry_outline(mesh_geometry);
+//       gauss_seidel(potentials, boundaries, mesh_geometry, 5, 1, 0);
+//       draw_mesh(potentials,mesh_geometry);
+//
+//       opengl_2d_mode();
+//
+//
+//       update_screen();
+//
+//       opengl_switch_to_graph_window();
+//       opengl_clear_screen();
+//
+//       opengl_switch_to_mesh_window();
+//       opengl_clear_screen();
+//       // update_screen();
+//        bool valid = false;
+//       printf("%f",relative_mesh_value(potentials,idx(10,0,16,17,17),16,16,16,0,0,-1,mesh_geometry,valid));
+//
+//     }
+//
+//
+// }
+
 
 int main(int ac, char** av){
   init_OpenCL();

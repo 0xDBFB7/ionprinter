@@ -27,6 +27,21 @@
 #define SIZE_Y 64
 #define SIZE_Z 64
 
+#define WORLD_X_START 0.0
+#define WORLD_X_END 0.01
+
+#define WORLD_Y_START 0.0
+#define WORLD_Y_END 0.01
+
+#define WORLD_Z_START 0.0
+#define WORLD_Z_END 0.01
+
+const double WORLD_X_SCALE = (WORLD_X_END-WORLD_X_START)/SIZE_X;
+const double WORLD_Y_SCALE = (WORLD_Y_END-WORLD_Y_START)/SIZE_Y;
+const double WORLD_Z_SCALE = (WORLD_Z_END-WORLD_Z_START)/SIZE_Z;
+
+#define OPENGL_WORLD_SCALE 1
+
 const int SIZE_XY = (SIZE_X*SIZE_Y);
 const int SIZE_XYZ = (SIZE_X*SIZE_Y*SIZE_Z);
 

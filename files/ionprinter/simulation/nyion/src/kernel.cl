@@ -22,31 +22,6 @@ void kernel multires_gauss_seidel(global float* U, global const float* b, int re
                 U[idx(x,y,z-res,X_SIZE,Y_SIZE)] +
                 b[idx(x,y,z,X_SIZE,Y_SIZE)])/6.0;
 }
-//
-// void kernel potentials_gauss_seidel(global float* U, global const int* boundaries, global const float* electrode_potentials, int res, const int X_SIZE, const int Y_SIZE){
-//     /* -----------------------------------------------------------------------------
-//     Call with a 3d NDRange of DIM_SIZE - 2.
-//     The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
-//
-//     ----------------------------------------------------------------------------- */
-//     int x = (get_global_id(0)*res)+res;
-//     int y = (get_global_id(1)*res)+res;
-//     int z = (get_global_id(2)*res)+res;
-//
-//     int coord = idx(x,y,z,X_SIZE,Y_SIZE);
-//     float boundary_potential = 0;
-//     if(boundaries[coord] > 0){
-//       boundary_potential = electrodes[boundaries[coord]];
-//     }
-//     potentials[coord] =     (potentials[idx(x+res,y,z,X_SIZE,Y_SIZE)] +
-//                               potentials[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
-//                               potentials[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
-//                               potentials[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
-//                               potentials[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
-//                               potentials[idx(x,y,z-res,X_SIZE,Y_SIZE)] +
-//                               boundary_potential)/6.0;
-// }
-
 
 void kernel multires_restrict(global float* U, int res, const int X_SIZE, const int Y_SIZE){
   /* -----------------------------------------------------------------------------

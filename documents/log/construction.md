@@ -2091,11 +2091,29 @@ Consider the linear equation P*U=b. b contains a certain number of fixed solutio
 
 
 
-There's a 'charge-conservation' scheme that avoids solving the poisson equation. I can't even imagine how that would work.
-
-
-
-
+There's a 'current-conservation' scheme that avoids solving the poisson equation. I can't even imagine how that would work.
 
 Got it!
+
+<hr>
+
+Convergence behavior of SLMG:
+
+```
+Cycle [32,16,8,16,8,4,8,4,2,4,2,1]
+Residual relaxes/cycle [32,16,8,16,8,4,8,4,2,4,2,1]*2
+
+Residual: 0.7745325056838676 convergence factor: 0.7745325056838676 Step: 1
+Residual: 0.3633668014882448 convergence factor: 0.4691433849731237 Step: 2
+Residual: 0.13337895626451535 convergence factor: 0.3670642329410224 Step: 3
+Residual: 0.052765931411227034 convergence factor: 0.39560911922704173 Step: 4
+Residual: 0.0239998594366231 convergence factor: 0.4548362701983242 Step: 5
+Residual: 0.01201102754371281 convergence factor: 0.5004624120999778 Step: 6
+Residual: 0.006259129172132274 convergence factor: 0.5211152126121487 Step: 7
+Residual: 0.0033721318879365 convergence factor: 0.5387541613536837 Step: 8
+Residual: 0.001810366270447276 convergence factor: 0.5368610512903422 Step: 9
+Residual: 0.0009888474852408798 convergence factor: 0.5462140459546737 Step: 10
+Residual: 0.00053864491489687 convergence factor: 0.5447199117522739 Step: 11
+Residual: 0.0002970035665809213 convergence factor: 0.5513902728252548 Step: 12
+```
 

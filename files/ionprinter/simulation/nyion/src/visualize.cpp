@@ -49,7 +49,7 @@ void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute_
   }
 }
 
-void initialize_opengl(root_mesh_geometry mesh_geometry){
+void initialize_opengl(){
 
   int sngBuf[] = { GLX_RGBA,
                    GLX_RED_SIZE, 1,
@@ -108,13 +108,13 @@ void initialize_opengl(root_mesh_geometry mesh_geometry){
   /* -----------------------------------------------------------------------------
   Determine the longest side of the mesh and configure the frustrum appropriately.
   ----------------------------------------------------------------------------- */
-  int min_extent = std::min(std::min(mesh_geometry.x_min_bound,mesh_geometry.y_min_bound),mesh_geometry.z_min_bound)/OPENGL_WORLD_SCALE;
-  int max_extent = std::max(std::max(mesh_geometry.x_max_bound,mesh_geometry.y_max_bound),mesh_geometry.z_max_bound)/OPENGL_WORLD_SCALE;
+  int min_extent = WORLD_Z_START;
+  int max_extent = WORLD_Z_END;
   opengl_z_extent = max_extent-min_extent;
 
   opengl_current_z_translate = 2*opengl_z_extent;
-  opengl_current_x_translate = -(((mesh_geometry.x_max_bound-mesh_geometry.x_min_bound)/2)+mesh_geometry.x_min_bound)/OPENGL_WORLD_SCALE;
-  opengl_current_y_translate = -(((mesh_geometry.y_max_bound-mesh_geometry.y_min_bound)/2)+mesh_geometry.y_min_bound)/OPENGL_WORLD_SCALE;
+  opengl_current_x_translate = -(((WORLD_X_END-WORLD_X_START)/2)+WORLD_X_START)/OPENGL_WORLD_SCALE;
+  opengl_current_y_translate = -(((WORLD_Y_END-WORLD_Y_START)/2)+WORLD_Y_START)/OPENGL_WORLD_SCALE;
 }
 
 void opengl_switch_to_graph_window(){
@@ -131,7 +131,7 @@ void opengl_3d_mode(){
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
   double aspect = (double)viewport[2] / (double)viewport[3];
-  // printf("%f,%f\n",opengl_current_z_translate-1.5*opengl_z_extent,opengl_current_z_translate+opengl_z_extent);
+
   gluPerspective(60, aspect, opengl_current_z_translate-1.5*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -238,79 +238,34 @@ void opengl_draw_axis_cross(){
 //
 // }
 
-void draw_mesh(std::vector<std::vector<double>>& input_mesh, root_mesh_geometry mesh_geometry){
+void draw_mesh(std::vector<std::vector<double>>& input_mesh){
   /* -----------------------------------------------------------------------------
   Determine min and max for color scaling
   ----------------------------------------------------------------------------- */
-  double min = mesh_min(input_mesh,mesh_geometry);
-  double max = mesh_max(input_mesh,mesh_geometry);
+  double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
+  double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
   /* -----------------------------------------------------------------------------
   Draw cubes
   ----------------------------------------------------------------------------- */
-  for(int r_x = 0; r_x < mesh_geometry.root_x_len; r_x++){
-    for(int r_y = 0; r_y < mesh_geometry.root_y_len; r_y++){
-      for(int r_z = 0; r_z < mesh_geometry.root_z_len; r_z++){
-        int root_idx = (mesh_geometry.root_x_len*mesh_geometry.root_y_len*r_z) + (mesh_geometry.root_x_len*r_y) + r_x;
+  for(int x = 0; x < SIZE_X; x++){
+    for(int y = 0; y < SIZE_X; y++){
+      for(int z = 0; z < SIZE_X; z++){
 
-        if(input_mesh[root_idx].size()){
-          /* -----------------------------------------------------------------------------
-          Draw submesh outline
-          ----------------------------------------------------------------------------- */
-          glPushMatrix();
-            int cube_size = mesh_geometry.root_scale/OPENGL_WORLD_SCALE;
-            glTranslatef((r_x*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                          (r_y*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                          (r_z*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-            glColor4f(1, 0, 0, 0.1);
-            glutWireCube(cube_size);
-          glPopMatrix();
-          /* -----------------------------------------------------------------------------
-          Draw fine mesh cubes
-          ----------------------------------------------------------------------------- */
-          int sub_len = submesh_side_length(input_mesh[root_idx]);
+  glPushMatrix();
+    glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
+                  (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
+                  (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
 
-          cube_size = (mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE;
-          double fine_scale = mesh_geometry.root_scale/sub_len;
-          for(int x = 0; x < sub_len; x++){
-            for(int y = 0; y < sub_len; y++){
-              for(int z = 0; z < sub_len; z++){
-                glPushMatrix();
-
-                  glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                                (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                                (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-
-                  if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
-                    glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,255,
-                                                (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
-                  }
-                  else{
-                    glColor4f(0,(255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min)),0,
-                                                (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min));
-                  }
-                  glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
-                glPopMatrix();
-              }
-            }
-          }
-        }
-        else{
-          /* -----------------------------------------------------------------------------
-          Draw inactive submesh outlines
-          ----------------------------------------------------------------------------- */
-          glPushMatrix();
-            int cube_size = mesh_geometry.root_scale/OPENGL_WORLD_SCALE;
-            glTranslatef((r_x*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                          (r_y*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                          (r_z*mesh_geometry.root_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-            // glColor3f(255,255,255);
-            glColor4f(1, 1, 1, 0.02);
-            glutSolidCube(cube_size);
-          glPopMatrix();
-        }
-      }
+    if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
+      glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,255,
+                                  (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
     }
-  }
+    else{
+      glColor4f(0,(255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min)),0,
+                                  (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min));
+    }
+    glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
+  glPopMatrix();
 }
 
 void opengl_apply_camera_rotation(){
