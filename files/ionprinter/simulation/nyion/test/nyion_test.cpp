@@ -199,7 +199,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   ----------------------------------------------------------------------------- */
   // double max = 0;
 
-  const int MG_CYCLES = 30;
+  const int MG_CYCLES = 1;
   int MG_LEVELS = 12;//level 0 is the finest.
   int resolutions[] = {32,16,8,16,8,4,8,4,2,4,2,1};
 
@@ -262,7 +262,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
         queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
       }
       for(int i = 0; i < resolutions[level]; i++){ //as many cycles as the resolution is a good approximation
-        queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
+        queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(10),cl::NullRange);
       }
       if(res > 1){
         queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
@@ -270,10 +270,10 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
       queue.finish();
     }
 
-    queue.enqueueReadBuffer(buffer_v,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),v);
-    queue.enqueueReadBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
-    queue.finish();
-    display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
+    // queue.enqueueReadBuffer(buffer_v,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),v);
+    // queue.enqueueReadBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
+    // queue.finish();
+    // display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
 
     /* -----------------------------------------------------------------------------
     Apply correction to fine grid.

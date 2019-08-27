@@ -2133,3 +2133,57 @@ Of course! The GPU was running the gauss-seidel kernels in a non-deterministic o
 
 In fact, the accidentally non-atomic results are often precisely the same as Jacobi. Switching the Python implementation to Jacobi also produces the poor convergence seen.
 
+So now we're back to ultra-low-speed g-s. There're a few alternative polynomial-based smoothers, but they're all pretty poor-performing.
+
+A hybrid scheme using g-s on the potential and jacobi on the residual works really well. The convergence was pretty oscilliatory with 2 jacobi cycles on the residual;
+
+```
+Residual: 0.9462130116792321 convergence factor: 0.38303013845625433 Step: 2
+Residual: 0.3203507717376136 convergence factor: 0.33856094535108033 Step: 3
+Residual: 0.19052924889362552 convergence factor: 0.5947519584865565 Step: 4
+Residual: 0.1713446213684269 convergence factor: 0.8993087537131393 Step: 5
+Residual: 0.12015567479144809 convergence factor: 0.7012515119052857 Step: 6
+Residual: 0.06832530672513709 convergence factor: 0.5686398652725143 Step: 7
+Residual: 0.03195035602563599 convergence factor: 0.46762111371365944 Step: 8
+Residual: 0.012350504179937645 convergence factor: 0.3865529438866965 Step: 9
+Residual: 0.006547761152952338 convergence factor: 0.5301614458451522 Step: 10
+Residual: 0.006900436752884959 convergence factor: 1.0538620135484937 Step: 11
+Residual: 0.006502772797162882 convergence factor: 0.9423711904096767 Step: 12
+Residual: 0.005164047355329306 convergence factor: 0.7941300605769813 Step: 13
+Residual: 0.0035408563665899635 convergence factor: 0.6856746507050896 Step: 14
+Residual: 0.0020770162628160603 convergence factor: 0.5865858560132275 Step: 15
+Residual: 0.0009800444788676218 convergence factor: 0.4718520968819271 Step: 16
+Residual: 0.000308059068518729 convergence factor: 0.3143317218364124 Step: 17
+Residual: 0.00020098652287865932 convergence factor: 0.6524285223774867 Step: 18
+Residual: 0.0002945501659213118 convergence factor: 1.4655219748198702 Step: 19
+Residual: 0.0002839566149699123 convergence factor: 0.9640348158750331 Step: 20
+Residual: 0.00021703388025325773 convergence factor: 0.764320564520937 Step: 21
+Residual: 0.00013868587624081484 convergence factor: 0.6390056523846955 Step: 22
+Residual: 7.295053183087444e-05 convergence factor: 0.526012697242528 Step: 23
+Residual: 2.831670650808991e-05 convergence factor: 0.38816312640102774 Step: 24
+Residual: 8.445345836583137e-06 convergence factor: 0.29824604899479934 Step: 25
+Residual: 1.3173247798607621e-05 convergence factor: 1.5598233694047658 Step: 26
+Residual: 1.481300953481933e-05 convergence factor: 1.1244766485289246 Step: 27
+Residual: 1.2452951469328361e-05 convergence factor: 0.8406766660114923 Step: 28
+Residual: 8.678078913162867e-06 convergence factor: 0.6968692469842983 Step: 29
+Residual: 5.086096171075284e-06 convergence factor: 0.5860854944935704 Step: 30
+```
+
+ 3 made convergence more steady but slower:
+
+```
+Residual: 0.9242201022605371 convergence factor: 0.3741273364066939 Step: 2
+Residual: 0.3765915339701972 convergence factor: 0.407469533554937 Step: 3
+Residual: 0.2051029706950096 convergence factor: 0.5446297969917749 Step: 4
+Residual: 0.1383080716976741 convergence factor: 0.6743348047519981 Step: 5
+Residual: 0.07134703728936481 convergence factor: 0.5158559179779574 Step: 6
+Residual: 0.03354065537686331 convergence factor: 0.4701057906697826 Step: 7
+Residual: 0.017213722473627114 convergence factor: 0.5132196219845281 Step: 8
+Residual: 0.010005004322478465 convergence factor: 0.5812225878398459 Step: 9
+Residual: 0.005862237556578028 convergence factor: 0.5859305371220289 Step: 10
+Residual: 0.004238238905455177 convergence factor: 0.7229729031876986 Step: 11
+Residual: 0.0027972667871412715 convergence factor: 0.6600068683105186 Step: 12
+```
+
+
+

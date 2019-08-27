@@ -29,6 +29,27 @@ void kernel multires_gauss_seidel(global float* U, global const float* b, int re
     }
 }
 
+void kernel multires_jacobi(global float* U, global float* T, global const float* b, int res, const int X_SIZE, const int Y_SIZE){
+    /* -----------------------------------------------------------------------------
+    Call with a 3d NDRange of DIM_SIZE - 2.
+    The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
+
+    ----------------------------------------------------------------------------- */
+    int x = (get_global_id(0)*res)+res;
+    int y = (get_global_id(1)*res)+res;
+    int z = (get_global_id(2)*res)+res;
+
+    int coord = idx(x,y,z,X_SIZE,Y_SIZE);
+    T[coord] = (U[idx(x+res,y,z,X_SIZE,Y_SIZE)] +
+                U[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
+                U[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
+                U[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
+                U[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
+                U[idx(x,y,z-res,X_SIZE,Y_SIZE)] +
+                b[idx(x,y,z,X_SIZE,Y_SIZE)])/6.0;
+}
+
+
 void kernel multires_restrict(global float* U, int res, const int X_SIZE, const int Y_SIZE){
   /* -----------------------------------------------------------------------------
   http://paulbourke.net/miscellaneous/interpolation/

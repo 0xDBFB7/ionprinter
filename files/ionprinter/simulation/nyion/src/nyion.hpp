@@ -23,9 +23,9 @@
 #include <unistd.h>
 
 
-#define SIZE_X 64
-#define SIZE_Y 64
-#define SIZE_Z 64
+#define SIZE_X 256
+#define SIZE_Y 256
+#define SIZE_Z 256
 
 #define WORLD_X_START 0.0
 #define WORLD_X_END 0.01

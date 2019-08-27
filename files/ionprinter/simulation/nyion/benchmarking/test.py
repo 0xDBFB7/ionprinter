@@ -5,7 +5,7 @@ import math
 
 SIZE_X = 64
 SIZE_Y = 64
-SIZE_Z = 64
+SIZE_Z = 16
 
 
 u = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
@@ -18,10 +18,11 @@ for x in range(40,50):
 def gauss_seidel(U,b,theta):
     rows = U.shape[0]
     cols = U.shape[1]
+    z_size = U.shape[2]
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            for z in range(theta, (cols - theta)-1,theta):
+            for z in range(theta, (z_size - theta)-1,theta):
                 U[x,y,z] = (U[x+theta,y,z] +
                             U[x-theta,y,z] +
                             U[x,y+theta,z] +
@@ -33,9 +34,11 @@ def gauss_seidel(U,b,theta):
 def jacobi(U,T,b,theta):
     rows = U.shape[0]
     cols = U.shape[1]
+    z_size = U.shape[2]
+
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            for z in range(theta, (cols - theta)-1,theta):
+            for z in range(theta, (z_size - theta)-1,theta):
                 T[x,y,z] = (U[x+theta,y,z] +
                             U[x-theta,y,z] +
                             U[x,y+theta,z] +
@@ -47,10 +50,11 @@ def jacobi(U,T,b,theta):
 def restriction(X, theta):
     rows = X.shape[0]
     cols = X.shape[1]
+    z_size = X.shape[2]
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            for z in range(theta, (cols - theta)-1,theta):
+            for z in range(theta, (z_size - theta)-1,theta):
                 sum = 0
                 for i in range(0,theta):
                     for j in range(0,theta):
@@ -62,10 +66,11 @@ def restriction(X, theta):
 def prolongate(X, theta):
     rows = X.shape[0]
     cols = X.shape[1]
+    z_size = X.shape[2]
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            for z in range(theta, (cols - theta)-1,theta):
+            for z in range(theta, (z_size - theta)-1,theta):
                 V000 = X[x,y,z]
                 V001 = X[x,y,z+theta]
                 V010 = X[x,y+theta,z]
@@ -103,10 +108,8 @@ while True:
 
     # Step 1: Residual Calculation.
     v1 = u.copy()
-    jacobi(u,T,b,1)
-    u=T.copy()
-    print(numpy.linalg.norm(b))
-
+    gauss_seidel(u,b,1)
+    # u=T.copy()
     r = u - v1
     # Step 2: Restriction.
     res = [32,16,8,16,8,4,8,4,2,4,2,1]
@@ -114,12 +117,13 @@ while True:
     for level in range(0,len(res),1):
         resolution = res[level]
         r1 = r.copy()
-        if(level != 0):
+        if(res != 1):
             restriction(r1,resolution)
-        for i in range(0,2*int(math.sqrt(res[level]))):
+
+        for i in range(0,3*int(math.sqrt(res[level]))):
             jacobi(v,T,r1,resolution)
             v=T.copy()
-        if(level != 0):
+        if(res != 1):
             prolongate(v,resolution)
 
     u = u + v
@@ -144,5 +148,5 @@ while True:
     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
     c1 = numpy.linalg.norm(r)
     #
-    # plt.draw()
-    # plt.pause(0.001)
+    plt.draw()
+    plt.pause(0.001)
