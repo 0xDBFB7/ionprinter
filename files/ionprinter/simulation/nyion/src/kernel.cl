@@ -9,18 +9,24 @@ void kernel multires_gauss_seidel(global float* U, global const float* b, int re
     The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
 
     ----------------------------------------------------------------------------- */
-    int x = (get_global_id(0)*res)+res;
-    int y = (get_global_id(1)*res)+res;
-    int z = (get_global_id(2)*res)+res;
+    // int x = (get_global_id(0)*res)+res;
+    // int y = (get_global_id(1)*res)+res;
+    // int z = (get_global_id(2)*res)+res;
 
-    int coord = idx(x,y,z,X_SIZE,Y_SIZE);
-    U[coord] = (U[idx(x+res,y,z,X_SIZE,Y_SIZE)] +
-                U[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
-                U[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
-                U[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
-                U[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
-                U[idx(x,y,z-res,X_SIZE,Y_SIZE)] +
-                b[idx(x,y,z,X_SIZE,Y_SIZE)])/6.0;
+    for(int x = res; x < (X_SIZE-res)-1; x += res){
+      for(int y = res; y < (X_SIZE-res)-1; y += res){
+        for(int z = res; z < (X_SIZE-res)-1; z += res){
+          int coord = idx(x,y,z,X_SIZE,Y_SIZE);
+          U[coord] = (U[idx(x+res,y,z,X_SIZE,Y_SIZE)] +
+                      U[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
+                      U[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
+                      U[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
+                      U[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
+                      U[idx(x,y,z-res,X_SIZE,Y_SIZE)] +
+                      b[idx(x,y,z,X_SIZE,Y_SIZE)])/6.0;
+        }
+      }
+    }
 }
 
 void kernel multires_restrict(global float* U, int res, const int X_SIZE, const int Y_SIZE){

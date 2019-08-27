@@ -2117,3 +2117,13 @@ Residual: 0.00053864491489687 convergence factor: 0.5447199117522739 Step: 11
 Residual: 0.0002970035665809213 convergence factor: 0.5513902728252548 Step: 12
 ```
 
+
+
+<hr>
+
+"Comparative" unit testing.
+
+Much of the trouble in unit testing these matrix techniques is in constructing the correct results. The assertions must be manually coded in 3d space, which takes considerable effort. A proof-of-concept could be written in a high-level language like Python, then compared directly to the low-level functions.
+
+<hr>
+

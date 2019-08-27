@@ -75,60 +75,56 @@ def prolongate(X, theta):
                             X[x+i,y+j,z+k] += V111*(f_x)*(f_y)*(f_z)
 
 
-restriction(u,4)
-plt.imshow(u[:,:,8])
-plt.draw()
-plt.pause(100)
-#
-#
-# # Precondition.
+# Precondition.
 # for i in range(0,10):
 #     gauss_seidel(u,b,1)
-#
-# convergence = []
-# ims = []
-# t = 0
-# c1 = 1
-# while True:
-#
-#     # Step 1: Residual Calculation.
-#     v1 = u.copy()
-#     gauss_seidel(u,b,1)
-#     r = u - v1
-#     # Step 2: Restriction.
-#     res = [32,16,8,16,8,4,8,4,2,4,2,1]
-#     v = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
-#     for level in range(0,len(res),1):
-#         resolution = res[level]
-#         r1 = r.copy()
-#         if(level != 0):
-#             restriction(r1,resolution)
-#         for i in range(0,2*int(math.sqrt(res[level]))):
-#             gauss_seidel(v,r1,resolution)
-#         if(level != 0):
-#             prolongate(v,resolution)
-#
-#     u = u + v
-#
-#     convergence.append(numpy.linalg.norm(r))
-#
-#     plt.subplot(2, 2, 1)
-#     plt.gca().set_title('Potentials')
-#     plt.imshow(u[:,:,8])
-#     plt.subplot(2, 2, 2)
-#     plt.gca().set_title('Residual')
-#     plt.imshow(r[:,:,8])
-#     plt.subplot(2, 2, 3)
-#     plt.gca().set_title('Correction')
-#     plt.imshow(v[:,:,8])
-#     plt.subplot(2, 2, 4)
-#     plt.yscale('log')
-#     plt.gca().set_title('Convergence')
-#     plt.plot(convergence)
-#     plt.savefig(str(t) + '.png')
-#     t+=1
-#     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
-#     c1 = numpy.linalg.norm(r)
-#     #
-#     # plt.draw()
-#     # plt.pause(0.001)
+
+convergence = []
+ims = []
+t = 0
+c1 = 1
+while True:
+
+    # Step 1: Residual Calculation.
+    v1 = u.copy()
+    gauss_seidel(u,b,1)
+    print(numpy.linalg.norm(b))
+
+    r = u - v1
+    # Step 2: Restriction.
+    res = [32,16,8,16,8,4,8,4,2,4,2,1]
+    v = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
+    for level in range(0,len(res),1):
+        resolution = res[level]
+        r1 = r.copy()
+        if(level != 0):
+            restriction(r1,resolution)
+        for i in range(0,2*int(math.sqrt(res[level]))):
+            gauss_seidel(v,r1,resolution)
+        if(level != 0):
+            prolongate(v,resolution)
+
+    u = u + v
+
+    convergence.append(numpy.linalg.norm(r))
+
+    plt.subplot(2, 2, 1)
+    plt.gca().set_title('Potentials')
+    plt.imshow(u[:,:,8])
+    plt.subplot(2, 2, 2)
+    plt.gca().set_title('Residual')
+    plt.imshow(r[:,:,8])
+    plt.subplot(2, 2, 3)
+    plt.gca().set_title('Correction')
+    plt.imshow(v[:,:,8])
+    plt.subplot(2, 2, 4)
+    plt.yscale('log')
+    plt.gca().set_title('Convergence')
+    plt.plot(convergence)
+    plt.savefig(str(t) + '.png')
+    t+=1
+    print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
+    c1 = numpy.linalg.norm(r)
+    #
+    # plt.draw()
+    # plt.pause(0.001)

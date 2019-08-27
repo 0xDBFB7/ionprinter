@@ -36,7 +36,7 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < 10; i++){
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
     queue.finish();
   }
 
@@ -148,9 +148,6 @@ TEST(MG_GPU_OPERATORS, transfer_timing_test)
 
 TEST(MG_GPU_OPERATORS, multigrid_test)
 {
-  // const int GS_CYCLES_PER_LEVEL = 2;//level 0 is the finest.
-
-
   /* -----------------------------------------------------------------------------
   GPU kernel initialization
   ----------------------------------------------------------------------------- */
@@ -231,7 +228,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
     gauss_seidel.setArg(0, buffer_U);
     gauss_seidel.setArg(1, buffer_b);
     gauss_seidel.setArg(2, res);
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
     /* -----------------------------------------------------------------------------
     Subtract the first iteration from the new potentials to obtain the residuals
     ----------------------------------------------------------------------------- */
@@ -242,7 +239,6 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
     ----------------------------------------------------------------------------- */
     queue.enqueueReadBuffer(buffer_r,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),r);
     queue.finish();
-    // max = *std::max_element(r, r+SIZE_XYZ);
     float norm = sqrt(std::inner_product(r, r+SIZE_XYZ, r, 0.0L));
     printf("Residual: %f\nConvergence Factor: %f\n",norm,norm/previous_norm);
     previous_norm = norm;
