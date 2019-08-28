@@ -52,9 +52,9 @@ def restriction(X, theta):
     cols = X.shape[1]
     z_size = X.shape[2]
 
-    for x in range(theta, (rows - theta)-1,theta):
-        for y in range(theta, (cols - theta)-1,theta):
-            for z in range(theta, (z_size - theta)-1,theta):
+    for x in range(0, (rows - theta),theta):
+        for y in range(0, (cols - theta),theta):
+            for z in range(0, (z_size - theta),theta):
                 sum = 0
                 for i in range(0,theta):
                     for j in range(0,theta):
@@ -68,9 +68,9 @@ def prolongate(X, theta):
     cols = X.shape[1]
     z_size = X.shape[2]
 
-    for x in range(theta, (rows - theta)-1,theta):
-        for y in range(theta, (cols - theta)-1,theta):
-            for z in range(theta, (z_size - theta)-1,theta):
+    for x in range(0, (rows - theta),theta):
+        for y in range(0, (cols - theta),theta):
+            for z in range(0, (z_size - theta),theta):
                 V000 = X[x,y,z]
                 V001 = X[x,y,z+theta]
                 V010 = X[x,y+theta,z]
@@ -104,23 +104,25 @@ ims = []
 t = 0
 c1 = 1
 T = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
+v = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
 while True:
 
     # Step 1: Residual Calculation.
+    gauss_seidel(u,b,1)
     v1 = u.copy()
     gauss_seidel(u,b,1)
     # u=T.copy()
     r = u - v1
     # Step 2: Restriction.
     res = [32,16,8,16,8,4,8,4,2,4,2,1]
-    v = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
+    # v = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
     for level in range(0,len(res),1):
         resolution = res[level]
         r1 = r.copy()
         if(res != 1):
             restriction(r1,resolution)
 
-        for i in range(0,3*int(math.sqrt(res[level]))):
+        for i in range(0,4*int(math.sqrt(res[level]))):
             jacobi(v,T,r1,resolution)
             v=T.copy()
         if(res != 1):
@@ -143,7 +145,7 @@ while True:
     plt.yscale('log')
     plt.gca().set_title('Convergence')
     plt.plot(convergence)
-    plt.savefig(str(t) + '.png')
+    # plt.savefig(str(t) + '.png')
     t+=1
     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
     c1 = numpy.linalg.norm(r)

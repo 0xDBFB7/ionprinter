@@ -222,11 +222,10 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   queue.enqueueFillBuffer(buffer_T,0,0,sizeof(float)*(SIZE_XYZ)); //wipe correction buffer
 
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
-    queue.enqueueFillBuffer(buffer_v,0,0,sizeof(float)*(SIZE_XYZ)); //wipe correction buffer
+    // queue.enqueueFillBuffer(buffer_v,0,0,sizeof(float)*(SIZE_XYZ)); //wipe correction buffer
     /* -----------------------------------------------------------------------------
     Store a copy of the previous iteration
     ----------------------------------------------------------------------------- */
-    queue.enqueueCopyBuffer(buffer_U,buffer_r,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
     /* -----------------------------------------------------------------------------
     Compute the finest gauss-seidel iteration
     ----------------------------------------------------------------------------- */
@@ -235,7 +234,10 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
     gauss_seidel.setArg(1, buffer_b);
     gauss_seidel.setArg(2, res);
     queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
+    queue.enqueueCopyBuffer(buffer_U,buffer_r,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
     queue.finish();
+
     /* -----------------------------------------------------------------------------
     Subtract the first iteration from the new potentials to obtain the residuals
     ----------------------------------------------------------------------------- */
@@ -259,52 +261,29 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
     jacobi.setArg(2, buffer_r1);
     gauss_seidel.setArg(0, buffer_v);
     gauss_seidel.setArg(1, buffer_r1);
-    for(int level = 6; level > -1; level--){
-      for(int up = 6; up > level-1; up--){
-        res = pow(2,up);
-        printf("res: %i\n",res);
-        linterp.setArg(1, res);
-        multires_restrict.setArg(1, res);
-        jacobi.setArg(3, res);
-        gauss_seidel.setArg(2, res);
-        queue.enqueueCopyBuffer(buffer_r,buffer_r1,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-        //todo: faster copy could be implemented - theta subtract?
-        if(res > 1){ //this could be sped up by inserting into r1 directly, avoiding the copy op
-          queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-        }
-        for(int i = 0; i < sqrt(res); i++){ //as many cycles as the resolution is a good approximation
-            queue.enqueueNDRangeKernel(jacobi,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-            queue.enqueueCopyBuffer(buffer_T,buffer_v,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-        }
-        if(res > 1){
-          queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-        }
-        queue.finish();
+    for(int level = 5; level > -1; level--){
+      res = pow(2,level);
+      printf("res: %i\n",res);
+      linterp.setArg(1, res);
+      multires_restrict.setArg(1, res);
+      jacobi.setArg(3, res);
+      gauss_seidel.setArg(2, res);
+      queue.enqueueCopyBuffer(buffer_r,buffer_r1,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
+      //todo: faster copy could be implemented - theta subtract?
+      if(res > 1){ //this could be sped up by inserting into r1 directly, avoiding the copy op
+        queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-res)/res,(SIZE_Y-res)/res,(SIZE_Z-res)/res),cl::NullRange);
       }
+      queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
+      queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
 
-      if(level != 0){
-        for(int down = level; down < 6; down++){
-          res = pow(2,down);
-          printf("res: %i\n",res);
-          linterp.setArg(1, res);
-          multires_restrict.setArg(1, res);
-          jacobi.setArg(3, res);
-          gauss_seidel.setArg(2, res);
-          queue.enqueueCopyBuffer(buffer_r,buffer_r1,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-          //todo: faster copy could be implemented - theta subtract?
-          if(res > 1){ //this could be sped up by inserting into r1 directly, avoiding the copy op
-            queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-          }
-          for(int i = 0; i < 3; i++){ //as many cycles as the resolution is a good approximation
-              queue.enqueueNDRangeKernel(jacobi,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-              queue.enqueueCopyBuffer(buffer_T,buffer_v,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-          }
-          if(res > 1){
-            queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-          }
-          queue.finish();
-        }
+      // for(int i = 0; i < res; i++){ //as many cycles as the resolution is a good approximation
+      //     queue.enqueueNDRangeKernel(jacobi,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
+      //     queue.enqueueCopyBuffer(buffer_T,buffer_v,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
+      // }
+      if(res > 1){
+        queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-res)/res,(SIZE_Y-res)/res,(SIZE_Z-res)/res),cl::NullRange);
       }
+      queue.finish();
     }
 
     // queue.enqueueReadBuffer(buffer_v,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),v);

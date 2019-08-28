@@ -54,9 +54,9 @@ void kernel multires_restrict(global float* U, int res, const int X_SIZE, const 
   /* -----------------------------------------------------------------------------
   http://paulbourke.net/miscellaneous/interpolation/
   ----------------------------------------------------------------------------- */
-  int g_x = (get_global_id(0)*res)+res;
-  int g_y = (get_global_id(1)*res)+res;
-  int g_z = (get_global_id(2)*res)+res;
+  int g_x = (get_global_id(0)*res);
+  int g_y = (get_global_id(1)*res);
+  int g_z = (get_global_id(2)*res);
 
   float value = 0;
   for(int x = 0; x < res; x++){
@@ -73,9 +73,9 @@ void kernel multires_interpolate(global float* U, int res, const int X_SIZE, con
   /* -----------------------------------------------------------------------------
   http://paulbourke.net/miscellaneous/interpolation/
   ----------------------------------------------------------------------------- */
-  int g_x = (get_global_id(0)*res)+res;
-  int g_y = (get_global_id(1)*res)+res;
-  int g_z = (get_global_id(2)*res)+res;
+  int g_x = (get_global_id(0)*res);
+  int g_y = (get_global_id(1)*res);
+  int g_z = (get_global_id(2)*res);
 
   float V000 = (U[idx(g_x,g_y,g_z,X_SIZE,Y_SIZE)]);
   float V001 = (U[idx(g_x,g_y,g_z+res,X_SIZE,Y_SIZE)]);

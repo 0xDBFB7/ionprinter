@@ -2192,3 +2192,10 @@ No, disregard; that was a figment of my incompetence.
 No, disregard that again; the solution does diverge.
 
 At large resolutions, there is insufficient damping.
+
+
+
+Try full weighting, then bicubic.
+
+Wavelet multigrid looks interesting.
+
