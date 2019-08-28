@@ -2185,5 +2185,10 @@ Residual: 0.004238238905455177 convergence factor: 0.7229729031876986 Step: 11
 Residual: 0.0027972667871412715 convergence factor: 0.6600068683105186 Step: 12
 ```
 
+The hybrid scheme has more difficulty with a higher dof mesh.
 
+No, disregard; that was a figment of my incompetence.
 
+No, disregard that again; the solution does diverge.
+
+At large resolutions, there is insufficient damping.
