@@ -2199,3 +2199,39 @@ Try full weighting, then bicubic.
 
 Wavelet multigrid looks interesting.
 
+'v' need not be wiped.
+
+
+
+Tried out Raptor AMG.
+
+```
+arthurdent@DeepThought-Ryzen-Debian:~/Programs/raptor-master/build$ mpirun -n 16 ./examples/example 
+Level	NumRows	NNZ
+-----	-------	---
+0	16000000	143952004
+1	9735033	145658265
+2	5728968	143205172
+3	2755849	92478107
+4	1333287	51794569
+5	632486	26779106
+6	297705	13220867
+7	138652	6318092
+8	63461	2913665
+9	28089	1268415
+10	11760	504470
+11	4675	187199
+12	1760	63318
+13	624	18595
+14	220	5216
+15	73	1125
+16	24	180
+Raptor AMG Setup Time: 2.264749e+01
+Raptor AMG Solve Time: 5.838596e+01
+
+```
+
+58 seconds, not super great? At that rate even the simplest of runs with SLPIC enabled would take ~4 days.
+
+OTOH, an atomic G-S mg sweep takes 20s on this GPU.
+
