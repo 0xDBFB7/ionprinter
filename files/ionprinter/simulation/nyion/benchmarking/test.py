@@ -52,9 +52,9 @@ def restriction(X, theta):
     cols = X.shape[1]
     z_size = X.shape[2]
 
-    for x in range(0, (rows - theta),theta):
-        for y in range(0, (cols - theta),theta):
-            for z in range(0, (z_size - theta),theta):
+    for x in range(theta, (rows - theta),theta):
+        for y in range(theta, (cols - theta),theta):
+            for z in range(theta, (z_size - theta),theta):
                 sum = 0
                 for i in range(0,theta):
                     for j in range(0,theta):
@@ -68,9 +68,9 @@ def prolongate(X, theta):
     cols = X.shape[1]
     z_size = X.shape[2]
 
-    for x in range(0, (rows - theta),theta):
-        for y in range(0, (cols - theta),theta):
-            for z in range(0, (z_size - theta),theta):
+    for x in range(theta, (rows - theta),theta):
+        for y in range(theta, (cols - theta),theta):
+            for z in range(theta, (z_size - theta),theta):
                 V000 = X[x,y,z]
                 V001 = X[x,y,z+theta]
                 V010 = X[x,y+theta,z]
@@ -94,36 +94,6 @@ def prolongate(X, theta):
                             X[x+i,y+j,z+k] += V110*(f_x)*(f_y)*(1.0-f_z)
                             X[x+i,y+j,z+k] += V111*(f_x)*(f_y)*(f_z)
 
-def prolongate_cubic(X, theta):
-    rows = X.shape[0]
-    cols = X.shape[1]
-    z_size = X.shape[2]
-
-    for x in range(0, (rows - theta),theta):
-        for y in range(0, (cols - theta),theta):
-            for z in range(0, (z_size - theta),theta):
-                V000 = X[x,y,z]
-                V001 = X[x,y,z+theta]
-                V010 = X[x,y+theta,z]
-                V100 = X[x+theta,y,z]
-                V101 = X[x+theta,y,z+theta]
-                V110 = X[x+theta,y+theta,z]
-                V111 = X[x+theta,y+theta,z+theta]
-                for i in range(0,theta):
-                    for j in range(0,theta):
-                        for k in range(0,theta):
-                            f_x = float(i)/theta
-                            f_y = float(j)/theta
-                            f_z = float(k)/theta
-
-                            X[x+i,y+j,z+k] = 0
-                            X[x+i,y+j,z+k] += V000*(1.0-f_x)*(1.0-f_y)*(1.0-f_z)
-                            X[x+i,y+j,z+k] += V001*(1.0-f_x)*(1.0-f_y)*(f_z)
-                            X[x+i,y+j,z+k] += V010*(1.0-f_x)*(f_y)*(1.0-f_z)
-                            X[x+i,y+j,z+k] += V100*(f_x)*(1.0-f_y)*(1.0-f_z)
-                            X[x+i,y+j,z+k] += V101*(f_x)*(1.0-f_y)*(f_z)
-                            X[x+i,y+j,z+k] += V110*(f_x)*(f_y)*(1.0-f_z)
-                            X[x+i,y+j,z+k] += V111*(f_x)*(f_y)*(f_z)
 
 
 
@@ -156,18 +126,18 @@ while True:
         plt.gca().set_title('Original')
         plt.imshow(r1[:,:,8])
         if(res != 1):
-            restriction(r1,resolution)
+            restriction(r1,2*resolution)
         plt.subplot(4, 1, 2)
         plt.gca().set_title('Restricted')
         plt.imshow(r1[:,:,8])
         for i in range(0,3*int(math.sqrt(res[level]))):
-            jacobi(v,T,r1,resolution)
+            jacobi(v,T,r1,2*resolution)
             v=T.copy()
         plt.subplot(4, 1, 3)
         plt.gca().set_title('Smoothed')
         plt.imshow(v[:,:,8])
         if(res != 1):
-            prolongate(v,resolution)
+            prolongate(v,2*resolution)
 
         plt.subplot(4, 1, 4)
         plt.gca().set_title('Prolongated')
@@ -176,6 +146,8 @@ while True:
 
         plt.draw()
         plt.pause(0.001)
+        plt.savefig(str(t) + '.png')
+
     #
     u = u + v
     # convergence.append(numpy.linalg.norm(r))
@@ -193,7 +165,6 @@ while True:
     # plt.yscale('log')
     # plt.gca().set_title('Convergence')
     # plt.plot(convergence)
-    # # plt.savefig(str(t) + '.png')
     t+=1
     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
     c1 = numpy.linalg.norm(r)

@@ -2235,3 +2235,31 @@ Raptor AMG Solve Time: 5.838596e+01
 
 OTOH, an atomic G-S mg sweep takes 20s on this GPU.
 
+Maybe some of the difficulty in explaining complex systems is in determining the extent of your audience's ignorance.
+
+The relaxation should be turned into audio.
+
+With pure jacobi, a run takes < 1 second.
+
+Duramax D-3005 or Dolapix CE-64 are deflocculants used in alumina electrophoresis.
+
+> However, v∗
+> j is now only an intermediate value. The new iterate is given by the
+> weighted average
+> v(1)
+> j = (1 − ω)v(0)
+> j + ωv∗
+> j = v(0)
+> j + ω(v∗
+> j − v(0)
+> j ), 1 ≤ j ≤ n − 1,
+> where ω ∈ R is a weighting factor that may be chosen. This generates an entire
+> family of iterations called the weighted or damped Jacobi method. Notice that ω = 1
+> yields the original Jacobi iteration.
+> In matrix form, the weighted Jacobi method is given by (Exercise 3)
+
+P.9, *A Multigrid Tutorial*
+
+
+
+Decided to re-write 
