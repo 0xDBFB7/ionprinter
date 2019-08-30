@@ -2327,3 +2327,7 @@ T\phi = f\\
 r = Tv - f
 $$
 Notice that 'f', the right-hand-side, only refers to the space charge. The boundary conditions are applied to phi externally, using programmatic ghost points or whatnot.
+
+The residual is zeroed at the boundaries.
+
+<http://cacs.usc.edu/education/cs653/NRC-c19.6-MG.pdf>

@@ -4,7 +4,7 @@ import matplotlib.animation as animation
 import math
 SIZE_X = 128
 
-u = numpy.zeros(SIZE_X)
+u = numpy.zeros((SIZE_X,SIZE_Y))
 b = numpy.zeros(SIZE_X)
 
 for x in range(40,50):

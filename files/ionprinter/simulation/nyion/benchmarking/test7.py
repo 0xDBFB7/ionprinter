@@ -8,9 +8,21 @@ u = numpy.zeros(SIZE_X)
 b = numpy.zeros(SIZE_X)
 
 for x in range(40,50):
-        b[x,y] = 1
+        u[x] = 1
+        b[x] = 1
 
 # b[8,8] = 1
+
+def gauss_seidel(U,b,theta):
+    rows = U.shape[0]
+    cols = U.shape[1]
+
+    for x in range(theta, (rows - theta),theta):
+        for y in range(theta, (cols - theta),theta):
+            U[x,y] = (U[x+theta,y] +
+                        U[x-theta,y] +
+                        U[x,y+theta] +
+                        U[x,y-theta] + b[x,y])/4.0
 
 def gauss_seidel(U,b,theta):
     rows = U.shape[0]
@@ -31,18 +43,7 @@ def restriction(X):
 
     for x in range(0,int(rows/2)-1):
         for y in range(0,int(cols/2)-1):
-
             O[x,y] = X[x*2,y*2]
-            # sum = 0
-            # for i in range(1,2):
-            #     for j in range(1,2):
-            #         sum += X[2*x+i,2*y+j]
-            # O[x,y] = sum
-            # O[x,y] = X[x*2,y*2]*0.5
-            # O[x,y] += X[x*2+1,y*2]*0.125
-            # O[x,y] += X[x*2-1,y*2]*0.125
-            # O[x,y] += X[x*2,y*2+1]*0.125
-            # O[x,y] += X[x*2,y*2-1]*0.125
     return O
 
 def prolongate(X):
@@ -66,27 +67,27 @@ def prolongate(X):
 # it's not the root residual you idiot
 # it's each residual recursively
 
-def V_Cycle(u,f,h):
-    phi = u.copy()
-
-    v1 = phi.copy()
-    gauss_seidel(phi,f,1)
-    r = phi - v1
-
-    rhs = restriction(r)
-    #
-    eps = numpy.zeros_like(rhs)
-    #
-    if(h == 32):
-        for i in range(0,10):
-            gauss_seidel(eps,rhs,1)
-    else:
-        eps = V_Cycle(eps,rhs,2*h)
-
-    T = prolongate(eps)
-
-    if(h==1):
-        print("Residual: {} Step: {}".format(numpy.linalg.norm(r),h))
+# def V_Cycle(u,f,h):
+#     phi = u.copy()
+#
+#     v1 = phi.copy()
+#     gauss_seidel(phi,f,1)
+#     r = phi - v1
+#
+#     rhs = restriction(r)
+#     #
+#     eps = numpy.zeros_like(rhs)
+#     #
+#     if(h == 32):
+#         for i in range(0,10):
+#             gauss_seidel(eps,rhs,1)
+#     else:
+#         eps = V_Cycle(eps,rhs,2*h)
+#
+#     T = prolongate(eps)
+#
+#     if(h==1):
+#         print("Residual: {} Step: {}".format(numpy.linalg.norm(r),h))
 
     # plt.subplot(2, 3, 1)
     # plt.gca().set_title('Potentials')
@@ -113,7 +114,7 @@ def V_Cycle(u,f,h):
     # plt.clf()
     # plt.cla()
 
-    return phi + T
+    # return phi + T
 
 convergence = []
 ims = []
