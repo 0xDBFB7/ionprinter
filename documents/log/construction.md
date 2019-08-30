@@ -2263,3 +2263,67 @@ P.9, *A Multigrid Tutorial*
 
 
 Decided to re-write 
+
+
+
+Having an issue where it performs essentially identically if 2 grids or 16 are used. 
+
+Changed to 1d. Maybe now I'll be able to figure this out.
+
+Messed up the residual operator; it's more complex than just subtracting the two approximations.
+
+Brandt's
+
+<https://people.eecs.berkeley.edu/~demmel/cs267/lecture25/lecture25.html>
+
+Jacobi ideal damping is w=2/3.
+
+Block g-s is an option but jacobi is way faster.
+
+<https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html>
+
+
+
+eq 14 in <https://web.stanford.edu/class/cs315b/projects/multigrid_poisson/multigrid_poisson_slides.pdf>
+
+has the residual operator. I puzzled over the 'a' constant for a while, but I think it's just 1 or -1.
+
+
+
+Wow nice, the whole jacobi thing's broken and I didn't even catch it. Matplotlib auto-scaled the potentials, so I didn't see the lack of convergence.
+
+
+
+> There are several criteria for the convergence of the
+> iterative procedure when solving the Poisson
+> equation, but the simplest one is that nowhere on the
+> mesh the absolute value of the potential update is
+> larger than 1E-5 V.
+> This criterion has shown to be sufficient for all device
+> simulations that have been performed within the
+> Computational Electronics community.
+
+<https://nanohub.org/resources/1542/download/numericalanalysis_ppt.pdf>
+
+
+
+space charge for later:
+
+[https://storm.cis.fordham.edu/~nicolenikas/CompPhysMidterm-copy%20(2).pdf](https://storm.cis.fordham.edu/~nicolenikas/CompPhysMidterm-copy (2).pdf)
+
+<http://accelconf.web.cern.ch/accelconf/IPAC2014/papers/mopme013.pdf>
+
+eq 7 <https://pdfs.semanticscholar.org/3bff/671288b8bec327beb7dfcda5f5d321ed6c73.pdf>
+
+
+
+Okay, so here's what I've learned. 
+
+The poisson equation is as follows:
+$$
+\nabla^2 \phi = f \\
+\nabla^2 \phi = -q/\epsilon_0\\
+T\phi = f\\
+r = Tv - f
+$$
+Notice that 'f', the right-hand-side, only refers to the space charge. The boundary conditions are applied to phi externally, using programmatic ghost points or whatnot.
