@@ -2331,3 +2331,19 @@ Notice that 'f', the right-hand-side, only refers to the space charge. The bound
 The residual is zeroed at the boundaries.
 
 <http://cacs.usc.edu/education/cs653/NRC-c19.6-MG.pdf>
+
+> void resid(double **res, double **u, double **rhs, int n)
+> Returns minus the residual for the model problem. Input quantities are u[1..n][1..n] and
+> rhs[1..n][1..n], while res[1..n][1..n] is returned.
+> {
+>     int i,j;
+>     double h,h2i;
+>     h=1.0/(n-1);
+>     h2i=1.0/(h*h);
+> for (j=2;j<n;j++) Interior points.
+>     for (i=2;i<n;i++)
+>     res[i][j] = -h2i*(u[i+1][j]+u[i-1][j]+u[i][j+1]+u[i][j-1]- 4.0*u[i][j])+rhs[i][j];
+>     for (i=1;i<=n;i++) Boundary points.
+>         res[i][1]=res[i][n]=res[1][i]=res[n][i]=0.0;
+> }
+

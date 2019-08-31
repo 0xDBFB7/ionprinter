@@ -10,20 +10,27 @@ SIZE_X = 128
 u = numpy.zeros((SIZE_X))
 b = numpy.zeros((SIZE_X))
 
-for x in range(10,20):
-    u[x] = 1.0
-    b[x] = 1.0
+# for x in range(10,20):
+#     u[x] = 1.0
+#     b[x] = 1.0
+
+u[64] = 1.0
+b[64] = 1.0
+
+
+b[0] = 1.0
+b[SIZE_X-1] = 1.0
 
 def residual(u,b,f):
     rows = u.shape[0]
 
-    # h = 1.0/(rows-1)
-    # h2 = 1.0/(h*h)
+    h = 1.0/(rows-1)
+    h2 = 1.0/(h*h)
 
     R = numpy.zeros(rows)
-    for x in range(1,rows-2): #careful with the edge boundaries; they must be included!
+    for x in range(0,rows-1): #careful with the edge boundaries; they must be included!
         if(b[x] == 0):
-            R[x] = f[x] - (u[x+1] + u[x-1] + -2.0*u[x])/2.0
+            R[x] = f[x] - (u[x+1] + u[x-1] - 2.0*u[x])
         else:
             R[x] = 0
     return R
@@ -60,73 +67,137 @@ def restriction(X):
 
     O = numpy.zeros((int(rows/2)))
 
-    for x in range(0,int(rows/2)-1):
-        O[x] = X[x*2]
+    for x in range(1,int(rows/2)-2):
+        O[x] = 0.25*(X[x*2-1] + X[x*2] + X[x*2+1])
 
     return O
+
 
 def prolongate(X):
     rows = X.shape[0]
 
     O = numpy.zeros((rows*2))
-    for x in range(1,rows-1):
+    for x in range(0,rows-1):
         O[2*x] = X[x]
         O[2*x+1] = (X[x]+X[x+1])/2.0
 
     return O
 
-def gauss_seidel(u,b,f):
+def jacobi(u,b,f):
+    T = u.copy()
     for x in range(1, (u.shape[0] - 2)):
         if(b[x] == 0):
-            u[x] = (u[x+1] + u[x-1] + f[x])/2.0
+            T[x] = (u[x+1] + u[x-1] + f[x])/2.0
+    return T
 
-# def V_cycle():
 
 
+
+
+def V_cycle(phi,b,f,h):
+    u = phi.copy()
+    u1 = phi.copy()
+    u = jacobi(u,b,f)
+    r = -residual(u,b,f)
+
+    r1 = restriction(r)
+
+    v = numpy.zeros_like(r1) #correction
+    # b1 = restriction(
+    b1 = numpy.zeros_like(r1)
+    b1[0] = 1.0
+    b1[b1.shape[0]-1] = 1.0
+    print(numpy.linalg.norm(r),h)
+    if(h == 32):
+        for i in range(0,100):
+            v = jacobi(v,b1,r1)
+    else:
+        v = V_cycle(v,b1,r1,2*h)
+
+    v1 = prolongate(v)
+    #
+    # plt.figure()
+    # plt.subplot(2, 3, 1)
+    # plt.gca().set_title('Potentials')
+    # plt.plot(u)
+    # plt.subplot(2, 3, 2)
+    # plt.gca().set_title('Root residual')
+    # plt.plot(r)
+    #
+    # plt.subplot(2, 3, 3)
+    # plt.gca().set_title('Restricted residual')
+    # plt.plot(r1)
+    # plt.plot(b1)
+    # plt.subplot(2, 3, 4)
+    # plt.gca().set_title('Correction')
+    # plt.plot(v)
+    # plt.plot(b1)
+    # plt.subplot(2, 3, 5)
+    # plt.gca().set_title('Prolongated correction')
+    # plt.plot(v1)
+    #
+    # plt.draw()
+    # plt.pause(0.1)
+
+    u += v1
+
+    return u
+
+
+# f = numpy.zeros_like(u) #no space charge
+# u = V_cycle(u,b,f,1)
+# f = numpy.zeros_like(u) #no space charge
+# u = V_cycle(u,b,f,1)
+# input()
 
 prev_r = 1
 while True:
 
+
+    u1 = u.copy()
     f = numpy.zeros_like(u) #no space charge
-    gauss_seidel(u,b,f)
-    r = -residual(u,b,f)
+    u = V_cycle(u,b,f,1)
+    r = u - u1.copy()
 
-    print("Convergence: {}".format(numpy.linalg.norm(r)/prev_r))
     prev_r = numpy.linalg.norm(r)
-
-
-    plt.subplot(2, 3, 1)
-    plt.gca().set_title('Potentials')
-    plt.plot(u)
-    plt.subplot(2, 3, 2)
-    plt.gca().set_title('Root residual')
-    plt.plot(r)
-
-
-    r1 = restriction(r)
-    v = numpy.zeros_like(r1) #correction
-    b1 = restriction(b) #no boundaries on inner levels?
-    gauss_seidel(v,b1,r1)
-    gauss_seidel(v,b1,r1)
-
-    v1 = prolongate(v)
-
-    plt.subplot(2, 3, 3)
-    plt.gca().set_title('Restricted residual')
-    plt.plot(r1)
-    plt.plot(b1)
-    plt.subplot(2, 3, 4)
-    plt.gca().set_title('Correction')
-    plt.plot(v)
-    plt.plot(b1)
-    plt.subplot(2, 3, 5)
-    plt.gca().set_title('Prolongated correction')
-    plt.plot(v1)
-
-
-    u += v1*(1.0-b)
-
-    plt.draw()
-    plt.pause(0.1)
-    plt.clf()
-    plt.cla()
+    # input()
+    #
+    #
+    # prev_r = numpy.linalg.norm(r)
+    #
+    #
+    # plt.subplot(2, 3, 1)
+    # plt.gca().set_title('Potentials')
+    # plt.plot(u)
+    # plt.subplot(2, 3, 2)
+    # plt.gca().set_title('Root residual')
+    # plt.plot(r)
+    #
+    #
+    # r1 = restriction(r)
+    # v = numpy.zeros_like(r1) #correction
+    # b1 = restriction(b) #no boundaries on inner levels?
+    # gauss_seidel(v,b1,r1)
+    # gauss_seidel(v,b1,r1)
+    #
+    # v1 = prolongate(v)
+    #
+    # plt.subplot(2, 3, 3)
+    # plt.gca().set_title('Restricted residual')
+    # plt.plot(r1)
+    # plt.plot(b1)
+    # plt.subplot(2, 3, 4)
+    # plt.gca().set_title('Correction')
+    # plt.plot(v)
+    # plt.plot(b1)
+    # plt.subplot(2, 3, 5)
+    # plt.gca().set_title('Prolongated correction')
+    # plt.plot(v1)
+    #
+    #
+    # u += v1*(1.0-b)
+    #
+    # plt.draw()
+    # plt.pause(0.1)
+    # plt.clf()
+    # plt.cla()

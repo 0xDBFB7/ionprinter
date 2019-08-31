@@ -31,6 +31,7 @@ def gauss_seidel(U,b,theta):
                             U[x,y,z-theta] + b[x,y,z])/6.0
 
 
+
 def jacobi(U,T,b,theta):
     rows = U.shape[0]
     cols = U.shape[1]
@@ -93,9 +94,6 @@ def prolongate(X, theta):
                             X[x+i,y+j,z+k] += V101*(f_x)*(1.0-f_y)*(f_z)
                             X[x+i,y+j,z+k] += V110*(f_x)*(f_y)*(1.0-f_z)
                             X[x+i,y+j,z+k] += V111*(f_x)*(f_y)*(f_z)
-
-
-
 
 # Precondition.
 # for i in range(0,10):
