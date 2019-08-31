@@ -2347,3 +2347,15 @@ The residual is zeroed at the boundaries.
 >         res[i][1]=res[i][n]=res[1][i]=res[n][i]=0.0;
 > }
 
+
+
+<hr>
+
+This is a really, really hard problem. 
+
+Not in absolute terms; this is a trivial exercise given to first-year numerical analysis students, and comprises only a few hundred lines of code at the worst. It's only hard for me.
+
+However, I've read some 50 papers, read Briggs, Brandt, copied code verbatim, and generally spent at least one thousand hours trying to get convergence < 0.1. I have re-written the code some 15 or 20 times, trying my hardest to follow instructions perfectly. And it still doesn't work.
+
+
+

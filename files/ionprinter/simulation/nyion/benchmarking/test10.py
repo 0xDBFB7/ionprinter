@@ -13,9 +13,24 @@ for x in range(40,50):
         u[x,y] = 1.0
         b[x,y] = 1.0
 
+def jacobi(U,b,f,theta):
+    rows = U.shape[0]
+    cols = U.shape[1]
+    h2 = 1.0/((1/rows)*(1/cols))
+    T = U.copy()
+    for x in range(theta, (rows - theta),theta):
+        for y in range(theta, (cols - theta),theta):
+            if(b[x,y] == 0):
+                T[x,y] = (U[x+theta,y] +
+                            U[x-theta,y] +
+                            U[x,y+theta] +
+                            U[x,y-theta] + h2*f[x,y])/4.0
+    return T
+
 def gauss_seidel(U,b,f,theta):
     rows = U.shape[0]
     cols = U.shape[1]
+    h2 = 1.0/((1/rows)*(1/cols))
 
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
@@ -23,7 +38,7 @@ def gauss_seidel(U,b,f,theta):
                 U[x,y] = (U[x+theta,y] +
                             U[x-theta,y] +
                             U[x,y+theta] +
-                            U[x,y-theta] + f[x,y])/4.0
+                            U[x,y-theta] + h2*f[x,y])/4.0
 
 def residual(U,b,f,theta):
     rows = U.shape[0]
@@ -33,23 +48,29 @@ def residual(U,b,f,theta):
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
             if(b[x,y] == 0):
-                R[x,y] = (U[x+theta,y] +
-                            U[x-theta,y] +
-                            U[x,y+theta] +
-                            U[x,y-theta] - 4.0*U[x,y]) + f[x,y]
+                R[x,y] = f[x,y] - (U[x+theta,y] +
+                                    U[x-theta,y] +
+                                    U[x,y+theta] +
+                                    U[x,y-theta] - 4.0*U[x,y])
     return R
 
 def restriction(X, theta):
     rows = X.shape[0]
     cols = X.shape[1]
-
+    O = X.copy()
     for x in range(theta, (rows - theta)-1,theta):
         for y in range(theta, (cols - theta)-1,theta):
-            sum = 0
-            for i in range(0,theta):
-                for j in range(0,theta):
-                    sum += X[x+i,y+j]
-            X[x,y] = sum
+            # sum = 0
+            # for i in range(0,theta):
+            #     for j in range(0,theta):
+            #         sum += X[x+i,y+j]
+
+            O[x,y] = X[x,y]*0.5
+            O[x,y] += X[x+theta,y]*0.125
+            O[x,y] += X[x-theta,y]*0.125
+            O[x,y] += X[x,y+theta]*0.125
+            O[x,y] += X[x,y-theta]*0.125
+    numpy.copyto(X,O)
 
 
 def prolongate(X, theta):
@@ -86,21 +107,30 @@ while True:
     v1 = u.copy()
     f = numpy.zeros((SIZE_X, SIZE_Y))
     gauss_seidel(u,b,f,1)
-    r = residual(u,b,f,1)
+    r = -residual(u,b,f,1)
     # Step 2: Restriction.
-    res = [32,16,8,16,8,4,8,4,2,4,2,1]
+    # res = [128,32,16,8,16,8,4,8,4,2,4,2,1]
     v = numpy.zeros((SIZE_X, SIZE_Y))
     b1 = numpy.zeros((SIZE_X, SIZE_Y))
-    for level in range(0,len(res),1):
-        resolution = res[level]
-        r1 = r.copy()
-        if(level != 0):
-            restriction(r1,resolution)
-        for i in range(0,res[level]):
-            gauss_seidel(v,b1,r1,resolution)
-            gauss_seidel(v,b1,r1,resolution)
-        if(level != 0):
-            prolongate(v,resolution)
+    restriction(r,4)
+    v=jacobi(v,b,r,4)
+    v=jacobi(v,b,r,4)
+    v=jacobi(v,b,r,4)
+    v=jacobi(v,b,r,4)
+    prolongate(v,4)
+    u = u + v
+
+    # # b1 = numpy.zeros((SIZE_X, SIZE_Y))
+    # for level in range(0,len(res),1):
+        # resolution = res[level]
+        # r1 = r.copy()
+        # # if(level != 0):
+        # #     restriction(r1,resolution)
+        # for i in range(0,4):
+        #     v=jacobi(v,b,r1,resolution)
+        #     v=jacobi(v,b,r1,resolution)
+        # if(level != 0):
+        #     prolongate(v,resolution)
 
 
     convergence.append(numpy.linalg.norm(r))
@@ -109,7 +139,6 @@ while True:
     plt.gca().set_title('Potentials')
     plt.imshow(u)
 
-    u = u + v
 
     plt.subplot(2, 2, 2)
     plt.gca().set_title('Residual')
