@@ -16,7 +16,7 @@ def source(x,y,n):#RHS corresponding to above
 nv          = 1     # nv : Number of V-cycles within FMG. nv=1 will give solution a to within discretization error.
                     # Increase this (to ~5) to get exact solution (upto roundoff limit) of the discrete problem
                     # For instance, when deferred correction is desired.
-nlevels     = 8     # total number of grid levels. Also determines the grid size
+nlevels     = 9     # total number of grid levels. Also determines the grid size
 NX          = 1*2**(nlevels-1)
 NY          = 1*2**(nlevels-1)
 

@@ -8,7 +8,7 @@ Thanks Dr. Malpeddi!
 import numpy as np
 from scipy.sparse.linalg import LinearOperator
 
-def Jacrelax(level,nx,ny,u,f,iters=1,pre=False):
+def Jacrelax(level,nx,ny,u,f,iters=1,pre=False,r=0):
   '''
   under-relaxed Jacobi method smoothing
   '''
@@ -22,35 +22,35 @@ def Jacrelax(level,nx,ny,u,f,iters=1,pre=False):
   u[-1,:] = -u[-2,:]
   u[:, 0] = -u[:, 1]
   u[:,-1] = -u[:,-2]
+  #
+  # if(r):
+  #     u[int(nx/2),int(ny/2)] = 1
 
-  #if it is a pre-sweep, u is fully zero (on the finest grid depends on BC, always true on coarse grids)
-  # we can save some calculation, if doing only one iteration, which is typically the case.
-  if(pre and level>1):
-    u[1:nx+1,1:ny+1] = -Ap*f[1:nx+1,1:ny+1]
-    #Dirichlet BC
-    u[ 0,:] = -u[ 1,:]
-    u[-1,:] = -u[-2,:]
-    u[:, 0] = -u[:, 1]
-    u[:,-1] = -u[:,-2]
-    iters=iters-1
-
+  T = u.copy()
   for it in range(iters):
-    u[1:nx+1,1:ny+1] = Ap*(Ax*(u[2:nx+2,1:ny+1] + u[0:nx,1:ny+1])
-                         + Ay*(u[1:nx+1,2:ny+2] + u[1:nx+1,0:ny])
-                         - f[1:nx+1,1:ny+1])
-    #Dirichlet BC
+    for i in range(1,nx+1):
+      for j in range(1,ny+1):
+         u[i,j]= Ap*( Ax*(u[i+1,j]+u[i-1,j])
+                     + Ay*(u[i,j+1]+u[i,j-1]) - f[i,j])
+
+
     u[ 0,:] = -u[ 1,:]
     u[-1,:] = -u[-2,:]
     u[:, 0] = -u[:, 1]
     u[:,-1] = -u[:,-2]
+
 
 #  if(not pre):
 #    return u,None
 
   res=np.zeros([nx+2,ny+2])
-  res[1:nx+1,1:ny+1]=f[1:nx+1,1:ny+1]-(( Ax*(u[2:nx+2,1:ny+1]+u[0:nx,1:ny+1])
-                                       + Ay*(u[1:nx+1,2:ny+2]+u[1:nx+1,0:ny])
-                                       - 2.0*(Ax+Ay)*u[1:nx+1,1:ny+1]))
+  for i in range(1,nx+1):
+    for j in range(1,ny+1):
+      res[i,j]=f[i,j] - ((Ax*(u[i+1,j]+u[i-1,j])+Ay*(u[i,j+1]+u[i,j-1]) - 2.0*(Ax+Ay)*u[i,j]))
+
+  # if(r):
+  #     res[int(nx/2),int(ny/2)] = 0
+
   return u,res
 
 def restrict(nx,ny,v):
@@ -59,12 +59,10 @@ def restrict(nx,ny,v):
   '''
   v_c=np.zeros([nx+2,ny+2])
 
-#  #vectorized form of
-#  for i in range(1,nx+1):
-#    for j in range(1,ny+1):
-#      v_c[i,j]=0.25*(v[2*i-1,2*j-1]+v[2*i,2*j-1]+v[2*i-1,2*j]+v[2*i,2*j])
+  for i in range(1,nx+1):
+    for j in range(1,ny+1):
+      v_c[i,j]=0.25*(v[2*i-1,2*j-1]+v[2*i,2*j-1]+v[2*i-1,2*j]+v[2*i,2*j])
 
-  v_c[1:nx+1,1:ny+1]=0.25*(v[1:2*nx:2,1:2*ny:2]+v[1:2*nx:2,2:2*ny+1:2]+v[2:2*nx+1:2,1:2*ny:2]+v[2:2*nx+1:2,2:2*ny+1:2])
 
   return v_c
 
@@ -74,7 +72,6 @@ def prolong(nx,ny,v):
   '''
   v_f=np.zeros([2*nx+2,2*ny+2])
 
-#  #vectorized form of
   for i in range(1,nx+1):
       for j in range(1,ny+1):
         v_f[2*i-1,2*j-1] = 0.5625*v[i,j]+0.1875*(v[i-1,j]+v[i,j-1])+0.0625*v[i-1,j-1]
@@ -93,7 +90,7 @@ def V_cycle(nx,ny,num_levels,u,f,level=1):
     return u,res
 
   #Step 1: Relax Au=f on this grid
-  u,res=Jacrelax(level,nx,ny,u,f,iters=2,pre=True)
+  u,res=Jacrelax(level,nx,ny,u,f,iters=2,pre=True,r=1)
 
   #Step 2: Restrict residual to coarse grid
   res_c=restrict(nx//2,ny//2,res)
@@ -106,7 +103,7 @@ def V_cycle(nx,ny,num_levels,u,f,level=1):
   u+=prolong(nx//2,ny//2,e_c)
 
   #Step 5: Relax Au=f on this grid
-  u,res=Jacrelax(level,nx,ny,u,f,iters=1,pre=False)
+  u,res=Jacrelax(level,nx,ny,u,f,iters=1,pre=False,r=1)
   return u,res
 
 def FMG(nx,ny,num_levels,f,nv=1,level=1):

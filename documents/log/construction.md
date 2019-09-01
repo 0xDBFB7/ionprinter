@@ -2357,5 +2357,13 @@ Not in absolute terms; this is a trivial exercise given to first-year numerical 
 
 However, I've read some 50 papers, read Briggs, Brandt, copied code verbatim, and generally spent at least one thousand hours trying to get convergence < 0.1. I have re-written the code some 15 or 20 times, trying my hardest to follow instructions perfectly. And it still doesn't work.
 
+Brandt's 5.3 Relaxation on and near boundaries and 5.4 are both important.
+
+<hr>
+
+Trottenberg's *Multigrid* is also enlightening, P.185 or so.
+
+
+
 
 
