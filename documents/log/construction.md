@@ -2367,3 +2367,10 @@ Trottenberg's *Multigrid* is also enlightening, P.185 or so.
 
 
 
+<https://www.cs.virginia.edu/~robins/YouAndYourResearch.html>
+
+not sure I entirely agree with some points, but yeah
+
+<https://github.com/marmakoide/inside-3d-mesh>
+
+<http://www.sgh1.net/posts/read-stl-file.md>
