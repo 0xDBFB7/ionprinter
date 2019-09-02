@@ -2374,3 +2374,36 @@ not sure I entirely agree with some points, but yeah
 <https://github.com/marmakoide/inside-3d-mesh>
 
 <http://www.sgh1.net/posts/read-stl-file.md>
+
+
+
+<http://teacher.pas.rochester.edu/PHY217/LectureNotes/Chapter3/LectureNotesChapter3.pdf> is really good for explaining how the stencil works with laplace's equation
+
+
+
+
+
+<hr>
+
+I've been considerably less diligent in keeping notes. Much of what I've been working on has amounted to mere brute-force multigrid. I've found an example code written by a PhD, and I'm trying to massage arbitrary boundaries onto it.
+
+![figure_1](assets/figure_1.png)
+
+One can see that the second-level U (in orange) is clearly asymmetric. Hmm, this ties in well with something I saw in Ulrich et al, where the restriction operator was modified to remove boundaries. Let's see!
+
+![figure_3](assets/figure_3.png)
+
+Look at those high-frequency components in the residual! You can really see where the coarsening helps. 
+
+![figure_4](assets/figure_4.png)
+
+Gotcha. Restriction does indeed make for a lopsided residual. Let's fix that, shall we? Dr. Malipeddi's code uses a full weighting restriction by default. Altering this to a 6-stencil with boundary checks on each arm.
+
+![figure_1-2](assets/figure_1-2.png)
+
+Promising! Now the problems only seem to arise after prolongation.
+
+Oh hey! That could be a useful troubleshooting technique. Arrange a perfectly symmetrical problem, solve it, and see what parts remain asymmetric - perhaps by comparison.
+
+![figure_1-3](assets/figure_1-3.png)
+
