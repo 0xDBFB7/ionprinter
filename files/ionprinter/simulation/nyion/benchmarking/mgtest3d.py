@@ -25,7 +25,7 @@ def source(x,y,z,n):
 
 #input
 max_cycles = 20           #maximum number of V cycles
-nlevels    = 5           #total number of grid levels. 1 means no multigrid, 2 means one coarse grid. etc
+nlevels    = 4           #total number of grid levels. 1 means no multigrid, 2 means one coarse grid. etc
 NX         = 3*2**(5-1) #Nx and Ny are given as function of grid levels
 NY         = 3*2**(5-1)
 NZ         = 3*2**(5-1)

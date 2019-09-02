@@ -89,24 +89,15 @@ def restrict(B,nx,ny,nz,v):
           if(not B[i*2-1,j*2,k*2]):
               v_c[i,j,k] += v[2*i-1,2*j,2*k]
               count+=1
-          if(not B[i*2+1,j*2,k*2]):
-              v_c[i,j,k] += v[2*i+1,2*j,2*k]
+          if(not B[i*2,j*2-1,k*2]):
+              v_c[i,j,k] += v[2*i,2*j-1,2*k]
               count+=1
           if(not B[i*2,j*2-1,k*2]):
               v_c[i,j,k] += v[2*i,2*j-1,2*k]
               count+=1
-          if(not B[i*2,j*2+1,k*2]):
-              v_c[i,j,k] += v[2*i,2*j+1,2*k]
-              count+=1
-          if(not B[i*2,j*2,k*2-1]):
-              v_c[i,j,k] += v[2*i,2*j,2*k-1]
-              count+=1
-          if(not B[i*2,j*2,k*2+1]):
-              v_c[i,j,k] += v[2*i,2*j,2*k+1]
-              count+=1
           if(not B[i*2,j*2,k*2]):
-              v_c[i,j,k] += 6*v[2*i,2*j,2*k]
-              count+=6
+              v_c[i,j,k] += v[2*i,2*j,2*k]
+              count+=1
 
           v_c[i,j,k] /= count
               # 0.125*(v[2*i-1,2*j-1,2*k-1]+v[2*i,2*j-1,2*k-1]+v[2*i-1,2*j,2*k-1]+v[2*i,2*j,2*k-1]
@@ -187,49 +178,49 @@ def V_cycle(B,nx,ny,nz,num_levels,u,f,level=1):
   #Step 1: Relax Au=f on this grid
   u,res=GSrelax(B,nx,ny,nz,u,f,2)
 
-  plt.figure()
-  plt.subplot(2, 3, 2)
-  plt.gca().set_title('Potentials')
-  plt.plot(u[:,int(nx/2),int(nx/2)])
-
-  plt.subplot(2, 3, 3)
-  plt.gca().set_title('Residuals')
-  plt.plot(res[:,int(nx/2),int(nx/2)])
-  plt.subplot(2, 3, 3)
-  plt.plot(B[:,int(nx/2),int(nx/2)])
+  # plt.figure()
+  # plt.subplot(2, 3, 2)
+  # plt.gca().set_title('Potentials')
+  # plt.plot(u[:,int(nx/2),int(nx/2)])
+  #
+  # plt.subplot(2, 3, 3)
+  # plt.gca().set_title('Residuals')
+  # plt.plot(res[:,int(nx/2),int(nx/2)])
+  # plt.subplot(2, 3, 3)
+  # plt.plot(B[:,int(nx/2),int(nx/2)])
 
   #Step 2: Restrict residual to coarse grid
   res_c=restrict(B,nx//2,ny//2,nz//2,res)
   b_c=restrict_B(nx//2,ny//2,nz//2,B)
-
-  plt.subplot(2, 3, 4)
-  plt.gca().set_title('Restricted Residuals')
-  plt.plot(res_c[:,int(nx/4),int(nx/4)])
-  plt.subplot(2, 3, 4)
-  plt.plot(b_c[:,int(nx/4),int(nx/4)])
+  #
+  # plt.subplot(2, 3, 4)
+  # plt.gca().set_title('Restricted Residuals')
+  # plt.plot(res_c[:,int(nx/4),int(nx/4)])
+  # plt.subplot(2, 3, 4)
+  # plt.plot(b_c[:,int(nx/4),int(nx/4)])
 
   print(np.amax(u))
   #Step 3:Solve A e_c=res_c on the coarse grid. (Recursively)
   e_c=np.zeros_like(res_c)
   e_c,res_c=V_cycle(b_c,nx//2,ny//2,nz//2,num_levels,e_c,res_c,level+1)
-
-  plt.subplot(2, 3, 5)
-  plt.gca().set_title('Restricted Correction')
-  plt.plot(e_c[:,int(nx/4),int(nx/4)])
+  #
+  # plt.subplot(2, 3, 5)
+  # plt.gca().set_title('Restricted Correction')
+  # plt.plot(e_c[:,int(nx/4),int(nx/4)])
 
   #Step 4: Interpolate(prolong) e_c to fine grid and add to u
   R = prolong(B,nx//2,ny//2,nz//2,e_c)*(1.0-B)
   u+= R
-
-  plt.subplot(2, 3, 6)
-  plt.gca().set_title('Prolongated Correction')
-  plt.plot(R[:,int(nx/2),int(nx/2)])
-  plt.subplot(2, 3, 6)
-  plt.gca().set_title('Prolongated Correction')
-  plt.plot(B[:,int(nx/2),int(nx/2)])
-
-  plt.draw()
-  plt.pause(1)
+  #
+  # plt.subplot(2, 3, 6)
+  # plt.gca().set_title('Prolongated Correction')
+  # plt.plot(R[:,int(nx/2),int(nx/2)])
+  # plt.subplot(2, 3, 6)
+  # plt.gca().set_title('Prolongated Correction')
+  # plt.plot(B[:,int(nx/2),int(nx/2)])
+  #
+  # plt.draw()
+  # plt.pause(1)
 
   #Step 5: Relax Au=f on this grid
   if(level==1):

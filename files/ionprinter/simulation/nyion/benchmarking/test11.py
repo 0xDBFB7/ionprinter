@@ -19,15 +19,9 @@ def residual(U,B,F):
         if(B[i] == 0):
             R[i] = F[i] - (U[i+1] + U[i-1] - 2.0*U[i])
 
-    return R
 
-# def restriction(X): #boundary points are handled differently: see "Multigrid Methods for Boundary Value Problems"
-#     rows = X.shape[0]
-#     O = numpy.zeros((int(rows/2)))
-#     for x in range(0,int(rows/2)-1):
-#         O[x] = X[x*2] + X[x*2+1]
-#
-#     return O
+
+    return R
 
 def prolongate(X):
     rows = X.shape[0]
@@ -63,25 +57,25 @@ def V_Cycle(U,B,F,h):
 
     v1 = prolongate(v)
 
-    plt.figure()
-    plt.subplot(2, 3, 1)
-    plt.gca().set_title('Potentials')
-    plt.plot(u)
-    plt.subplot(2, 3, 2)
-    plt.gca().set_title('Residual')
-    plt.plot(r)
-    plt.subplot(2, 3, 3)
-    plt.gca().set_title('Restricted residual')
-    plt.plot(r_restricted)
-    plt.subplot(2, 3, 4)
-    plt.gca().set_title('Correction')
-    plt.plot(v)
-    plt.subplot(2, 3, 5)
-    plt.gca().set_title('Prolongated Correction')
-    plt.plot(v1)
-
-    plt.draw()
-    plt.pause(1)
+    # plt.figure()
+    # plt.subplot(2, 3, 1)
+    # plt.gca().set_title('Potentials')
+    # plt.plot(u)
+    # plt.subplot(2, 3, 2)
+    # plt.gca().set_title('Residual')
+    # plt.plot(r)
+    # plt.subplot(2, 3, 3)
+    # plt.gca().set_title('Restricted residual')
+    # plt.plot(r_restricted)
+    # plt.subplot(2, 3, 4)
+    # plt.gca().set_title('Correction')
+    # plt.plot(v)
+    # plt.subplot(2, 3, 5)
+    # plt.gca().set_title('Prolongated Correction')
+    # plt.plot(v1)
+    #
+    # plt.draw()
+    # plt.pause(1)
 
     U += v1
 
