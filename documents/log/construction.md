@@ -2405,5 +2405,16 @@ Promising! Now the problems only seem to arise after prolongation.
 
 Oh hey! That could be a useful troubleshooting technique. Arrange a perfectly symmetrical problem, solve it, and see what parts remain asymmetric - perhaps by comparison.
 
+Borrowed an old trilinear interp function, which worked quite admirably.
+
 ![figure_1-3](assets/figure_1-3.png)
 
+![figure_2-1](assets/figure_2-1.png)
+
+Well, it started out admirably, that is.
+
+![figure_6](assets/figure_6.png)
+
+I think our restriction is now of the wrong order. Let me fix that, back in a jiffy...
+
+That seems to have helped.

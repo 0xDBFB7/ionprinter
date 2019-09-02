@@ -104,6 +104,9 @@ def restrict(B,nx,ny,nz,v):
           if(not B[i*2,j*2,k*2+1]):
               v_c[i,j,k] += v[2*i,2*j,2*k+1]
               count+=1
+          if(not B[i*2,j*2,k*2]):
+              v_c[i,j,k] += 6*v[2*i,2*j,2*k]
+              count+=6
 
           v_c[i,j,k] /= count
               # 0.125*(v[2*i-1,2*j-1,2*k-1]+v[2*i,2*j-1,2*k-1]+v[2*i-1,2*j,2*k-1]+v[2*i,2*j,2*k-1]
@@ -146,9 +149,9 @@ def restrict_B(nx,ny,nz,B):
 
 def prolong(B,nx,ny,nz,v):
     v_f=np.zeros([2*nx+2,2*ny+2,2*nz+2])
-    for x in range(1, nx):
-        for y in range(1, ny):
-            for z in range(1, nz):
+    for x in range(1, nx+1):
+        for y in range(1, ny+1):
+            for z in range(1, nz+1):
                 V000 = v[x,y,z]
                 V001 = v[x,y,z+1]
                 V010 = v[x,y+1,z]
