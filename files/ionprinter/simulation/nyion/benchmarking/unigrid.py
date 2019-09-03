@@ -25,14 +25,14 @@ def FND(I3, J3):
 
 I1 = 97
 J1 = 65
-H = (1.0/8.0) ##?
+H = 1/32##?
 
 U = numpy.zeros((I1,J1))
 F = numpy.zeros((I1,J1))
 
-for I in range(0,I1):
-    for J in range(0,J1):
-        U[I,J] = math.cos(3.0*(I+J)*H)
+# for I in range(0,I1):
+#     for J in range(0,J1):
+#         U[I,J] = math.cos(3.0*(I+J-2)*H)
 # U[10,10] = 10
 
 N=6
@@ -42,22 +42,22 @@ while True:
         M1 = 2**(N-k)
         for relaxes in range(0,1): #Number of relaxations; 1 usually suffices
             E=0
-            for I in range(M1,I1-M1,M1):
-                for J in range(M1,J1-M1,M1):
+            for I in range(1+M1,I1-M1,M1):
+                for J in range(1+M1,J1-M1,M1):
                     A1=0
                     R1=0
-                    for I3 in range(I-M1-1,I+M1): #fix ranges
-                        for J3 in range(J-M1-1,J+M1):
+                    for I3 in range(I-M1+1,I+M1): #fix ranges
+                        for J3 in range(J-M1+1,J+M1):
                             D = 4 + math.exp((I3+J3)*H)*H*H
-                            F[I3,J3] = math.sin(3*(I3+J3)*H)*H*H
+                            F[I3,J3] = math.sin(3*(I3+J3-2)*H)*H*H
                             R = (D*U[I3,J3]) - U[I3,J3-1] - U[I3,J3+1] - U[I3-1,J3] - U[I3+1,J3] - F[I3,J3] #compute residual
                             A3 = D*FND(I3,J3) - FND(I3,J3+1) - FND(I3,J3-1) - FND(I3+1,J3) - FND(I3-1,J3)
                             R1 = R1 + FND(I3,J3)*R
                             A1 = A1 + FND(I3,J3)*A3
                     S=R1/A1
                     E=E+R1*R1
-                    for I3 in range(I-M1-1,I+M1):
-                        for J3 in range(J-M1-1,J+M1):
+                    for I3 in range(I-M1+1,I+M1):
+                        for J3 in range(J-M1+1,J+M1):
                             U[I3,J3] = U[I3,J3] - S*FND(I3,J3)
 
         E=math.sqrt(E)/M1/H
@@ -71,5 +71,5 @@ while True:
     prev_E = E
     #
     plt.draw()
-    plt.pause(1)
+    plt.pause(0.001)
     plt.cla()
