@@ -2446,3 +2446,4 @@ In McCormack et al, the U boundary and the rhs charge are scaled inverses of eac
 
 
 
+Damped jacobi greatly improves convergence.
