@@ -2459,3 +2459,8 @@ There's a fast direct multipole method for 2d that looks pretty interesting.
 
 Need to read [Classical Electrodynamics](http://www.amazon.de/Classical-Electrodynamics-John-David-Jackson/dp/047130932X/ref=sr_1_2?ie=UTF8&qid=1360409697&sr=8-2) by J. D. Jackson
 
+<http://www.mgnet.org/mgnet/tutorials/xwb.html>
+
+
+
+Now I've screwed myself, haven't I. By using unigrid, the operators have disappeared. 
