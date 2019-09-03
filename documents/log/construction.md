@@ -2463,4 +2463,10 @@ Need to read [Classical Electrodynamics](http://www.amazon.de/Classical-Electrod
 
 
 
-Now I've screwed myself, haven't I. By using unigrid, the operators have disappeared. 
+Now I've screwed myself, haven't I. By using unigrid, the operators have disappeared, so I can't alter them near the boundaries.
+
+
+
+<https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19810025336.pdf#page=256>
+
+Using a local- pre-smoothing technique. That seems to have done it.

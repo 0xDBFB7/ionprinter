@@ -60,27 +60,35 @@ while True:
             T = U.copy()
             for I in range(M1,I1-M1,M1):
                 for J in range(M1,J1-M1,M1):
-                    A1=0
-                    R1=0
-                    for I3 in range(I-M1+1,I+M1): #fix ranges
-                         for J3 in range(J-M1+1,J+M1):
-                            D = 8
-                            F[I3,J3] = 0
-                            R = (D*U[I3,J3]) - U[I3,J3-1] - U[I3,J3+1] - U[I3-1,J3] - U[I3+1,J3]    - U[I3-1,J3-1] - U[I3+1,J3+1] - U[I3-1,J3+1] - U[I3+1,J3-1]
-                            R -= F[I3,J3] #compute residual
-                            A3 = D*FND(I3,J3) - FND(I3,J3+1) - FND(I3,J3-1) - FND(I3+1,J3) - FND(I3-1,J3)    - FND(I3-1,J3+1) - FND(I3-1,J3-1) - FND(I3+1,J3+1) - FND(I3+1,J3-1)
-                            R1 = R1 + FND(I3,J3)*R
-                            A1 = A1 + FND(I3,J3)*A3
+                    submesh_relaxes = 1
+                    if(B[I-M1:I+M1,J-M1:J+M1].max() and k < 2): #if there's a boundary nearby, pre-smooth.
+                        for d in range(0,100):
+                            for I3 in range(I-M1*2+1,I+M1*2): #fix ranges
+                                 for J3 in range(J-M1*2+1,J+M1*2):
+                                    if(not B[I3,J3]):
+                                        U[I3,J3] = ((U[I3,J3-1] + U[I3,J3+1] + U[I3-1,J3] + U[I3+1,J3] + F[I3,J3]) / 4.0)
+                    for d in range(0,submesh_relaxes):
+                        T = U.copy()
+                        A1=0
+                        R1=0
+                        for I3 in range(I-M1+1,I+M1): #fix ranges
+                             for J3 in range(J-M1+1,J+M1):
+                                D = 4
+                                F[I3,J3] = 0
+                                R = (D*U[I3,J3]) - U[I3,J3-1] - U[I3,J3+1] - U[I3-1,J3] - U[I3+1,J3]
+                                R -= F[I3,J3] #compute residual
+                                A3 = D*FND(I3,J3) - FND(I3,J3+1) - FND(I3,J3-1) - FND(I3+1,J3) - FND(I3-1,J3)
+                                if(not B[I3,J3]):
+                                    R1 = R1 + FND(I3,J3)*R
+                                A1 = A1 + FND(I3,J3)*A3
 
-                    S=R1/A1
-                    E=E+R1*R1
-                    for I3 in range(I-M1+1,I+M1):
-                        for J3 in range(J-M1+1,J+M1):
-                            # if(not B[I3,J3]):
-                            T[I3,J3] = U[I3,J3] - 0.8*S*FND(I3,J3)
-                            if(B[I3,J3]):
-                                T[I3,J3] = U[I3,J3]
-            numpy.copyto(U,T)
+                        S=R1/A1
+                        E=E+R1*R1
+                        for I3 in range(I-M1+1,I+M1):
+                            for J3 in range(J-M1+1,J+M1):
+                                if(not B[I3,J3]):
+                                    T[I3,J3] = U[I3,J3] - 0.8*S*FND(I3,J3)
+                        numpy.copyto(U,T)
 
         E=math.sqrt(E)/M1/H
         print(E)
