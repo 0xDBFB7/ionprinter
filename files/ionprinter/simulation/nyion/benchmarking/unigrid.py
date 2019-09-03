@@ -24,8 +24,8 @@ b = numpy.zeros(SIZE_X)
 def FND(I3, J3):
     return (M1-math.fabs(I-I3))*(M1-math.fabs(J-J3))/(M1*M1)
 
-I1 = 64
-J1 = 64
+I1 = 128
+J1 = 128
 H = 1/8##?
 
 U = numpy.zeros((I1,J1))
@@ -40,9 +40,9 @@ for I in range(0,I1):
 #         B[I+15,J] = 1
         U[I,J] = math.cos(3.0*(I+J-2)*H)
 
-for I in range(20,30):
-    for J in range(20,30):
-        U[I,J] = 100
+for I in range(32,48):
+    for J in range(32,48):
+        U[I,J] = 1
         B[I,J] = 1
 
 N=4
@@ -64,14 +64,11 @@ while True:
                     R1=0
                     for I3 in range(I-M1+1,I+M1): #fix ranges
                          for J3 in range(J-M1+1,J+M1):
-                            D = 4
+                            D = 8
                             F[I3,J3] = 0
-                            if(k < 2): # add a layer of boundaries
-                                current_val = (U*(1.0-B))[I3-1:I3+1,J3-1:J3+1].max()/6
-                            else:
-                                current_val = U[I3,J3]
-                            R = (D*current_val) - U[I3,J3-1] - U[I3,J3+1] - U[I3-1,J3] - U[I3+1,J3] - F[I3,J3] #compute residual
-                            A3 = D*FND(I3,J3) - FND(I3,J3+1) - FND(I3,J3-1) - FND(I3+1,J3) - FND(I3-1,J3)
+                            R = (D*U[I3,J3]) - U[I3,J3-1] - U[I3,J3+1] - U[I3-1,J3] - U[I3+1,J3]    - U[I3-1,J3-1] - U[I3+1,J3+1] - U[I3-1,J3+1] - U[I3+1,J3-1]
+                            R -= F[I3,J3] #compute residual
+                            A3 = D*FND(I3,J3) - FND(I3,J3+1) - FND(I3,J3-1) - FND(I3+1,J3) - FND(I3-1,J3)    - FND(I3-1,J3+1) - FND(I3-1,J3-1) - FND(I3+1,J3+1) - FND(I3+1,J3-1)
                             R1 = R1 + FND(I3,J3)*R
                             A1 = A1 + FND(I3,J3)*A3
 
@@ -79,8 +76,10 @@ while True:
                     E=E+R1*R1
                     for I3 in range(I-M1+1,I+M1):
                         for J3 in range(J-M1+1,J+M1):
-                            if(not B[I3,J3]):
-                                T[I3,J3] = U[I3,J3] - 0.8*S*FND(I3,J3)
+                            # if(not B[I3,J3]):
+                            T[I3,J3] = U[I3,J3] - 0.8*S*FND(I3,J3)
+                            if(B[I3,J3]):
+                                T[I3,J3] = U[I3,J3]
             numpy.copyto(U,T)
 
         E=math.sqrt(E)/M1/H
