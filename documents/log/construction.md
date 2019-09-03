@@ -2446,4 +2446,16 @@ In McCormack et al, the U boundary and the rhs charge are scaled inverses of eac
 
 
 
-Damped jacobi greatly improves convergence.
+Damped jacobi greatly improves convergence. 2/3 or 0.8 were used, both to great effect.
+
+(The reader is warned to be sure that the boundary conditions are incorporated in
+f_h)
+
+Still having trouble with the boundaries.
+
+
+
+There's a fast direct multipole method for 2d that looks pretty interesting.
+
+Need to read [Classical Electrodynamics](http://www.amazon.de/Classical-Electrodynamics-John-David-Jackson/dp/047130932X/ref=sr_1_2?ie=UTF8&qid=1360409697&sr=8-2) by J. D. Jackson
+
