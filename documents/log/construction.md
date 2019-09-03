@@ -2418,3 +2418,31 @@ Well, it started out admirably, that is.
 I think our restriction is now of the wrong order. Let me fix that, back in a jiffy...
 
 That seems to have helped.
+
+
+
+
+
+> In irregular regions where boundaries do not lie on coarse grid lines, there are
+> several options possible for treating these boundaries. 
+>
+> The most obvious, which is
+> analogous to the usual multigrid approach, is to define the directions as the interpolated coarse grid coordinate vectors and use the (zero) boundary conditions
+> properly in interpolation. This is illustrated in one dimension by d, in Fig. 2. Note
+> that this requires special handling of the coarse grid points that are adjacent to the
+> boundary. Another approach is simply to ignore those directions which would
+> overlap the boundary so that d, is suppressed as in Fig. 3.
+>
+> In Section 5, this will be referred to as the contracted boundary method. This means that some points near the boundary are not corrected by smooth error iterations, so the danger is that
+> convergence is slowed (see Section 5). 
+
+<https://www.researchgate.net/profile/Steve_McCormick/publication/23862617_Unigrid_methods_for_boundary_value_problems_with_nonrectangular_domains/links/59edd626aca27250fe79be89/Unigrid-methods-for-boundary-value-problems-with-nonrectangular-domains.pdf>
+
+
+
+Wait, is the RHS the same as U boundary? That would explain everything.
+
+In McCormack et al, the U boundary and the rhs charge are scaled inverses of each other.
+
+
+

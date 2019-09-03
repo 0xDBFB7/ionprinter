@@ -17,7 +17,7 @@ def residual(U,B,F):
     R = numpy.zeros_like(U)
     for i in range(1,U.shape[0]-1):
         if(B[i] == 0):
-            R[i] = F[i] - (U[i+1] + U[i-1] - 2.0*U[i])
+            R[i] = F[i]*h2 - (U[i+1] + U[i-1] - 2.0*U[i])
 
 
 
@@ -40,7 +40,7 @@ def V_Cycle(U,B,F,h):
         U = (1.0-B)*U
         U += B
 
-    r = residual(U,B,f)
+    r = residual(U,B,F)
 
     print(numpy.linalg.norm(r),h)
 
@@ -89,5 +89,4 @@ u[int(SIZE/2)] = 1
 b[int(SIZE/2)] = 1
 
 while True:
-    f = numpy.zeros(SIZE)
-    u = V_Cycle(u,b,f,1)
+    u = V_Cycle(u,b,-1.0*b,1)

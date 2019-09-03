@@ -73,7 +73,7 @@ b[int(NX/2),int(NY/2),int(NZ/2)] = 1
 
 #V cycle
 for it in range(1,max_cycles+1):
-  u,res=V_cycle(b,NX,NY,NZ,nlevels,u,f)
+  u,res=V_cycle(b,NX,NY,NZ,nlevels,u,b)
 
   rtol=np.max(np.max(np.abs(res)))
   if(rtol<tol):
@@ -84,7 +84,7 @@ for it in range(1,max_cycles+1):
 
 print('Elapsed time: ',time.time()-tb,' seconds')
 
-u,res=FMG(b,NX,NY,NZ,nlevels,f,1)
+u,res=FMG(b,NX,NY,NZ,nlevels,b,1)
 print('Elapsed time: ',time.time()-tb,' seconds')
 error=uann[1:NX+1,1:NY+1,1:NZ+1]-u[1:NX+1,1:NY+1,1:NZ+1]
 en=np.max(np.max(np.abs(error)))

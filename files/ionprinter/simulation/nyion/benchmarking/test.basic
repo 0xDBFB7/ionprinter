@@ -11,7 +11,7 @@ DISP "» RELAXATIONS";
 INPUT N0
 DISP "» CYCLES";
 INPUT Cl
-print "» GPIDS=";n;" #x points«";II;" #Y POINTS-";Jl;" h = ";h
+print "» GPIDS=";N;" #x points«";I1;" #Y POINTS-";J1;" H = ";H
 PRINT "» RELAXATIONS=";NO;" # CYCLES";C1
 C=0
 FOR 1=1 TO II
@@ -30,7 +30,7 @@ At=0
 R1=0
 FOR I3=I-MI+1 TO I+Ml-1
 FOR J3=J-M1+1 TO J+Ml-1
-D-4+EXPÍ(I3+J3-2>«H■+H*H
+D=4+EXPÍ(I3+J3-2>«H+H*H
 R«D*U<I3,J3)-U<I3,J3-1)-U<I3,J3+1)-U<I3-1,J3)-U<I3+1,J3)
 R=R-SINk3»<I3+J3-2)*H)*H*H
 A3 = D*FND(I3,J3)-FND(I3,J3+1)-FHD<13.J3-1 >-FND<I3+l,J3>-FND<13-1, 13)
@@ -47,10 +47,10 @@ NEXT J3
 NEXT 13
 NEXT J
 NEXT I
-E=SOR(E)/n|,H
+E=SQR(E)/M1/H
 PRINT "LEVEL = ";N-K+l; " ERPOP=";E
 NEXT N8
 NEXT K
 IF C<C1 THEN 220
-DEF FND<I3, J3)»(M1-ABS< I - I 3 ) ) * i M 1 -ABS>: J- J3 > > .Ml «Ml >
+DEF FND(I3, J3)=(M1-ABS(I-I3))*i M1 -ABS>: J- J3 > > .Ml «Ml >
 END

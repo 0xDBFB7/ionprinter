@@ -8,8 +8,8 @@ SIZE_Y = 256
 u = numpy.zeros((SIZE_X, SIZE_Y))
 b = numpy.zeros((SIZE_X, SIZE_Y))
 
-for x in range(40,50):
-    for y in range(40,50):
+for x in range(120,128+8):
+    for y in range(120,128+8):
         u[x,y] = 1.0
         b[x,y] = 1.0
 
@@ -30,8 +30,6 @@ def jacobi(U,b,f,theta):
             if(b[x,y] == 0):
                 T[x,y] = Ap*(Ax*(U[x+theta,y] + U[x-theta,y]) +
                           Ay*(U[x,y+theta] + U[x,y-theta]) + f[x,y])
-
-
 
     return T
 
@@ -91,7 +89,7 @@ def restriction(B,X, theta):
     numpy.copyto(X,O)
 
 
-def prolongate(B,X, theta):
+def prolongate(B, X, theta):
     rows = X.shape[0]
     cols = X.shape[1]
 
@@ -101,8 +99,8 @@ def prolongate(B,X, theta):
             V01 = X[x,y+theta]
             V10 = X[x+theta,y]
             V11 = X[x+theta,y+theta]
-            for i in range(0,theta):
-                for j in range(0,theta):
+            for i in range(0,theta,theta//2):
+                for j in range(0,theta,theta//2):
                     if(not B[x+i,y+j]):
                         f_x = float(i)/theta
                         f_y = float(j)/theta
@@ -121,33 +119,65 @@ ims = []
 t = 0
 c1 = 1
 
+def V_Cycle(U,B,f,h):
+
+    U=jacobi(U,B,f,h)
+    U=jacobi(U,B,f,h)
+    r = residual(U,B,f,h)
+    # # # Step 2: Restriction.
+    v = numpy.zeros((SIZE_X, SIZE_Y))
+    restriction(b,r,2*h)
+    if(h == 4):
+        for i in range(0,10):
+            v=jacobi(v,b,r,h*2)
+            v=jacobi(v,b,r,h*2)
+    else:
+        v = V_Cycle(v,B,r,h*2)
+
+    prolongate(B,v,h*2)
+
+    return U + v
+
 while True:
 
+    #
+    # # # Step 1: Residual Calculation.
+    # # v1 = u.copy()
+    # f = numpy.zeros((SIZE_X, SIZE_Y))
+    # u=jacobi(u,b,f,1)
+    # u=jacobi(u,b,f,1)
+    # r = -residual(u,b,f,1)
+    # # # # Step 2: Restriction.
+    # # res = [32,16,8,4,2,1]
+    # v = numpy.zeros((SIZE_X, SIZE_Y))
+    # restriction(b,r,2)
+    # v=jacobi(v,b,r,2)
+    # v=jacobi(v,b,r,2)
+    # r1= residual(v,b,r,2)
+    # #
+    # # v1 = numpy.zeros((SIZE_X, SIZE_Y))
+    # # restriction(b,r1,4)
+    # # v1=jacobi(v1,b,r1,4)
+    # # v1=jacobi(v1,b,r1,4)
+    # # r2= residual(v1,b,r1,4)
+    # #
+    # # v2 = numpy.zeros((SIZE_X, SIZE_Y))
+    # # restriction(b,r2,16)
+    # # v2=jacobi(v2,b,r2,16)
+    # # v2=jacobi(v2,b,r2,16)
+    # #
+    # # prolongate(b,v2,16)
+    # # v1 += v2
+    # #
+    # # prolongate(b,v1,4)
+    # # v += v1
+    #
+    # prolongate(b,v,2)
+    # u += v
+    f = b.copy()
+    u = V_Cycle(u,b,b,1)
 
-    # # Step 1: Residual Calculation.
-    # v1 = u.copy()
-    f = numpy.zeros((SIZE_X, SIZE_Y))
-    u=jacobi(u,b,f,1)
-    u=jacobi(u,b,f,1)
-    r = -residual(u,b,f,1)
-    # # # Step 2: Restriction.
-    # res = [32,16,8,4,2,1]
-    v = numpy.zeros((SIZE_X, SIZE_Y))
-    restriction(b,r,4)
-    v=jacobi(v,b,r,4)
-    v=jacobi(v,b,r,4)
-    r1= -residual(v,b,r,1)
-    prolongate(b,v,4)
-    u += v
-
-    v = numpy.zeros((SIZE_X, SIZE_Y))
-    restriction(b,r,4)
-    v=jacobi(v,b,r,4)
-    v=jacobi(v,b,r,4)
-    r1= -residual(v,b,r,1)
-    prolongate(b,v,4)
-    u += v
-    # r = residual(v,b,r,1)
+    r = residual(u,b,f,1)
     # # # # b1 = numpy.zeros((SIZE_X, SIZE_Y))
     # for level in range(0,len(res),1):
     #     resolution = res[level]
@@ -164,21 +194,26 @@ while True:
 
     convergence.append(numpy.linalg.norm(r))
 
-    plt.subplot(2, 2, 1)
+    plt.subplot(2, 3, 1)
     plt.gca().set_title('Potentials')
-    plt.plot(u[45,:])
+    plt.plot(u[128,:])
 
 
-    plt.subplot(2, 2, 2)
+    plt.subplot(2, 3, 2)
     plt.gca().set_title('Residual')
-    plt.plot(r[45,:])
-    plt.subplot(2, 2, 3)
-    plt.gca().set_title('Correction')
-    plt.plot(v[45,:])
-    plt.subplot(2, 2, 4)
+    plt.plot(r[128,:])
+    plt.subplot(2, 3, 3)
+    # plt.gca().set_title('Correction')
+    # plt.plot(v[128,:])
+    # plt.subplot(2, 3, 4)
+
     plt.yscale('log')
     plt.gca().set_title('Convergence')
     plt.plot(convergence)
+
+    # plt.subplot(2, 3, 5)
+    # plt.gca().set_title('Residual')
+    # plt.plot(r1[128,:])
     # # plt.savefig(str(t) + '.png')
     t+=1
     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
