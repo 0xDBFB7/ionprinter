@@ -94,7 +94,12 @@ while True:
             E=math.sqrt(E)/M1/H
             print(E)
             # #FND COMPUTES THE UNIGRID DIRECTIONS
-
+    T = U.copy()
+    for I3 in range(1,I1-1): #fix ranges
+        for J3 in range(1,J1-1):
+            if(not B[I3,J3]):
+                U[I3,J3] = ((U[I3,J3-1] + U[I3,J3+1] + U[I3-1,J3] + U[I3+1,J3] + F[I3,J3]) / 4.0)
+    T = U - T
     plt.subplot(2, 3, 2)
     plt.gca().set_title('Potentials')
     plt.imshow(U)
@@ -102,6 +107,7 @@ while True:
     plt.gca().set_title('Boundaries')
     plt.imshow(B)
     print("Converge: {}".format(E/prev_E))
+    print("a: {}".format(numpy.linalg.norm(T)))
     prev_E = E
     #
     plt.draw()

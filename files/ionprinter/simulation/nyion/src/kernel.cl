@@ -10,7 +10,7 @@ inline float FND(I3, J3, step_size){
     return (step_size-abs(I-I3))*(step_size-abs(J-J3))/(step_size*step_size);
 }
 
-void kernel unigrid(global const float* U, global float* T, global const float* b, const int X_SIZE, const int Y_SIZE, const int Z_SIZE){
+void kernel unigrid(global const float* U, global float* T, global const float* F, int res, global const float* b, const int X_SIZE, const int Y_SIZE, const int Z_SIZE){
   for(int level = 0; level < LEVELS; level++){ //k
     int step_size = 2**(LEVELS-level); //M1
 
@@ -18,10 +18,35 @@ void kernel unigrid(global const float* U, global float* T, global const float* 
       for(int x = step_size; x < X_SIZE-step_size; x+= step_size){
         for(int y = step_size; y < Y_SIZE-step_size; y+= step_size){
           for(int z = step_size; z < Z_SIZE-step_size; z+= step_size){
-            
+
+            if(B[I-M1:I+M1,J-M1:J+M1].max() and B[I-M1:I+M1,J-M1:J+M1].sum() != 9 and k < 2){
+
+            }
+
+            for(int i = x-step_size+1; i < x+step_size; i++){
+              for(int j = y-step_size+1; j < y+step_size; j++){
+                for(int k = z-step_size+1; i < z+step_size; z++){
+
+                }
+              }
+            }
+            /* -----------------------------------------------------------------------------
+            Call with a 3d NDRange of DIM_SIZE - 2.
+            The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
+
+            ----------------------------------------------------------------------------- */
+            for(int i = x-step_size+1; i < x+step_size; i++){
+              for(int j = y-step_size+1; j < y+step_size; j++){
+                for(int k = z-step_size+1; i < z+step_size; z++){
+
+                }
+              }
+            }
+
           }
         }
       }
+    }
   }
 }
 
