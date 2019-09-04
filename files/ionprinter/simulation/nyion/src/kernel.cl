@@ -1,10 +1,28 @@
 
+#define RELAX_CYCLES 2
+#define LEVELS 4
+
 inline int idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
 }
 
-void kernel unigrid(global const float* U, global float* T, global const float* b, const int X_SIZE, const int Y_SIZE){
-  
+inline float FND(I3, J3, step_size){
+    return (step_size-abs(I-I3))*(step_size-abs(J-J3))/(step_size*step_size);
+}
+
+void kernel unigrid(global const float* U, global float* T, global const float* b, const int X_SIZE, const int Y_SIZE, const int Z_SIZE){
+  for(int level = 0; level < LEVELS; level++){ //k
+    int step_size = 2**(LEVELS-level); //M1
+
+    for relax_cycles in range(0,RELAX_CYCLES){
+      for(int x = step_size; x < X_SIZE-step_size; x+= step_size){
+        for(int y = step_size; y < Y_SIZE-step_size; y+= step_size){
+          for(int z = step_size; z < Z_SIZE-step_size; z+= step_size){
+            
+          }
+        }
+      }
+  }
 }
 
 // void kernel multires_gauss_seidel(global float* U, global const float* b, int res, const int X_SIZE, const int Y_SIZE){
