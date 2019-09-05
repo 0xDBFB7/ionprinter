@@ -149,47 +149,39 @@ TEST(MG_GPU_OPERATORS, transfer_timing_test)
 TEST(MG_GPU_OPERATORS, multigrid_test)
 {
   /* -----------------------------------------------------------------------------
-  GPU kernel initialization
-  ----------------------------------------------------------------------------- */
-  cl::Kernel gauss_seidel(program, "multires_gauss_seidel");
-  cl::Kernel jacobi(program, "multires_jacobi");
-  cl::Kernel linterp(program, "multires_interpolate");
-  cl::Kernel multires_restrict(program, "multires_restrict");
-  cl::Kernel residual_subtract(program, "subtract");
-  cl::Kernel residual_add(program, "add");
-  gauss_seidel.setArg(3, SIZE_X);
-  gauss_seidel.setArg(4, SIZE_Y);
-  jacobi.setArg(4, SIZE_X);
-  jacobi.setArg(5, SIZE_Y);
-  linterp.setArg(2, SIZE_X);
-  linterp.setArg(3, SIZE_Y);
-  multires_restrict.setArg(2, SIZE_X);
-  multires_restrict.setArg(3, SIZE_Y);
-  /* -----------------------------------------------------------------------------
   GPU buffer allocation
   ----------------------------------------------------------------------------- */
   cl::Buffer buffer_U(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
+  cl::Buffer buffer_output(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
   cl::Buffer buffer_b(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
-  cl::Buffer buffer_r(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //residuals
-  cl::Buffer buffer_T(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //residuals - jacobi output
-  cl::Buffer buffer_r1(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //residuals, copy - slmg doesn't require this array, but
-  cl::Buffer buffer_v(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //correction
+  cl::Buffer buffer_F(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
+  /* -----------------------------------------------------------------------------
+  GPU kernel initialization
+  ----------------------------------------------------------------------------- */
+  cl::Kernel unigrid(program, "unigrid");
+  unigrid.setArg(0, buffer_U);
+  unigrid.setArg(1, buffer_output);
+  unigrid.setArg(2, buffer_F);
+  unigrid.setArg(3, buffer_b);
+  unigrid.setArg(4, 1);
+  unigrid.setArg(5, SIZE_X);
+  unigrid.setArg(6, SIZE_Y);
+  unigrid.setArg(7, SIZE_Z);
   /* -----------------------------------------------------------------------------
   Local buffer allocation
   ----------------------------------------------------------------------------- */
   float * U = new float[(SIZE_XYZ)];
-  float * r = new float[(SIZE_XYZ)];
-  float * v = new float[(SIZE_XYZ)];
+  float * F = new float[(SIZE_XYZ)];
   float * b = new float[(SIZE_XYZ)];
   memset (U, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
-  memset (r, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
+  memset (F, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
   memset (b, 0, sizeof (float) * SIZE_XYZ);
-  memset (v, 0, sizeof (float) * SIZE_XYZ);
   /* -----------------------------------------------------------------------------
   Demo problem setup
   ----------------------------------------------------------------------------- */
   for(int x = 40; x < 50; x++){
     for(int y = 40; y < 50; y++){
+      U[(SIZE_XY*8)+SIZE_X*y+x] = 1;
       b[(SIZE_XY*8)+SIZE_X*y+x] = 1;
     }
   }
@@ -197,118 +189,50 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   Copy problem to GPU memory
   ----------------------------------------------------------------------------- */
   queue.enqueueWriteBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
+  queue.enqueueWriteBuffer(buffer_F,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),F);
   queue.enqueueWriteBuffer(buffer_b,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),b);
   /* -----------------------------------------------------------------------------
   Max stores the greatest value in the residual; this is cheaper than finding the norm
   ----------------------------------------------------------------------------- */
   // double max = 0;
 
-  const int MG_CYCLES = 20;
-  std::vector<int> resolutions = {1,2,4,8,16,32,64,128,64,128,64,32,16,8,16,8,4,8,4,2,4,2,1};
-  std::vector<int> sweeps= {128,64,128,128,64,32,16,8,16,8,4,8,4,2,4,2,1};
+  const int MG_CYCLES = 10;
 
-  residual_add.setArg(0, buffer_U);
-  residual_add.setArg(1, buffer_v);
-  residual_add.setArg(2, buffer_U);
-
-  residual_subtract.setArg(0, buffer_U);
-  residual_subtract.setArg(1, buffer_r);
-  residual_subtract.setArg(2, buffer_r);
-
-  float previous_norm = 1;
-  float convergence_factor = 1;
+  // float previous_norm = 1;
+  // float convergence_factor = 1;
 
   auto t1 = std::chrono::high_resolution_clock::now();
-  queue.enqueueFillBuffer(buffer_T,0,0,sizeof(float)*(SIZE_XYZ)); //wipe correction buffer
-
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
-    // queue.enqueueFillBuffer(buffer_v,0,0,sizeof(float)*(SIZE_XYZ)); //wipe correction buffer
-    /* -----------------------------------------------------------------------------
-    Store a copy of the previous iteration
-    ----------------------------------------------------------------------------- */
-    queue.enqueueCopyBuffer(buffer_U,buffer_r,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-    /* -----------------------------------------------------------------------------
-    Compute the finest gauss-seidel iteration
-    ----------------------------------------------------------------------------- */
-    int res = 1; //a full resolution fine grid cycle
-    gauss_seidel.setArg(0, buffer_U);
-    gauss_seidel.setArg(1, buffer_b);
-    gauss_seidel.setArg(2, res);
-    // queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
-    // queue.finish();
-    queue.enqueueNDRangeKernel(jacobi,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-    queue.enqueueCopyBuffer(buffer_T,buffer_v,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-    /* -----------------------------------------------------------------------------
-    Subtract the first iteration from the new potentials to obtain the residuals
-    ----------------------------------------------------------------------------- */
-    queue.enqueueNDRangeKernel(residual_subtract,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
-    /* -----------------------------------------------------------------------------
-    Read residuals from GPU for diagnostics (optional)
-    ----------------------------------------------------------------------------- */
-    queue.enqueueReadBuffer(buffer_r,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),r);
-    queue.finish();
-    float norm = sqrt(std::inner_product(r, r+SIZE_XYZ, r, 0.0L));
-    convergence_factor = norm/previous_norm;
-    printf("Residual: %f\nConvergence Factor: %f\n",norm,convergence_factor);
-    previous_norm = norm;
-    /* -----------------------------------------------------------------------------
-    Cycle down from coarse level
-    ----------------------------------------------------------------------------- */
-    linterp.setArg(0, buffer_v);
-    multires_restrict.setArg(0, buffer_r1);
-    jacobi.setArg(0, buffer_v);
-    jacobi.setArg(1, buffer_T);
-    jacobi.setArg(2, buffer_r1);
-    gauss_seidel.setArg(0, buffer_v);
-    gauss_seidel.setArg(1, buffer_r1);
     for(int level = 5; level > -1; level--){
-      res = pow(2,level);
-      printf("res: %i\n",res);
-      linterp.setArg(1, res);
-      multires_restrict.setArg(1, res);
-      jacobi.setArg(3, res);
-      gauss_seidel.setArg(2, res);
-      queue.enqueueCopyBuffer(buffer_r,buffer_r1,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-      //todo: faster copy could be implemented - theta subtract?
-      if(res > 1){ //this could be sped up by inserting into r1 directly, avoiding the copy op
-        queue.enqueueNDRangeKernel(multires_restrict,cl::NullRange,cl::NDRange((SIZE_X-res)/res,(SIZE_Y-res)/res,(SIZE_Z-res)/res),cl::NullRange);
-      }
-      // queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
-      // queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
+      int step_size = pow(2,level);
+      unigrid.setArg(4, step_size);
+      queue.enqueueNDRangeKernel(unigrid,cl::NullRange,cl::NDRange((SIZE_X-2*step_size)/(step_size*2),
+                                                                          (SIZE_Y-2*step_size)/(step_size*2),
+                                                                          (SIZE_Z-2*step_size)/(step_size*2)),cl::NullRange);
 
-      for(int i = 0; i < res; i++){ //as many cycles as the resolution is a good approximation
-          queue.enqueueNDRangeKernel(jacobi,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-          queue.enqueueCopyBuffer(buffer_T,buffer_v,0,0,sizeof(float)*(SIZE_XYZ));//copy residuals
-      }
-      if(res > 1){
-        queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-res)/res,(SIZE_Y-res)/res,(SIZE_Z-res)/res),cl::NullRange);
-      }
-      queue.finish();
+
+      queue.enqueueCopyBuffer(buffer_output,buffer_U,0,0,sizeof(float)*(SIZE_XYZ));
+      //copy residuals - double buffer would speed up
+
     }
-
-    // queue.enqueueReadBuffer(buffer_v,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),v);
-    // queue.enqueueReadBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
-    // queue.finish();
-    // display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
-
-    /* -----------------------------------------------------------------------------
-    Apply correction to fine grid.
-    ----------------------------------------------------------------------------- */
-    queue.enqueueNDRangeKernel(residual_add,cl::NullRange,cl::NDRange(SIZE_XYZ),cl::NullRange);
   }
+  int status = queue.finish();
+  printf("s%i\n",status);
 
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
-  // display_array(v,SIZE_X,SIZE_Y,SIZE_Z,8);
+
+  queue.enqueueReadBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
+  queue.finish();
+  display_array(U,SIZE_X,SIZE_Y,SIZE_Z,8);
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/1.0;
   std::cout << "Multigrid on " << SIZE_X <<  "^3 took " << duration << " us\n";
 
 
   delete[] U;
-  delete[] r;
-  delete[] v;
+  delete[] F;
   delete[] b;
 }
 

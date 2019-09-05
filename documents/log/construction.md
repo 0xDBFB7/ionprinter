@@ -2469,7 +2469,4 @@ Now I've screwed myself, haven't I. By using unigrid, the operators have disappe
 
 <https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19810025336.pdf#page=256>
 
-Using a local- pre-smoothing technique. That seems to have done it.
-
-
-
+Using a local- pre-smoothing technique. That seems to have done it. This quickly 'fills in' boundaries on coarse meshes by applying a few hundred smoothing cycles in the sub-regions adjacent to boundaries.

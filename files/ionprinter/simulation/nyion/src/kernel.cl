@@ -1,49 +1,83 @@
 
-#define RELAX_CYCLES 2
-#define LEVELS 4
+#define COEFFICIENT_OF_RELAXATION 0.8
 
 inline int idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
 }
 
-inline float FND(I3, J3, step_size){
-    return (step_size-abs(I-I3))*(step_size-abs(J-J3))/(step_size*step_size);
+inline float unigrid_directions(int x, int y, int z, int i, int j, int k, int step_size){
+  //precompute LUT?
+    return ((step_size-abs(x-i))*(step_size-abs(y-j))*(step_size-abs(z-k)))/(step_size*step_size*step_size);
 }
 
-void kernel unigrid(global const float* U, global float* T, global const float* F, int res, global const float* b, const int X_SIZE, const int Y_SIZE, const int Z_SIZE){
-  for(int level = 0; level < LEVELS; level++){ //k
-    int step_size = 2**(LEVELS-level); //M1
+void kernel unigrid(global const float* U, global float* output, global const float* F,
+                                                            global const float* boundaries,
+                                                            int step_size,
+                                                            const int SIZE_X, const int SIZE_Y, const int SIZE_Z){
+  /* -----------------------------------------------------------------------------
 
-    for relax_cycles in range(0,RELAX_CYCLES){
-      for(int x = step_size; x < X_SIZE-step_size; x+= step_size){
-        for(int y = step_size; y < Y_SIZE-step_size; y+= step_size){
-          for(int z = step_size; z < Z_SIZE-step_size; z+= step_size){
+  ----------------------------------------------------------------------------- */
+  int x = (get_global_id(0)*step_size)+step_size;
+  int y = (get_global_id(1)*step_size)+step_size;
+  int z = (get_global_id(2)*step_size)+step_size;
 
-            if(B[I-M1:I+M1,J-M1:J+M1].max() and B[I-M1:I+M1,J-M1:J+M1].sum() != 9 and k < 2){
 
-            }
+  /* -----------------------------------------------------------------------------
+  Fix coarse boundaries if required
+  ----------------------------------------------------------------------------- */
+  // if(B[I-M1:I+M1,J-M1:J+M1].max() and B[I-M1:I+M1,J-M1:J+M1].sum() != 9 and k < 2){
+  //  for(int i = x-step_size+1; i < x+step_size; i++){
+    //   for(int j = y-step_size+1; j < y+step_size; j++){
+    //     for(int k = z-step_size+1; i < z+step_size; z++){
+    //
+    //     }
+    //   }
+    // }
+  // }
 
-            for(int i = x-step_size+1; i < x+step_size; i++){
-              for(int j = y-step_size+1; j < y+step_size; j++){
-                for(int k = z-step_size+1; i < z+step_size; z++){
+  /* -----------------------------------------------------------------------------
+  Compute local correction
+  ----------------------------------------------------------------------------- */
+  float A1 = 0;
+  float R1 = 0;
+  for(int i = x-step_size+1; i < x+step_size; i++){
+    for(int j = y-step_size+1; j < y+step_size; j++){
+      for(int k = z-step_size+1; k < z+step_size; k++){
+        float residual = (6.0*U[idx(i,j,k,SIZE_X,SIZE_Y)])
+                            - U[idx(i+1,j,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i-1,j,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j+1,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j-1,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j,k+1,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j,k-1,SIZE_X,SIZE_Y)]
+                            - F[idx(i,j,k,SIZE_X,SIZE_Y)];
+                            //unigrid works backwards from residual.
 
-                }
-              }
-            }
-            /* -----------------------------------------------------------------------------
-            Call with a 3d NDRange of DIM_SIZE - 2.
-            The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
 
-            ----------------------------------------------------------------------------- */
-            for(int i = x-step_size+1; i < x+step_size; i++){
-              for(int j = y-step_size+1; j < y+step_size; j++){
-                for(int k = z-step_size+1; i < z+step_size; z++){
-
-                }
-              }
-            }
-
-          }
+        if(!boundaries[idx(i,j,k,SIZE_X,SIZE_Y)]){
+          R1 += (unigrid_directions(x,y,z,i,j,k,step_size)*residual);
+        }
+        float A3 = 6.0*unigrid_directions(x,y,z,i,j,k,step_size)
+                          - unigrid_directions(x+1,y,z,i,j,k,step_size)
+                          - unigrid_directions(x-1,y,z,i,j,k,step_size)
+                          - unigrid_directions(x,y+1,z,i,j,k,step_size)
+                          - unigrid_directions(x,y-1,z,i,j,k,step_size)
+                          - unigrid_directions(x,y,z+1,i,j,k,step_size)
+                          - unigrid_directions(x,y,z-1,i,j,k,step_size);
+        A1 += unigrid_directions(x,y,z,i,j,k,step_size) * A3;
+      }
+    }
+  }
+  float correction = R1/A1;
+  // /* -----------------------------------------------------------------------------
+  // Apply correction to local region
+  // ----------------------------------------------------------------------------- */
+  for(int i = x-step_size+1; i < x+step_size; i++){
+    for(int j = y-step_size+1; j < y+step_size; j++){
+      for(int k = z-step_size+1; k < z+step_size; k++){
+        if(!boundaries[idx(i,j,k,SIZE_X,SIZE_Y)]){
+          output[idx(i,j,k,SIZE_X,SIZE_Y)] = U[idx(i,j,k,SIZE_X,SIZE_Y)] -
+                        (COEFFICIENT_OF_RELAXATION * correction * unigrid_directions(x,y,z,i,j,k,step_size));
         }
       }
     }

@@ -40,8 +40,8 @@ void kernel_queue_wrapper(cl::Kernel kernel, cl::NDRange range){
 void display_array(float potentials[],int s_x, int s_y, int s_z, int z_slice){
   double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
   double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
-  for(int y=0;y<s_y;y++){
-    for(int x=0;x<s_x;x++){
+  for(int y=0;y<s_y/4;y++){
+    for(int x=0;x<s_x/4;x++){
       // std::cout<<potentials[idx(x,y,1,SIZE_X,SIZE_Y)]<<" ";
       int r = 0;
       int g = 0;
