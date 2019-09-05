@@ -2470,3 +2470,6 @@ Now I've screwed myself, haven't I. By using unigrid, the operators have disappe
 <https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19810025336.pdf#page=256>
 
 Using a local- pre-smoothing technique. That seems to have done it. This quickly 'fills in' boundaries on coarse meshes by applying a few hundred smoothing cycles in the sub-regions adjacent to boundaries.
+
+Performance was initially poor; some ~1 second per MG cycle. However, the unigrid implementation wasn't breaking up work units properly, so counterintuitively coarser meshes took far longer.
+

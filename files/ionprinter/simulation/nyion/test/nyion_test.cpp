@@ -152,6 +152,8 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   GPU buffer allocation
   ----------------------------------------------------------------------------- */
   cl::Buffer buffer_U(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
+  cl::Buffer buffer_U1(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
+  cl::Buffer buffer_R(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_output(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
   cl::Buffer buffer_b(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
   cl::Buffer buffer_F(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
@@ -203,31 +205,31 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
 
   auto t1 = std::chrono::high_resolution_clock::now();
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
-    for(int level = 5; level > -1; level--){
-      int step_size = pow(2,level);
+    // for(int level = 5; level > -1; level--){
+      int step_size = pow(2,1);
       unigrid.setArg(4, step_size);
-      queue.enqueueNDRangeKernel(unigrid,cl::NullRange,cl::NDRange((SIZE_X-2*step_size)/(step_size*2),
-                                                                          (SIZE_Y-2*step_size)/(step_size*2),
-                                                                          (SIZE_Z-2*step_size)/(step_size*2)),cl::NullRange);
+      queue.enqueueNDRangeKernel(unigrid,cl::NullRange,cl::NDRange((SIZE_X-2*step_size)/(step_size),
+                                                                          (SIZE_Y-2*step_size)/(step_size),
+                                                                          (SIZE_Z-2*step_size)/(step_size)),cl::NullRange);
 
-
-      queue.enqueueCopyBuffer(buffer_output,buffer_U,0,0,sizeof(float)*(SIZE_XYZ));
+      // queue.enqueueCopyBuffer(buffer_output,buffer_U,0,0,sizeof(float)*(SIZE_XYZ));
       //copy residuals - double buffer would speed up
 
-    }
+    // }
   }
   int status = queue.finish();
-  printf("s%i\n",status);
 
 
   auto t2 = std::chrono::high_resolution_clock::now();
+
+  printf("s%i\n",status);
 
 
   queue.enqueueReadBuffer(buffer_U,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),U);
   queue.finish();
   display_array(U,SIZE_X,SIZE_Y,SIZE_Z,8);
 
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/1.0;
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
   std::cout << "Multigrid on " << SIZE_X <<  "^3 took " << duration << " us\n";
 
 
