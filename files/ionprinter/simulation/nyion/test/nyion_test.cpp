@@ -152,6 +152,8 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   GPU buffer allocation
   ----------------------------------------------------------------------------- */
   cl::Buffer buffer_U(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
+  cl::Buffer buffer_corrections(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
+
   cl::Buffer buffer_U1(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_R(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_output(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
@@ -206,7 +208,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   auto t1 = std::chrono::high_resolution_clock::now();
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
     // for(int level = 5; level > -1; level--){
-      int step_size = pow(2,1);
+      int step_size = pow(2,4);
       unigrid.setArg(4, step_size);
       queue.enqueueNDRangeKernel(unigrid,cl::NullRange,cl::NDRange((SIZE_X-2*step_size)/(step_size),
                                                                           (SIZE_Y-2*step_size)/(step_size),

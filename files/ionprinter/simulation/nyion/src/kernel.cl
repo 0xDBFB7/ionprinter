@@ -10,7 +10,52 @@ inline float unigrid_directions(int x, int y, int z, int i, int j, int k, int st
     return ((step_size-abs(x-i))*(step_size-abs(y-j))*(step_size-abs(z-k)))/(step_size*step_size*step_size);
 }
 
-void kernel unigrid(global const float* U, global float* output, global const float* F,
+void kernel compute_unigrid_corrections(global const float* U, global float* corrections, global const float* F,
+                                                            global const float* boundaries,
+                                                            int step_size,
+                                                            const int SIZE_X, const int SIZE_Y, const int SIZE_Z){
+  /* -----------------------------------------------------------------------------
+  Compute local corrections
+  ----------------------------------------------------------------------------- */
+  int x = (get_global_id(0)*step_size)+step_size;
+  int y = (get_global_id(1)*step_size)+step_size;
+  int z = (get_global_id(2)*step_size)+step_size;
+
+  float A1 = 0;
+  float R1 = 0;
+  for(int i = x-step_size+1; i < x+step_size; i++){
+    for(int j = y-step_size+1; j < y+step_size; j++){
+      for(int k = z-step_size+1; k < z+step_size; k++){
+        float residual = (6.0*U[idx(i,j,k,SIZE_X,SIZE_Y)])
+                            - U[idx(i+1,j,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i-1,j,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j+1,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j-1,k,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j,k+1,SIZE_X,SIZE_Y)]
+                            - U[idx(i,j,k-1,SIZE_X,SIZE_Y)]
+                            - F[idx(i,j,k,SIZE_X,SIZE_Y)];
+                            //unigrid works backwards from residual.
+
+
+        if(!boundaries[idx(i,j,k,SIZE_X,SIZE_Y)]){
+          R1 += (unigrid_directions(x,y,z,i,j,k,step_size)*residual);
+        }
+        float A3 = 6.0*unigrid_directions(x,y,z,i,j,k,step_size)
+                          - unigrid_directions(x,y,z,i-1,j,k,step_size)
+                          - unigrid_directions(x,y,z,i+1,j,k,step_size)
+                          - unigrid_directions(x,y,z,i,j-1,k,step_size)
+                          - unigrid_directions(x,y,z,i,j+1,k,step_size)
+                          - unigrid_directions(x,y,z,i,j,k-1,step_size)
+                          - unigrid_directions(x,y,z,i,j,k+1,step_size);
+        A1 += unigrid_directions(x,y,z,i,j,k,step_size) * A3;
+      }
+    }
+  }
+
+  corrections[] = R1/A1;
+}
+
+void kernel apply_unigrid_corrections(global const float* U, global float* output, global const float* F,
                                                             global const float* boundaries,
                                                             int step_size,
                                                             const int SIZE_X, const int SIZE_Y, const int SIZE_Z){
@@ -42,53 +87,22 @@ void kernel unigrid(global const float* U, global float* output, global const fl
     // }
   // }
 
-  /* -----------------------------------------------------------------------------
-  Compute local correction
-  ----------------------------------------------------------------------------- */
-  // float A1 = 0;
-  // float R1 = 0;
-  // for(int i = x-step_size+1; i < x+step_size; i++){
-  //   for(int j = y-step_size+1; j < y+step_size; j++){
-  //     for(int k = z-step_size+1; k < z+step_size; k++){
-  //       float residual = (6.0*U[idx(i,j,k,SIZE_X,SIZE_Y)])
-  //                           - U[idx(i+1,j,k,SIZE_X,SIZE_Y)]
-  //                           - U[idx(i-1,j,k,SIZE_X,SIZE_Y)]
-  //                           - U[idx(i,j+1,k,SIZE_X,SIZE_Y)]
-  //                           - U[idx(i,j-1,k,SIZE_X,SIZE_Y)]
-  //                           - U[idx(i,j,k+1,SIZE_X,SIZE_Y)]
-  //                           - U[idx(i,j,k-1,SIZE_X,SIZE_Y)]
-  //                           - F[idx(i,j,k,SIZE_X,SIZE_Y)];
-  //                           //unigrid works backwards from residual.
-  //
-  //
-  //       if(!boundaries[idx(i,j,k,SIZE_X,SIZE_Y)]){
-  //         R1 += (unigrid_directions(x,y,z,i,j,k,step_size)*residual);
-  //       }
-  //       float A3 = 6.0*unigrid_directions(x,y,z,i,j,k,step_size)
-  //                         - unigrid_directions(x,y,z,i-1,j,k,step_size)
-  //                         - unigrid_directions(x,y,z,i+1,j,k,step_size)
-  //                         - unigrid_directions(x,y,z,i,j-1,k,step_size)
-  //                         - unigrid_directions(x,y,z,i,j+1,k,step_size)
-  //                         - unigrid_directions(x,y,z,i,j,k-1,step_size)
-  //                         - unigrid_directions(x,y,z,i,j,k+1,step_size);
-  //       A1 += unigrid_directions(x,y,z,i,j,k,step_size) * A3;
-  //     }
-  //   }
-  // }
-  float correction = 1;
+
+  float correction = R1/A1;
   // /* -----------------------------------------------------------------------------
   // Apply correction to local region
   // ----------------------------------------------------------------------------- */
   for(int i = x-step_size+1; i < x+step_size; i++){
     for(int j = y-step_size+1; j < y+step_size; j++){
       for(int k = z-step_size+1; k < z+step_size; k++){
-        if(!boundaries[idx(i,j,k,SIZE_X,SIZE_Y)]){
-          output[idx(i,j,k,SIZE_X,SIZE_Y)] = U[idx(i,j,k,SIZE_X,SIZE_Y)] -
-                        (COEFFICIENT_OF_RELAXATION * correction * unigrid_directions(x,y,z,i,j,k,step_size));
-        }
-        else{
-          output[idx(i,j,k,SIZE_X,SIZE_Y)] = U[idx(i,j,k,SIZE_X,SIZE_Y)];
-        }
+        output[idx(i,j,k,SIZE_X,SIZE_Y)] = 2.0;
+        // if(!boundaries[idx(i,j,k,SIZE_X,SIZE_Y)]){
+        //   output[idx(i,j,k,SIZE_X,SIZE_Y)] = U[idx(i,j,k,SIZE_X,SIZE_Y)] -
+        //                 (COEFFICIENT_OF_RELAXATION * correction * unigrid_directions(x,y,z,i,j,k,step_size));
+        // }
+        // else{
+        //   output[idx(i,j,k,SIZE_X,SIZE_Y)] = U[idx(i,j,k,SIZE_X,SIZE_Y)];
+        // }
       }
     }
   }

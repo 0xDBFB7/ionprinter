@@ -2473,3 +2473,6 @@ Using a local- pre-smoothing technique. That seems to have done it. This quickly
 
 Performance was initially poor; some ~1 second per MG cycle. However, the unigrid implementation wasn't breaking up work units properly, so counterintuitively coarser meshes took far longer.
 
+
+
+It's the second part, applying the correction, that's consuming all the compute power. It's also not the branch section.
