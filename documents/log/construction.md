@@ -2294,6 +2294,8 @@ Wow nice, the whole jacobi thing's broken and I didn't even catch it. Matplotlib
 
 
 
+> 
+>
 > There are several criteria for the convergence of the
 > iterative procedure when solving the Poisson
 > equation, but the simplest one is that nowhere on the
@@ -2476,3 +2478,11 @@ Performance was initially poor; some ~1 second per MG cycle. However, the unigri
 
 
 It's the second part, applying the correction, that's consuming all the compute power. It's also not the branch section.
+
+
+
+Need a better reduction algorithm.
+
+
+
+<https://en.wikipedia.org/wiki/Bayesian_search_theory>

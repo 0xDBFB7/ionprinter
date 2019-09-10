@@ -7,18 +7,20 @@ TEST_GROUP(MG_GPU_OPERATORS)
 {
 };
 
-TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
+TEST(MG_GPU_OPERATORS, multires_jacobi_test)
 {
   //test on non-square array
   cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
   cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
+  cl::Buffer buffer_RHS(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
+  cl::Buffer buffer_output(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
 
   float * potentials = new float[(SIZE_XYZ)];
   int * boundaries = new int[(SIZE_XYZ)];
   memset (potentials, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
   memset (boundaries, 0, sizeof (int) * SIZE_XYZ);
 
-  int res = 4;
+  int res = 1;
 
   potentials[(SIZE_XY)*res+SIZE_X*res*2+res*2] = 200;
   boundaries[(SIZE_XY)*res+SIZE_X*res*2+res*2] = 1;
@@ -27,68 +29,22 @@ TEST(MG_GPU_OPERATORS, multires_gauss_seidel_test)
   queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
 
 
-  cl::Kernel gauss_seidel(program, "multires_gauss_seidel");
+  cl::Kernel gauss_seidel(program, "multires_jacobi");
   gauss_seidel.setArg(0, buffer_potentials);
-  gauss_seidel.setArg(1, buffer_boundaries);
-  gauss_seidel.setArg(2, res);
-  gauss_seidel.setArg(3, SIZE_X);
-  gauss_seidel.setArg(4, SIZE_Y);
+  gauss_seidel.setArg(1, buffer_output);
+  gauss_seidel.setArg(2, buffer_RHS);
+  gauss_seidel.setArg(3, buffer_boundaries);
+  gauss_seidel.setArg(4, res);
+  gauss_seidel.setArg(5, SIZE_X);
+  gauss_seidel.setArg(6, SIZE_Y);
   auto t1 = std::chrono::high_resolution_clock::now();
 
   for(int i = 0; i < 10; i++){
-    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(1),cl::NullRange);
-    queue.finish();
+    queue.enqueueNDRangeKernel(gauss_seidel,cl::NullRange,cl::NDRange(SIZE_X-2,
+                                                                        SIZE_Y-2,
+                                                                        SIZE_Z-2),cl::NullRange);
   }
-
-  auto t2 = std::chrono::high_resolution_clock::now();
-
-
-  //read result C from the device to array C
-  queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
-
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
-  std::cout << "Gauss-Seidel on " << SIZE_X <<  " took " << duration << " us\n";
-
-  // display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z,res);
-
-  delete[] potentials;
-  delete[] boundaries;
-}
-
-
-TEST(MG_GPU_OPERATORS, multires_linterp_test)
-{
-  //test on non-square array
-  cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
-  cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));
-
-  float * potentials = new float[(SIZE_XYZ)];
-  float * boundaries = new float[(SIZE_XYZ)];
-
-  memset (potentials, 0, sizeof (float) * SIZE_XYZ); //zero out arrays
-
-  int res = 4;
-
-  // potentials[(SIZE_XY)*res+SIZE_X*res+res] = 200;
-  // potentials[(SIZE_XY)+SIZE_X+2] = 1000;
-  // boundaries[(SIZE_XY)+SIZE_X+2] = 1;
-
-  queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
-  queue.enqueueWriteBuffer(buffer_boundaries,CL_TRUE,0,sizeof(int)*(SIZE_XYZ),boundaries);
-
-
-  cl::Kernel linterp(program, "multires_interpolate");
-  linterp.setArg(0, buffer_potentials);
-  linterp.setArg(1, buffer_boundaries);
-  linterp.setArg(2, res);
-  linterp.setArg(3, SIZE_X);
-  linterp.setArg(4, SIZE_Y);
-  auto t1 = std::chrono::high_resolution_clock::now();
-
-  for(int i = 0; i < 10; i++){
-    queue.enqueueNDRangeKernel(linterp,cl::NullRange,cl::NDRange((SIZE_X-(2*res))/res,(SIZE_Y-(2*res))/res,(SIZE_Z-(2*res))/res),cl::NullRange);
-    queue.finish();
-  }
+  int status = queue.finish();
 
   auto t2 = std::chrono::high_resolution_clock::now();
 
@@ -96,15 +52,13 @@ TEST(MG_GPU_OPERATORS, multires_linterp_test)
   queue.enqueueReadBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(SIZE_XYZ),potentials);
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
-  std::cout << "Linterp on " << SIZE_X <<  " took " << duration << " us\n";
+  std::cout << "Jacobi on " << SIZE_X <<  " took " << duration << " us, " << status << "\n";
 
   // display_array(potentials,SIZE_X,SIZE_Y,SIZE_Z,res);
 
   delete[] potentials;
   delete[] boundaries;
-
 }
-
 
 TEST(MG_GPU_OPERATORS, transfer_timing_test)
 {
@@ -153,7 +107,6 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   ----------------------------------------------------------------------------- */
   cl::Buffer buffer_U(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_corrections(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
-
   cl::Buffer buffer_U1(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_R(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //potential approximation
   cl::Buffer buffer_output(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ)); //boundary condition values
@@ -162,9 +115,9 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   /* -----------------------------------------------------------------------------
   GPU kernel initialization
   ----------------------------------------------------------------------------- */
-  cl::Kernel unigrid(program, "unigrid");
+  cl::Kernel unigrid(program, "multigr");
   unigrid.setArg(0, buffer_U);
-  unigrid.setArg(1, buffer_output);
+  unigrid.setArg(1, buffer_corrections);
   unigrid.setArg(2, buffer_F);
   unigrid.setArg(3, buffer_b);
   unigrid.setArg(4, 1);
@@ -208,11 +161,11 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   auto t1 = std::chrono::high_resolution_clock::now();
   for(int cycles = 0; cycles < MG_CYCLES; cycles++){
     // for(int level = 5; level > -1; level--){
-      int step_size = pow(2,4);
+      int step_size = pow(2,0);
       unigrid.setArg(4, step_size);
-      queue.enqueueNDRangeKernel(unigrid,cl::NullRange,cl::NDRange((SIZE_X-2*step_size)/(step_size),
-                                                                          (SIZE_Y-2*step_size)/(step_size),
-                                                                          (SIZE_Z-2*step_size)/(step_size)),cl::NullRange);
+      queue.enqueueNDRangeKernel(unigrid,cl::NullRange,cl::NDRange(SIZE_X-2*step_size,
+                                                                          SIZE_Y-2*step_size,
+                                                                          SIZE_Z-2*step_size),cl::NullRange);
 
       // queue.enqueueCopyBuffer(buffer_output,buffer_U,0,0,sizeof(float)*(SIZE_XYZ));
       //copy residuals - double buffer would speed up
