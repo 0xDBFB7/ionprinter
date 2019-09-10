@@ -165,3 +165,20 @@ Nearly a month of testing still did not yield a functional multigrid implementat
 
 Writing a proof-of-concept recipe in Python without regard to optimization very rapidly exposed the problem. This is definitely something to keep in mind; it's much easier to troubleshoot something if you know precisely the expected behavior. 
 
+<hr>
+
+#### Issue:
+
+ A constant defined as double fully halved a kernel's performance.
+
+```
+(6.0*U[idx(x,y,z,X_SIZE,Y_SIZE)]
+5000 us
+```
+
+
+```
+(6.0f*U[idx(x,y,z,X_SIZE,Y_SIZE)]
+2200us
+```
+

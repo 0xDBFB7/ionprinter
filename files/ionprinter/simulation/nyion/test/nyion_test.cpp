@@ -115,7 +115,7 @@ TEST(MG_GPU_OPERATORS, multigrid_test)
   /* -----------------------------------------------------------------------------
   GPU kernel initialization
   ----------------------------------------------------------------------------- */
-  cl::Kernel unigrid(program, "multigr");
+  cl::Kernel unigrid(program, "compute_unigrid_corrections");
   unigrid.setArg(0, buffer_U);
   unigrid.setArg(1, buffer_corrections);
   unigrid.setArg(2, buffer_F);
