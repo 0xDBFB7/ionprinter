@@ -2486,3 +2486,53 @@ Need a better reduction algorithm.
 
 
 <https://en.wikipedia.org/wiki/Bayesian_search_theory>
+
+
+
+
+
+**1) Use of Dedicated Cache** could be getting you thread's actual grid cell into private registers that is fastest. Then neighbours into __local array so the comparisons/calc only done in chip.
+
+Load current cell into __private
+
+Load neighbours into __local
+
+start looping for local array
+
+get next neighbour into __private from __local
+
+compute
+
+end loop
+
+(if it has many neighbours, lines after "Load neighbours into __local" can be in another loop that gets from main memory by patches)
+
+What is your gpu? Nice it is GTX660. You should have 64kB controllable cache per compute unit. CPUs have only registers of 1kB and not addressable for array operations.
+
+
+
+
+
+<hr>
+
+By eustathopoulos2015wetting and fujii1993interfacial, we find that there are few ceramics that can withstand molten non-ferrous materials for a long period of time. BN+aluminum degrades after a few hours.
+
+> A startling experiment is to heat metallic
+> aluminum in a high-purity aluminum oxide crucible to about
+> 2O0O0C., at which point the crucible will vanish through the
+> formation of volatile Al2O
+
+Nice.
+
+long1959aluminum is such a fun paper. Aluminum nitride is definitely acceptable for aluminum use (and gallium, for whatever reason).
+
+Stability in order:
+
+<https://www.jstage.jst.go.jp/article/isijinternational1989/30/12/30_12_1033/_pdf>
+
+Thestability of nitrides at 1200Kdecreases in the
+following order: nitrides of Hf Zr, Ti, Al, Ce, Be, Ta,
+Nb, V, Mg, Ca, Si, Li, Cr, In, Mn, Mo and Fe,
+respectively. 
+
+Copper definitely works with alumina. 

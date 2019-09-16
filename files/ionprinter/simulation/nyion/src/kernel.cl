@@ -29,13 +29,13 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
   // int sub_z = z / step_size;
   // sub_z *= step_size;
   //
-  int i = x % step_size;
-  int j = y % step_size;
-  int k = z % step_size;
+  // int i = x % step_size;
+  // int j = y % step_size;
+  // int k = z % step_size;
 
   float residual = 0;
   if(!boundaries[idx(x,y,z,SIZE_X,SIZE_Y)]){
-    float stencil_value = (6.0f*U[idx(x,y,z,SIZE_X,SIZE_Y)])
+    residual = (6.0f*U[idx(x,y,z,SIZE_X,SIZE_Y)])
                         - U[idx(x+1,y,z,SIZE_X,SIZE_Y)]
                         - U[idx(x-1,y,z,SIZE_X,SIZE_Y)]
                         - U[idx(x,y+1,z,SIZE_X,SIZE_Y)]
@@ -44,8 +44,6 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
                         - U[idx(x,y,z-1,SIZE_X,SIZE_Y)]
                         - F[idx(x,y,z,SIZE_X,SIZE_Y)];
                         //unigrid works backwards from residual.
-
-    residual = stencil_value; //all kinds of wrong
   }
 
   // A1 and A3 can be pre-computed.
@@ -58,8 +56,7 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
   //                   - unigrid_directions(x,y,z,i,j,k+1,step_size);
   //  = unigrid_directions(x,y,z,i,j,k,step_size) * A3;
 
-  corrections[idx(get_global_id(0),get_global_id(1),get_global_id(2),
-                                        get_global_size(0),get_global_size(1))] = residual;
+  corrections[idx(x,y,z,SIZE_X,SIZE_Y)] = residual;
 }
 
 
