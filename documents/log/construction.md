@@ -2524,7 +2524,7 @@ By eustathopoulos2015wetting and fujii1993interfacial, we find that there are fe
 
 Nice.
 
-long1959aluminum is such a fun paper. Aluminum nitride is definitely acceptable for aluminum use (and gallium, for whatever reason).
+long1959aluminum is such a fun and grest paper. Aluminum nitride is definitely acceptable for aluminum use (and gallium, for whatever reason).
 
 Stability in order:
 
@@ -2535,4 +2535,75 @@ following order: nitrides of Hf Zr, Ti, Al, Ce, Be, Ta,
 Nb, V, Mg, Ca, Si, Li, Cr, In, Mn, Mo and Fe,
 respectively. 
 
-Copper definitely works with alumina. 
+Copper definitely works with alumina. AlN can be produced by via a spark in a nitrogen atmosphere, or by carbothermal nitridation. 
+
+There seems to be zero information on the interfacial reactions between copper and AlN.
+
+Putting electrodes into the fluid flow would seem to be almost impossible now; they'll be almost immediately destroyed. Maybe platinum? This is a shame, since DC MHD requires electrodes. This means the MHD pump would either need to be abandoned in favor of capillary systems, the use of a non-contact magnetic induction mhd scheme - or perhaps a capacitive induction scheme?
+
+Capacitive induction sanity check: can we put any reasonable amount of current through such a device? To Insect!
+
+```
+  1 mm × 1 mm × eps0 × (9.1 / 0.25 mm) ➞ pF
+
+   = 0.322292 pF
+```
+
+```
+(10 mm * 1 mm) * eps0 * 9.1 / 0.05 mm -> picofarad
+= 6.1146 pF
+```
+
+```
+  1 / (2 × pi × 500 kHz × 10 pF) ➞ Ω
+
+   = 31831 Ω
+```
+
+Hmm, maybe - but why? Induction's just as good. The B-field could be generated using graphite traces embedded in the bowtie proper? - but then again, we'll need an SMC that continues to function at huge temperatures. Then again, the coils could be external to the bowtie and shielded from thermal radiation. 
+
+
+
+Nyion should probably support OpenPMD.
+
+hydantoin epoxy, aquazol 
+
+aquazol is used for preservation
+
+aquazol 500 is stronger than 200.
+
+WB4101 Water Based Binder System - acrylic
+
+<https://digitalfire.com/4sight/education/binders_for_ceramic_bodies_345.html>
+
+Acrylic emulsion 
+
+Aquazol is perfect for this application. However, I really don't like the fact that it's proprietary and only produced by one company. What happens if Polymer Innovations loses the license from Dow? Now I've gotta put a whole bunch of engineering time into finding an alternative. In fact, I'm already finding a supply chain issue; I can't buy the stuff now! Let's not.
+
+Poly(2-ethyl-2-oxazoline)
+
+Methylcellulose is too weak.
+
+A paper says 'reaction of glycidol with acrylic acid' - glycidol is a 4 on the safety diamond, carcinogen, acutely and chronically toxic. Nice.
+
+oh, Poly(2-ethyl-2-oxazoline), PEOX is aquazol.
+
+Citric acid is a pva crosslinker.
+
+Oh my god, I'm such an idiot. PVA (poly-vinyl acetate, school glue) is distinct from PVA(polyvinyl- alcohol). The alcohol is a precursor to the acetate.
+
+
+
+Teter, A. R. (1965). *Evaluation Of Binders For Machinable Unfired Ceramics*. Rocky Flats Div., Dow Chemical Co., Golden, Colo has a neat chart of strengths to properties, testing with PVA etc.
+
+Acrylic Binders for Dry Pressing Ceramics
+
+PVP is another good one.
+
+"Low Temperature Electronics and Low Temperature Cofired Ceramic ..., Volume 2003" mentions PEOX
+
+
+
+<https://www.americanelements.com/aluminum-nitride-24304-00-5>
+
+The alginate+calcium iodide people found a strength of 8 MPa, 1100 psi - well over the 600 required for "good machining" according to Dow. Calcium is the important bit; it forms two crosslinked bonds, compared to sodium's one. CaCl2 and CaI should have similar properties. There's an even safer alternative to CaCl that was mentioned, but whatever.  

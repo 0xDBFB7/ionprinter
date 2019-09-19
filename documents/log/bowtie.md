@@ -168,3 +168,12 @@ Oh! I can simulate this by using a heat flux boundary condition!
 The gas that exits the bowtie has a certain temperature distribution. 
 
 [1]: http://www.rmcybernetics.com/projects/DIY_Devices/diy-induction-heater.htm
+
+
+
+
+
+Another reason why a large array of bowties is desirable is that the pressure required in each bowtie is far lower. This eases simulation, as the low Knudsen number avoids turbulent effects and allows simple rarefied-gas monte-carlo methods to be used. 
+
+High pressures would also mandate temperatures well above the boiling point of the print material, which would complicate things from a materials science viewpoint (by accelerating interfacial reactions, increasing vapor pressures), produce messy, ill-defined vapor that could be contaminated with macro-scale droplets (as learned from early zinc testing), increase power consumption (though this may be offset by the greater surface area), and require that all upstream systems be gas-tight.
+
