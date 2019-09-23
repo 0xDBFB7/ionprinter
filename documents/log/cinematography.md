@@ -323,4 +323,3 @@ An explanation for each sequence could be put in the subtitles, or as an overlay
 
 
 neutral density filter + washed out background = crisp image through 
-

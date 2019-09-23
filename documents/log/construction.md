@@ -2491,23 +2491,24 @@ Need a better reduction algorithm.
 
 
 
-**1) Use of Dedicated Cache** could be getting you thread's actual grid cell into private registers that is fastest. Then neighbours into __local array so the comparisons/calc only done in chip.
-
-Load current cell into __private
-
-Load neighbours into __local
-
-start looping for local array
-
-get next neighbour into __private from __local
-
-compute
-
-end loop
-
-(if it has many neighbours, lines after "Load neighbours into __local" can be in another loop that gets from main memory by patches)
-
-What is your gpu? Nice it is GTX660. You should have 64kB controllable cache per compute unit. CPUs have only registers of 1kB and not addressable for array operations.
+> **1) Use of Dedicated Cache** could be getting you thread's actual grid cell into private registers that is fastest. Then neighbours into __local array so the comparisons/calc only done in chip.
+>
+> Load current cell into __private
+>
+> Load neighbours into __local
+>
+> start looping for local array
+>
+> get next neighbour into __private from __local
+>
+> compute
+>
+> end loop
+>
+> (if it has many neighbours, lines after "Load neighbours into __local" can be in another loop that gets from main memory by patches)
+>
+> What is your gpu? Nice it is GTX660. You should have 64kB controllable cache per compute unit. CPUs have only registers of 1kB and not addressable for array operations.
+>
 
 
 
@@ -2519,7 +2520,7 @@ By eustathopoulos2015wetting and fujii1993interfacial, we find that there are fe
 
 > A startling experiment is to heat metallic
 > aluminum in a high-purity aluminum oxide crucible to about
-> 2O0O0C., at which point the crucible will vanish through the
+> 2000C., at which point the crucible will vanish through the
 > formation of volatile Al2O
 
 Nice.
@@ -2607,3 +2608,87 @@ PVP is another good one.
 <https://www.americanelements.com/aluminum-nitride-24304-00-5>
 
 The alginate+calcium iodide people found a strength of 8 MPa, 1100 psi - well over the 600 required for "good machining" according to Dow. Calcium is the important bit; it forms two crosslinked bonds, compared to sodium's one. CaCl2 and CaI should have similar properties. There's an even safer alternative to CaCl that was mentioned, but whatever.  
+
+Should get one of those clip-on pressure cookers.
+
+Photo-activated ionic gelation of alginate hydrogel: real-time rheological monitoring of the two-step crosslinking mechanism. Uses CaCO3 and diphenyliodonium nitrate as the photoacid. Photoacid reacts with UV to acidify, caco3 reacts with H+, caco3 reacts with alginate. 
+
+Pyranine
+
+
+
+<https://www.jstor.org/stable/1269076?seq=1#page_scan_tab_contents>
+
+
+
+
+
+<https://blog.saleae.com/transitioning-away-from-in-house-manufacturing/>
+
+Very interesting that saleae went this way. It totally makes sense for them, I think; everything they do is essentially COTS. On the other hand, they don't seem to be doing so well, so...
+
+Also, the hell is up with their prices?
+
+
+
+ionolith software should have a remotely-updated MOTD for announcements, recalls, etc.
+
+
+
+PTFE lined pressure vessel/reaction chambers? Coool. Cheap on ebay.
+
+80 cu. ft tank will fill a 2-gallon chamber ~300 times. That's acceptable.
+
+**George E. Totten, D. Scott MacKenzie "Handbook of Aluminum Alloy Production and Materials Manufacturing" (2003)**
+
+AlN is interesting in that it's natively soft and machinable.
+
+
+
+> The resulting sheet is then placed in a furnace in the
+> presence of nitrogen and fired to approximately 600 C.
+> for a period of approximately 10 to 20 hours. This tem
+> perature is below the melting point of the aluminum and
+> yet is sufficiently high to cause substantial reaction be
+> tween the aluminum and the nitrogen. In the period of
+> 10 to 20 hours, approximately 5 to 10 percent of the alu
+> minum reacts with the nitrogen to form an aluminum ni
+> tride shell 12 around the aluminum core 10. 
+
+Cool! Easy way to make AlN.
+
+
+
+The way I do science has changed in the last few years - probably for the better, but... nowadays I just look for the answer to any problem on Google Scholar. I guess that's okay.
+
+
+
+Looked for pressure vessels with a hinged lid for the furnace. Pressure cookers looked great at first, but then I found these cheap airtight M2A1 50-cal metal ammo boxes that're just the right size. Good stuff!
+
+
+
+Perhaps the two-piece bowtie could be separable for cleaning of oxides etc
+
+
+
+So, weird thing that I remembered on the multigrid. The first functional test used the difference residual rather than the proper f-Ab residual, simply adding the residual on each level to the root, yet it converged just fine as long as long as the V-sweep was only performed 'upwards'. It later became unstable, but this may have just been because of the island boundaries used to test it.
+
+There's a few galvanized ammo boxes on amazon. Should warn people not to use those, since they'll give you metal fume fever. 
+
+MIL-DTL-3060G covers specs for these ammo cans.
+
+> 4.4.4.1 Vacuum method. The assembled container shall be tested for leakage by immersing the
+> closed box, in a vacuum vessel, to a depth of at least one inch below the surface of the water. The air
+> pressure in the vessel shall be lowered to 3 psi below ambient pressure. Observation for leakage of air
+> from the interior of the box assembly shall be made during the period of lowering pressure and for a
+> minimum of 16 seconds while the 3 psi pressure differential is maintained.
+
+"a .32 cubic foot air tight metal can"
+
+A "cubic foot" of gas = one cubic foot at stp, 14.7 psi. Still 250 cycles. 15 psi * 0.5 sq ft = 1080 lbs. Quite a lot.
+
+
+
+
+
+What makes time different? Think about this. We can change spacial resolution with relative ease, without affecting the other particles in different regions. Why can't we have different temporal resolutions?

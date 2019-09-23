@@ -185,6 +185,44 @@ Many codes (such as SIMION) support many of the simulation modes described above
 
 
 
+### Finite-difference-time-domain
+
+In conventional 3d electrostatics, we discretize in 3 dimensions, solve, apply changes to electrodes and move particles etc, then solve again, ad infinitum. This works for most time-invariant fields; electrostatic fields, magnetic fields, etc.
+
+Magnetic fields can be found by solving for the current in conductors in each direction (x,y,z), then solving three seperate poisson equations for the same.
+
+It's even possible to simulate time-varying electrostatic systems (like capacitor impedance) in steady-state by supplying assumptions about frequency and amplitude in the boundaries. See [] for more on that.
+
+Likewise, it's possible to simulate the time behavior of heat transfer, 
+
+However, coupled *electromagnetic* fields involve time-varying quantities proper; it's impossible to calculate 'a single step' of the field. For instance, see Maxwell's equations, like
+$$
+V = -\frac{dB}{dt}
+$$
+You can't usefully apply this to a mesh without time.
+
+Designing inductively-coupled plasma coils requires the above equation. The time-varying magnetic field induces an axial electric field in the vacuum, which accelerates electrons to bombard neutral gas. This is the main reason why a second electron gun is used for ionization in the first-gen designs; it's ostensibly steady-state. 
+
+This actually constrains our hardware design solution somewhat. If we can't usefully simulate an ICP coil, for instance, we can't deduce the nuances of how the particles will react. They'll twirl and dance in spectacular fashion, a dance for the real world alone.
+
+> Similar compromises can be seen in other fields. For instance, SpaceX uses Methane in their Raptor engines for a number of reasons, including efficiency, etc. However, a significant benefit can be found in combustion simulation. 'cut' fuels like the Merlin's RP-1 fuel undergo thousands of forward and reverse sub-reactions between all the myriad hydrocarbon species. With moderate-performance engines like the Merlin, these small-scale effects seem to be less important. using a simple fuel like methane allows much simpler, more accurate simulation.
+
+
+
+However, the 3D stencils we've used so far can be abstracted into the fourth dimension. We can discretize in 4D, where our mesh contains all time states of all spacial mesh points, and apply the stencils to this much larger set of points.
+
+Unfortunately, these meshes grow as N^4, so FDTD methods are stupendously computationally expensive. Plus, more arithmetic is required at each point.
+
+
+
+### Relativistic effects
+
+There are several aspects that simplify this problem. Wakefield solvers such as FBPIC must contend with the relativistic effects that are introduced at high particle speeds; we can neglect these issues entirely.
+
+
+
+
+
 #### History
 
 The first cathode-ray tubes were in use decades before computing power became sufficient for any of these techniques. These were often designed using electrolytic tank analogs (Staggs, 1965), which mechanically move a probe in a tank of conductive liquid.
