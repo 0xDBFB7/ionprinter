@@ -2597,7 +2597,9 @@ Oh my god, I'm such an idiot. PVA (poly-vinyl acetate, school glue) is distinct 
 
 Teter, A. R. (1965). *Evaluation Of Binders For Machinable Unfired Ceramics*. Rocky Flats Div., Dow Chemical Co., Golden, Colo has a neat chart of strengths to properties, testing with PVA etc.
 
-Acrylic Binders for Dry Pressing Ceramics
+Acrylic Binders for Dry Pressing Ceramics a
+
+acrylic emulsions are made from micron-sized bits of acrylic polymer in 
 
 PVP is another good one.
 
@@ -2611,9 +2613,11 @@ The alginate+calcium iodide people found a strength of 8 MPa, 1100 psi - well ov
 
 Should get one of those clip-on pressure cookers.
 
-Photo-activated ionic gelation of alginate hydrogel: real-time rheological monitoring of the two-step crosslinking mechanism. Uses CaCO3 and diphenyliodonium nitrate as the photoacid. Photoacid reacts with UV to acidify, caco3 reacts with H+, caco3 reacts with alginate. 
+Photo-activated ionic gelation of alginate hydrogel: real-time rheological monitoring of the two-step crosslinking mechanism. Uses CaCO3 and diphenyliodonium nitrate as the photoacid. 
 
-Pyranine
+Photoacid reacts with UV to acidify, caco3 reacts with H+, caco3 reacts with alginate. 
+
+Pyranine from yellow highlighters might work; alters ph 
 
 
 
@@ -2673,6 +2677,8 @@ Perhaps the two-piece bowtie could be separable for cleaning of oxides etc
 
 So, weird thing that I remembered on the multigrid. The first functional test used the difference residual rather than the proper f-Ab residual, simply adding the residual on each level to the root, yet it converged just fine as long as long as the V-sweep was only performed 'upwards'. It later became unstable, but this may have just been because of the island boundaries used to test it.
 
+
+
 There's a few galvanized ammo boxes on amazon. Should warn people not to use those, since they'll give you metal fume fever. 
 
 MIL-DTL-3060G covers specs for these ammo cans.
@@ -2685,10 +2691,136 @@ MIL-DTL-3060G covers specs for these ammo cans.
 
 "a .32 cubic foot air tight metal can"
 
-A "cubic foot" of gas = one cubic foot at stp, 14.7 psi. Still 250 cycles. 15 psi * 0.5 sq ft = 1080 lbs. Quite a lot.
+A "cubic foot" of gas = one cubic foot at stp, 14.7 psi. Still 250 cycles. 
+
+15 psi * 0.5 sq ft = 1080 lbs. Quite a lot, it'll probably implode.
 
 
 
 
 
 What makes time different? Think about this. We can change spacial resolution with relative ease, without affecting the other particles in different regions. Why can't we have different temporal resolutions?
+
+
+
+There's no reason why we can't have struts in the chamber, as long as there's an algorithm to avoid them. There'll always be a few emitters with a clear line of sight to any point. That might make things easier.
+
+
+
+==Kiln temperature can be monitored by SiC element resistance.== The element could be allowed to cool to chamber ambient every few seconds to remove any temperature offset.
+
+Because SiC is a semiconductor, the resistivity is all over the place at different temperatures as small dopants affect the system greatly.
+
+[http://www.ift.org/~/media/Knowledge%20Center/Learn%20Food%20Science/Food%20Science%20Activity%20Guide/activity_alginategummie.pdf](http://www.ift.org/~/media/Knowledge Center/Learn Food Science/Food Science Activity Guide/activity_alginategummie.pdf)
+
+
+
+Design of a Silicon Carbide Micro-Hotplate Geometry
+for High Temperature Chemical Sensing
+
+
+
+![great_fit](assets/great_fit.png)
+
+That's a great fit. 
+
+Anyhow, not sure if the SiC will have a sufficiently reliable temperature curve.
+
+Bandgap energy, 
+
+
+
+<http://www.iue.tuwien.ac.at/phd/ayalew/node61.html>
+
+
+
+<http://www.ioffe.ru/SVA/NSM/Semicond/SiC/bandstr.html>
+
+> More than 200 different polytypes of SiC are known. However, about 95% of all publications deal with three main polytypes: 3C, 4H, and 6H. In all main polytypes of SiC, some atoms have been observed in association both with cubic (C), with hexagonal (H) and with rombohedral (R) lattice sites.
+
+
+
+<https://camotics.org/download.html> openscam
+
+As far as I can tell, stat error bars are ambiguous without stating the statistical interval used to generate them. Stating in terms of CI would probably be more useful.
+
+
+
+ah, cool, active beam transverse cooling has been implemented, it's called stochastic cooling: <https://en.wikipedia.org/wiki/Stochastic_cooling>
+
+<https://en.wikipedia.org/wiki/Electron_cooling> is basically what we'll be doing.
+
+See, I should have known about this before. The fact that I was not aware of the term 'electron cooling' means that there are field-size gaps in my knowledge. 
+
+
+
+>  CeSOX project was officially cancelled by CEA and INFN due to the radioactive source production problem,[[33\]](https://en.wikipedia.org/wiki/Borexino#cite_note-33) and Borexino's 2018-19 goals were reoriented toward achieving higher detector stability and, with it, increased radiopurity, in order to push for higher precision solar neutrino results, with special emphasis on CNO neutrinos.
+
+damn, they gave up!
+
+
+
+First, to narrow the search space a bit, we'll choose our solvent in which the ingredients will be dispersed. I chose water as our solvent for no very good reason, and in fact this may have complicated the organic binder step significantly. Other solvents like ethanol have also been used in papers, though they seem to be less common. Different solvents have different alumina dispersion properties; that is, alumina settles faster or slower.
+
+Luckily, we don't need to be concerned about the outgassing or vacuum safety of the low-temp binder, since essentially every chemical bond will be broken in the kiln.
+
+impedance nasa ceramic alumina "Yittrium oxide firing agent"
+
+Sintering of Alumina at Temperatures of 
+1400°C. and Below 
+by IVAN B. CUTLER, CYRIL BRADSHAW, CARL J. CHRISTENSEN, and EDMOND P. HYATT 1% MnO 1%TiO2 seems to suffice
+
+
+Density to determine sinter depth
+
+Turns out that kaolin really just makes a mullite-alumina composite. Properties degraded significantly on propane torch exposure.
+
+This refractory brick is itself made of foamed aluminum oxide, usually with a silica binder; you definitely don't want to breathe the dust created by handling it.
+
+You can clean up zinc MnO2 using oxalic acid, prolly not worth it
+
+Al2O3 · 2SiO 2 · 2H2O. Kaolinite
+
+2CuO + C → 2Cu + CO2 - there seem to be intermediate steps in this equation.
+
+
+
+From a naive work function viewpoint, potassium would seem to be a good thermionic cathode option.
+
+> (c) Some experiments were made to replace cesium with barium and
+> potassium. It was expected that these metals would produce somewhat
+> higher work functions but it seemed to be of interest to establish whether
+> the lower vapor pressure metals would lead to better thermal stability.
+> As shown in Table VII, the work functions were, indeed, considerably
+> higher. A surprising result was that the potassium surface was thermally
+> 25
+> less stable than the cesium surface. Qualitatively this probably means
+> that the greater binding force for cesium on ZnO more than compensates
+> for the lower vapor pressure of potassium.
+
+(<https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770006877.pdf>)
+
+
+
+Alginate is a copolymer produced by a seaweed, treated with a mineral ion (sodium, in this case) to form a salt. - might actually have supply chain issues in the future because of climate change!
+
+You might be wondering why we have to go to all this trouble with an organic binder. In general, nothing will bond with alumina at low temperatures; it's got a really low surface energy.
+
+
+
+Firing with 10% or so Kaolin occurred really quickly - 10 minutes sufficed to get sufficient strength.
+
+Kaolin is interesting. It starts out as Al2O3 **·** 2SiO2 **·** 2H2O, like a hydrated silica almost.
+
+At 1100C it becomes mullite, 2Al2O3 SiO2, then at 1400C the mullite grows into long, strong spikes. Mullite is basically the active ingredient in porcelain; and it's sort of in this family of clay-like ceramics. You can make a perfectly respectable ceramic part out of mullite alone.
+
+The al2o3 is obviously fine, that's just alumina. However, for high-temperature vacuum applications, I was a little concerned about the silicon dioxide/silica impurities, and some graphs back up this worry. For almost any sane application this won't be a problem at all; however, I'll be running this alumina right near the upper temperature limit of 1700 C, so any outgassing problem'll be amplified enormously. 
+
+
+
+At first glance, you might think that the sintering aid is just a sort of high-temp 'glue' that's mechanically binding the alumina together. My understanding is that this is correct in the case of clays like Kaolin, especially when talking about impure, 70% alumina mixes, where it's more an alumina composite than anything else. 
+
+However, true sintering aids like manganese and titania act more like semiconductor 'dopants', affecting the grain boundary growth and introducing dislocations in the crystalline structure of the alumina. This gets into some pretty heavy material science that goes way beyond my empirical knowledge.
+
+As always with inert gases, be sure that the area has sufficient ventilation. Humans can generally only detect an excess of CO2 via the hypercaptic response, rather than directly sensing a lack of oxygen; this means that you will die with no warning at all, often within just a few breaths. A small candle has been used in mines as a crude oxygen depletion sensor, since combustion generally stops at above life-sustaining oxygen levels; but because of location and diffusion rates this may instill a false sense of security. 
+
