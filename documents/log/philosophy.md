@@ -109,13 +109,13 @@ Kind of a dick move! But yeah, you could do that too.
 
 
 
-#### I do not concern my self with patents or copyright
+#### I do not concern myself with patents or copyright
 
 Emotion: on/off with dry/wet prose.
 
 I do not concern myself with patent or copyright. I do not feel society can be bettered by my obtaining either.
 
-First, I must be deferential to the giants who ultimately bear my weight. The books describing every nook, crevice, and handhold in theory itself, the thousands of research papers whose facts and figures have been cast into the very soul of this device, the videos and blogs describing the nuances of obscure techniques; the discussion forums where many a fact has been distilled from opinion; all made possible purely by those who put pen to paper and disseminated what they learned for the benefit of the public[1]. I am proud to have been given the opportunity to join their ranks.
+First, I must be deferential to the giants who ultimately bear my weight. The books describing every nook, crevice, and handhold in theory itself, the tens thousands of research papers whose facts and figures have been cast into the very soul of this device, the videos and blogs describing the nuances of obscure techniques; the discussion forums where many a fact has been distilled from opinion; all made possible purely by those who put pen to paper and disseminated what they learned for the benefit of the public[1]. I am proud to have been given the opportunity to join their ranks.
 
 In addition, this device is *simple*. The fundamental physical concepts behind this device have been known for more than a century. Heavy ion beams were created way back in the Manhattan project. Feynman discussed ion-beam printers in his 1969 lecture, "Plenty of Room At The Bottom."[2a,b], and they have been used for decades in the industry. The only two aspects that I can even remotely be given any possible credit for are the recombination of a previously-directed beam to work around charge-density limitations, and the lowering of cost by an order of magnitude by way of copious vertical integration. The first, even, is dubious; the second is obvious.
 

@@ -21,7 +21,7 @@ To do this, the following physics must be simulated:
 - Vaporization (print material, contaminants, graphite from bowtie structure, and diffusion pump oil)
 - Joule heating and heat transfer
 - Particle deposition and condensation
-- Forces and collisions between ions and ions, ions and electrons, and the trace background gas in the chamber.
+- Forces and collisions between ions and ions, ions and electrons, electrons and ions, and the trace background gas in the chamber.
 
 - Optionally, a magnetohydrodynamic system.
 
@@ -144,7 +144,7 @@ It is also helpful to define the 'residual'.
 $$
 
 $$
-(confusingly, some appear to define the residual as F-Ab.)
+(confusingly, some appear to define the residual backwards, as F-Ab. This is equivalent, it just means the corrections have to be applied with -).
 
 Now, how are electrodes applied to this grid? Simple: the points within the electrode are not updated after a smoothing sweep. Adjacent points still use these boundary values in the arms of their stencils. The residuals must also be zeroed in the boundaries.
 
@@ -231,13 +231,17 @@ In 1977, for instance, [] described using taut wires excited by RF to measure th
 
 
 
-Of course, computing all space around the beam seems ridiculous. Many beam 
+Of course, computing all space around the beam seems ridiculous. Many beam solvers restrict their 
 
 SLPIC
 
 
 
-These operators can be thought of either in terms of local operations (known as stencils), or in terms of the core linear algebra. 
+There are two ways to implement this: either as a
+
+
+
+It is important that the restriction and prolongation operators be mirror images of each other.
 
 For instance, the standard 7-point stencil used in 
 
@@ -253,43 +257,7 @@ For instance, the standard 7-point stencil used in
 
 
 
-```
-def conjugate_grad(A, b, x=None):
-    """
-    Description
-    -----------
-    Solve a linear equation Ax = b with conjugate gradient method.
-    Parameters
-    ----------
-    A: 2d numpy.array of positive semi-definite (symmetric) matrix
-    b: 1d numpy.array
-    x: 1d numpy.array of initial point
-    Returns
-    -------
-    1d numpy.array x such that Ax = b
-    """
-    n = len(b)
-    if not x:
-        x = np.ones(n)
-    r = np.dot(A, x) - b
-    p = - r
-    r_k_norm = np.dot(r, r)
-    for i in xrange(2*n):
-        Ap = np.dot(A, p)
-        alpha = r_k_norm / np.dot(p, Ap)
-        x += alpha * p
-        r += alpha * Ap
-        r_kplus1_norm = np.dot(r, r)
-        beta = r_kplus1_norm / r_k_norm
-        r_k_norm = r_kplus1_norm
-        if r_kplus1_norm < 1e-5:
-            print 'Itr:', i
-            break
-        p = beta * p - r
-    return x
-```
 
-<https://gist.github.com/sfujiwara/b135e0981d703986b6c2#file-cg-py-L51>
 
 
 
@@ -317,7 +285,9 @@ The author now wishes to bring certain mistakes to attention.
 
   Initial estimates showed that 
 
-  It is important to be committed to a problem, of course, for the detached researcher's attention may wander, and the solutions they produce may be substandard. However, it is important that any specific solution be abandoned if fundamental flaws are found, and that the chosen course of action be periodically reexamined.
+  It is important to be committed to a problem, of course, for the detached researcher's attention may wander and the solutions they produce become substandard. However, it is important that any specific solution be abandoned if fundamental flaws are found, and that the chosen course of action be continuously reexamined.
+
+  The fact that the DOD has recently replaced almost all FPGAs wholesale with GPGPUs should have hinted at their effectiveness.
 
 - Misunderstanding of base concepts.
 
@@ -337,3 +307,22 @@ The author now wishes to bring certain mistakes to attention.
 
 After many trials with IBSimu, I discovered beam rigidity.
 
+
+
+
+
+#### Lessons learned:
+
+- Practice the algorithms you're going to implement. Get a feel for how they behave, what sort of convergence and timing you can expect. Jumping to a full-size 16M-DOF problem in 3D in a nonlinear language like OpenCL without first getting an intuition as to how these techniques operate was not a great idea. 
+
+  For one, all the operators are become fiendishly complex as dimensionality increases, making it easier to make silly mistakes. The test cycle time of larger problems becomes huge, and waiting for GPU setup fills, kernel compilation times, etc.
+
+  An unfamiliar algorithm should be gradually prototyped, first in 1D in as high-level a language as possible, then in 2D with some added complexity, then in 3D. At this point, you should have a slow but complete reference implementation from which you can develop a fast one.
+
+  As horrifying as it may sound, TDD seemed to be beyond useless during this project. The complexity of the functions were not sufficient to demand it, and requirements changed too quickly. The whole API would be re-written hourly, data structures would change as performance issues became apparent, etc. It may be helpful to pause test coverage while prototyping.
+
+  Note also that the character of many algorithms can change drastically as the problem size increases. 
+
+  Premature optimization isn't necessarily the root of all evil in scientific computation. 
+
+  

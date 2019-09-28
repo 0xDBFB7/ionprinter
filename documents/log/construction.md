@@ -2677,6 +2677,8 @@ Perhaps the two-piece bowtie could be separable for cleaning of oxides etc
 
 So, weird thing that I remembered on the multigrid. The first functional test used the difference residual rather than the proper f-Ab residual, simply adding the residual on each level to the root, yet it converged just fine as long as long as the V-sweep was only performed 'upwards'. It later became unstable, but this may have just been because of the island boundaries used to test it.
 
+Oh, just remembered how this worked. I just used the earlier mesh as a 'better guess', using T=T-U and no fancy residual, correcting at each level. This worked quite well in one direction.
+
 
 
 There's a few galvanized ammo boxes on amazon. Should warn people not to use those, since they'll give you metal fume fever. 
@@ -2781,7 +2783,15 @@ You can clean up zinc MnO2 using oxalic acid, prolly not worth it
 
 Al2O3 · 2SiO 2 · 2H2O. Kaolinite
 
-2CuO + C → 2Cu + CO2 - there seem to be intermediate steps in this equation.
+
+
+Carbothermic reduction 2CuO + C → 2Cu + CO2 - there seem to be intermediate steps in this equation. Titania should be useful, for brazing for instance.
+
+> Reduction of finely dispersed TiO2 by carbon in nitrogen flow begins at approximately 1000°C. In the initial stages up to approximatel 1170°C reduction of TiO2 into lower titanium oxides takes place.
+
+Indeed! <https://www.sciencedirect.com/science/article/abs/pii/S0955221989800093>
+
+Titanium's melting point is 1,668 °C. That should be achievable.
 
 
 
@@ -2812,15 +2822,36 @@ Firing with 10% or so Kaolin occurred really quickly - 10 minutes sufficed to ge
 
 Kaolin is interesting. It starts out as Al2O3 **·** 2SiO2 **·** 2H2O, like a hydrated silica almost.
 
-At 1100C it becomes mullite, 2Al2O3 SiO2, then at 1400C the mullite grows into long, strong spikes. Mullite is basically the active ingredient in porcelain; and it's sort of in this family of clay-like ceramics. You can make a perfectly respectable ceramic part out of mullite alone.
+At 1100C it becomes mullite, 2Al2O3 SiO2, then at 1400C the mullite grows into long, strong spikes. Mullite is basically the active ingredient in porcelain; and it's sort of in this family of clay-like silicate ceramics. You can make a perfectly respectable ceramic part out of mullite alone.
 
 The al2o3 is obviously fine, that's just alumina. However, for high-temperature vacuum applications, I was a little concerned about the silicon dioxide/silica impurities, and some graphs back up this worry. For almost any sane application this won't be a problem at all; however, I'll be running this alumina right near the upper temperature limit of 1700 C, so any outgassing problem'll be amplified enormously. 
 
+acrylamide
 
-
-At first glance, you might think that the sintering aid is just a sort of high-temp 'glue' that's mechanically binding the alumina together. My understanding is that this is correct in the case of clays like Kaolin, especially when talking about impure, 70% alumina mixes, where it's more an alumina composite than anything else. 
+At first glance, you might think that the sintering aid is just a sort of high-temp 'glue' that's mechanically binding the alumina together. My understanding is that this is correct in the case of clays like Kaolin, especially when talking about impure, 70% alumina mixes, where it's more an alumina-silicate composite than anything else. 
 
 However, true sintering aids like manganese and titania act more like semiconductor 'dopants', affecting the grain boundary growth and introducing dislocations in the crystalline structure of the alumina. This gets into some pretty heavy material science that goes way beyond my empirical knowledge.
 
 As always with inert gases, be sure that the area has sufficient ventilation. Humans can generally only detect an excess of CO2 via the hypercaptic response, rather than directly sensing a lack of oxygen; this means that you will die with no warning at all, often within just a few breaths. A small candle has been used in mines as a crude oxygen depletion sensor, since combustion generally stops at above life-sustaining oxygen levels; but because of location and diffusion rates this may instill a false sense of security. 
 
+If the candle goes out, however, you should run.
+
+
+
+High speed digital design <http://dl.icdst.org/pdfs/files/f94398b13b72b92e7bbcee72d2d93fd6.pdf>
+
+Spade bit to countersink 
+
+Slightly worried about paint on ammo can; bud industries has some stainless NEMA boxes that might be a good alternative if it becomes a problem.
+
+Constantly hitting the upper limit on RAM, created a 10 GB swap file. Might be useful to have a dedicated swap file.
+
+<http://www.masterzen.fr/2013/01/13/the-10-commandments-of-logging/>
+
+
+
+Carbon black for carbothermal
+
+
+
+Yknow, that nitridation 
