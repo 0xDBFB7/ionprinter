@@ -2830,11 +2830,47 @@ acrylamide
 
 At first glance, you might think that the sintering aid is just a sort of high-temp 'glue' that's mechanically binding the alumina together. My understanding is that this is correct in the case of clays like Kaolin, especially when talking about impure, 70% alumina mixes, where it's more an alumina-silicate composite than anything else. 
 
-However, true sintering aids like manganese and titania act more like semiconductor 'dopants', affecting the grain boundary growth and introducing dislocations in the crystalline structure of the alumina. This gets into some pretty heavy material science that goes way beyond my empirical knowledge.
+However, true sintering aids like manganese and titania act more like semiconductor 'dopants', affecting the grain boundary growth and introducing dislocations in the crystalline structure of the alumina. 
+
+@brook1976controlled is golden.
+
+Early descriptions of sintering aids (like those by Luks) mention "reactions" between the aids and the base substrate; but these are all physical effects, as far as I can tell.
+
+The reason why sintering takes so long here is that as far as I can tell it's actually a gas diffusion process; atoms are being transferred between grain boundaries as gas. This vapor-phase sintering is more like a temperature-time product than either. This differs from liquid-phase sintering, which is basically immediate.
+
+As opposed to polycrystalline forms, the grains of "Calcined" alumina are usually each composed of a single crystal. 
+
+The larger the grain, the lower the tensile strength, first because flaw size is related to grain size, and second because large grains create stress concentrations in their corners. The addition of these additives stops the grains from increasing in size.
+
+
+
+We can determine approximately how much heat will be lost to conductivity. Alumina silicate firebricks like these usually have a thermal conductivity of 0.1-0.35 W/(mK).  The heat flux and attainable temperature will be of the form
+$$
+q = k \frac{\text{T}_1 - \text{T}_2}{\text{L}} = \frac{x\text{ K}-300\text{ K}}{0.01 \text{ meters}} \ \frac{W}{m^2}
+$$
+
+$$
+T_f = \frac{LP}{Ak}  + T_2
+$$
+
+With an internal surface area of 68 cm^2,
+$$
+\frac{1 cm * 500 w}{0.0068 m^2 0.35W/mK} + 300 = 1284 K
+$$
+
+
+
+Note that this relation goes only as T, whereas a bare filament would go as T^4. This demonstrates how important insulating radiation is.
 
 As always with inert gases, be sure that the area has sufficient ventilation. Humans can generally only detect an excess of CO2 via the hypercaptic response, rather than directly sensing a lack of oxygen; this means that you will die with no warning at all, often within just a few breaths. A small candle has been used in mines as a crude oxygen depletion sensor, since combustion generally stops at above life-sustaining oxygen levels; but because of location and diffusion rates this may instill a false sense of security. 
 
 If the candle goes out, however, you should run.
+
+
+
+
+
+
 
 
 
@@ -2852,6 +2888,115 @@ Constantly hitting the upper limit on RAM, created a 10 GB swap file. Might be u
 
 Carbon black for carbothermal
 
-
+Barium carbonate + titanium dioxide = barium titanate semiconductor.
 
 Yknow, that nitridation 
+
+
+
+"oil-bonded" casting sand
+
+Alumina foam as bowtie insulator
+
+Sol-gel gelatine works, but <https://link.springer.com/content/pdf/10.1007/BF00367869.pdf> is interesting, mixing alumina with polystyrene granules. They predict 2.5 W/mK though.
+
+Alginate gels are stable up to 150C - higher than melting point of wax.
+
+Titania can increase porosity in some cases.
+
+Titania causes lung cancer over a few months at TWA levels. Amazon stuff has 0.3 micron particle size. Since I'll probably be working with this for many years, I'd like to exercise the right to substitution.
+
+If your grain size starts out crazy small, you don't need to wait for the sintering to reduce it further. <https://deepblue.lib.umich.edu/bitstream/handle/2027.42/66046/j.1151-2916.1991.tb07825.x.pdf?sequence=1&isAllowed=y>
+
+
+
+Even though sintering still seems to be largely an empirical science, even a crude understanding of the mechanisms can 
+
+
+
+<https://ceramics.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1151-2916.1963.tb13771.x?casa_token=c3EpWsW4LXwAAAAA:6vaZzNvt6DWVS3C3g36ZZrQ5uFpnmPrHJ0rbVbQ9ElK29wv_ghNvormD33ruQhJ-XctwyVlcyyESc7Y>
+
+It is concluded, therefore, that titania effects densification and grain growth of alumina
+by grain-boundary action rather than by a defect
+mechanism in the corundum lattice resulting
+from the substitutional solution of Ti4+ ions. 
+
+
+
+<https://ceramics.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1151-2916.1956.tb15599.x?casa_token=5KQW98dA2KIAAAAA:bFaVUVucnGx0BcRIaL84zQv_Upw5eAgJTxtIXLdEBNIIw1WDGWi1kKUS70vCQhGi9JXweKJ5MGMECMs>
+
+
+
+> Calcium chloride (CaCl2) is one of the most frequently used agents to ionically cross-link alginate. However, it typically leads to rapid and poorly controlled gelation due to its high solubility in aqueous solutions. One approach to slow and control gelation is to utilize a buffer containing phosphate (e.g., sodium hexametaphosphate), as phosphate groups in the buffer compete with carboxylate groups of alginate in the reaction with calcium ions, and retard gelation. Calcium sulfate (CaSO4) and calcium carbonate (CaCO3), due to their lower solubilities, can also slow the gelation rate and widen the working time for alginate gels. For example, an alginate solution can be mixed with CaCO3, which is not soluble in water at neutral pH. Glucono-δ-lactone is then added to the alginate/CaCO3 mixture in order to dissociate Ca2+ from the CaCO3 by lowering the pH. The released Ca2+subsequently initiates the gelation of the alginate solution in a more gradual manner [[40](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3223967/#R40)].
+
+> Alginate is inherently non-degradable in mammals, as they lack the enzyme (i.e., alginase) which can cleave the polymer chains, but ionically cross-linked alginate gels can be dissolved by release of the divalent ions cross-linking the gel into the surrounding media due to exchange reactions with monovalent cations such as sodium ions. Even if the gel dissolves, though, the average molecular weights of many commercially available alginates are higher than the renal clearance threshold of the kidneys, and likely will not be completely removed from the body [[57](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3223967/#R57)].
+
+<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3223967/>
+
+
+
+For fun, tried CaCl2 + alginate. Became a rubbery, relatively strong fibrous mass instantly, which isn't great.
+
+
+
+Mechanical properties of hydrocolloid gels filled with internally produced CO2 gas bubbles.
+
+<https://www.ncbi.nlm.nih.gov/pubmed/1369223>
+
+Ooh! Calcium carbonate, 2% citric acid, forms foam.
+
+
+
+For fun, tried CaCO3 + alginate. Gelated a tiny bit. Ca2+ concentration increases as temperature decreases, threw it in the freezer for a bit, gelated a bit further but not sufficiently.
+
+ glucono-delta-lactone (GDL) changes the solubility of caco3.
+
+Calcium sulfate (gypsum) is usually used in dental alginates.
+
+Okay, so we could do CaCO3 + citric acid = Ca2+ ion, which then reacts with alginate, but the reaction produces CO2 which would introduce porosity. CaCl2 works too well. A common ion that blocks out the CaCl2 dissociation might work.
+
+> Although there are many salts containing calcium
+> ion, such as CaCl2 · 4H2O, CaC2O4, Ca(C6H11O7)2,
+> Ca(IO3)2 · 6H2O, which can react with alginate and
+> crosses link together. However, it is generally very difficult to control the reaction rate for most of them. This
+> makes it impossible to complete casting processing at
+> certain period. Therefore, the divalent salts with a controlled reaction rate with alginate have to be considered.
+> In other words, divalent cation concentration released
+> from the salt can be adjusted with temperature or time.
+> Examining the solubility of above salt substances at
+> different temperatures, we found that Ca(IO3)2 · 6H2O
+> is good for gelcasting processing because they have a
+> lower solubility (0.17 wt%) at room temperature and
+> a high solubility (1.38 wt%) at increased temperature
+> of 60 ◦C.
+
+
+
+Tried some random amount of salt, CaCl2, and Alginate. Worked really well; the CaCl2 didn't dissolve at all for many minutes, and the crosslinked layer only slowly built up. From the CRC handbook we see the following dissociation constants:
+
+
+
+Calcium carbonate (calcite) CaCO3 3.36 ⋅ 10–9
+Calcium fluoride CaF2 3.45 ⋅ 10–11
+Calcium hydroxide Ca(OH)2 5.02 ⋅ 10–6
+Calcium iodate Ca(IO3)2 6.47 ⋅ 10–6
+Calcium iodate hexahydrate Ca(IO3)2⋅ 6H2O 7.10 ⋅ 10–7
+Calcium molybdate CaMoO4 1.46 ⋅ 10–8
+Calcium oxalate monohydrate CaC2O4⋅ H2O 2.32 ⋅ 10–9
+Calcium phosphate Ca3(PO4)2 2.07 ⋅ 10–33
+Calcium sulfate CaSO4 4.93 ⋅ 10–5
+Calcium sulfate dihydrate CaSO4⋅ 2H2O 3.14 ⋅ 10–5
+Calcium sulfite hemihydrate CaSO3⋅ 0.5H2O 3.1 ⋅ 10–7
+
+Gelation really got underway in the iodate paper after 60 min. 
+
+4.93 ⋅ 10–5 / 6.47 ⋅ 10–6 
+
+60/7.6 
+
+8 minutes pot life
+
+That's pretty reasonable. Gypsum it is!
+
+Tried a bit of gypsum from a broken piece of drywall. worked! 
+

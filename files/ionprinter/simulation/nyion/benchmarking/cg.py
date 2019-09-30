@@ -21,8 +21,8 @@ for I in range(15,20):
         U[I,J] = 1
         B[I,J] = 0
 
-def residual(U,):
-
+def residual(U):
+    
 
 def conjugate_grad(U, boundaries, F):
     """
