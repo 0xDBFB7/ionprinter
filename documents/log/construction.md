@@ -1752,7 +1752,6 @@ How about 2 modules per card? Still 80 I/O. ~50 I/O seems to be the crossover be
 One module? 64 I/O. \$10 FPGA + \$10 in RAM. *16.
 
 <hr>
-
 Conrad Sanderson and Ryan Curtin. 
 *Armadillo: a template-based C++ library for linear algebra*. 
 Journal of Open Source Software, Vol. 1, pp. 26, 2016. 
@@ -3000,3 +2999,12 @@ That's pretty reasonable. Gypsum it is!
 
 Tried a bit of gypsum from a broken piece of drywall. worked! 
 
+
+
+See, *this* is truly how innovation works. In trying to come up with an alternative to sodium iodiate (namely,  sodium carbonate), I came across the carbon dioxide alumina foaming method, which will probably alleviate bowtie radiation issues. You have to be able to do dumb stuff to get ahead!
+
+
+
+A' can mean the transpose, inverse, derivative, or the next iteration, depending on context. It wasn't disambiguated here. That's bull.
+
+Spent a while trying to figure out why CG wasn't working, input matrix wasn't symmetric. Dumbo. Need to switch to bicgstab or something.

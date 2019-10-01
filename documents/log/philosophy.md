@@ -318,11 +318,15 @@ a dream
 
 Part of the value of space travel is in the perfection it demands from the design process. Space is completely inhospitable, almost inaccessible, poses risks of natures not seen terrestrially, all while applying strict mass budgets that strain the edges of structural science.  
 
-Only accelerator science even approaches such difficulty. Aerospace is a crucible; in it we burn off pseudoscience and negligence until society is left with the core product; a deep, nuanced understanding of all subjects encompassed. With a safety factor of 1.1, one cannot afford to ignore minutia; and it is that very nuance which drives society forward. With 400,000 motivated individuals, one cannot afford to mismanage.
+Only accelerator science even approaches such difficulty. Like a courtroom, aerospace is a crucible; in it we burn off pseudoscience and negligence until society is left with the core product; a deep, nuanced understanding of all subjects encompassed. With a safety factor of 1.1, one cannot afford to ignore minutia; and it is that very nuance which drives society forward. With 400,000 motivated individuals, one cannot afford to mismanage.
 
 A second moonshot is the ideal option from almost every point of view except the one that truly matters. It is the straightforward, stepping-stone option. From the point of view of the impassionate scientist, the books have been written, the articles published. 
 
 We must go to Mars not because it is easy, *but because it is hard.*
 
 
+
+<hr>
+
+Please do not compliment me. I am always teetering on the tragic precipice of arrogance and assholery; whatever trace of impostor syndrome I can retain is an essential asset to me.
 

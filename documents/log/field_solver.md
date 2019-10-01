@@ -95,7 +95,7 @@ It also allows us to find the effects of the particles on the electrodes.
 
 Unfortunately, this equation can't simply be worked in the manner you may be used to. So-called 'direct' methods exist, but they become computationally infeasible for more than a few dozen points. 
 
-CG 'updates all values in the direction of a solution'.
+CG 'updates all values in the direction of a solution'. It requires the matrix to be 'positive definite' - I don't understand what this means, but it distinctly does *not* mean BiCG includes a second subspace for negative definite. The 
 
 Recall that the potential field must be smooth. What if we took the neighboring points, averaged them, then updated the middle point? This is an iterative solver known as Jacobi. If the new values are updated immediately (such that the adjacent stencils will use the updated value), this is known as a Gauss-Seidel smoother; if the new values are put into a second array, this is a Jacobi smoother.
 
@@ -105,7 +105,8 @@ However, there's a problem. Because each point's value depends on each other poi
 
 --
 
-This is known as Geometric Multigrid. If we do away with the 'stencil' concepts, we can define a more abstract form of the same operations called Algebraic Multigrid.
+This is known as Geometric Multigrid. If we do away with the 'stencil' concepts, we can define a more abstract form of the same operations called Algebraic Multigrid. Algebraic multigrid doesn't care about the structure of the data; unfortunately, this means it is typically slower.
+
 
 
 $$
@@ -117,8 +118,8 @@ In 1-D, that looks like this:
 
 $$
 \begin{bmatrix}
-       \frac{5}{6} & \frac{1}{6} & 0           \\[0.3em]
-       \frac{5}{6} & 0           & \frac{1}{6} \\[0.3em]
+       4 & 1 & 0           \\[0.3em]
+       1 & 4           & 1 \\[0.3em]
        0           & \frac{5}{6} & \frac{1}{6}
        
      \end{bmatrix}
@@ -134,6 +135,12 @@ $$
      \end{bmatrix}
 $$
 
+
+
+Or, in a more manageable stencil representation,
+$$
+\phi[x,y] - \phi[x+1,y] - \phi[x-1,y] - \phi[x,y+1] - \phi[x,y-1] =q/e0
+$$
 All the complexity 
 
 Now, if we wanted to solve for the field at every possible position in some region, we would need to solve an infinite number of these equations, requiring infinite computing power. Moore's law notwithstanding. Fortunately, we can instead solve a reasonable, representative number of points by discretization. A common rule of thumb is 10 cells across the diameter of a beam.
@@ -176,6 +183,12 @@ Multigrid island boundaries
 
 
 ##### Examples: Pic-Las, V-sim
+
+
+
+### Discretization
+
+
 
 
 
@@ -273,6 +286,16 @@ FPGA miners
 
 
 
+### Data structures
+
+
+
+'Nested' data structures are particularly interesting because multigrid happens naturally.
+
+
+
+
+
 
 
 
@@ -283,7 +306,7 @@ The author now wishes to bring certain mistakes to attention.
 
   After the performance of the CPU and cluster was exhausted, alternative computing solutions were sought.
 
-  Initial estimates showed that 
+  Initial estimates showed that FPGAs would be 
 
   It is important to be committed to a problem, of course, for the detached researcher's attention may wander and the solutions they produce become substandard. However, it is important that any specific solution be abandoned if fundamental flaws are found, and that the chosen course of action be continuously reexamined.
 
