@@ -3008,3 +3008,46 @@ See, *this* is truly how innovation works. In trying to come up with an alternat
 A' can mean the transpose, inverse, derivative, or the next iteration, depending on context. It wasn't disambiguated here. That's bull.
 
 Spent a while trying to figure out why CG wasn't working, input matrix wasn't symmetric. Dumbo. Need to switch to bicgstab or something.
+
+
+
+> The smoother used in the upstroke of the V-Cycle (Algorithm 1, line 11) performs the operations of the smoother
+> used for the downstroke (line 4) in reverse order. E.g.,
+> if Gauss-Seidel iteration is used, opposite traversal orders
+> should be used when descending or ascending the V-Cycle,
+> respectively. For Jacobi smoothers, no reversal is necessary
+> as the result is independent of the traversal order.
+
+
+
+> **When
+> the multigrid V-Cycle is used as a preconditioner, it is solving a Poisson problem with zero boundary conditions, and
+> uses a zero initial guess as discussed in Section 3.3**
+
+Wait, what?
+
+
+
+> Preconditioning operates by constructing a symmetric, positive definite matrix M which is
+> easier to invert than L, and such that M^−1L is significantly
+> better conditioned than L.
+> In our case, we will use the multigrid V-Cycle as the preconditionerM−1
+> as described in [Tat93]. In particular, if we
+> define u :=M^−1
+> b, then u is the result of one iteration of the
+> multigrid V-Cycle for the problem Lu = b with zero initial
+> guess, and zero boundary conditions. We can easily verify
+> that under these conditions, the action of the V-Cycle indeed
+> corresponds to a linear operator; the requirement that M be
+> symmetric and positive definite, however, is less trivial. 
+
+Ooooh
+
+Preconditioning doesn't mean "provides a better initial guess"; it's an entire method on its own
+
+huh!
+
+
+
+oh man, this looks hard as *f****.
+
