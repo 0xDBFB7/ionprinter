@@ -124,12 +124,12 @@ t = 0
 c1 = 1
 while True:
     for i in range(0,10):
-        T1 = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
+        T1 = u.copy()
         jacobi(u,T1,b,f,1)
         u = T1.copy()
     # Step 1: Residual Calculation.
     v1 = u.copy()
-    T1 = numpy.zeros((SIZE_X, SIZE_Y, SIZE_Z))
+    T1 = u.copy()
     jacobi(u,T1,b,f,1)
     u = T1.copy()
     # u=T.copy()
