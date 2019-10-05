@@ -29,5 +29,8 @@ while(convergence > 0.001):
     R = R - potentials
     convergence = (numpy.linalg.norm(R))
     print(convergence)
+
+
+
 plt.imshow(potentials)
 plt.show()

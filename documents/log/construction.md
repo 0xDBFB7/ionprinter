@@ -3191,3 +3191,19 @@ How about int8 fixed point, then convert to float and finish off the last few it
 
 How about a higher-order stencil for the boundary conditions?
 
+Bastardized half-V mg scheme isn't going to work, I don't think. It relies on the change after a jacobi cycle, which gets all screwy after source terms are added.
+
+
+
+You can see clearly why CG requires a symmetric matrix. u' dot u = zero, then several terms divide by zero.
+
+
+
+<https://www.uml.edu/docs/cluster_13_tcm18-284412.pdf>
+
+> For these linear systems, as the largest matrix is
+> 1,000×1,000, our solver can solve them within 200 ms per
+> iteration on a single GPU.
+
+oh, that's funny
+

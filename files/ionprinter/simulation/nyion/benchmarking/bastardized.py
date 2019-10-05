@@ -122,6 +122,7 @@ convergence = []
 ims = []
 t = 0
 c1 = 1
+pos = 15
 while True:
     for i in range(0,10):
         T1 = u.copy()
@@ -192,6 +193,10 @@ while True:
     t+=1
     print("Residual: {} convergence factor: {} Step: {}".format(numpy.linalg.norm(r),numpy.linalg.norm(r)/c1,t))
     c1 = numpy.linalg.norm(r)
+
+    if(numpy.linalg.norm(r) < 1e-3):
+        f[25,pos,8] = 10
+        pos+=1
     #
     plt.cla()
     plt.draw()

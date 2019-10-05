@@ -14,9 +14,7 @@ int main(){
   //
 	auto t1 = std::chrono::high_resolution_clock::now();
 
-  for(int i=0; i < 100; i++){
-
-
+  for(int i=0; i < 10; i++){
   #pragma omp parallel for
 	for(int coord=SIZE*SIZE; coord < SIZE*SIZE*SIZE-(SIZE*SIZE); coord++){
     potentials_out[coord] = (potentials[coord+1] +

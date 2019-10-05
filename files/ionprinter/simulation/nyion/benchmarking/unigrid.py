@@ -22,8 +22,8 @@ b = numpy.zeros(SIZE_X)
 #         dH[i] = 0.5*dH[i-1][2k-1] + dH[i-1][2k+1] + 0.5*dH[i-1][2k+1]  //
 
 
-I1 = 64
-J1 = 64
+I1 = 128
+J1 = 128
 H = 1/8##?
 
 U = numpy.zeros((I1,J1))
@@ -47,41 +47,6 @@ def FND(I3, J3):
     return (M1-math.fabs(I-I3))*(M1-math.fabs(J-J3))/(M1*M1)
 
 
-def conjugate_grad(A, b, x=None):
-    """
-    Description
-    -----------
-    Solve a linear equation Ax = b with conjugate gradient method.
-    Parameters
-    ----------
-    A: 2d numpy.array of positive semi-definite (symmetric) matrix
-    b: 1d numpy.array
-    x: 1d numpy.array of initial point
-    Returns
-    -------
-    1d numpy.array x such that Ax = b
-
-    Thanks
-    <https://gist.github.com/sfujiwara/b135e0981d703986b6c2#file-cg-py-L51>
-    """
-    if not x:
-        x = numpy.ones_like(A)
-    r = numpy.dot(A, x) - b
-    p = - r
-    r_k_norm = numpy.dot(r, r)
-    for i in range(2):
-        Ap = numpy.dot(A, p)
-        alpha = r_k_norm / numpy.dot(p, Ap)
-        x += alpha * p
-        r += alpha * Ap
-        r_kplus1_norm = numpy.dot(r, r)
-        beta = r_kplus1_norm / r_k_norm
-        r_k_norm = r_kplus1_norm
-        if r_kplus1_norm.max() < 1e-5:
-            break
-        p = beta * p - r
-    return x
-
 N=5
 prev_E = 1
 while True:
@@ -97,7 +62,7 @@ while True:
                 T = U.copy()
                 for I in range(M1,I1-M1,M1):
                     for J in range(M1,J1-M1,M1):
-                        submesh_relaxes = 1 #
+                        submesh_relaxes = 2 #
                         if(B[I-M1:I+M1,J-M1:J+M1].max() and B[I-M1:I+M1,J-M1:J+M1].sum() != 9 and k < 2): #if there's a boundary nearby, pre-smooth.
                             for d in range(0,100):
                                 for I3 in range(I-M1+1,I+M1): #fix ranges
@@ -129,9 +94,6 @@ while True:
             E=math.sqrt(E)/M1/H
             print(E)
             # #FND COMPUTES THE UNIGRID DIRECTIONS
-
-    U = conjugate_grad(U,F)
-
     T = U.copy()
     for I3 in range(1,I1-1): #fix ranges
         for J3 in range(1,J1-1):
