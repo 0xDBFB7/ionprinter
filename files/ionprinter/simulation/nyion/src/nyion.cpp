@@ -26,6 +26,7 @@ cl::CommandQueue queue;
 cl::Context context;
 cl::Device default_device;
 
+
 int idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
 }

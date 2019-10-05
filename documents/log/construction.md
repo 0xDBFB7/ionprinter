@@ -3011,6 +3011,8 @@ Spent a while trying to figure out why CG wasn't working, input matrix wasn't sy
 
 
 
+Revisiting the best mg paper, McAdams et al.
+
 > The smoother used in the upstroke of the V-Cycle (Algorithm 1, line 11) performs the operations of the smoother
 > used for the downstroke (line 4) in reverse order. E.g.,
 > if Gauss-Seidel iteration is used, opposite traversal orders
@@ -3049,5 +3051,143 @@ huh!
 
 
 
-oh man, this looks hard as *f****.
+That's actually really, really clever. The multigrid matrix is always sym positive definite, nimbly dodging the 
+
+
+
+> Red-colored steps in the algorithm are applicable when
+> the Poisson problem has a nullspace (i.e., all Neumann
+> boundary conditions), and should be omitted when Dirichlet
+> boundaries are present.
+
+<https://github.com/CNugteren/CLBlast>
+
+<http://multicore.doc.ic.ac.uk/tools/GPUVerify/>
+
+<https://gpuopen.com/compute-product/clsparse/>
+
+> <https://scicomp.stackexchange.com/questions/1024/how-can-wavelets-be-applied-to-pde>
+
+
+
+Particle-in-cell beam dynamics simulations with a wavelet-based Poisson solver
+
+> One
+> such advantage is the ability to use the solution from the
+> previous time step as the initial approximation used in
+> solving the Poisson equation one time step later: this
+> simple idea was found to have a dramatic effect on the
+> number of iterations to convergence	
+
+That...is big.
+
+
+
+Green functions like BigDFT
+
+<http://www.lumanmagnum.net/physics/heldeneng/fd_green.pdf>
+
+
+
+> By using a [pyroelectric](https://en.wikipedia.org/wiki/Pyroelectric) material such as triglycene sulphate (TGS) as the target, a vidicon sensitive over a broad portion of the [infrared](https://en.wikipedia.org/wiki/Infrared)spectrum.[*citation needed*] is possible. This technology was a precursor to modern microbolometer technology.
+
+
+
+Using fp16 doesn't seem to make a big difference in terms of accuracy in PiC. Unfortunately, fast fp16 support has only been introduced in AMD Vega and Nvidia's newest RTX and V100 series.
+
+
+
+Ooh, what if we perform high-res jacobi *only around the particles which have changed?*
+
+
+
+Quick test: does a minor modification to the mesh 
+
+> 
+>
+> 0
+> 40.2891737075
+> 1
+> 28.3638757209
+> 2
+> 22.7124996174
+> 3
+> 19.2203232451
+> 4
+> 16.7641694203
+> 5
+> 14.9057187313
+> 6
+> 13.4331521158
+> 7
+> 12.2294078434
+> 8
+> 11.223397089
+> 9
+> 10.3687214468
+> 10
+>
+> ...
+>
+> 0.00102005472475
+> 1420
+> 0.00101540333069
+> 1421
+> 0.00101077314658
+> 1422
+> 0.00100616407569
+> 1423
+> 0.00100157602175
+> 1424
+> 0.000997008888929
+> 1425
+> 41.6834337148
+> 0
+> 17.6467094456
+> 1
+> 11.7776573264
+> 2
+> 9.11461208058
+> 3
+>
+> ...
+>
+> 0.00100294457971
+> 1139
+> 0.000998194041993
+> 1140
+
+
+
+<https://www.ncbi.nlm.nih.gov/pubmed/29538276>
+
+<https://www.ncbi.nlm.nih.gov/pubmed/15280628>
+
+Y'know, I can sort of tell where public fears about 'chemicals' come from. I'm trying to see how bad TiO2 will be long-term in an industrial setting, and it's quite difficult to determine which data are reliable, how concerning issues will be in practical situations, etc.
+
+
+
+I feel something tickling in the back of my brain about a differentiating the whole system again. There's some reasonably constant change in the field deltas between timesteps; the changes occur on different cells, certainly, but a similar change. Is there some way we could apply the derivative to an initial guess on the next mesh?
+
+Almost like FDTD at that point.
+
+This only applies as the beam starts to fill the mesh, of course - once steady-state is reached, there shouldn't be many changes.
+
+Fluid electron sims
+
+
+
+250w+140w+200w = 
+
+
+
+<https://developer.download.nvidia.com/video/gputechconf/gtc/2019/presentation/s9926-tensor-core-performance-the-ultimate-guide.pdf> 
+
+almost 10x difference between 1060 float vs 2060 tensor fp16 
+
+V100 can only do 125 Tflops, to 2060's 50! Not even worth renting.
+
+How about int8 fixed point, then convert to float and finish off the last few iterations?
+
+How about a higher-order stencil for the boundary conditions?
 

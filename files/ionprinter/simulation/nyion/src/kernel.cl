@@ -1,3 +1,4 @@
+#pragma OPENCL EXTENSION cl_khr_fp16 : enable
 
 #define COEFFICIENT_OF_RELAXATION 0.8
 
@@ -10,8 +11,8 @@ inline float unigrid_directions(int x, int y, int z, int i, int j, int k, int st
     return ((step_size-abs(x-i))*(step_size-abs(y-j))*(step_size-abs(z-k)))/(step_size*step_size*step_size);
 }
 
-void kernel compute_unigrid_corrections(global const float* U, global float* corrections, global const float* F,
-                                                            global const float* boundaries,
+void kernel compute_unigrid_corrections(global const half* U, global half* corrections, global const half* F,
+                                                            global const half* boundaries,
                                                             int step_size,
                                                             const int SIZE_X, const int SIZE_Y, const int SIZE_Z){
   /* -----------------------------------------------------------------------------
@@ -33,7 +34,7 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
   // int j = y % step_size;
   // int k = z % step_size;
 
-  float residual = 0;
+  half residual = 0;
   if(!boundaries[idx(x,y,z,SIZE_X,SIZE_Y)]){
     residual = (6.0f*U[idx(x,y,z,SIZE_X,SIZE_Y)])
                         - U[idx(x+1,y,z,SIZE_X,SIZE_Y)]
@@ -47,7 +48,7 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
   }
 
   // A1 and A3 can be pre-computed.
-  // float A3 = 6.0f*unigrid_directions(x,y,z,i,j,k,step_size)
+  // half A3 = 6.0f*unigrid_directions(x,y,z,i,j,k,step_size)
   //                   - unigrid_directions(x,y,z,i-1,j,k,step_size)
   //                   - unigrid_directions(x,y,z,i+1,j,k,step_size)
   //                   - unigrid_directions(x,y,z,i,j-1,k,step_size)
@@ -95,7 +96,7 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
 //   // }
 //
 //
-//   float correction = R1/A1;
+//   half correction = R1/A1;
 //   // /* -----------------------------------------------------------------------------
 //   // Apply correction to local region
 //   // ----------------------------------------------------------------------------- */
@@ -115,7 +116,7 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
 //   }
 // }
 
-void kernel multires_jacobi(global const float* U, global float* T, global const float* RHS, global const float* boundaries, int res, const int X_SIZE, const int Y_SIZE){
+void kernel multires_jacobi(global const half* U, global half* T, global const half* RHS, global const half* boundaries, int res, const int X_SIZE, const int Y_SIZE){
     /* -----------------------------------------------------------------------------
     Call with a 3d NDRange of DIM_SIZE - 2.
     The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
@@ -138,10 +139,10 @@ void kernel multires_jacobi(global const float* U, global float* T, global const
     }
 }
 
-void kernel add(global float* input_1, global float* input_2, global float* output){
+void kernel add(global half* input_1, global half* input_2, global half* output){
   output[get_global_id(0)] = input_1[get_global_id(0)]+input_2[get_global_id(0)];
 }
 
-void kernel subtract(global float* input_1, global float* input_2, global float* output){
+void kernel subtract(global half* input_1, global half* input_2, global half* output){
   output[get_global_id(0)] = input_1[get_global_id(0)]-input_2[get_global_id(0)];
 }

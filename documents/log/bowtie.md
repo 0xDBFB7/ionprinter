@@ -32,7 +32,7 @@ Therefore, to get a bearable print speed of >50g/h, it can be assumed that boili
 I spent a few thousand hours trying high-power induction heating methods (largely based on some papers I've since lost and [1]). Induction heating, however, has a few serious drawbacks compared with simple Joule heating:
 
 * Low effectiveness on non-ferrous metals. Metals like iron love induction welding, due to their high relative permeability; Aluminum doesn't absorb current as well; sure, you can get a chunk of aluminum up to 800c or so with 10kw of power, but we don't have the luxury of such high powers.
-* Extremely low effectiveness above the Curie point. Metals generally lose a lot of their magnetic properties above a certain temperature; that temperature is far, far below their boiling point.
+* Low effectiveness above the Curie point. Metals generally lose a lot of their magnetic properties above a certain temperature; that temperature is far, far below their boiling point.
 
 It may be possible to build an ion printer that uses induction heating, but there aren't many benefits.
 

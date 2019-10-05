@@ -328,5 +328,37 @@ We must go to Mars not because it is easy, *but because it is hard.*
 
 <hr>
 
-Please do not compliment me. I am always teetering on the tragic precipice of arrogance and assholery; whatever trace of impostor syndrome I can retain is an essential asset to me.
+Please do not compliment me. I am always teetering on the tragic precipice of arrogance, hubris, and assholery; whatever trace of impostor syndrome I can retain is an essential asset to me.
+
+<hr>
+
+
+
+"Undertaking this project required reading approximately 20,000 pages of scientific literature.
+
+Many of these papers date from the 1970s or earlier, with some even from the 1930s; but almost all were funded by taxpayer dollars."
+
+"Few societal issues are simple enough to be accurately described in the credits of a video. Researching this, you will find the issue exceptionally one-sided."
+
+"Scientific journals have, by mere historical circumstance, found themselves in the enviable position of holding the sum total of the world's knowledge for ransom. Scientists pay thousands to submit papers; in return, the journal finds (unpaid, volunteer) peer reviewers. Many journals no longer even offer to proofread papers. Perverse historical incentives mandate that these costs be borne."
+
+
+
+"Then, obtaining access to each ~10-page paper generally costs between \$25-\$40 - precisely none of which, I must emphasize, goes to the researchers involved. Obtaining subscriptions is now so costly that even many universities are fully unable to afford the 7-figure fees."
+
+"Had I been forced to purchase each of the papers involved through conventional channels, I would have spent nearly $60,000 - 10x the total cost of the entire project."
+
+"This is not even a matter of copyright, merely a matter of access; scientists are almost always allowed to freely share these reports, and many of the papers this work was based on have been out of copyright for decades."
+
+"Open access publishing is on the rise. If you wish to invigorate industry, if your society would benefit from high-tech solutions wrought from the universe trickling expediently to commercial applications, support these efforts."
+
+"In the meantime, thank you to the likes of Andrea E, Aaron Swartz, and many others, who have sacrificed personally to allow scientists to stand on the shoulders of giants. "
+
+<hr>
+
+Won't this be used to print guns? 
+
+I'm not sure that will be a problem. That capability has existed for over a decade now with FDM printers, and despite media concern thus far not a single use has arisen.
+
+As far as the evidence demonstrates, "Guns don't kill people, people kill people" seems to be a very flawed statement; but the epidemiological data do not seem to support the idea that printers will cause mayhem. Perhaps the Venn diagrams of access to intricate, expensive equipment and homicidal maniacs don't overlap very much.
 
