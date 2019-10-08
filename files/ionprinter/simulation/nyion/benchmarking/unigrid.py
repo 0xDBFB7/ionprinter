@@ -5,22 +5,6 @@ import math
 from itertools import cycle
 SIZE_X = 128
 
-u = numpy.zeros(SIZE_X)
-b = numpy.zeros(SIZE_X)
-
-# for x in range(40,50):
-#     u[x] = 1
-#     b[x] = 1
-
-
-#
-# dH = [0]*10
-# dH[i] = numpy.identity(H)
-# for i in range(1,10):
-#     H=2**i
-#     for k in range(1,SIZE_X-1):
-#         dH[i] = 0.5*dH[i-1][2k-1] + dH[i-1][2k+1] + 0.5*dH[i-1][2k+1]  //
-
 
 I1 = 128
 J1 = 128
@@ -62,9 +46,9 @@ while True:
                 T = U.copy()
                 for I in range(M1,I1-M1,M1):
                     for J in range(M1,J1-M1,M1):
-                        submesh_relaxes = 2 #
+                        submesh_relaxes = 1 #
                         if(B[I-M1:I+M1,J-M1:J+M1].max() and B[I-M1:I+M1,J-M1:J+M1].sum() != 9 and k < 2): #if there's a boundary nearby, pre-smooth.
-                            for d in range(0,100):
+                            for d in range(0,10):
                                 for I3 in range(I-M1+1,I+M1): #fix ranges
                                      for J3 in range(J-M1+1,J+M1):
                                         if(not B[I3,J3]):

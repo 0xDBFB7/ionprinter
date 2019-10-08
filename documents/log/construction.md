@@ -1553,10 +1553,6 @@ Interesting for later use: compiling in a ramdisk can often improve performance.
 
 
 
-Barium Ferrite is a good high-temperature magnet material; good to ~300c, sinterable,  pretty spicy in terms of toxicity.  See <https://patentimages.storage.googleapis.com/b2/26/d8/8714585053693a/US4457851.pdf>
-
-Requires ~10K Oersted magnetizing field.
-
 
 
 <hr>
@@ -3206,4 +3202,32 @@ You can see clearly why CG requires a symmetric matrix. u' dot u = zero, then se
 > iteration on a single GPU.
 
 oh, that's funny
+
+
+
+OpenCL mandates gpu mem / 3 as the allowed buffer size. 400^3 seemed to be the max, 256 MB.
+
+
+
+We'll have to revisit mesh refinement; the 0.1mm 
+
+You can do finite-difference on an unstructured grid. The cost is the memory required to store the node relationships.
+
+
+
+<https://developer.nvidia.com/gpugems/GPUGems2/gpugems2_chapter37.html>
+
+quad/octree - linear, probably
+
+
+
+
+
+C-SiC junction makes a thermocouple <http://sffsymposium.engr.utexas.edu/Manuscripts/1997/1997-56-Sun.pdf>
+
+
+
+Bread porous conductive foam
+
+The WarpX people tried GPUs, <https://www.nersc.gov/assets/GPUs-for-Science-Day/04-remi-lehe.pdf>
 
