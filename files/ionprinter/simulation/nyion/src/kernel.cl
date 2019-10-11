@@ -115,7 +115,29 @@ void kernel compute_unigrid_corrections(global const float* U, global float* cor
 //   }
 // }
 
-void kernel multires_jacobi(global const float* U, global float* T, global const float* RHS, global const float* boundaries, int res, const int X_SIZE, const int Y_SIZE){
+void kernel jacobi(global const float* U, global float* output, global const float* RHS, global const float* boundaries, const int X_SIZE, const int Y_SIZE){
+    /* -----------------------------------------------------------------------------
+    Call with a 3d NDRange of DIM_SIZE - 2.
+    The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
+
+    ----------------------------------------------------------------------------- */
+    int x = (get_global_id(0))+1;
+    int y = (get_global_id(1))+1;
+    int z = (get_global_id(2))+1;
+  //
+    if(!boundaries[idx(x,y,z,X_SIZE,Y_SIZE)]){
+      output[idx(x,y,z,X_SIZE,Y_SIZE)] =
+                 (U[idx(x+1,y,z,X_SIZE,Y_SIZE)] -
+                  U[idx(x-1,y,z,X_SIZE,Y_SIZE)] -
+                  U[idx(x,y+1,z,X_SIZE,Y_SIZE)] -
+                  U[idx(x,y-1,z,X_SIZE,Y_SIZE)] -
+                  U[idx(x,y,z+1,X_SIZE,Y_SIZE)] -
+                  U[idx(x,y,z-1,X_SIZE,Y_SIZE)] -
+                  RHS[idx(x,y,z,X_SIZE,Y_SIZE)])/6.0f;
+    }
+}
+
+void kernel multires_jacobi(global const float* U, global float* output, global const float* RHS, global const float* boundaries, int res, const int X_SIZE, const int Y_SIZE){
     /* -----------------------------------------------------------------------------
     Call with a 3d NDRange of DIM_SIZE - 2.
     The +1 offset is added to exclude the invalid 0 borders of the mesh; the - 2 handles the other edge.
@@ -125,15 +147,14 @@ void kernel multires_jacobi(global const float* U, global float* T, global const
     int y = (get_global_id(1)*res)+res;
     int z = (get_global_id(2)*res)+res;
   //
-    int coord = idx(x,y,z,X_SIZE,Y_SIZE);
     if(!boundaries[idx(x,y,z,X_SIZE,Y_SIZE)]){
-      T[coord] = ((6.0f*U[idx(x,y,z,X_SIZE,Y_SIZE)]) -
-                  U[idx(x+res,y,z,X_SIZE,Y_SIZE)] -
-                  U[idx(x-res,y,z,X_SIZE,Y_SIZE)] -
-                  U[idx(x,y+res,z,X_SIZE,Y_SIZE)] -
-                  U[idx(x,y-res,z,X_SIZE,Y_SIZE)] -
-                  U[idx(x,y,z+res,X_SIZE,Y_SIZE)] -
-                  U[idx(x,y,z-res,X_SIZE,Y_SIZE)] -
+      output[idx(x,y,z,X_SIZE,Y_SIZE)] =
+                 (U[idx(x+res,y,z,X_SIZE,Y_SIZE)] +
+                  U[idx(x-res,y,z,X_SIZE,Y_SIZE)] +
+                  U[idx(x,y+res,z,X_SIZE,Y_SIZE)] +
+                  U[idx(x,y-res,z,X_SIZE,Y_SIZE)] +
+                  U[idx(x,y,z+res,X_SIZE,Y_SIZE)] +
+                  U[idx(x,y,z-res,X_SIZE,Y_SIZE)] +
                   RHS[idx(x,y,z,X_SIZE,Y_SIZE)]);
     }
 }

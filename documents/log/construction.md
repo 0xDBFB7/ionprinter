@@ -3231,3 +3231,5 @@ Bread porous conductive foam
 
 The WarpX people tried GPUs, <https://www.nersc.gov/assets/GPUs-for-Science-Day/04-remi-lehe.pdf>
 
+Just saw adaptive timestepping being discussed! The timestep on a small region can be some multiple of the overall.
+
