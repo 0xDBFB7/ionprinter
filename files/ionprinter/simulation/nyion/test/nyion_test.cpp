@@ -114,6 +114,16 @@ TEST(MG_GPU_OPERATORS, multires_jacobi_test)
   delete[] boundaries;
 }
 
+TEST(MG_GPU_OPERATORS, alloc)
+{
+  int size = 2000e6 / 4;
+  cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(size));
+  float * potentials = new float[size];
+  memset (potentials, 0, sizeof (float) * size); //zero out arrays
+
+  dbg(queue.enqueueWriteBuffer(buffer_potentials,CL_TRUE,0,sizeof(float)*(size),potentials));
+  delete[] potentials;
+}
 
 TEST(MG_GPU_OPERATORS, transfer_timing_test)
 {
@@ -255,7 +265,7 @@ TEST(MG_GPU_OPERATORS, transfer_timing_test)
 TEST(MG_GPU_OPERATORS, full_up_test)
 {
 
-  
+
   //test on non-square array
   cl::Buffer buffer_potentials(context,CL_MEM_READ_WRITE,sizeof(float)*(SIZE_XYZ));
   cl::Buffer buffer_boundaries(context,CL_MEM_READ_WRITE,sizeof(int)*(SIZE_XYZ));

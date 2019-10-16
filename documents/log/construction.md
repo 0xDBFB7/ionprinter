@@ -3233,3 +3233,29 @@ The WarpX people tried GPUs, <https://www.nersc.gov/assets/GPUs-for-Science-Day/
 
 Just saw adaptive timestepping being discussed! The timestep on a small region can be some multiple of the overall.
 
+implementing a linear block-structured mesh. This is really great, since we get meshes suitable for multigrid, DSMC, and radiation  basically for free.
+
+
+
+
+
+We might have a problem here. In the Pidgeon process for magnesium production, the vapor-deposited magnesium crystals have a terribly misshapen structure. Some papers refer to substrate temperature being a major factor in the deposition density. Indeed, in zinc testing I recall the first few layers worked fine, but then large blobs formed. 
+
+
+
+Again, I've completely missed an entire field of study, one that might completely sink the project. Metal vapors don't just condense into simple, solid structures; they form twisting, mesmerizing crystal structures on even the tiniest whim. There's a tremendous amount of complexity here - the Schwoebel-Ehrlich effect, etc. 
+
+<https://pdfs.semanticscholar.org/5a8f/7bb5e83c8f982004d8f75bf68cf0cf7fcce7.pdf>
+
+
+
+Ooh interesting: "smoothening by (a) 200 eV and (b) 900 eV
+hydrogen ion bombardment at 450°C. " <http://sci-hub.tw/https://www.sciencedirect.com/science/article/abs/pii/0168583X89907441>
+
+
+
+<http://sci-hub.tw/https://doi.org/10.1103/PhysRevLett.72.116> really cool sim method. It seems the particles tend to jump around during deposition, retaining certain features of the underlying substrate. 
+
+
+
+"Liquid-phase epitaxy" - something to think about, a drastic change from vacuum but possibly useful - an electrolyte carrier to direct depostion?

@@ -46,7 +46,7 @@ I've often been of the mind that when two options are presented, one should choo
 
 
 
-I hesitate to write this. Putting pen to paper turns a thought, a malleable entity, into a rigid document. I try to minimize this level of rigidness in my company; however, I think this is such a powerful concept that 
+I hesitate to write this. Putting pen to paper turns a thought, a malleable entity, into a rigid document; something to be followed, rather than questioned. I try to minimize this level of rigidness in my company; however, I think this is such a powerful concept that 
 
 
 
@@ -54,7 +54,7 @@ Why does vertical integration work?
 
 
 
-This seems a bit counterintuitive, and a few years ago I was of an antipodal position. Specialization is one of the driving principles of modern society; few are required to learn how to grow crops, the intricacies of animal husbandry, how to teach their children, or the thousands of other functions which would have been essential for survival in previous centuries. This is really quite terrific, and has increased productivity and the quality of life immensely. I do not decry progress! 
+This seems a bit counterintuitive, and a few years ago I was of an antipodal position. Specialization is one of the driving principles of modern society; few are required to learn how to grow crops, to learn the intricacies of animal husbandry, how to teach their children, or the thousands of other functions which would have been essential for survival in previous centuries. This is really quite terrific, and has increased productivity and the quality of life immensely. I do not decry progress! 
 
 
 
@@ -362,3 +362,92 @@ I'm not sure that will be a problem. That capability has existed for over a deca
 
 As far as the evidence demonstrates, "Guns don't kill people, people kill people" seems to be a very flawed statement; but the epidemiological data do not seem to support the idea that printers will cause mayhem. Perhaps the Venn diagrams of access to intricate, expensive equipment and homicidal maniacs don't overlap very much.
 
+
+
+
+
+
+
+
+
+<hr>
+
+Consumed by a project with only tenuous wisps of physical basis, I have become a model of the very misguided inventor I abhor so.
+
+I've witnessed many greats, seeing their skills dim, stoop to the warm illusion of pseudoscience. An accomplished electrical engineer abandoning the theory that guided him so to obsess with perpetual motion. 
+
+And now I, a mediocre designer clinging to the spoils of a cupped hand.
+
+
+
+Previously, time-slicing was sufficient; multitasking between the business, university, and the project was just sufficient to maintain all. A great deal was accomplished in secret between 9:00 and 4:00 - of course, this is completely unfair to my long-suffering parents, whose marriage has been reduced by the stress of a business and a lazy, spoiled son.
+
+Unfortunately, this pace is unsustainable, and I expended the head-start I was lucky to receive in university. Summer courses were passed by a mere 0.6%. The requirements of second-year courses alone exceed my already feeble brain-power; 
+
+I fear that if I set it aside, it will be permanent; if the design constraints and figures are are allowed to fade, 3.5 years and 50,000 words will be lost to "no meaningful conclusion".
+
+
+
+
+
+
+
+
+
+> Dear Professor Taylor,
+>
+> 
+>
+> I am a student of your excellent PHYS2213 course. I have a tremendously strange question. I can only imagine how busy you must be at this time, so of course please do not feel obligated to read or reply. Even so, it would be interesting to hear a (hopefully scathing) peer-review perspective of the situation from such an accomplished physicist as yourself. Sincere apologies for the disrespectful lack of brevity; my current state does not seem to lend itself to Hemingwaysian prose.
+>
+> 
+>
+> Four years ago, I stumbled across something of a loophole in a process somewhat related to molecular-beam epitaxy and ion-beam deposition. I have spent the majority of the intervening time persuing it. If it is indeed physically possible, the technique would be of such tremendous utility that I cannot bear to set it aside. I would of course be happy to discuss the nuances of the system developed thus far - if it would not be hopelessly boring to the victim.
+>
+> 
+>
+> Of course, I am but another insufferable, misguided inventor imbued with hubris through insufficient knowledge of the subject matter; even recently I have discovered great flaws in my understanding that could only barely be mitigated through innovation. 
+>
+> 
+>
+> However, the technology seems to be somewhat on the bleeding-edge (building on the work of some ~1,500 scientific papers), and so the 'spin-offs' required to develop it appear to be somewhat useful on their own, even if failure of the root project is certain; such things as "the rapid gel-cast production of nitride-graphite-alumina 1600C high-temperature ceramic composites with arbitrary geometries for mere cents with a $100 kiln using a commodity source of SiC elements", an abysmal pre-print of which I would be happy to share. 
+>
+> 
+>
+> Particle-in-cell+DSMC+multiphysics simulations, written from scratch (with 50x greater computational efficiency than industry-standard Warp fortran codes) have also been mandated, though this has been the subject of the last year's fruitless work.
+>
+> 
+>
+> These same efforts can also be redirected into a similar technique that may be of some importance.
+>
+> 
+>
+> Certain aspects of home life have made further development untenable, as I may be (completely reasonably) forced to relocate my lab. My feeble mind is, regrettably, entirely unable to maintain both this project and these second-year studies; and this project has driven me to such distraction that I am unsure that I am capable of continuing courses without seeing progress. Grades in all but your course have dropped precipitously; I cannot seem to focus on anything else for more than a few seconds.
+>
+> 
+>
+> Because of my abject ignorance and the highly uncertain nature of the technique, I am of the mind that obtaining funding from industry would be a grave mistake - I am more than willing to waste my own time, for I learn all the while and find fulfillment in only this; but of course one cannot trifle so with matters of money. Likewise, I believe I am far from a position where grant-writing would be an option.
+>
+> 
+>
+> I do not believe I would require any funding to conclude the work; I have a very small amount of the same from an electronics design company I used to run. I own the high-vacuum chamber and turbomolecular pump required to perform tests; primarily I require 2 m^2, quiet, perhaps a year, contact with experts in computational science, the ability to work at horrific hours while listening to the Bee Gees through headphones, and access to a CNC machine - all of which Petrie appears to have in excess. 
+>
+> 
+>
+> I would of course be more than willing to assist with any lab work requested; I have not a fraction of the knowledge of your scientists, but I may be found to be a somewhat capable assistant. I only wish to perform science and solve problems, be it mine or others'.
+>
+> 
+>
+> I recognize that this would be tremendously unfair to those who have worked hard to obtain their degrees and laboratory positions; indeed, what I am asking for is almost entirely unreasonable, a scientific 'free lunch', so to speak. 
+>
+> 
+>
+> Even so, a statement to the effect that I have not entirely lost the plot would be of great service. In essence, I would like to know if I should give up.
+>
+> 
+>
+> Sincere regards, and apologies for the length and arrogance of this email,
+>
+> 
+>
+> [redacted for reasons of embarrassment]

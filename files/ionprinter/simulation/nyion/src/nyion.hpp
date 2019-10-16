@@ -21,7 +21,7 @@
 #include <cstdio>
 #include <chrono>
 #include <unistd.h>
-
+#include <dbg.h>
 
 #define SIZE_X 256
 #define SIZE_Y 256
