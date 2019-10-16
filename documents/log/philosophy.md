@@ -364,12 +364,6 @@ As far as the evidence demonstrates, "Guns don't kill people, people kill people
 
 
 
-
-
-
-
-
-
 <hr>
 
 Consumed by a project with only tenuous wisps of physical basis, I have become a model of the very misguided inventor I abhor so.
@@ -394,10 +388,10 @@ I fear that if I set it aside, it will be permanent; if the design constraints a
 
 
 
-> Dear Professor Taylor,
->
-> 
->
+
+
+
+
 > I am a student of your excellent PHYS2213 course. I have a tremendously strange question. I can only imagine how busy you must be at this time, so of course please do not feel obligated to read or reply. Even so, it would be interesting to hear a (hopefully scathing) peer-review perspective of the situation from such an accomplished physicist as yourself. Sincere apologies for the disrespectful lack of brevity; my current state does not seem to lend itself to Hemingwaysian prose.
 >
 > 

@@ -3259,3 +3259,28 @@ hydrogen ion bombardment at 450°C. " <http://sci-hub.tw/https://www.sciencedire
 
 
 "Liquid-phase epitaxy" - something to think about, a drastic change from vacuum but possibly useful - an electrolyte carrier to direct depostion?
+
+
+
+0.025mm/min sometimes achieved commercially in PVD.
+
+> The layers of MLI can be arbitrarily close to each other, as long as they are not in thermal contact.
+
+
+
+It seems like so-called Type II or Type T condensation would be acceptable. This requires a build platform heated to between 0.3 - 0.5x the melting point of the print material. Rough regions will geometrically shadow others in many cases, leading to a positive-feedback thickness instability; the wide range of angles from the many bowties will probably reduce this problem, though issues may arise if printing on the sides.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

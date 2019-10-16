@@ -85,7 +85,7 @@ You may find that this makes intuitive sense - it'd be pretty weird if the field
 
 
 
-The right-hand-side $\frac{q}{\epsilon_0}$ refers to any charges hanging in the air. This is quite convenient, since we can therefore use this single equation to solve not only the force from the electrode field, but also between free-floating charged particles (the space charge).
+The right-hand-side $\frac{q}{\epsilon_0}$ refers to any charges hanging in the vacuum. This is quite convenient, since we can therefore use this single equation to solve not only the force from the electrode field, but also between free-floating charged particles (the space charge).
 
 It also allows us to find the effects of the particles on the electrodes.
 
