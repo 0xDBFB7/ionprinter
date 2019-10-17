@@ -3276,11 +3276,5 @@ It seems like so-called Type II or Type T condensation would be acceptable. This
 
 
 
-Spent birthday watching TV. Couldn't get my GODDAMN FUCKING BRAIN in gear.
-
-
-
-
-
 
 

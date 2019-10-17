@@ -37,7 +37,15 @@ int cell_length(int size_x, int size_y, int size_z){
                               (size_z -1 + 2),size_x+2,size_y+2);
 }
 
-
+void position_from_index(int &x, int &y, int &z, int index, int x_len, int y_len, int z_len){
+  /*
+  Helper function to obtain 1D mesh index from int 3D mesh position
+  sanity checking should be done in caller for performance reasons
+  */
+  x = index % x_len; //ugly and slow! Dumb and stupid!
+  y = (index / x_len) % y_len; //idx of root cell
+  z = index / (x_len * y_len);
+}
 
 uint32_t initialize_root_cell(int size_x, int size_y, int size_z, uint32_t &refined_indices, uint8_t &boundaries, float &values, uint32_t buffer_idx){
   cell_len = cell_length();
