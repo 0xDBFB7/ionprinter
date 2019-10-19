@@ -15,12 +15,15 @@
 #define WORLD_SIZE_Y 0.1
 #define WORLD_SIZE_Z 0.1
 
+#define X 0
+#define Y 1
+#define Z 2
 
 int idx(int x, int y, int z, int x_len, int y_len){
     return ((x_len*y_len*z) + (x_len*y) + x);
 }
 
-bool is_inside_boundary(float &value_world_position[3]){
+bool is_inside_boundary(float (&value_world_position)[3]){
   return false;
 }
 
@@ -40,11 +43,12 @@ int cell_length(int x_len, int y_len, int z_len){
 
 //preamble format: world origin, world res x,y,z
 
-void world_position_offset_from_cell_index(int index, float &value_world_position[3], int x_len, int y_len){
+void world_position_offset_from_cell_index(int index, float (&value_world_position)[3], int x_len, int y_len, int z_len){
     value_world_position[X] += ((index % x_len) / ((float) x_len))*WORLD_SIZE_X;
     value_world_position[Y] += ((index / x_len) % y_len) / ((float) y_len))*WORLD_SIZE_Y;
     value_world_position[Z] += ((index / (x_len * y_len)) / ((float) z_len))*WORLD_SIZE_Z;
 }
+
 
 uint32_t add_cell(int x_len, int y_len, int z_len, uint32_t &refined_indices, uint8_t &boundaries, float &values, uint32_t buffer_start_idx){
   int cell_len = cell_length();
@@ -65,7 +69,7 @@ uint32_t add_cell(int x_len, int y_len, int z_len, uint32_t &refined_indices, ui
 
 
 
-add_cell(new_cell_position, new_cell_len, refined_indices, boundaries, values, buffer_idx);
+//add_cell(new_cell_position, new_cell_len, refined_indices, boundaries, values, buffer_idx);
 
 //if not all 8 corners are homogenous boundaries or vacuum, refine cell.
 //
@@ -100,13 +104,13 @@ int main(){
     ----------------------------------------------------------------------------- */
 
 
-    uint32_t * refined_indices = new uint32_t[MAX_CELL_COUNT]; //a series of pointers to corresponding refined cells.
+    uint32_t * refined_indices = new uint32_t[BUFFER_SIZE]; //a series of pointers to corresponding refined cells.
                                                                //Zero if this cell is unrefined; this works because
                                                                //the root cells can't be pointed to.
 
-    uint8_t * boundaries = new uint8_t[MAX_CELL_COUNT];
-    float * values = new float[MAX_CELL_COUNT];
-
+    uint8_t * boundaries = new uint8_t[BUFFER_SIZE];
+    float * potential_values = new float[BUFFER_SIZE];
+	float * space_charge = new float[BUFFER_SIZE]
 
     int root_cells_x = 100;
     int root_cells_y = 100;
@@ -139,10 +143,74 @@ compute_electric_field(values,pointer){
 	values[pointer + PREAMBLE_WORLD_SCALE_X]
 }
 
-
-Could particles store the index of the relevant mesh?
-
 */
+
+/*
+
+Workflow:
+
+initialize_block(block_pointer: 0, size at depth 0)
+Initialize root block at buffer[0]; zero all values. Set size and length in preamble. Size should be whole xyz because root could be rectangular.
+Iterate over root cells (0,end):
+	Get cell's world-space position,
+	 set potential_values[] and boundaries[].
+
+function refine(block_pointer: 0, depth: 0)
+Iterate over root cells (1,end-1 xyz): //remember the ghost points
+	xyz = idx(size: block_pointer+preamble)
+	If not boundaries[xyz] == [x+1] == [y+1] == [z+1] == [x+1 z+1...] 
+		(if there's detail that should be captured, do end check to avoid +1 overrun) OR boundaries[xyz] == marked OR space_charge[] != 0 
+	 set refined_indices[this root cell index] = buffer_trailing_index
+	 and add new block at buffer_trailing_index
+	 initialize_block(block_pointer: buffer_trailing_index, size at this depth)
+	 
+	if(refined_indices[cell index] != 0):
+	
+		refine(block_pointer: refined_indices[cell_index], depth: depth+1)
+		Iterate over refined_indices[cell index] (1,end-1 xyz):
+			...refine() again if depth < max
+
+function copy_ghosts_level()
+Iterate over root cells ():
+	
+
+(copy buffer to GPU)
+
+while(True):
+
+	Iterate over particles:
+		world-space -> root cell idx, xyz
+		space_charge[0 + root cell] += particle charge / e0 //has to be atomic! oh noes!
+		if refined_indices[0 + root cell idx]
+			block idx = refined_indices[0 + root cell idx]
+			world-space x -= WORLD_SCALE * root cell idx x... (subtract origin of root cell)
+			(world space is now small xyz distance within refined root cell)
+			world-space -> cell idx
+			space_charge[block idx + cell idx] = ... //each particle should only charge one cell at each depth
+			if refined_indices[block_idx + cell idx]:
+				...
+
+	Iterate over root values(1,end-1 xyz):
+		jacobi
+		if refined_indices[]
+			copy_down
+			interpolate corners 1 in from end
+				jacobi
+				copy ghosts at this depth?
+			...
+
+		
+	copy_ghosts()
+		
+	
+
+			
+	(faster version of refine() that just checks space_charge) 
+*/
+
+
+
+
 
 
 
