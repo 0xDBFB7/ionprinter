@@ -19,6 +19,11 @@
 #define Y 1
 #define Z 2
 
+int GLOBAL_CELL_SIZES[] = {16,16,16,128,128,128}; //define the dimensions of each refinement depth.
+									   //bare linear array because that's easiest to work with in OpenCL.
+									   //Should probably go into the fast constant memory on GPU.
+									   // in order of depth, X,Y,Z,X,Y,Z,...
+									  
 int idx(int x, int y, int z, int x_len, int y_len){
     return ((x_len*y_len*z) + (x_len*y) + x);
 }
@@ -27,9 +32,7 @@ bool is_inside_boundary(float (&value_world_position)[3]){
   return false;
 }
 
-// uint32_t get_cell_idx(float x, float y, float z, ){
-//
-// }
+
 
 int cell_length(int x_len, int y_len, int z_len){
   /* -----------------------------------------------------------------------------
@@ -123,29 +126,9 @@ int main(){
 }
 
 
-
-
-
-
-
-
 /*
 
-Functions:
-
-
-
--------particle-------
-
-Electric field:
-uint32_t pointer = get_mesh_at_position(x,y,z,finest level);
-compute_electric_field(values,pointer){
-	values[pointer + PREAMBLE_WORLD_SCALE_X]
-}
-
-*/
-
-/*
+All this is really poor practice, especially since the whole sci-comp community is switching to C++ en masse.
 
 Workflow:
 
@@ -190,22 +173,36 @@ while(True):
 			if refined_indices[block_idx + cell idx]:
 				...
 
-	Iterate over root values(1,end-1 xyz):
-		jacobi
-		if refined_indices[]
-			copy_down
-			interpolate corners 1 in from end
-				jacobi
-				copy ghosts at this depth?
-			...
-
-		
-	copy_ghosts()
-		
 	
-
-			
+	Iterate over root values(1,end-1 xyz):
+		if(depth > 0):
+			copy corners (ignoring ghost points) to level below
+			copy ghosts to level below 
+			interpolate corners to fine
+						
+		copy ghosts at this depth
+		jacobi at this depth
+		if refined_indices[]
+				jacobi 
+				copy ghosts at this dept
+	
+	
+				
 	(faster version of refine() that just checks space_charge) 
+
+//////////////////////////////////////
+Recursive implementation:
+
+
+//////////////////////////////////////
+Ghost copy operation factor will go like
+((n+2)^3 - (n^3)) / (n^3)
+Where n is the refined-mesh side length.
+n = 10, O = 0.72
+n = 20, O = 0.331
+n = 50, O = 0.124
+/////////////////////////////////////
+
 */
 
 
