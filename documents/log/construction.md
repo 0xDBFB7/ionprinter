@@ -3274,6 +3274,12 @@ It seems like so-called Type II or Type T condensation would be acceptable. This
 
 
 
+Now I see why gypsum wasn't used; the solubility of gypsum increases only very slightly with temperature, from ~2 mg/l at 25c to 2.5 at 50, whereas iodate goes from 0.17 to 1.7 at 60c. That's unfortunate.
+
+
+
+
+
 
 
 

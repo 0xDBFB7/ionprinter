@@ -18,11 +18,11 @@
 #define X 0
 #define Y 1
 #define Z 2
-
-int GLOBAL_CELL_SIZES[] = {16,16,16,128,128,128}; //define the dimensions of each refinement depth.
+#define LEN 3
+int GLOBAL_CELL_SIZES[] = {16,16,16,4096,128,128,128,2097152}; //define the dimensions of each refinement depth.
 									   //bare linear array because that's easiest to work with in OpenCL.
 									   //Should probably go into the fast constant memory on GPU.
-									   // in order of depth, X,Y,Z,X,Y,Z,...
+									   // in order of depth, X,Y,Z,LEN,X,Y,Z,LEN...
 									  
 int idx(int x, int y, int z, int x_len, int y_len){
     return ((x_len*y_len*z) + (x_len*y) + x);
@@ -39,12 +39,12 @@ int cell_length(int x_len, int y_len, int z_len){
   Returns cell length in buffer
   //remains to be seen whether ghost points should be implicit or not
   ----------------------------------------------------------------------------- */
-  return PREAMBLE_SIZE + idx((x_len-1),
-                              (y_len-1),
-                              (z_len-1),x_len,y_len);
+  return 	idx((x_len-1),
+                (y_len-1),
+               	(z_len-1),x_len,y_len);
 }
 
-//preamble format: world origin, world res x,y,z
+
 
 void world_position_offset_from_cell_index(int index, float (&value_world_position)[3], int x_len, int y_len, int z_len){
     value_world_position[X] += ((index % x_len) / ((float) x_len))*WORLD_SIZE_X;
@@ -53,24 +53,23 @@ void world_position_offset_from_cell_index(int index, float (&value_world_positi
 }
 
 
-uint32_t add_cell(int x_len, int y_len, int z_len, uint32_t &refined_indices, uint8_t &boundaries, float &values, uint32_t buffer_start_idx){
-  int cell_len = cell_length();
-  for(int cell_index = 0; cell_index < cell_len; cell_index++){
-    int index = buffer_start_idx + cell_index; //get buffer index
+uint32_t add_block(uint32_t &refined_indices, uint8_t &boundaries, float &potential, float &space_charge, uint32_t block_pointer, int depth){
+	GLOBAL_CELL_SIZES[]		
+	
+	for(int cell_index = 0; cell_index < block_; cell_index++){
+		int index = buffer_start_idx + cell_index; //get buffer index
+						
+		float world_position[3] = {0};
+		world_position_offset_from_cell_index(cell_index, world_position);
+		//needs to be relative-ized later
+		boundaries[cell_index] = is_inside_boundary(world_position);
+		space_charge[cell_index] = 0;
+		refined_indices[cell_index] = 0;
+		values[cell_index] = 0;		
+	}
 
-    float world_position[3] = {0};
-    world_position_offset_from_cell_index(cell_index, world_position);
-    //needs to be relative-ized later
-    boundaries[index] = is_inside_boundary(world_position);
-
-    refined_indices[index] = 0;
-    values[index] = 0;
-  }
-
-  return buffer_start_idx + cell_length(size_x,size_y,size_z);
+	return buffer_start_idx + cell_length(size_x,size_y,size_z);
 }
-
-
 
 //add_cell(new_cell_position, new_cell_len, refined_indices, boundaries, values, buffer_idx);
 
@@ -112,7 +111,7 @@ int main(){
                                                                //the root cells can't be pointed to.
 
     uint8_t * boundaries = new uint8_t[BUFFER_SIZE];
-    float * potential_values = new float[BUFFER_SIZE];
+    float * potential = new float[BUFFER_SIZE];
 	float * space_charge = new float[BUFFER_SIZE]
 
     int root_cells_x = 100;
@@ -126,9 +125,60 @@ int main(){
 }
 
 
+
 /*
 
+Switched from refbase to zotero primarily because of Zotero's cool chrome extension.
+Fought with apache2's WebDAV for hours trying to sync Zotero
+I certainly don't begruge Zotero their money, it's just that I would have blown through their plans quite quickly.
+wsgidav --host=0.0.0.0 --port=25400 --root ~/NAS/primary_a/share/ --auth=anonymous worked fine, 
+Ended up not using DavLock folder like suggested, the defaults work fine.
+
+A set of beam-position buttons can be put at the build platform for calibration
+Beam modulation delay can be used to determine distance to objects
+The known distance in the emitter can calibrate beam velocity.
+
+E-field derivative
+
+Hey, the bowtie nozzles can totally be built sideways, retaining the liquid metal while
+admitting the gas.
+Having the build platform at the bottom or side-on would really simplify maintainance
+and troubleshooting, since otherwise all the feedthroughs and associated electronics
+would be under the machine.
+Having the build platform at the bottom would put the parts under compression,
+probably better for small cross-sections?
+The diffusion pump has to be vertical for condensate drain.
+
+synclient HorizTwoFingerScroll=0
+synclient HorizTwoFingerScroll=
+
+
+
+------------------
+~4% alginate
+~94% alumina
+~2% gypsum
+
+The powders were added and mixed.
+After adding a small amount of water, the concoction became fiberous and
+granulated while mixing. More water, and it reached the consistency of play-dough.
+
+Fired with propane, failed - though the part stayed together very well during firing.
+
+Another mix with FeO and TiO2, fired with propane, also failed.
+
+Consider printing graphite. We can't make a graphite wire, so a vapor-phase 
+setup would be desirable. The main argument against vapor-phase transport is that
+distant nozzles will have a precipitously lower pressure. Perhaps nearer nozzles can be obstructed?
+
+ 
+------------------
+
 All this is really poor practice, especially since the whole sci-comp community is switching to C++ en masse.
+If blocks are of a known length and always added in some definite order,
+we could do away with the whole ridiculous pointer-chasing thing and just index 
+in some sensible manner.
+
 
 Workflow:
 
@@ -163,6 +213,7 @@ while(True):
 
 	Iterate over particles:
 		world-space -> root cell idx, xyz
+		//group by root cell, assign a cell to each core?
 		space_charge[0 + root cell] += particle charge / e0 //has to be atomic! oh noes!
 		if refined_indices[0 + root cell idx]
 			block idx = refined_indices[0 + root cell idx]
