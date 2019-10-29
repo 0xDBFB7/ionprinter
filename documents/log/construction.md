@@ -3276,6 +3276,57 @@ It seems like so-called Type II or Type T condensation would be acceptable. This
 
 Now I see why gypsum wasn't used; the solubility of gypsum increases only very slightly with temperature, from ~2 mg/l at 25c to 2.5 at 50, whereas iodate goes from 0.17 to 1.7 at 60c. That's unfortunate.
 
+Gypsum seems to have the same problem that Cl2 has: 
+
+
+
+
+
+
+
+<hr>
+
+0.05x gelatine
+
+0.1x kaolin
+
+0.85x alumina
+
+Mixed powders first, injected with difficulty into 12x5mm mold.
+
+Heated to 80c. Gelatine began to leak out of the mold, but eventually hardened after ~2 hours (even at high temperature!). Interesting; got softer first, then harder after a spell. It is probably much easier to pour and handle at ~60c.
+
+Sintered with propane torch for ~2 minutes. Got to a reasonable strength, but some pressure crushed it.
+
+<hr>
+
+So, process for insulation:
+
+Mix stiff concoction (w. 2% TiO2. Pour into beaker. Heat beaker and mold to ~60c, pour once temperature attained - no sprue necessary)
+
+Should make a small test part first.
+
+2" thick quarters of the whole insulation would probably be a good idea.
+
+
+
+> Thus, the gel strength is mainly dependent on the proportion of fractions having a molecular weight of approx.
+> 100 000 g mol1, whereas the viscosity is primarily a function of those in the
+> Fig. 2.6 Model of gel formation (from sol to gel upon cooling).
+> 54 2 From Collagen to Gelatine
+> molecular weight range of 200 000 to over 400 000 g mol1. For this reason, depending on the method of manufacture, gelatines of the same Bloom value can
+> have quite different viscosities
+
+Gelatine has a very complex crosslink behavior, involving proteins folding around each other, etc. This makes it very 
+
+
+
+MAM with MBAM crosslinker is also recommended
+
+
+
+WTF: wine-tumbler furnace
+
 
 
 
