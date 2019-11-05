@@ -3443,8 +3443,6 @@ This seems to be wrong. Okay, here's a weird thing. Amorphous structures are mor
 
 However, it actually becomes more plastic.
 
-
-
 Ethyl acetate sonication is effective on PLA apparently.
 
 
