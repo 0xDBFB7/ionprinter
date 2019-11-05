@@ -3292,6 +3292,8 @@ Gypsum seems to have the same problem that Cl2 has:
 
 0.85x alumina
 
+A small amount of water
+
 Mixed powders first, injected with difficulty into 12x5mm mold.
 
 Heated to 80c. Gelatine began to leak out of the mold, but eventually hardened after ~2 hours (even at high temperature!). Interesting; got softer first, then harder after a spell. It is probably much easier to pour and handle at ~60c.
@@ -3321,7 +3323,9 @@ Gelatine has a very complex crosslink behavior, involving proteins folding aroun
 
 
 
-MAM with MBAM crosslinker is also recommended
+MAM with MBAM crosslinker is also recommended. This might be a good general plastic for casting.
+
+n n'-methylenebisacrylamide
 
 
 
@@ -3329,9 +3333,119 @@ WTF: wine-tumbler furnace
 
 
 
+PLA is soluble in ethyl acetate, which is easy to get and quite safe. No data on gelatin solubility in ethyl acetate. The Bulk Barn gelatin we're using is porcine, which generally has a 'bloom number' between 90-300, which is correlated with molecular weight. Gelatin is insoluble in oil.
+
+> Gelatin is soluble in aqueous solutions of polyhydric alcohols such as glycerol and propylene glycol. Examples of
+> highly polar, hydrogen-bonding, organic solvents in which gelatin will dissolve are acetic acid, trifluoroethanol, and
+> formamide. Gelatin is insoluble in less polar organic solvents such as benzene, acetone, primary alcohols and
+> dimethylformamide (9).
+
+Trying to cross-correlate to determine solubility: ethyl acetate - polarity 4.4, acetone (insoluble) - 5.1, dimethylformamide (insoluble) - 6.4
+
+Print too big!
+
+<hr>
+
+Commercialization of furnace.
+
+OF COURSE! We bridge rectify and filter the AC input to get a higher voltage for commercialization without a variac. Could also perhaps 
+
+OTOH, we should probably have isolation on the high-voltage side anyways, to prevent sparky gefingerpoken; high-freq xformer required then.
+
+OTOH, the element could be put behind a ceramic baffle. I mean, toasters have exposed elements.
+
+OTOH, what about 220v countries? There are 220v HSIs, but they're rare. 
 
 
 
+Let's try to avoid feature creep here. Let's require USB power to avoid a bootstrap supply. This also lets us do away with the LCD screen.
+
+Voltage measurement - V->F converter then through optocoupler?
+
+
+
+
+
+<hr>
+
+As a complex biologically-derived copolymer, alginate crosslinks in a very interesting "egg box" manner, wherein calcium ions bind 'zipper-shaped' sections of the large alginate molecule together. 
+
+If you thought alginate was complex and ill-defined for technical use, get a load of gelatine. This is a 'wide-cut' protein extracted by acid hydrolysis of animal matter. Because of its natural source, formal specifications for gelatin do not generally exist, and properties may vary greatly per batch. Gelatin is specified by "Bloom", a gel strength metric that roughly correlates with molecular weight. The gelatine used in these experiments was porcine-derived.
+
+Interestingly, the molecular weights that cause high viscosity in gelatine solutions are not the same as those which confer strength; that is, strength and viscosity can be varied relatively independently.
+
+Gelatine's strength degrades 
+
+
+
+Your ceramics should be fully cooked to prevent salmonella. 
+
+
+
+emulsion polymerization
+
+
+
+thermos? More like furnace.
+
+<hr>
+
+My, ethyl acetate has a heady vapor! Have a headache now.
+
+A few mL was put in a mason jar and a few hardened, extruded alumina scraps from a low-gelatine test were added, along with a PLA part. It would have been smart to gravimetrically measure solubility, but this wasn't done.
+
+After half an hour at 20c, no visible effect on gelatine, no visible effect on PLA.
+
+After an hour at 20c, there was some slight smoothing and de-lamination of PLA. The jar was placed on the 60c build platform.
+
+After two hours at ~50c, the PLA was slightly soggy, while the gelatine still looked reasonable. There was some pressure in the jar.
+
+
+
+After ~12 hours in ethyl acetate at room temperature, the PLA part was removed from the bath. It was extremely rubbery and delaminated easily. This plasticity remained even after several hours.
+
+==The gelatine parts remained strong and visibly unaffected. They broke in the same brittle, non-plastic manner as before treatment.==
+
+
+
+Dryness of solvent matters; adding cacl2 helps - this might be effective for the earlier PVA+acetone test, where trace moisture ruined the part.
+
+> Exactly what is the procedure for drying acetone with calcium chloride?
+> Thanks.
+>
+> First, dessicate the calcium chloride, if it's not done already. Calcium
+>
+> chloride produced specifically for drying purposes often has a cobalt
+>
+> chloride indicator added to some of the chips -- blue is dry, pink is wet.
+>
+> Cook the stuff in a 300F
+>
+>  oven until it all turns blue.
+>
+> Then you simply
+>
+>  add about 10% by volume of the calcium chloride to your
+>
+> acetone to be dried. Seal the container well, and agitate it a number of
+>
+> times for a few hours. Allow to settle well before decanting the dry
+>
+> acetone.
+>
+> <https://rec.pyrotechnics.narkive.com/aCypCuCx/drying-acetone-with-cacl2>
+
+
+
+> Amorphous PLA is dissolved by ethyl; crystalline is not. High MW PLAs range in crystalline fraction from 15-40%. For this reason, the PLA must be near Tg to activate. 
+
+This seems to be wrong. Okay, here's a weird thing. Amorphous structures are more flexible and less brittle than the crystalline ones; I would have expected that when the amorphous component is dissolved, the plastic would become more brittle.
+
+However, it actually becomes more plastic.
+
+
+
+Ethyl acetate sonication is effective on PLA apparently.
 
 
 

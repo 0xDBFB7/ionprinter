@@ -13,7 +13,7 @@ height = 20;
 mold_thickness = 1.5;
 
 layer_num = 4;
-layer_width = 1.75;
+layer_width = 1.5;
 layer_spacing = 1.75;
 
 nozzle_orfice = 6.8;
@@ -47,15 +47,15 @@ difference(){
                     if(n > 0){ //the spokes
                         for (sp = [0:num_spokes-1]){
                             rotate([0,0,sp*(360/num_spokes)+(n % 2)*((360/num_spokes)/2)])
-                                translate([internal_radius+(n*(layer_width+layer_spacing))-layer_width/2,0,height*3/4]) 
-                                    cube([layer_width+0.3,layer_width,height/2],center=true);
+                                translate([internal_radius+(n*(layer_width+layer_spacing))-layer_width/2-0.25,0,height*3/4]) 
+                                    cube([layer_width+0.5,layer_width,height/2],center=true);
                         }
                     }
                     
                     if(n == layer_num){ //the mounting tabs
                         for (sp = [0:num_spokes-1]){
                             rotate([0,0,sp*(360/num_spokes)+(n % 2)*((360/num_spokes)/2)])
-                                translate([internal_radius+(n*(layer_width+layer_spacing))-layer_width/2,0,height/2]) 
+                                translate([internal_radius+(n*(layer_width+layer_spacing))-layer_width,0,height/2]) 
                                     cylinder(h=height,r=mounting_hole_radius*2,center=true);
                         }
                     }
@@ -65,7 +65,7 @@ difference(){
            union(){
                 for (sp = [0:num_spokes-1]){
                             rotate([0,0,sp*(360/num_spokes)+(layer_num % 2)*((360/num_spokes)/2)])
-                                translate([internal_radius+(layer_num*(layer_width+layer_spacing))-layer_width/2,0,height/2]) 
+                                translate([internal_radius+(layer_num*(layer_width+layer_spacing))-layer_width,0,height/2]) 
                                     cylinder(h=height*2,r=mounting_hole_radius,center=true);
                 }
             }     
