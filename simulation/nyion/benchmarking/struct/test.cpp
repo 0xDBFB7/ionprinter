@@ -34,18 +34,6 @@ bool is_inside_boundary(float (&value_world_position)[3]){
 
 
 
-int cell_length(int x_len, int y_len, int z_len){
-  /* -----------------------------------------------------------------------------
-  Returns cell length in buffer
-  //remains to be seen whether ghost points should be implicit or not
-  ----------------------------------------------------------------------------- */
-  return 	idx((x_len-1),
-                (y_len-1),
-               	(z_len-1),x_len,y_len);
-}
-
-
-
 void world_position_offset_from_cell_index(int index, float (&value_world_position)[3], int x_len, int y_len, int z_len){
     value_world_position[X] += ((index % x_len) / ((float) x_len))*WORLD_SIZE_X;
     value_world_position[Y] += ((index / x_len) % y_len) / ((float) y_len))*WORLD_SIZE_Y;

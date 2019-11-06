@@ -1,50 +1,18 @@
+
+
+Potentials 
+
+l0
+0 0 0
+0 1 0
+0 0 0
+
+[0 0 0 0 1 0 0 0 0] 
+
+
+
 /*
 
-Switched from refbase to zotero primarily because of Zotero's cool chrome extension.
-Fought with apache2's WebDAV for hours trying to sync Zotero
-I certainly don't begruge Zotero their money, it's just that I would have blown through their plans quite quickly.
-wsgidav --host=0.0.0.0 --port=25400 --root ~/NAS/primary_a/share/ --auth=anonymous worked fine, 
-Ended up not using DavLock folder like suggested, the defaults work fine.
-
-A set of beam-position buttons can be put at the build platform for calibration
-Beam modulation delay can be used to determine distance to objects
-The known distance in the emitter can calibrate beam velocity.
-
-E-field derivative
-
-Hey, the bowtie nozzles can totally be built sideways, retaining the liquid metal while
-admitting the gas.
-Having the build platform at the bottom or side-on would really simplify maintainance
-and troubleshooting, since otherwise all the feedthroughs and associated electronics
-would be under the machine.
-Having the build platform at the bottom would put the parts under compression,
-probably better for small cross-sections?
-The diffusion pump has to be vertical for condensate drain.
-
-synclient HorizTwoFingerScroll=0
-synclient HorizTwoFingerScroll=
-
-
-
-------------------
-~4% alginate
-~94% alumina
-~2% gypsum
-
-The powders were added and mixed.
-After adding a small amount of water, the concoction became fiberous and
-granulated while mixing. More water, and it reached the consistency of play-dough.
-
-Fired with propane, failed - though the part stayed together very well during firing.
-
-Another mix with FeO and TiO2, fired with propane, also failed.
-
-Consider printing graphite. We can't make a graphite wire, so a vapor-phase 
-setup would be desirable. The main argument against vapor-phase transport is that
-distant nozzles will have a precipitously lower pressure. Perhaps nearer nozzles can be obstructed?
-
- 
-------------------
 
 All this is really poor practice, especially since the whole sci-comp community is switching to C++ en masse.
 If blocks are of a known length and always added in some definite order,

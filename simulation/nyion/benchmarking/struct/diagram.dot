@@ -1,0 +1,12 @@
+digraph G
+{
+        node [shape = record];
+
+        node0 [ label ="<f0> | <f1> J | <f2> "];
+        node1 [ label ="<f0> | <f1> E | <f2> "];
+
+        "node0":f0 -> "node1":f1;
+        "node0":f2 -> "node2":f1;
+
+        {rank = same; node0; node1}
+}
