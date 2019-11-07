@@ -1,0 +1,31 @@
+// The Round Table
+digraph {
+	subgraph cluster_0 {
+		node [shape=record]
+		7 [label=<{X=7 | W<sub>x</sub> = 0.0 | Buf 7 | Ref 0}> fillcolor=green style=filled]
+		6 [label=<{X=6 | W<sub>x</sub> = 0.05 | Buf 6 | Ref 0}> fillcolor=white style=filled]
+		5 [label=<{X=5 | W<sub>x</sub> = 0.04 | Buf 5 | Ref 0}> fillcolor=white style=filled]
+		4 [label=<{X=4 | W<sub>x</sub> = 0.03 | Buf 4 | Ref 0}> fillcolor=white style=filled]
+		3 [label=<{X=3 | W<sub>x</sub> = 0.02 | Buf 3 | Ref 0}> fillcolor=white style=filled]
+		2 [label=<{X=2 | W<sub>x</sub> = 0.01 | Buf 2 | Ref 0}> fillcolor=white style=filled]
+		1 [label=<{X=1 | W<sub>x</sub> = 0.0 | Buf 1 | Ref 0}> fillcolor=white style=filled]
+		0 [label=<{X=0 | W<sub>x</sub> = -0.0 | Buf 0 | Ref 0}> fillcolor=green style=filled]
+	{rank=same;0;1;2;3;4;5;6;7}
+	0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7[style=invis]
+	}
+	subgraph cluster_8 {
+		node [shape=record]
+		15 [label=<{X=7 | W<sub>x</sub> = 0.0 | Buf 15 | Ref 0}> fillcolor=green style=filled]
+		14 [label=<{X=6 | W<sub>x</sub> = 0.05 | Buf 14 | Ref 0}> fillcolor=white style=filled]
+		13 [label=<{X=5 | W<sub>x</sub> = 0.04 | Buf 13 | Ref 0}> fillcolor=white style=filled]
+		12 [label=<{X=4 | W<sub>x</sub> = 0.03 | Buf 12 | Ref 0}> fillcolor=white style=filled]
+		11 [label=<{X=3 | W<sub>x</sub> = 0.02 | Buf 11 | Ref 0}> fillcolor=white style=filled]
+		10 [label=<{X=2 | W<sub>x</sub> = 0.01 | Buf 10 | Ref 0}> fillcolor=white style=filled]
+		9 [label=<{X=1 | W<sub>x</sub> = 0.0 | Buf 9 | Ref 0}> fillcolor=white style=filled]
+		8 [label=<{X=0 | W<sub>x</sub> = -0.0 | Buf 8 | Ref 0}> fillcolor=green style=filled]
+	{rank=same;8;9;10;11;12;13;14;15}
+	8 -> 9 -> 10 -> 11 -> 12 -> 13 -> 14 -> 15[style=invis]
+	}
+	1 -> 9 [color=red minlen=20 penwidth=3]
+	2 -> 14 [color=red minlen=20 penwidth=3]
+}
