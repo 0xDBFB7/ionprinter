@@ -1,2 +1,5 @@
 build
 *.png
+*.svg
+*.png
+*.out
