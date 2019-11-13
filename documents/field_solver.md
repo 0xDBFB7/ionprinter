@@ -20,7 +20,7 @@ To do this, the following physics must be simulated:
 - Electric field
 - Vaporization (print material, contaminants, graphite from bowtie structure, and diffusion pump oil)
 - Joule heating and heat transfer
-- Particle deposition and condensation
+- Particle deposition, condensation, and crystalline structure formation
 - Forces and collisions between ions and ions, ions and electrons, electrons and ions, and the trace background gas in the chamber.
 
 - Optionally, a magnetohydrodynamic system.
@@ -44,6 +44,7 @@ The problem is equivalent to the fringe-fields you may have learned about in hig
 Certain simple beam devices (such as Einzel lenses Gillespie, 1997, Rashid, 2011) can be represented by an equally simple analytical function that alters the velocity and position of particles accordingly. 
 
 These are analogous to geometric optics, where light is assumed to travel in straight lines. Unfortunately, these models fail miserably with the complex, low-energy beams used in the ionolith, and also restrict the geometry of electrodes to a limited number of shapes.
+
 
 #### Envelope or 'slicing' codes
 
@@ -92,10 +93,9 @@ It also allows us to find the effects of the particles on the electrodes.
 [^2]: You may also hear about the Laplace equation: this is merely Poisson without the right-hand-side, where space charge is assumed to be zero.
 
 
-
 Unfortunately, this equation can't simply be worked in the manner you may be used to. So-called 'direct' methods exist, but they become computationally infeasible for more than a few dozen points. 
 
-CG 'updates all values in the direction of a solution'. It requires the matrix to be 'positive definite' - I don't understand what this means, but it distinctly does *not* mean BiCG includes a second subspace for negative definite. The 
+CG 'updates all values in the direction of a solution'. It requires the matrix to be 'positive definite' - I don't understand what this means, but it distinctly does *not* mean BiCG includes a second subspace for negative definite.
 
 Recall that the potential field must be smooth. What if we took the neighboring points, averaged them, then updated the middle point? This is an iterative solver known as Jacobi. If the new values are updated immediately (such that the adjacent stencils will use the updated value), this is known as a Gauss-Seidel smoother; if the new values are put into a second array, this is a Jacobi smoother.
 
@@ -141,6 +141,7 @@ Or, in a more manageable stencil representation,
 $$
 \phi[x,y] - \phi[x+1,y] - \phi[x-1,y] - \phi[x,y+1] - \phi[x,y-1] =q/e0
 $$
+
 All the complexity 
 
 Now, if we wanted to solve for the field at every possible position in some region, we would need to solve an infinite number of these equations, requiring infinite computing power. Moore's law notwithstanding. Fortunately, we can instead solve a reasonable, representative number of points by discretization. A common rule of thumb is 10 cells across the diameter of a beam.
@@ -148,15 +149,25 @@ Now, if we wanted to solve for the field at every possible position in some regi
 
 
 It is also helpful to define the 'residual'.
+
 $$
 
 $$
+
+This is somewhat like the R^2 value in statistics: it describes how well a certain mesh is described by the equation.
+
+If you just want a fast stopping criteria, you can cheat by subtracting each iteration of the solver from the previous one; the largest difference is a fast stopping criteria on vector processors.
+ 
 (confusingly, some appear to define the residual backwards, as F-Ab. This is equivalent, it just means the corrections have to be applied with -).
 
 Now, how are electrodes applied to this grid? Simple: the points within the electrode are not updated after a smoothing sweep. Adjacent points still use these boundary values in the arms of their stencils. The residuals must also be zeroed in the boundaries.
 
+Electrode shapes are known as island boundaries. Applying multigrid to island boundaries can become tricky, especially in corners:
 
+You can see that the corner has been lost when restricting to a coarser grid, preventing rapid convergence. There are two ways to fix this:
 
+- A modified boundary restriction (by none other than walt disney studios!) 
+- Running a smoother on just the outside of the boundaries.
 <https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html>
 
 
@@ -200,6 +211,8 @@ Many codes (such as SIMION) support many of the simulation modes described above
 
 ### Finite-difference-time-domain
 
+##### Examples: gprMax
+
 In conventional 3d electrostatics, we discretize in 3 dimensions, solve, apply changes to electrodes and move particles etc, then solve again, ad infinitum. This works for most time-invariant fields; electrostatic fields, magnetic fields, etc.
 
 Magnetic fields can be found by solving for the current in conductors in each direction (x,y,z), then solving three seperate poisson equations for the same.
@@ -212,6 +225,7 @@ However, coupled *electromagnetic* fields involve time-varying quantities proper
 $$
 V = -\frac{dB}{dt}
 $$
+
 You can't usefully apply this to a mesh without time.
 
 Designing inductively-coupled plasma coils requires the above equation. The time-varying magnetic field induces an axial electric field in the vacuum, which accelerates electrons to bombard neutral gas. This is the main reason why a second electron gun is used for ionization in the first-gen designs; it's ostensibly steady-state. 
@@ -227,13 +241,19 @@ However, the 3D stencils we've used so far can be abstracted into the fourth dim
 Unfortunately, these meshes grow as N^4, so FDTD methods are stupendously computationally expensive. Plus, more arithmetic is required at each point.
 
 
+#### Wavelet methods
+
+
+One of the more interesting papers is the Wavelet+CG solver.
+
+
 
 ### Relativistic effects
 
 There are several aspects that simplify this problem. Wakefield solvers such as FBPIC must contend with the relativistic effects that are introduced at high particle speeds; we can neglect these issues entirely.
 
 
-
+BigDFT, gprMax
 
 
 #### History
@@ -288,9 +308,21 @@ FPGA miners
 
 ### Data structures
 
+In general, data structures seem to be about finding a balance between memory hits and organizational cycle complexity.
+
+Fully unstructured meshes sit on one end of the scale. An unstructured mesh can conform itself perfectly to the geometry at hand, requiring few points to build an accurate model.
+
+However, actually operating with this data requires position lookups, exhaustive searches for neighbors, etc. 
 
 
-'Nested' data structures are particularly interesting because multigrid happens naturally.
+In contrast, indexing neighbors in a fully structured mesh requires nothing more than i+1. 
+
+
+Unstructured meshes (tetrahedral) are usually used for finite-element / finite-volume methods, but can also be used for finite-difference [].
+
+
+
+The 'nested' data structures are particularly interesting because multigrid happens naturally.
 
 
 
@@ -320,13 +352,17 @@ The author now wishes to bring certain mistakes to attention.
 
   At a ce
 
+- A single analytic expression can tell you far more about the nature of a problem than countless simulations.
 
+  Test
 
 
 
 
 
 #### Magnetic fields aren't useful for this problem.
+
+
 
 After many trials with IBSimu, I discovered beam rigidity.
 

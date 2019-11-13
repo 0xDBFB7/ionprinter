@@ -182,3 +182,19 @@ Writing a proof-of-concept recipe in Python without regard to optimization very 
 2200us
 ```
 
+
+<hr>
+
+
+#### Issue:
+
+Unit testing may be a hindrance in the early rapid prototyping stages of a project. 
+
+##### Discovery 
+
+Many hundreds of hours were spent developing the first (very dumb) data structure; hundreds of lines of unit tests were written and thrown out as the API changed almost hourly. Eventually it became apparent that this structure wouldn't work. The new linear-stack adaptive block-structured tree shares none of the tests.
+
+
+
+
+ 

@@ -34,6 +34,7 @@ If reversing wire is not required, the two solenoids could simply be connected t
 The two solenoids will have different inductances and resistances etc, perhaps that could be leveraged to control them seperately. 
 
 Clamp could even be passive, just a piece of spring steel or something akin to a strand-jack collet.
+
 ```
 
 
