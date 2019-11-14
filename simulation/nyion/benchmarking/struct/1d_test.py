@@ -5,9 +5,8 @@ refined_indices = [0]*40
 SIZES = [8,8,8]
 
 
-potentials[12] = 10
-potentials[14] = 10
-potentials[17] = 10
+potentials[14] = 14
+potentials[17] = 17
 
 refined_indices[1] = 8
 refined_indices[2] = 16
@@ -53,20 +52,23 @@ def traverse_all(sync_depth, ignore_ghosts=0):
 
 #traverse_all(2)
 
-def sync_ghosts(sync_depth):
-
+def sync_ghosts(array, sync_depth):
+    '''
+    Transfers ghost values between blocks at sync_depth. 
+    Performs a breadth-first search of the structure tree
+    '''
     current_depth = 0
     
     x = 1
+    
     buffer_ref_queue = [0,0,0]
     buffer_x_queue = [0,0,0]
            
-    while True:        
+    while True: 
+       
         buffer_point = buffer_ref_queue[current_depth]
     
-        #print("Buf: {} Buffer pointer: {} x: {} buffer_ref_queue: {} current_depth: {}".format(buffer_point+x,buffer_point,x,buffer_ref_queue,current_depth))
         if(current_depth != sync_depth-1 and refined_indices[buffer_point+x]):
-            print("Descending to",current_depth+1)
             buffer_x_queue[current_depth] = x
             current_depth += 1
             buffer_ref_queue[current_depth] = refined_indices[buffer_point+x]
@@ -76,7 +78,6 @@ def sync_ghosts(sync_depth):
         if(x == SIZES[current_depth]-1):
             if(current_depth == 0): # done!
                 break
-            print("Ascending to",current_depth-1)
             current_depth-=1;
             x = buffer_x_queue[current_depth]+1
             continue
@@ -91,10 +92,16 @@ def sync_ghosts(sync_depth):
             
             if(refined_indices[buffer_point+x-1]): #shouldn't have to worry about buffer overrun, because ghosts are ignored
                                                     #index block before
-                potentials[refined_indices[buffer_point+x]] = potentials[refined_indices[buffer_point+x-1]+sizes[current_depth+1]-2]
+                                                    
+                array[refined_indices[buffer_point+x]] = potentials[refined_indices[buffer_point+x-1]+SIZES[current_depth+1]-2]
+
+            if(refined_indices[buffer_point+x+1]):
+                array[refined_indices[buffer_point+x]+SIZES[current_depth]-1] = potentials[refined_indices[buffer_point+x+1]+1]            
+
                 
         x+=1    
 
-sync_depth(2)
-print()
+print(potentials)
+sync_ghosts(potentials,1)
+print(potentials)
 

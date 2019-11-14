@@ -445,3 +445,18 @@ I fear that if I set it aside, it will be permanent; if the design constraints a
 > 
 >
 > [redacted for reasons of embarrassment]
+
+
+
+<hr>
+
+These last few months have not been great. I have been a lazy, spoiled, good-for-nothing ass. I act like a dick to my parents, who only try to help. Self-sufficiency is a perfectly reasonable requirement for them to have. 
+
+There is a change in my brain that I think is disasterous; a little inhibit flag before every action. Whereas before, given a free moment, I think I used to work on the project, some days I now just hang waiting for the flag to go away, and stare into the fireplace, increasingly convinced of the futility of effort on the whole. Being yelled at every time I work on something which I believe to be essential. Right now it's gone, which is great. In a few minutes my dad'll walk by and the flag'll be back up.
+
+Before class a little self-important student with delusions of being a YTV presenter started bossing people around. She sounded exactly like me.
+
+If I ever brag about how hard I worked, how bad I had it, please let it be known that I had it *easy*. I have middle-class parents; I have no job, free education. There are students in my class who are taking 6 courses simulataneously while working minimum-wage service jobs to pay their way. *That's hard*. Every day I am amazed at the tenacity of my fellows.  
+
+
+

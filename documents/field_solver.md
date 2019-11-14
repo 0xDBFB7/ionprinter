@@ -308,7 +308,7 @@ FPGA miners
 
 ### Data structures
 
-In general, data structures seem to be about finding a balance between memory hits and organizational cycle complexity.
+In general, data structures seem to be about finding a balance between inefficiently representing the object, and computational complexity of arranging the data.
 
 Fully unstructured meshes sit on one end of the scale. An unstructured mesh can conform itself perfectly to the geometry at hand, requiring few points to build an accurate model.
 
