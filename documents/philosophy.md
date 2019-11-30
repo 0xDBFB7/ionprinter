@@ -460,3 +460,7 @@ If I ever brag about how hard I worked, how bad I had it, please let it be known
 
 
 
+Oh yeah, here's a weird thing my brain's been doing. Just before falling asleep, with timing much like exploding-head-syndrome, my brain will start producing a stream of the most horrifying scenes of gore and viscera - I have to get up and run to the bathroom before it becomes completely overwhelming. How weird is that?
+
+ 
+  

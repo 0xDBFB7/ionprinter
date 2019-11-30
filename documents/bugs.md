@@ -196,5 +196,35 @@ Many hundreds of hours were spent developing the first (very dumb) data structur
 
 
 
+#### Issue:
 
- 
+Sneaky uninitialized buffers can lead to undefined behavior:
+
+```
+void sync_ghosts(){
+
+...
+
+    int buffer_ref_queue[MAX_DEPTH]; //store previous block reference
+    int buffer_x_queue[MAX_DEPTH];  //store value index in block 
+
+```
+
+is broken. 
+
+
+```
+
+void sync_ghosts(){
+
+    int buffer_ref_queue[MAX_DEPTH] = {0}; //store previous block reference
+    int buffer_x_queue[MAX_DEPTH] = {0};  //store value index in block 
+    
+```
+
+works.
+
+#### Solution
+
+A fuzzer would be helpful. Static analysis, too.
+
