@@ -228,3 +228,5 @@ works.
 
 A fuzzer would be helpful. Static analysis, too.
 
+New instrumentation features in GCC: -fsanitize=address,undefined,null. 
+

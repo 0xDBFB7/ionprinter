@@ -3495,3 +3495,16 @@ However, it actually becomes more plastic.
 Tg seems to have gone back up after a day or so, and the part regained its former hardness.
 
 Ethyl acetate sonication is effective on PLA apparently.
+
+
+
+<hr>
+
+Working on simulation program. Thinking of switching from OpenCL to OpenMP for future-proofing and simplicity. 
+
+Had a few dumb errors, discovered the new -fsanitize options. Really helpful.
+
+I thought I had a static analysis setup at some point. I seem to have lost it.
+
+Oh, it's just using cppcheck.
+

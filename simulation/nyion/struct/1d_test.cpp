@@ -2,10 +2,12 @@
 #include "dbg.h"
 
 const int MAX_DEPTH = 3;
+const int MESH_BUFFER_SIZE = 40;
 const int SIZES[MAX_DEPTH] = {8,8,8};
 
-int potentials[40] = {0};
-int refined_indices[40] = {0};
+int potentials[MESH_BUFFER_SIZE] = {0};
+int refined_indices[MESH_BUFFER_SIZE] = {0};
+
 
 // 
 // bool xyz_helper(){
@@ -47,7 +49,9 @@ bool breadth_first(int &buffer_point, int &current_depth,
     return true;
 }
 
-void sync_ghosts(){
+
+
+void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
 
     int ignore_ghosts = 1;
 
@@ -58,11 +62,36 @@ void sync_ghosts(){
     int x = ignore_ghosts;
 
     while(breadth_first(buffer_point, current_depth, 
-                    buffer_ref_queue, buffer_x_queue, x, MAX_DEPTH, ignore_ghosts)){
+                    buffer_ref_queue, buffer_x_queue, x, sync_depth, ignore_ghosts)){
 
-        std::cout << current_depth << "," << x << "\n";
+        //std::cout << current_depth << "," << x << "\n";
 
-        x+=1;    
+        
+        if(current_depth == sync_depth-1 && refined_indices[buffer_point+x]){
+            // 0 0 0  
+            // G G G     potentials[refined_indices[buffer_point+x]+0]
+            //-^-^-^--
+            // 4 2 6     potentials[refined_indices[buffer_point+x-1]+sizes[current_depth+1]-2]
+            
+            if(refined_indices[buffer_point+x-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
+                                                    //index block before
+                //Update bottom ghost points                                                    
+                array[refined_indices[buffer_point+x]] = array[refined_indices[buffer_point+x-1]+SIZES[current_depth+1]-2];
+            }
+            else{
+                //pass
+            }
+            
+            if(refined_indices[buffer_point+x+1]){
+                //Update top ghost points
+                array[refined_indices[buffer_point+x]+SIZES[current_depth]-1] = array[refined_indices[buffer_point+x+1]+1];
+            }
+            else{
+                //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges. 
+            }
+        }
+
+        x+=1;
     }
 }
 
@@ -79,5 +108,7 @@ int main(){
     refined_indices[5] = 24;
     refined_indices[21] = 32;
     
-    sync_ghosts();      
+    sync_ghosts(potentials,1);      
+    dbg(potentials);    
 }
+
