@@ -95,7 +95,13 @@ void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
     }
 }
 
+/*
 
+ - particle moves
+ - e field
+ - copy ghosts
+ 
+*/
 
 int main(){
 

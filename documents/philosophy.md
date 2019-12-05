@@ -460,7 +460,40 @@ If I ever brag about how hard I worked, how bad I had it, please let it be known
 
 
 
-Oh yeah, here's a weird thing my brain's been doing. Just before falling asleep, with timing much like exploding-head-syndrome, my brain will start producing a stream of the most horrifying scenes of gore and viscera - I have to get up and run to the bathroom before it becomes completely overwhelming. How weird is that?
+
+
+
+
+
+
+
+
+
+<hr>
+
+
+
+
+
+#### Concerning the ephemerality of twitter
+
+Why is twitter so ephemeral?
+
+I'm not sure I've ever read a tweet that didn't appear on my timeline or embedded in a post. 
+
+I certainly don't browse someone's timeline exhausively like I might a blog or 
+
+
+Of course, it is very reasonable to assume that I use twitter differently than others - I would be interested in others' experiences with the above.
+
+But if this is more generally true, it would seem that a great deal of information is being lost. 
+
+I learn a lot via twitter - even more so since my circle of friends increased a year ago. However, it's a distinct kind of learning; 
+more tidbits that people that people discuss 
+
+It's interesting to contrast this with something like IRC. IRC is designed to be transient; it's realtime, what happens now is gone soon, so don't post anything valuable.
+And yet, I've spent far more time 
+
 
  
   
