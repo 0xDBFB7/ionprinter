@@ -1,0 +1,102 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "."
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+  Max Output Level = 4
+  Coordinate System = Cartesian
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = Steady state
+  Steady State Max Iterations = 1
+  Output Intervals = 1
+  Timestepping Method = BDF
+  BDF Order = 1
+  Solver Input File = case.sif
+  Post File = case.ep
+  Coordinate Scaling = 0.001
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 8.8542e-12
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 1
+End
+
+Solver 1
+  Equation = Heat Equation
+  Variable = -dofs 1 Temperature
+  Procedure = "HeatSolve" "HeatSolver"
+  Exec Solver = Always
+  Stabilize = True
+  Bubbles = False
+  Lumped Mass Matrix = False
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-8
+  Nonlinear System Max Iterations = 50
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 0.9
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-8
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 1
+  Linear System Precondition Recompute = 1
+End
+
+Solver 2 ! Set the correct solver number here.
+              ! Usually you want to use the highest number so the results are saved at the end of a timestep.
+  Exec Solver = String "after timestep"
+  exec interval = 1is
+  Equation = String "ResultOutput"
+  Procedure = File "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = String "paraver." !or any other output file name of your choice
+  Output Format = String "vtk"
+  Vtk Format = Logical True
+End
+
+Equation 1
+  Name = "Equation 1"
+  Active Solvers(1) = 1
+End
+
+!See construction.md/graphite.
+
+Material 1
+  Name = "Alumina"
+  Porosity Model = van Genuchten
+  Electric Conductivity = 71582 !Siemens per meter
+  Heat Conductivity = 30
+  Heat Capacity = 451 !J/(kg*K)
+  Mesh Poisson ratio = 0.35
+  Density = 3900.0
+  Poisson ratio = 0.35
+  Youngs modulus = 70.0e9
+End
+
+Boundary Condition 1
+  Target Boundaries(59) = 2 3 5 6 7 8 9 10 11 12 13 14 15 17 18 19 20 21 22 23 24 25 26 28 29 30 31 32 33 34 35 36 37 38 39 41 42 43 44 45 46 47 49 50 51 53 54 55 56 57 58 59 60 61 62 63 64 65 66
+  Name = "Radiation"
+  Radiation Boundary Open = True
+  Radiation = Diffuse Gray
+  Radiation Target Body = -1
+  External Temperature = 300
+  Emissivity = 0.5
+End
+

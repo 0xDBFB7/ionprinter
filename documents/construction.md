@@ -3508,3 +3508,50 @@ I thought I had a static analysis setup at some point. I seem to have lost it.
 
 Oh, it's just using cppcheck.
 
+
+
+We're almost certainly not going to use VTK anymore, so cmake isn't a necessity.
+
+On the other hand, it'll be useful to get more experience with it.
+
+https://github.com/mxgmn/WaveFunctionCollapse would look really cool for the ionolith scene - or really any background.
+
+This doesn't make any sense! With upgraded gcc 7.2 and -O2, I'm getting 
+
+
+
+
+<hr>
+
+Layers of PVA and slipcast gelatine might work to build up a thin MLI.
+
+Dixie cups might work too.
+
+Wine tumbler dimensions:
+
+At 115mm down from rim, 67mm ID.
+
+Past smaller ridge, 75mm ID.
+
+
+
+
+<hr>
+
+approx. 1 part alginate was added to water and mixed.
+
+~1 part caco3 was added
+
+then 1 part citric acid.
+
+The alginate stiffened into a rubbery mass and hissed perceptibly. A large number of small bubbles seemed entrained within the same.
+
+The alginate mass was surprisingly stiff and solid - near the consistency of soft silicone.
+
+Tearing it apart revealed a goey, largely uncrosslinked interior.
+
+
+<hr>
+
+Tried elemer again, got annoyed again. Let's finish our custom thing first.
+

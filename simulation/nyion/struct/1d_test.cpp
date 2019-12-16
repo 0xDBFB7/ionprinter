@@ -15,6 +15,19 @@ int refined_indices[MESH_BUFFER_SIZE] = {0};
 // }
 
 
+struct traverse_state{
+    unsigned int x_queue[MAX_DEPTH] = {0};
+    unsigned int y_queue[MAX_DEPTH] = {0};
+    unsigned int z_queue[MAX_DEPTH] = {0};
+    unsigned int ref_queue[MAX_DEPTH] = {0};   
+    int x = 0;
+    int y = 0;
+    int z = 0;
+      
+};
+
+
+
 bool breadth_first(int &buffer_point, int &current_depth, 
                     int (&buffer_ref_queue)[MAX_DEPTH], 
                     int (&buffer_x_queue)[MAX_DEPTH],
@@ -88,7 +101,9 @@ void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
             }
             else{
                 //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges. 
+                // it would probably make sense to set thes 
             }
+            
         }
 
         x+=1;
@@ -97,10 +112,19 @@ void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
 
 /*
 
- - particle moves
+ - particle moves    
+
+# Direct lookup 
  - e field
+ - DSMC collisions
+
+# Breadth first
+
  - copy ghosts
- 
+ - jacobi
+ - copy down 
+ - visualization
+
 */
 
 int main(){
