@@ -23,19 +23,6 @@ include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DI
 
 add_compile_options(-Wall -Wextra -pedantic -Werror -std=c++17 -O3 -fopenmp -foffload=-lm)
 
-
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-
-#---Locate the ROOT package and defines a number of variables (e.g. ROOT_INCLUDE_DIRS)
-find_package(ROOT REQUIRED COMPONENTS)
-
-#---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
-include(${ROOT_USE_FILE})
-
-include_directories(${CMAKE_SOURCE_DIR} ${ROOT_INCLUDE_DIRS})
-#---Create  a main program using the library
-
-
 set(CMAKE_BUILD_TYPE Debug)
 add_subdirectory (src)
 
