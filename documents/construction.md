@@ -3555,3 +3555,127 @@ Tearing it apart revealed a goey, largely uncrosslinked interior.
 
 Tried elemer again, got annoyed again. Let's finish our custom thing first.
 
+
+
+Some CaCO3 + alginate put in sodastream a few times. Visible carbonation, very little crosslinking.
+
+Mg citrate tested, about the same character as caco4.
+
+<hr>
+
+4 were set up
+
+1 10% alginate + benzoate - irradiated 
+
+2 10% alginate + benzoate, non-irradiated
+    
+3 10% alginate + benzoate + alumina, irradiated
+
+0.05g benzoate, partially crushed 
+0.2g alginate
+0.3g alumina
+
+
+No observable difference pre-post irradiation.
+
+Another paper found UV crosslinking with just pva + polyacrylate + water - photolyzed water
+
+<hr>
+
+stronger covalent alginate crosslinking
+
+PVAc in alcohol carrier (isopropyl works) + NaOH = PVOH
+
+A solution of PVAc in a water–alcohol medium was
+placed in a reactor equipped with a stirrer and a
+thermometer, and then a solution containing ethyl alcohol
+and potassium (sodium) hydroxide was introduced in
+drops. After precipitation of the PVAc, the system was
+mixed for a further 15 min, and then acetic acid was
+introduced to neutralise the residual alkali (to pH = 7.0).
+The formed precipitate of polyvinyl alcohol was filtered
+off, washed with alcohol for the complete removal of the
+alkali metal acetate, and dried at 80°C in vacuum for 3 h.
+
+
+Seems like others have issues with PVA cracking.
+
+Gel-free process of saponification of polyvinyl acetate in
+water–alcohol media
+
+<hr>
+
+Compiling AMREX: 
+
+export CUDACXX=/usr/local/cuda-10.2/bin/nvcc
+
+cmake -DENABLE_CUDA=yes -DENABLE_OMP=1 -DSPACEDIM=3 -DENABLE_DP=1 -DENABLE_PARTICLES=1 -DCUDA_ARCH=Pascal -DENABLE_DP_PARTICLES=1 ../
+
+
+AMReX doesn't support embedded dirichlet boundaries or any sort of import function. Gosh darnit.
+
+
+<hr>
+
+CaSO4 to Alginate typically 1 to 1
+
+Rather than relying on the solubility of Ca+, a retarder is added to soak up the Ca ions temporarily.
+
+
+"The function of Na4P207 as retarder, demonstrated by the Ca2+ ion-time profiles, is to sequester the Ca2+ ions in solution.
+Only when the level of Na4P207 is exhausted, does the viscosity rise"
+
+TSPP  is tetrasodium phosphate
+T.S.P. cleaner, trisodium phosphate, is also used
+
+Na2SiF6 can interfere with this reaction, leading to an abrupt termination of
+the reaction prior to complete crosslinking
+
+
+In one paper, the redardant/chelator was used with an insoluble calcium phosphate and hexandioic acid.
+
+<hr>
+
+0.4g alumina
+0.04g kaolin
+0.02g alginate
+0.01g CaSO4
+0.01g Na3PO4 (TSP cleaner)
+
+Fail. Alginate has a strange shear thinning quality that makes it horrible to work with. I can only conclude that the authors of the papers are wizards.
+
+<hr>
+
+
+export CPATH=$CPATH:/usr/local/cuda/include
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/arthurdent/Programs/gcc-offload/gcc-offload/install/lib64/
+~/Programs/gcc-offload/gcc-offload/install/bin/g++ -O2 -Wall -Werror -fopenmp -foffload=-lm -fno-fast-math -fno-associative-math openmp_offload.cpp -o ompfl && ./ompfl
+
+
+
+<hr>
+
+Here's where we're at so far in terms of GPU support.
+
+OpenCL is fast. A 200^3 Jacobi runs in 1.5 ms on a single GTX1060. Unfortunately, OpenCL has a particularly clunky kernel system compared to the single source file in OpenMP and CUDA, and mandates pure C. It also seems to be largely deprecated in the HPC community; CUDA doesn't versions above 1.2, etc.
+
+WebCL is currently only usable on Macs.
+
+CUDA is fast and proprietary. It would be undesirable to mandate a specific GPU vendor for the user, since Nyion will probably be an integral part of the control software.
+
+Vulkan, Molten, and their ilk are all predominantly graphics libraries with only second-class support for compute.
+
+OpenMP is terrific in that it can support CPU multithreading, GPU offload, with great modern tools like atomics, plus built-in support for reduction. 
+
+According to "Using OpenMP offloading in Charm++", OpenMP is a factor of 10 slower than OpenCL.
+
+
+Nvidia's nvvp profiler is great!
+
+CUDA 10.2 supports GCC 8 - see if performance has changed
+
+
+`error while loading shared libraries: libROOTVecOps.so: cannot open shared object file: No such file or directory`
+
+Just had to run ldconfig after installing root.
+

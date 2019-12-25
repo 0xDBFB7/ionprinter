@@ -22,7 +22,7 @@ int _idx(int x, int y, int z, int x_len, int y_len){
 
 int main(int argc, char** argv)
 {
-    const long int t = 500;
+    const long int t = 256;
     const unsigned long int N = t*t*t;
 
     std::cout << "Number of devices: " << omp_get_num_devices() << std::endl;
@@ -54,15 +54,15 @@ int main(int argc, char** argv)
     {
 
 // 
-    #pragma omp teams distribute simd
-    for(unsigned long int i = 0; i < N-6; ++i) buffer[i] = (buffer[i+1] + buffer[i+2] + buffer[i+3] +buffer[i+4] + buffer[i+5] + buffer[i+5])/ 6.0;
-    #pragma omp teams distribute simd
-    for(int b = 0; b < 0; b++){
+    #pragma omp teams distribute 
+    for(unsigned long int i = 0; i < N-6; ++i) buffer[i] = (buffer[i+1] + buffer[i+2] + buffer[i+3] +buffer[i+4] + buffer[i+5] + buffer[i+5])/ 6.0f;
+    #pragma omp teams distribute 
+    for(int b = 0; b < 1; b++){
         for(int x = 1; x < t-1; x++){
             for(int y = 1; y < t-1; y++){
                 for(int z = 1; z < t-1; z++){
                     int idx = (t*t*z) + (t*y) + x;
-                    buf2[idx] = (buffer[idx-1]+buffer[idx+1]+buffer[idx-(t*t)]+buffer[idx+(t*t)]+buffer[idx-t]+buffer[idx+t]) / 6.0;
+                    buf2[idx] = (buffer[idx-1]+buffer[idx+1]+buffer[idx-(t*t)]+buffer[idx+(t*t)]+buffer[idx-t]+buffer[idx+t]) / 6.0f;
                 }
             }
         }
@@ -83,8 +83,9 @@ int main(int argc, char** argv)
     #pragma omp parallel for 
     for(unsigned long int i = 0; i < N-6; ++i) test[i] = (test[i+1]+test[i+2]+test[i+3]+test[i+4]+test[i+5]+test[i+6]) / 6.0;;
 //  
-    
-    for(int b = 0; b < 0; b++){
+
+    for(int b = 0; b < 1; b++){
+    #pragma omp parallel for
     for(int x = 1; x < t-1; x++){
         for(int y = 1; y < t-1; y++){
             for(int z = 1; z < t-1; z++){

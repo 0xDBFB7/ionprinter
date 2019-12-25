@@ -46,7 +46,6 @@ void opengl_2d_mode();
 
 void draw_mesh(std::vector<std::vector<double>>& input_mesh,root_mesh_geometry mesh_geometry);
 
-void to_csv(std::vector<std::vector<double>> &original, root_mesh_geometry mesh_geometry);
 
 void opengl_apply_camera_rotation();
 void opengl_switch_to_graph_window();

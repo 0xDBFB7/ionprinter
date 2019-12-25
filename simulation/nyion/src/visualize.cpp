@@ -9,20 +9,20 @@
 #include <GL/glext.h>
 #include <GL/glx.h>
 
+#include "TGraph.h"
 
-double opengl_zoom = 30;
-double opengl_z_extent = 10;
-double opengl_current_angle_x = 45;
-double opengl_current_angle_y = 25.0;
-double opengl_current_x_translate = 0.0;
-double opengl_current_y_translate = 0.0;
-double opengl_current_z_translate = 0;
-double opengl_delta_zoom = 0;
-double opengl_delta_angle_x = 0;
-double opengl_delta_angle_y = 0;
-double opengl_delta_x_translate = 0.0;
-double opengl_delta_y_translate = 0.0;
-double opengl_delta_z_translate = 0.0;
+
+float camera_x = 0.0;
+float camera_y = 0.0;
+float camera_z = 0.0;
+
+float camera_target_x = 0.0;
+float camera_target_y = 0.0;
+float camera_target_z = 0.0;
+
+float camera_angle_x = 0.0;
+float camera_angle_y = 1.0;
+float camera_angle_z = 0.0;
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
@@ -31,12 +31,12 @@ Display * display;
 XVisualInfo* vi;
 
 void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribute__((unused)) int y){
-  if(key == '2') opengl_delta_angle_x = 10;
-  if(key == '8') opengl_delta_angle_x = -10;
-  if(key == '4') opengl_delta_angle_y = 10;
-  if(key == '6') opengl_delta_angle_y = -10;
-  if(key == '+') opengl_delta_zoom = -10;
-  if(key == '-') opengl_delta_zoom = +10;
+  if(key == '2') opengl_angle_x = 10;
+  if(key == '8') opengl_angle_x = -10;
+  if(key == '4') opengl_angle_y = 10;
+  if(key == '6') opengl_angle_y = -10;
+  if(key == '+') opengl_zoom = -10;
+  if(key == '-') opengl_zoom = +10;
   if(key == '0'){
       opengl_delta_angle_x -= opengl_current_angle_x;
       opengl_delta_angle_y -= opengl_current_angle_y;
@@ -79,18 +79,18 @@ void initialize_opengl(){
 
   mesh_window = glXGetCurrentDrawable();
 
-  glutInitWindowSize(OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_X);
-  glutCreateWindow("Nyion Graph");
-  glViewport(0, 0, OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_Y);
+  // glutInitWindowSize(OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_X);
+  // glutCreateWindow("Nyion Graph");
+  // glViewport(0, 0, OPENGL_GRAPH_WINDOW_X, OPENGL_GRAPH_WINDOW_Y);
 
-  glutKeyboardFunc(keyboard_handler);
-  glutSpecialFunc(special_keyboard_handler);
+  // glutKeyboardFunc(keyboard_handler);
+  // glutSpecialFunc(special_keyboard_handler);
 
-  graph_window = glXGetCurrentDrawable();
-
-  std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-  opengl_switch_to_mesh_window();
+  // graph_window = glXGetCurrentDrawable();
+  //
+  // std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  //
+  // opengl_switch_to_mesh_window();
 
 
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -108,13 +108,7 @@ void initialize_opengl(){
   /* -----------------------------------------------------------------------------
   Determine the longest side of the mesh and configure the frustrum appropriately.
   ----------------------------------------------------------------------------- */
-  int min_extent = WORLD_Z_START;
-  int max_extent = WORLD_Z_END;
-  opengl_z_extent = max_extent-min_extent;
 
-  opengl_current_z_translate = 2*opengl_z_extent;
-  opengl_current_x_translate = -(((WORLD_X_END-WORLD_X_START)/2)+WORLD_X_START)/OPENGL_WORLD_SCALE;
-  opengl_current_y_translate = -(((WORLD_Y_END-WORLD_Y_START)/2)+WORLD_Y_START)/OPENGL_WORLD_SCALE;
 }
 
 void opengl_switch_to_graph_window(){
@@ -178,136 +172,42 @@ void opengl_draw_axis_cross(){
   glEnd();
 }
 
-//
-// void draw_geometry_outline(root_mesh_geometry mesh_geometry){
+
+// void draw_mesh(std::vector<std::vector<double>>& input_mesh){
 //   /* -----------------------------------------------------------------------------
-//   Draw a wireframe box encompassing mesh_geometry.
-//   GL_LINE_STRIPs should be drawn between pixels; hence the +0.5.
+//   Determine min and max for color scaling
 //   ----------------------------------------------------------------------------- */
-//   glColor3f(1.0f, 1.0f, 0.0f);
-//     glBegin(GL_LINE_STRIP);
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_min_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_max_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//     glVertex3f(((int)(mesh_geometry.x_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.y_min_bound/OPENGL_WORLD_SCALE)+0.5),
-//                           ((int)(mesh_geometry.z_max_bound/OPENGL_WORLD_SCALE)+0.5));
-//   glEnd();
+//   double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
+//   double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
+//   /* -----------------------------------------------------------------------------
+//   Draw cubes
+//   ----------------------------------------------------------------------------- */
+//   for(int x = 0; x < SIZE_X; x++){
+//     for(int y = 0; y < SIZE_X; y++){
+//       for(int z = 0; z < SIZE_X; z++){
 //
+//   glPushMatrix();
+//     glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
+//                   (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
+//                   (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
+//
+//     if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
+//       glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,255,
+//                                   (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
+//     }
+//     else{
+//       glColor4f(0,(255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min)),0,
+//                                   (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min));
+//     }
+//     glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
+//   glPopMatrix();
 // }
 
-void draw_mesh(std::vector<std::vector<double>>& input_mesh){
-  /* -----------------------------------------------------------------------------
-  Determine min and max for color scaling
-  ----------------------------------------------------------------------------- */
-  double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
-  double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
-  /* -----------------------------------------------------------------------------
-  Draw cubes
-  ----------------------------------------------------------------------------- */
-  for(int x = 0; x < SIZE_X; x++){
-    for(int y = 0; y < SIZE_X; y++){
-      for(int z = 0; z < SIZE_X; z++){
-
-  glPushMatrix();
-    glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                  (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-                  (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
-
-    if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
-      glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,255,
-                                  (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
-    }
-    else{
-      glColor4f(0,(255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min)),0,
-                                  (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min));
-    }
-    glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
-  glPopMatrix();
-}
-
-void opengl_apply_camera_rotation(){
-  opengl_current_z_translate += opengl_delta_zoom; //FIXME: no longer required.
-  opengl_current_angle_x += opengl_delta_angle_x;
-  opengl_current_angle_y += opengl_delta_angle_y;
-  /* -----------------------------------------------------------------------------
-  Redo model rotation and translation
-  ----------------------------------------------------------------------------- */
-  glTranslatef(opengl_current_x_translate, opengl_current_y_translate, -opengl_current_z_translate);
-  glRotatef(opengl_current_angle_x, 1.0, 0, 0);
-  glRotatef(opengl_current_angle_y, 0, 1.0, 0);
-  opengl_delta_zoom = 0;
-  opengl_delta_angle_x = 0;
-  opengl_delta_angle_y = 0;
-}
-
-
-void opengl_graph_1d_vector(std::vector<double> &input, const std::string& title, int index){
-  double min = *std::min_element(input.begin(),input.end());
-  double max = *std::max_element(input.begin(),input.end());
-
-  opengl_switch_to_graph_window();
-
-  double graph_y_position = (OPENGL_GRAPH_WINDOW_Y/ ((double)OPENGL_GRAPH_COUNT))*index + OPENGL_GRAPH_Y_OFFSET;
-  double graph_height = OPENGL_GRAPH_WINDOW_Y/((double)OPENGL_GRAPH_COUNT);
-  glRasterPos2i(OPENGL_GRAPH_X_OFFSET,graph_y_position);
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-  glutBitmapString(GLUT_BITMAP_HELVETICA_18, (unsigned char *) title.c_str());
-
-  glColor3f(1.0f, 1.0f, 0.0f);
-  glBegin(GL_LINE_STRIP);
-  double graph_x_scale = (((double)OPENGL_GRAPH_WINDOW_X-OPENGL_GRAPH_X_OFFSET)/input.size());
-  double graph_y_scale = graph_height/(max-min);
-  for(uint32_t i = 0; i < input.size(); i++){
-    glVertex2f(OPENGL_GRAPH_X_OFFSET+(graph_x_scale*i),(graph_y_position+graph_height)-(graph_y_scale*(input[i]-min)));
-  }
-  glEnd();
-
-}
 
 void update_screen(){
+  gluLookAt(
+
+  );
   glutMainLoopEvent();
 
   glutSwapBuffers();
