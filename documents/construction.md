@@ -3677,5 +3677,8 @@ CUDA 10.2 supports GCC 8 - see if performance has changed
 
 `error while loading shared libraries: libROOTVecOps.so: cannot open shared object file: No such file or directory`
 
-Just had to run ldconfig after installing root.
+Just had to run ldconfig after installing ROOT.
+
+
+Beam can be blanked by turning off mass-spec deflection voltage, allowing the silicone oil curtain to evacuate everything vaporized.
 
