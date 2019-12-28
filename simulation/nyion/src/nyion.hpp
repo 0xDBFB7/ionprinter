@@ -6,3 +6,10 @@
 #include "TBrowser.h"
 #include "TFrame.h"
 #include "TApplication.h"
+
+#include <iostream>
+#include <omp.h>
+#include <chrono>
+#include <math.h>
+#include <cuda.h>
+#include <dbg.h>

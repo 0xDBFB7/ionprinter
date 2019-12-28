@@ -22,7 +22,6 @@ float camera_target_z = 0.0;
 
 float camera_angle_x = 0.0;
 float camera_angle_y = 1.0;
-float camera_angle_z = 0.0;
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
@@ -31,9 +30,9 @@ Display * display;
 XVisualInfo* vi;
 
 void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribute__((unused)) int y){
-  if(key == '2') opengl_angle_x = 10;
-  if(key == '8') opengl_angle_x = -10;
-  if(key == '4') opengl_angle_y = 10;
+  if(key == '2') camera_angle_z = 10;
+  if(key == '8') camera_target_y = -10;
+  if(key == '4') camera_target_z = 10;
   if(key == '6') opengl_angle_y = -10;
   if(key == '+') opengl_zoom = -10;
   if(key == '-') opengl_zoom = +10;
@@ -205,11 +204,11 @@ void opengl_draw_axis_cross(){
 
 
 void update_screen(){
-  gluLookAt(
+  gluLookAt(0,0,0,
+            0,0,0,
+            0,1,0);
 
-  );
   glutMainLoopEvent();
-
   glutSwapBuffers();
   glutPostRedisplay();
 
