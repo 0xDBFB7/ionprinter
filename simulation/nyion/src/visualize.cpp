@@ -12,16 +12,12 @@
 #include "TGraph.h"
 
 
-float camera_x = 0.0;
+float camera_x = -10;
 float camera_y = 0.0;
-float camera_z = 0.0;
+float camera_z = 10;
 
-float camera_target_x = 0.0;
-float camera_target_y = 0.0;
-float camera_target_z = 0.0;
-
-float camera_angle_x = 0.0;
-float camera_angle_y = 1.0;
+float camera_angle_pitch = 0.0;
+float camera_angle_yaw = 0.0;
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
@@ -30,16 +26,12 @@ Display * display;
 XVisualInfo* vi;
 
 void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribute__((unused)) int y){
-  if(key == '2') camera_angle_z = 10;
-  if(key == '8') camera_target_y = -10;
-  if(key == '4') camera_target_z = 10;
-  if(key == '6') opengl_angle_y = -10;
-  if(key == '+') opengl_zoom = -10;
-  if(key == '-') opengl_zoom = +10;
-  if(key == '0'){
-      opengl_delta_angle_x -= opengl_current_angle_x;
-      opengl_delta_angle_y -= opengl_current_angle_y;
-  }
+  if(key == '2') camera_angle_pitch = 10;
+  if(key == '8') camera_angle_pitch = -10;
+  if(key == '4') camera_angle_yaw = 10;
+  if(key == '6') camera_angle_yaw = -10;
+  if(key == '+') camera_x = -10;
+  if(key == '-') camera_x = +10;
 }
 
 void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute__((unused)) int y){
@@ -123,9 +115,9 @@ void opengl_3d_mode(){
   glLoadIdentity();
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
-  double aspect = (double)viewport[2] / (double)viewport[3];
+  // double aspect = (double)viewport[2] / (double)viewport[3];
 
-  gluPerspective(60, aspect, opengl_current_z_translate-1.5*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
+  // gluPerspective(60, aspect, opengl_current_z_translate-1.5*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -204,7 +196,9 @@ void opengl_draw_axis_cross(){
 
 
 void update_screen(){
-  gluLookAt(0,0,0,
+  gluLookAt(cos(camera_angle_yaw)*cos(camera_angle_pitch),
+            sin(camera_angle_yaw)*cos(camera_angle_pitch),
+            sin(camera_angle_pitch),
             0,0,0,
             0,1,0);
 

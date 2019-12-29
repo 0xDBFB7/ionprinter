@@ -25,16 +25,16 @@
 /* -----------------------------------------------------------------------------
 DISPLAY SETTINGS
 ----------------------------------------------------------------------------- */
-#define OPENGL_WORLD_SCALE 0.0005 //m/opengl index
+// #define OPENGL_WORLD_SCALE 0.0005 //m/opengl index
 #define OPENGL_3D_WINDOW_X 1920
 #define OPENGL_3D_WINDOW_Y 1080
-#define OPENGL_GRAPH_WINDOW_X 1000
-#define OPENGL_GRAPH_WINDOW_Y 1000
-
-#define OPENGL_GRAPH_COUNT 5
-
-#define OPENGL_GRAPH_X_OFFSET 40
-#define OPENGL_GRAPH_Y_OFFSET 70
+// #define OPENGL_GRAPH_WINDOW_X 1000
+// #define OPENGL_GRAPH_WINDOW_Y 1000
+//
+// #define OPENGL_GRAPH_COUNT 5
+//
+// #define OPENGL_GRAPH_X_OFFSET 40
+// #define OPENGL_GRAPH_Y_OFFSET 70
 //
 // void initialize_opengl(root_mesh_geometry mesh_geometry);
 // void update_screen();

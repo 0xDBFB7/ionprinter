@@ -450,24 +450,6 @@ I fear that if I set it aside, it will be permanent; if the design constraints a
 
 <hr>
 
-These last few months have not been great. I have been a lazy, spoiled, good-for-nothing ass. I act like a dick to my parents, who only try to help. Self-sufficiency is a perfectly reasonable requirement for them to have. 
-
-There is a change in my brain that I think is disasterous; a little inhibit flag before every action. Whereas before, given a free moment, I think I used to work on the project, some days I now just hang waiting for the flag to go away, and stare into the fireplace, increasingly convinced of the futility of effort on the whole. Being yelled at every time I work on something which I believe to be essential. Right now it's gone, which is great. In a few minutes my dad'll walk by and the flag'll be back up.
-
-Before class a little self-important student with delusions of being a YTV presenter started bossing people around. She sounded exactly like me.
-
-If I ever brag about how hard I worked, how bad I had it, please let it be known that I had it *easy*. I have middle-class parents; I have no job, free education. There are students in my class who are taking 6 courses simulataneously while working minimum-wage service jobs to pay their way. *That's hard*. Every day I am amazed at the tenacity of my fellows.  
-
-
-
-
-
-
-
-
-
-
-
 
 <hr>
 
@@ -491,9 +473,47 @@ But if this is more generally true, it would seem that a great deal of informati
 I learn a lot via twitter - even more so since my circle of friends increased a year ago. However, it's a distinct kind of learning; 
 more tidbits that people that people discuss 
 
+I am reminded of Feynman's advice to "Learn concepts, not facts". Maybe that's my fundamental problem - I spend all my time learning bits and gobs of trivia, while unstanding nothing of the underlying framework. 
+
 It's interesting to contrast this with something like IRC. IRC is designed to be transient; it's realtime, what happens now is gone soon, so don't post anything valuable.
 And yet, I've spent far more time 
 
 
- 
-  
+
+
+#### Long-term plan
+
+Part of the 'ideology' of the ionolith is that Hargrave Sciences will be replaced as the vendor. 
+
+I would be very sad to find that my company has become 'IP obese'; to succumb to convergent design.
+
+We needn't look far from the AM field for examples - c.f. Makerbot. What fantastic innovations has this company wrought? It seems that they have only succeeded in proprietarizing what was once public; by making black-box extruders with custom connectors; by raising prices where the competition's plummets. 
+
+The ionolith is somewhat different from most products in a number of ways: 
+
+The ionolith is perhaps one of the first truly self-replicating products. The device will be specifically designed to be produced using itself. 
+
+No matter how much money is being made, production of Hargrave Sciences ionoliths will cease 4 years from the launch date; and all service will be terminated 6 months later.
+
+This will allow us to focus on what truly benefits society, rather than just pumping out S/N N+1. In a century, 
+
+For this to be successful, the design must be maintainable by the end-user, well-documented, and free of planned obscelescence.
+
+By this date, the hardware and software of the product will surely be mature, and there won't be a good reason for the company to exist - beyond greed. 
+
+From an existential perspective, to have started with an only to allow the company to be tarnished by time would be something of a miserable eulogy. 
+
+bla bla bla
+
+Of course, good science doesn't involve absolutes, and if a convincing reason is discovered for why
+
+##### Counterpoint:
+
+Unix and C++, both of which could only have be developed because their authors had stability over many years.
+
+
+
+
+
+
+

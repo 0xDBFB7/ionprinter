@@ -1,32 +1,23 @@
 #include "nyion.hpp"
 // #include "visualize.hpp"
+//
+
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 
-TEST_GROUP(MG_GPU_OPERATORS)
+TEST_GROUP(FirstTestGroup)
 {
 };
 
-TEST(MG_GPU_OPERATORS, test)
+TEST(FirstTestGroup, FirstTest)
 {
+    testah();
+   FAIL("Fail me!");
 }
 
 
 
-
-int main(int ac, char** av){
-  std::cout << "Number of devices: " << omp_get_num_devices() << std::endl;
-  std::cout << "Default device: " << omp_get_default_device() << std::endl;
-
-  bool offload;
-  #pragma omp target defaultmap(tofrom:scalar)
-  offload = !omp_is_initial_device();
-
-  if (offload) {
-    printf("Able to use offloading!\n");
-  }
-
-
-
-  return RUN_ALL_TESTS(ac, av);
+int main(int ac, char** av)
+{
+   return CommandLineTestRunner::RunAllTests(ac, av);
 }

@@ -3684,4 +3684,9 @@ Beam can be blanked by turning off mass-spec deflection voltage, allowing the si
 
 
 
+Using OpenMP requires re-compiling GCC with support for Nvidia PTX. This would be acceptable, except that every library used must be compiled with this new GCC. Combined with the significant performance losses and lack of support for fp16, bare CUDA is looking like a better option every day. 
+
+
+
+
 
