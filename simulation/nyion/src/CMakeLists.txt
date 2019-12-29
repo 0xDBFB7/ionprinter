@@ -6,4 +6,4 @@ add_library (visualize visualize.cpp visualize.hpp)
 add_executable(nyion main.cpp)
 add_executable(array_helper array_helper.cpp)
 
-target_link_libraries(nyion data_structure visualize ${ROOT_LIBRARIES})
+target_link_libraries(nyion ${MATHGL2_LIBRARY} /usr/local/lib/libmgl-glut.so data_structure visualize ${ROOT_LIBRARIES} )

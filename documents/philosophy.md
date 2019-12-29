@@ -514,6 +514,11 @@ Unix and C++, both of which could only have be developed because their authors h
 
 
 
+#### State of C++ graphing, 2019:
 
+Gnuplot-iostream - ???
+Matplotlib bindings - ???
+PLPlot - 'non-sensible defaults' personified, pretty clunky, but usable in a pinch
+ROOT - Hell of an import if all you're after is plotting. Breaks builds, segfaults at random.
 
-
+MathGL - Trying now. needed to compile with cmake ../ -Denable-glut=on. The FindMathGL2.cmake script doesn't currently link libmgl-glut.so. I had to add that manually.

@@ -1,12 +1,6 @@
 #include <iostream>
-#include "TROOT.h"
-#include "TCanvas.h"
-#include "TFile.h"
-#include "TH1F.h"
-#include "TBrowser.h"
-#include "TFrame.h"
-#include "TApplication.h"
 
+#include <mgl2/mgl.h>
 
 #include <iostream>
 #include <omp.h>

@@ -15,24 +15,15 @@ find_package(ROOT REQUIRED COMPONENTS MathCore RIO Hist Tree Net)
 find_package(OpenMP REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
-
-find_package(PkgConfig REQUIRED)
-pkg_search_module(CPPUTEST REQUIRED cpputest>=3.8)
-
-include_directories(${CPPUTEST_INCLUDE_DIRS})
-link_directories(${CPPUTEST_LIBRARIES})
+find_package(MathGL2 REQUIRED)
 
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 add_definitions(${ROOT_CXX_FLAGS})
 
 include(${ROOT_USE_FILE})
 
-include_directories(${CMAKE_SOURCE_DIR} $(CPPUTEST_HOME)/include ${ROOT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ../src/)
-
-
+include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} $(CPPUTEST_HOME)/include ${ROOT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ../src/)
 
 set(CMAKE_BUILD_TYPE Debug)
 add_subdirectory (src)
