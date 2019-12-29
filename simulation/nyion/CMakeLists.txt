@@ -11,19 +11,14 @@ add_compile_options(-Wall -Wextra -pedantic -Werror -std=c++17 -g  -fopenmp -fof
 
 PROJECT(nyion LANGUAGES C CXX CUDA)
 
-find_package(ROOT REQUIRED COMPONENTS MathCore RIO Hist Tree Net)
 find_package(OpenMP REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(MathGL2 REQUIRED)
 
-list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 
-add_definitions(${ROOT_CXX_FLAGS})
 
-include(${ROOT_USE_FILE})
-
-include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} $(CPPUTEST_HOME)/include ${ROOT_INCLUDE_DIRS} ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ../src/)
+include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} $(CPPUTEST_HOME)/include ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ../src/)
 
 set(CMAKE_BUILD_TYPE Debug)
 add_subdirectory (src)
