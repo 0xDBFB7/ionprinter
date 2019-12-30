@@ -36,12 +36,12 @@ DISPLAY SETTINGS
 // #define OPENGL_GRAPH_X_OFFSET 40
 // #define OPENGL_GRAPH_Y_OFFSET 70
 //
-// void initialize_opengl(root_mesh_geometry mesh_geometry);
-// void update_screen();
+void initialize_opengl();
+void update_screen();
 // void draw_geometry_outline(root_mesh_geometry mesh_geometry);
-// void opengl_clear_screen();
-// void opengl_draw_axis_cross();
-// void opengl_3d_mode();
+void opengl_clear_screen();
+void opengl_draw_axis_cross();
+void opengl_3d_mode();
 // void opengl_2d_mode();
 //
 // void draw_mesh(std::vector<std::vector<double>>& input_mesh,root_mesh_geometry mesh_geometry);

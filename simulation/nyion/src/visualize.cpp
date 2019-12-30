@@ -9,15 +9,15 @@
 #include <GL/glext.h>
 #include <GL/glx.h>
 
-#include "TGraph.h"
 
+float camera_distance = -10;
 
-float camera_x = -10;
+float camera_x = 0;
 float camera_y = 0.0;
-float camera_z = 10;
+float camera_z = 0;
 
-float camera_angle_pitch = 0.0;
-float camera_angle_yaw = 0.0;
+float camera_angle_pitch = 45.0;
+float camera_angle_yaw = -45.0;
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
@@ -26,12 +26,17 @@ Display * display;
 XVisualInfo* vi;
 
 void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribute__((unused)) int y){
-  if(key == '2') camera_angle_pitch = 10;
-  if(key == '8') camera_angle_pitch = -10;
-  if(key == '4') camera_angle_yaw = 10;
-  if(key == '6') camera_angle_yaw = -10;
-  if(key == '+') camera_x = -10;
-  if(key == '-') camera_x = +10;
+  if(key == '2') camera_angle_pitch += 0.1;
+  if(key == '8') camera_angle_pitch += -0.1;
+  if(key == '4') camera_angle_yaw += 0.1;
+  if(key == '6') camera_angle_yaw += -0.1;
+  if(key == 'a') camera_x += 0.1;
+  if(key == 'd') camera_x += -0.1;
+  if(key == 'w') camera_y += 0.1;
+  if(key == 's') camera_y += -0.1;
+  if(key == '0'){ camera_angle_pitch = 0; camera_angle_yaw = 0; camera_x = 0; camera_y = 0; camera_z = 0; camera_distance = 0;};
+  if(key == '+') camera_distance += -1;
+  if(key == '-') camera_distance += +1;
 }
 
 void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute__((unused)) int y){
@@ -42,18 +47,18 @@ void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute_
 
 void initialize_opengl(){
 
-  int sngBuf[] = { GLX_RGBA,
-                   GLX_RED_SIZE, 1,
-                   GLX_GREEN_SIZE, 1,
-                   GLX_BLUE_SIZE, 1,
-                   GLX_DEPTH_SIZE, 12,
-                   None
-  };
+  // int sngBuf[] = { GLX_RGBA,
+  //                  GLX_RED_SIZE, 1,
+  //                  GLX_GREEN_SIZE, 1,
+  //                  GLX_BLUE_SIZE, 1,
+  //                  GLX_DEPTH_SIZE, 12,
+  //                  None
+  // };
 
-  display = XOpenDisplay(0);
-  vi = glXChooseVisual(display, DefaultScreen(display), sngBuf);
-  glContext = glXCreateContext(display, vi, 0, GL_TRUE);
-
+  // display = XOpenDisplay(0);
+  // vi = glXChooseVisual(display, DefaultScreen(display), sngBuf);
+  // glContext = glXCreateContext(display, vi, 0, GL_TRUE);
+  //
 
   int argc = 0;
   char *argv[1];
@@ -96,9 +101,19 @@ void initialize_opengl(){
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+
   /* -----------------------------------------------------------------------------
   Determine the longest side of the mesh and configure the frustrum appropriately.
   ----------------------------------------------------------------------------- */
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+  double aspect = (double)viewport[2] / (double)viewport[3];
+
+  gluPerspective(45, aspect, 0.1, 30); //all parameters must be positive.
+  glMatrixMode(GL_MODELVIEW);
+  // glLoadIdentity();
 
 }
 
@@ -111,15 +126,8 @@ void opengl_switch_to_mesh_window(){
 }
 
 void opengl_3d_mode(){
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  GLint viewport[4];
-  glGetIntegerv(GL_VIEWPORT, viewport);
-  // double aspect = (double)viewport[2] / (double)viewport[3];
 
-  // gluPerspective(60, aspect, opengl_current_z_translate-1.5*opengl_z_extent, opengl_current_z_translate+opengl_z_extent); //all parameters must be positive.
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
+
 }
 
 
@@ -127,7 +135,7 @@ void opengl_2d_mode(){
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho(0.0, OPENGL_3D_WINDOW_X, OPENGL_3D_WINDOW_Y, 0.0, -1.0, 10.0);
+  glOrtho(0.0, OPENGL_3D_WINDOW_X, OPENGL_3D_WINDOW_Y, 0.0, -1.0, 30.0);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
 }
@@ -135,7 +143,8 @@ void opengl_2d_mode(){
 
 void opengl_clear_screen(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glPopMatrix();
+  glFlush();
+
 }
 
 
@@ -196,11 +205,14 @@ void opengl_draw_axis_cross(){
 
 
 void update_screen(){
-  gluLookAt(cos(camera_angle_yaw)*cos(camera_angle_pitch),
-            sin(camera_angle_yaw)*cos(camera_angle_pitch),
-            sin(camera_angle_pitch),
-            0,0,0,
+  glLoadIdentity();
+  gluLookAt(camera_distance * sin(camera_angle_yaw)*cos(camera_angle_pitch) + camera_x,
+            camera_distance * cos(camera_angle_yaw) + camera_y,
+            camera_distance * sin(camera_angle_yaw)*sin(camera_angle_pitch) + camera_z,
+            camera_x,camera_y,camera_z,
             0,1,0);
+
+  // gluLookAt(-10,0,0, 0,0,0, 0,1,0);
 
   glutMainLoopEvent();
   glutSwapBuffers();

@@ -8,5 +8,3 @@
 #include <math.h>
 #include <cuda.h>
 #include <dbg.h>
-
-void testah();
