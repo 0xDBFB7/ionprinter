@@ -1,11 +1,6 @@
 #include "nyion.hpp"
+#include "data_structure.hpp"
 
-const int MAX_DEPTH = 3;
-const int MESH_BUFFER_SIZE = 40;
-const int SIZES[MAX_DEPTH] = {8,8,8};
-
-int potentials[MESH_BUFFER_SIZE] = {0};
-int refined_indices[MESH_BUFFER_SIZE] = {0};
 
 
 /*
@@ -32,6 +27,7 @@ struct traverse_state{
 bool breadth_first(int &buffer_point, int &current_depth,
                     int (&buffer_ref_queue)[MAX_DEPTH],
                     int (&buffer_x_queue)[MAX_DEPTH],
+                    int (&refined_indices)[MESH_BUFFER_SIZE],
                         int &x, int max_depth, int ignore_ghosts){
 
     /*
@@ -80,7 +76,7 @@ bool breadth_first(int &buffer_point, int &current_depth,
 }
 
 
-void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
+void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int (&refined_indices)[MESH_BUFFER_SIZE], int sync_depth){
 
     int ignore_ghosts = 1;
 
@@ -91,7 +87,7 @@ void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
     int x = ignore_ghosts;
 
     while(breadth_first(buffer_point, current_depth,
-                    buffer_ref_queue, buffer_x_queue, x, sync_depth, ignore_ghosts)){
+                    buffer_ref_queue, buffer_x_queue, refined_indices, x, sync_depth, ignore_ghosts)){
 
         //std::cout << current_depth << "," << x << "\n";
 
@@ -142,22 +138,22 @@ void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int sync_depth){
  - visualization
 
 */
-
-int main(){
-
-    potentials[14] = 14;
-    potentials[17] = 17;
-
-
-    refined_indices[1] = 8;
-    refined_indices[2] = 16;
-    refined_indices[5] = 24;
-    refined_indices[21] = 32;
-
-    sync_ghosts(potentials,1);
-    dbg(potentials);
-}
-
+//
+// int main(){
+//
+//     potentials[14] = 14;
+//     potentials[17] = 17;
+//
+//
+//     refined_indices[1] = 8;
+//     refined_indices[2] = 16;
+//     refined_indices[5] = 24;
+//     refined_indices[21] = 32;
+//
+//     sync_ghosts(potentials,1);
+//     dbg(potentials);
+// }
+//
 
 
 

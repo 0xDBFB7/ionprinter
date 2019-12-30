@@ -58,7 +58,7 @@ All the best to you in your simulations adventures!
 Not to foreshadow, but his notes regarding GPU acceleration were particularly salient.
 
 
-Warp started out as a Fortran code. Documentation was a little sparse; and modules with 
+Warp started out as a Fortran code. Documentation was a little sparse; and modules with DSMC. Getting cell potentials was a little trick,
 
 Simulations on the order of 100^3 were carried out.
 
@@ -67,6 +67,16 @@ Simulations on the order of 100^3 were carried out.
 Due to all sorts of effects (), quantities like total energy, momentum, etc in a PiC simulation can diverge and
 
 Particles within the same cell of a PiC simulation won't feel any force, so 'Coulomb collisions' are usually added in seperately.  
+
+
+HBM2
+
+Summing up charge on electrode
+
+FBPic
+
+Electron recombination is a relatively slow process. It's what gives rise to the latent glow of fluorescent tubes, the green airglow of the atmosphere, and other pretty glows. A similar process (electron-hole recombination) allows LEDs to produce light.
+
 
 
 
@@ -83,9 +93,12 @@ SIMION is a general-purpose beam simulator.
 
 $ \nabla \cdot \mathbf {E} ={\frac {\rho }{\varepsilon _{0}}} $
 
+This means 'downwards everywhere' - the field always goes towards zero away from space charges and electrodes. It also means everything should be smooth. 
+
 Poisson's equation:
 
 $ {\displaystyle {\nabla }^{2}\varphi =-{\frac {\rho }{\varepsilon }}.}$
+
 
 The Child-Langmuir law provides a 1d analytic expression that describes how charged particles can become 'bunched up'. 
 

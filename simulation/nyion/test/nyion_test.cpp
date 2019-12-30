@@ -1,5 +1,6 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
+#include "data_structure.hpp"
 
 
 #include "CppUTest/CommandLineTestRunner.h"
@@ -31,6 +32,32 @@ IGNORE_TEST(OpenGL, OpenGL_Basic)
     opengl_test_prism();
     update_screen();
   }
+}
+
+TEST_GROUP(data_structure_mesh){
+};
+
+TEST(data_structure_mesh, data_structure_mesh_1d){
+  int * potentials = new int[MESH_BUFFER_SIZE];
+  int * refined_indices = new int[MESH_BUFFER_SIZE];
+  std::fill(potentials, potentials + MESH_BUFFER_SIZE, 0);
+  std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
+
+  potentials[14] = 14;
+  potentials[17] = 17;
+
+
+  refined_indices[1] = 8;
+  refined_indices[2] = 16;
+  refined_indices[5] = 24;
+  refined_indices[21] = 32;
+
+
+  sync_ghosts(potentials,refined_indices,1);
+  dbg(potential);
+
+  delete [] potentials;
+  delete [] refined_indices;
 }
 
 
