@@ -16,8 +16,8 @@ float camera_x = 0;
 float camera_y = 0.0;
 float camera_z = 0;
 
-float camera_angle_pitch = 45.0;
-float camera_angle_yaw = -45.0;
+float camera_angle_pitch = -0.785398;
+float camera_angle_yaw = -0.785398;
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
@@ -34,7 +34,7 @@ void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribut
   if(key == 'd') camera_x += -0.1;
   if(key == 'w') camera_y += 0.1;
   if(key == 's') camera_y += -0.1;
-  if(key == '0'){ camera_angle_pitch = 0; camera_angle_yaw = 0; camera_x = 0; camera_y = 0; camera_z = 0; camera_distance = 0;};
+  if(key == '0'){ camera_angle_pitch = -0.785398; camera_angle_yaw = 0; camera_x = 0; camera_y = 0; camera_z = 0; camera_distance = -10;};
   if(key == '+') camera_distance += -1;
   if(key == '-') camera_distance += +1;
 }
@@ -173,6 +173,38 @@ void opengl_draw_axis_cross(){
 }
 
 
+
+
+void opengl_test_prism() {
+  //thanks to mina michael
+  //https://gamedev.stackexchange.com/questions/150802/drawing-a-simple-triangular-prism-in-opengl-in-3d
+  glBegin(GL_QUADS);
+      glVertex3f(0.5, 0, 0.5);
+      glVertex3f(0.5, 0, -0.5);
+      glVertex3f(-0.5, 0, -0.5);
+      glVertex3f(-0.5, 0, 0.5);
+
+      glVertex3f(0.5,0,-0.5);
+      glVertex3f(0.5,1,-0.5);
+      glVertex3f(-0.5,1,-0.5);
+      glVertex3f(-0.5,0,-0.5);
+
+      glVertex3f(0.5,1,-0.5);
+      glVertex3f(-0.5,1,-0.5);
+      glVertex3f(-0.5,0,0.5);
+      glVertex3f(0.5,0,0.5);
+  glEnd();
+  glBegin(GL_TRIANGLES);
+      glVertex3f(0.5,0,0.5);
+      glVertex3f(0.5,1,-0.5);
+      glVertex3f(0.5,0,-0.5);
+
+      glVertex3f(-0.5,0,0.5);
+      glVertex3f(-0.5,1,-0.5);
+      glVertex3f(-0.5,0,-0.5);
+  glEnd();
+}
+
 // void draw_mesh(std::vector<std::vector<double>>& input_mesh){
 //   /* -----------------------------------------------------------------------------
 //   Determine min and max for color scaling
@@ -206,9 +238,9 @@ void opengl_draw_axis_cross(){
 
 void update_screen(){
   glLoadIdentity();
-  gluLookAt(camera_distance * sin(camera_angle_yaw)*cos(camera_angle_pitch) + camera_x,
-            camera_distance * cos(camera_angle_yaw) + camera_y,
-            camera_distance * sin(camera_angle_yaw)*sin(camera_angle_pitch) + camera_z,
+  gluLookAt(camera_distance * sin(camera_angle_pitch)*cos(camera_angle_yaw) + camera_x,
+            camera_distance * cos(camera_angle_pitch) + camera_y,
+            camera_distance * sin(camera_angle_pitch)*sin(camera_angle_yaw) + camera_z,
             camera_x,camera_y,camera_z,
             0,1,0);
 

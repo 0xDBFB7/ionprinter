@@ -17,36 +17,6 @@ TEST(MathGL, MathGL_Basic)
   // gr.WriteFrame("test.png");
 }
 
-
-void triangularPrism()
-{
-    glBegin(GL_QUADS);
-        glVertex3f(0.5, 0, 0.5);
-        glVertex3f(0.5, 0, -0.5);
-        glVertex3f(-0.5, 0, -0.5);
-        glVertex3f(-0.5, 0, 0.5);
-
-        glVertex3f(0.5,0,-0.5);
-        glVertex3f(0.5,1,-0.5);
-        glVertex3f(-0.5,1,-0.5);
-        glVertex3f(-0.5,0,-0.5);
-
-        glVertex3f(0.5,1,-0.5);
-        glVertex3f(-0.5,1,-0.5);
-        glVertex3f(-0.5,0,0.5);
-        glVertex3f(0.5,0,0.5);
-    glEnd();
-    glBegin(GL_TRIANGLES);
-        glVertex3f(0.5,0,0.5);
-        glVertex3f(0.5,1,-0.5);
-        glVertex3f(0.5,0,-0.5);
-
-        glVertex3f(-0.5,0,0.5);
-        glVertex3f(-0.5,1,-0.5);
-        glVertex3f(-0.5,0,-0.5);
-    glEnd();
-}
-
 TEST_GROUP(OpenGL)
 {
 };
@@ -58,9 +28,11 @@ TEST(OpenGL, OpenGL_Basic)
   while(true){
     opengl_clear_screen();
     opengl_draw_axis_cross();
-    triangularPrism();
+    opengl_test_prism();
     update_screen();
-
+    int test[10];
+    test[15] = 5;
+    std::cout << test[15];
   }
 }
 

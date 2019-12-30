@@ -42,6 +42,7 @@ void update_screen();
 void opengl_clear_screen();
 void opengl_draw_axis_cross();
 void opengl_3d_mode();
+void opengl_test_prism();
 // void opengl_2d_mode();
 //
 // void draw_mesh(std::vector<std::vector<double>>& input_mesh,root_mesh_geometry mesh_geometry);
