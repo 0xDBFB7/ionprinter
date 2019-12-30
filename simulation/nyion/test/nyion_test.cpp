@@ -21,7 +21,7 @@ TEST_GROUP(OpenGL)
 {
 };
 
-TEST(OpenGL, OpenGL_Basic)
+IGNORE_TEST(OpenGL, OpenGL_Basic)
 {
   initialize_opengl();
   opengl_3d_mode();
@@ -30,9 +30,6 @@ TEST(OpenGL, OpenGL_Basic)
     opengl_draw_axis_cross();
     opengl_test_prism();
     update_screen();
-    int test[10];
-    test[15] = 5;
-    std::cout << test[15];
   }
 }
 

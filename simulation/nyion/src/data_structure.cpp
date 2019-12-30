@@ -1,5 +1,4 @@
-#include <iostream>
-#include "dbg.h"
+#include "nyion.hpp"
 
 const int MAX_DEPTH = 3;
 const int MESH_BUFFER_SIZE = 40;
@@ -28,16 +27,17 @@ struct traverse_state{
     int x = 0;
     int y = 0;
     int z = 0;
-
 };
 
 bool breadth_first(int &buffer_point, int &current_depth,
                     int (&buffer_ref_queue)[MAX_DEPTH],
                     int (&buffer_x_queue)[MAX_DEPTH],
-                        int &x, int depth, int ignore_ghosts){
+                        int &x, int max_depth, int ignore_ghosts){
 
     /*
     A traverse through all the cells of all the blocks at a specified level.
+    'Breadth first' is perhaps a bit misleading; more precisely it's depth first then breadth across
+    depth
     Iterates through the x,y,z values of a block,
     ref_queue stores block indices of parent blocks.
 
@@ -51,7 +51,7 @@ bool breadth_first(int &buffer_point, int &current_depth,
 
       buffer_point = buffer_ref_queue[current_depth];
 
-      if(current_depth != depth-1 && refined_indices[buffer_point+x]){
+      if(current_depth != max_depth-1 && refined_indices[buffer_point+x]){
           //Descend
           buffer_x_queue[current_depth] = x;
           current_depth += 1;

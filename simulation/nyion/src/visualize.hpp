@@ -5,6 +5,9 @@
 #include <iterator> // for ostream_iterator
 #include <algorithm>
 #include <cmath>
+#include "data_structure.hpp"
+
+
 
 #include <fstream>
 
@@ -20,6 +23,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
+#include <GL/glx.h>
 
 
 /* -----------------------------------------------------------------------------

@@ -1,13 +1,7 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
+#include "data_structure.hpp"
 
-#include <GL/glew.h>
-#include <GL/glut.h>
-#include <GL/freeglut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#include <GL/glx.h>
 
 
 float camera_distance = -10;
@@ -18,6 +12,8 @@ float camera_z = 0;
 
 float camera_angle_pitch = -0.785398;
 float camera_angle_yaw = -0.785398;
+
+
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
