@@ -55,7 +55,13 @@ TEST(data_structure_mesh, data_structure_mesh_1d){
 
   sync_ghosts(potentials,refined_indices,1);
   pretty_print_named_array(potentials, 0, MESH_BUFFER_SIZE);
-  // dbg(potential);
+
+  CHECK_EQUAL(14,potentials[14]);
+  CHECK_EQUAL(17,potentials[15]);
+
+  CHECK_EQUAL(14,potentials[14]);
+  CHECK_EQUAL(17,potentials[15]);
+
 
   delete [] potentials;
   delete [] refined_indices;
