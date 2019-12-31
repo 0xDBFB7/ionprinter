@@ -10,11 +10,11 @@
 //~/Programs/gcc-offload/gcc-offload/install/bin/g++ -Wall -Werror -fsanitize=undefined,null -fopenmp -foffload=-lm -fno-fast-math -fno-associative-math openmp_offload.cpp -o ompfl && ./ompfl
 //-foffload=-lm -fno-fast-math -fno-associative-math required for math function offload
 
-struct Point 
-{ 
+struct Point
+{
    float * x;
-   int y[100]; 
-};  
+   int y[100];
+};
 
 int _idx(int x, int y, int z, int x_len, int y_len){
   return ((x_len*y_len*z) + (x_len*y) + x);
@@ -45,18 +45,18 @@ int main(int argc, char** argv)
     float* buf2 = (float*)omp_target_alloc(N*sizeof(float), device);
     float* p = (float*)omp_target_alloc(N*sizeof(float), device);
     // Evaluate
-    auto t1 = std::chrono::high_resolution_clock::now();    
-    
+    auto t1 = std::chrono::high_resolution_clock::now();
+
     struct Point p1;
     p1.x = p;
-    
+
     #pragma omp target is_device_ptr(buffer) is_device_ptr(buf2) map(tofrom:p1)
     {
 
-// 
-    #pragma omp teams distribute 
+//
+    #pragma omp teams distribute
     for(unsigned long int i = 0; i < N-6; ++i) buffer[i] = (buffer[i+1] + buffer[i+2] + buffer[i+3] +buffer[i+4] + buffer[i+5] + buffer[i+5])/ 6.0f;
-    #pragma omp teams distribute 
+    #pragma omp teams distribute
     for(int b = 0; b < 1; b++){
         for(int x = 1; x < t-1; x++){
             for(int y = 1; y < t-1; y++){
@@ -69,20 +69,20 @@ int main(int argc, char** argv)
     }
 
     p1.x[10] = 10;
-       
+
     }
 
     //dbg(p1);
-    
+
     auto t2 = std::chrono::high_resolution_clock::now();
 
     for(unsigned long int i = 0; i < N; ++i) test[i] = sqrtf(i*i*i*i*i*i)+56;
 
     auto t3 = std::chrono::high_resolution_clock::now();
 
-    #pragma omp parallel for 
+    #pragma omp parallel for
     for(unsigned long int i = 0; i < N-6; ++i) test[i] = (test[i+1]+test[i+2]+test[i+3]+test[i+4]+test[i+5]+test[i+6]) / 6.0;;
-//  
+//
 
     for(int b = 0; b < 1; b++){
     #pragma omp parallel for
@@ -95,13 +95,13 @@ int main(int argc, char** argv)
         }
     }
     }
-        
+
     auto t4 = std::chrono::high_resolution_clock::now();
     dbg(test[_idx(1,1,1,t,t)]);
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count()/10.0;
     std::cout << duration << " us, " << "\n";
 
-    
+
     duration = std::chrono::duration_cast<std::chrono::microseconds>( t4 - t3 ).count()/10.0;
     std::cout << duration << " us, " << "\n";
     // Cleanup

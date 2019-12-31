@@ -1,11 +1,13 @@
 #include <iostream>
+#include <string>
+
 #include <chrono>
 #include <math.h>
 #include <dbg.h>
 
 #include <omp.h>
 
-#include <cuda.h>
+// #include <cuda.h>
 
 
 

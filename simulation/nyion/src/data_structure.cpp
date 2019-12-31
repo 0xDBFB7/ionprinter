@@ -27,7 +27,7 @@ struct traverse_state{
 bool breadth_first(int &buffer_point, int &current_depth,
                     int (&buffer_ref_queue)[MAX_DEPTH],
                     int (&buffer_x_queue)[MAX_DEPTH],
-                    int (&refined_indices)[MESH_BUFFER_SIZE],
+                    int * (refined_indices),
                         int &x, int max_depth, int ignore_ghosts){
 
     /*
@@ -76,7 +76,7 @@ bool breadth_first(int &buffer_point, int &current_depth,
 }
 
 
-void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int (&refined_indices)[MESH_BUFFER_SIZE], int sync_depth){
+void sync_ghosts(int * array, int * refined_indices, int sync_depth){
 
     int ignore_ghosts = 1;
 
@@ -122,6 +122,21 @@ void sync_ghosts(int (&array)[MESH_BUFFER_SIZE], int (&refined_indices)[MESH_BUF
     }
 }
 
+template<typename T>
+void pretty_print_array(T * input, int start, int end, std::string name){
+  std::cout << "\033[1;33m" << name << "[" << end << "]" << "\033[0m = {";
+
+  for(int i = start; i < end-1; i++){
+    std::cout << input[i] << ",";
+  }
+  if(end-start > 0){
+    std::cout << input[end-1]; //handle trailing ,
+  }
+
+  std::cout << "};\n";
+}
+template void pretty_print_array(float * input, int start, int length, std::string name);
+template void pretty_print_array(int * input, int start, int length, std::string name);
 /*
 
  - particle moves
