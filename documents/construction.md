@@ -3690,3 +3690,5 @@ Using OpenMP requires re-compiling GCC with support for Nvidia PTX. This would b
 
 
 
+Google Benchmark looks good. There doesn't seem to be a way to access results programmatically, unfortunately.
+

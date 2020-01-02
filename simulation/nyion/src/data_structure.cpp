@@ -11,28 +11,41 @@ Terminology:
 Block
 
 
+Block beginning indices could be unrolled for the compute-intensive portions.
+array []  {size(^3), indice, size(^3), indice}
+
+Ghost updates, too - run through once in tree mode, establish ghost link indices and record, have GPU update quickly.
+
+
+
 */
 
-struct traverse_state{
-    int current_depth = 0;
-    int block_beginning_indice = 0;
-    int current_indice = 0;
-    int x_queue[MAX_DEPTH] = {0};
-    int y_queue[MAX_DEPTH] = {0};
-    int z_queue[MAX_DEPTH] = {0};
-    int ref_queue[MAX_DEPTH] = {0};
-    int x = 0;
-    int y = 0;
-    int z = 0;
 
-    void update_idx(int (&mesh_sizes)[MAX_DEPTH]){
-      current_indice = (mesh_sizes[current_depth]*mesh_sizes[current_depth]*z) + (mesh_sizes[current_depth]*y) + x;
+void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+  //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
+
+  state.current_indice = (mesh_sizes[state.current_depth]*mesh_sizes[state.current_depth]*state.z)
+                                                  + (mesh_sizes[state.current_depth]*state.y) + state.x;
+}
+//
+//
+void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+    // pre-compute scales
+    // state.world_scale[i] = ROOT_WORLD_SCALE; no! wrong!
+    for(int i = 0; i < state.current_depth; i++){
+      state.world_scale[i] /= mesh_sizes[i];
     }
-};
+}
+
+// void unroll_traverse(){
+//
+// }
 
 bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]){
 
     /*
+    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
+
     A traverse through all the cells of all the blocks at a specified level.
     'Breadth first' is perhaps a bit misleading; more precisely it's depth first then breadth across
     depth
@@ -44,7 +57,6 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth
     block_beginning_indice
 
     */
-
 
     while(true){
 
@@ -79,7 +91,10 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth
 }
 
 
+
+
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]){
+    // static_assert (sync_depth < MAX_DEPTH, "Assert failed");
 
     traverse_state state;
 
@@ -115,11 +130,17 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
         }
 
         state.x+=1;
-        state.update_idx(mesh_sizes);
+        update_idx(state,mesh_sizes);
     }
 }
 
-
+void world_cell_lookup(float x, float y, float z, int max_depth){
+  int x_,y_,z_;
+  for(int depth = 0, depth < max_depth; depth++){
+      x_ += x/(mesh_scale[depth]); //remember ghosts!
+      x -= x_*mesh_scale[depth]
+  }
+}
 
 
 /*

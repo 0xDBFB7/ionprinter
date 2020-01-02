@@ -200,13 +200,8 @@ void opengl_test_prism() {
       glVertex3f(-0.5,0,-0.5);
   glEnd();
 }
-
+//
 // void draw_mesh(std::vector<std::vector<double>>& input_mesh){
-//   /* -----------------------------------------------------------------------------
-//   Determine min and max for color scaling
-//   ----------------------------------------------------------------------------- */
-//   double max = *std::max_element(potentials, potentials+(s_x*s_y*s_z));
-//   double min = *std::min_element(potentials, potentials+(s_x*s_y*s_z));
 //   /* -----------------------------------------------------------------------------
 //   Draw cubes
 //   ----------------------------------------------------------------------------- */
@@ -230,7 +225,7 @@ void opengl_test_prism() {
 //     glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
 //   glPopMatrix();
 // }
-
+//
 
 void update_screen(){
   glLoadIdentity();

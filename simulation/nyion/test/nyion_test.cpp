@@ -36,9 +36,44 @@ IGNORE_TEST(OpenGL, OpenGL_Basic)
 
 TEST_GROUP(data_structure_mesh){
 };
+//
+
+TEST(data_structure_mesh, scale_tests){
+  int mesh_sizes[MAX_DEPTH];
+  mesh_sizes[0] = 3;
+  mesh_sizes[1] = 5;
+  mesh_sizes[2] = 3;
+  // std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+  traverse_state state;
+  init_scales(state, mesh_sizes);
+
+  DOUBLES_EQUAL(state.mesh_scale[0], (1/3), 1e-5);
+}
+
+
+TEST(data_structure_mesh, traverse_tests){
+  int mesh_sizes[MAX_DEPTH];
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+
+  int * potentials = new int[MESH_BUFFER_SIZE];
+  int * refined_indices = new int[MESH_BUFFER_SIZE];
+  std::fill(potentials, potentials + MESH_BUFFER_SIZE, 0);
+  std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
+
+  traverse_state state;
+
+  //first we encounter a ghost.
+  breadth_first(state, refined_indices, 1, 1, mesh_sizes);
+
+
+
+
+  delete [] potentials;
+  delete [] refined_indices;
+}
 
 TEST(data_structure_mesh, data_structure_mesh_1d){
-  int mesh_sizes[MAX_DEPTH] = {8};
+  int mesh_sizes[MAX_DEPTH];
   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
 
   int * potentials = new int[MESH_BUFFER_SIZE];
