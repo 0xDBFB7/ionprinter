@@ -4,7 +4,7 @@ include_directories(../src/)
 link_directories(../src/)
 
 add_executable (nyion_test nyion_test.cpp)
-target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} nyion_lib data_structure visualize OpenMP::OpenMP_CXX )
+target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
 
 target_link_libraries(nyion_test CppUTest )
 target_link_libraries(nyion_test CppUTestExt )

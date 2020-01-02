@@ -38,6 +38,9 @@ TEST_GROUP(data_structure_mesh){
 };
 
 TEST(data_structure_mesh, data_structure_mesh_1d){
+  int mesh_sizes[MAX_DEPTH] = {8};
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
+
   int * potentials = new int[MESH_BUFFER_SIZE];
   int * refined_indices = new int[MESH_BUFFER_SIZE];
   std::fill(potentials, potentials + MESH_BUFFER_SIZE, 0);
@@ -52,15 +55,14 @@ TEST(data_structure_mesh, data_structure_mesh_1d){
   refined_indices[5] = 24;
   refined_indices[21] = 32;
 
-
-  sync_ghosts(potentials,refined_indices,1);
+  sync_ghosts(potentials,refined_indices,1,mesh_sizes);
   pretty_print_named_array(potentials, 0, MESH_BUFFER_SIZE);
 
   CHECK_EQUAL(14,potentials[14]);
   CHECK_EQUAL(17,potentials[15]);
 
-  CHECK_EQUAL(14,potentials[14]);
-  CHECK_EQUAL(17,potentials[15]);
+  CHECK_EQUAL(14,potentials[16]);
+  CHECK_EQUAL(17,potentials[17]);
 
 
   delete [] potentials;

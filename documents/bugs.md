@@ -230,3 +230,29 @@ A fuzzer would be helpful. Static analysis, too.
 
 New instrumentation features in GCC: -fsanitize=address,undefined,null. 
 
+
+#### Issue:
+
+Very similar to the above:
+
+```
+
+int mesh_sizes[MAX_DEPTH] = {8};
+
+```
+
+actually produces {8,0,0}. 
+
+This is perhaps the first bug in this project that was immediately caught by a unit test.
+
+##### Solution
+
+Making all fills explicit with 
+
+```
+std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
+```
+
+is a good idea.
+
+

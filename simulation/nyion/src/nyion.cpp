@@ -1,6 +1,8 @@
 // #include <iostream>
 
-
+int idx(int x, int y, int z, int xlen, int ylen){
+  return (x + (y*xlen) + (z*xlen*ylen));
+}
 //
 // int main(int ac, char** av){
 //     TApplication theApp("App", &argc, argv);

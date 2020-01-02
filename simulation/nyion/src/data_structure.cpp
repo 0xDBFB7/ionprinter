@@ -2,7 +2,6 @@
 #include "data_structure.hpp"
 
 
-
 /*
 
 Implementation of an adaptive block-structured mesh.
@@ -15,20 +14,23 @@ Block
 */
 
 struct traverse_state{
-    unsigned int x_queue[MAX_DEPTH] = {0};
-    unsigned int y_queue[MAX_DEPTH] = {0};
-    unsigned int z_queue[MAX_DEPTH] = {0};
-    unsigned int ref_queue[MAX_DEPTH] = {0};
+    int current_depth = 0;
+    int block_beginning_indice = 0;
+    int current_indice = 0;
+    int x_queue[MAX_DEPTH] = {0};
+    int y_queue[MAX_DEPTH] = {0};
+    int z_queue[MAX_DEPTH] = {0};
+    int ref_queue[MAX_DEPTH] = {0};
     int x = 0;
     int y = 0;
     int z = 0;
+
+    void update_idx(int (&mesh_sizes)[MAX_DEPTH]){
+      current_indice = (mesh_sizes[current_depth]*mesh_sizes[current_depth]*z) + (mesh_sizes[current_depth]*y) + x;
+    }
 };
 
-bool breadth_first(int &buffer_point, int &current_depth,
-                    int (&buffer_ref_queue)[MAX_DEPTH],
-                    int (&buffer_x_queue)[MAX_DEPTH],
-                    int * (refined_indices),
-                        int &x, int max_depth, int ignore_ghosts){
+bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]){
 
     /*
     A traverse through all the cells of all the blocks at a specified level.
@@ -39,32 +41,33 @@ bool breadth_first(int &buffer_point, int &current_depth,
 
     g o o o o o... g
     ^
-    buffer_point
+    block_beginning_indice
 
     */
 
+
     while(true){
 
-      buffer_point = buffer_ref_queue[current_depth];
+      state.block_beginning_indice = state.ref_queue[state.current_depth]; //block_begin
 
-      if(current_depth != max_depth-1 && refined_indices[buffer_point+x]){
+      if(state.current_depth != max_depth-1 && refined_indices[state.current_indice]){
           //Descend
-          buffer_x_queue[current_depth] = x;
-          current_depth += 1;
-          buffer_ref_queue[current_depth] = refined_indices[buffer_point+x];
-          x = ignore_ghosts;
+          state.x_queue[state.current_depth] = state.x;
+          state.current_depth += 1;
+          state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
+          state.x = ignore_ghosts;
 
           continue;
       }
 
-      if(x == SIZES[current_depth]-ignore_ghosts){
+      if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts){
           //Ascend
-          if(current_depth == 0){
+          if(state.current_depth == 0){
               return false;
           }
 
-          current_depth-=1;
-          x = buffer_x_queue[current_depth]+1;
+          state.current_depth-=1;
+          state.x = state.x_queue[state.current_depth]+1;
 
           continue;
       }
@@ -76,40 +79,33 @@ bool breadth_first(int &buffer_point, int &current_depth,
 }
 
 
-void sync_ghosts(int * array, int * refined_indices, int sync_depth){
+void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]){
 
-    int ignore_ghosts = 1;
+    traverse_state state;
 
-    int current_depth = 0;
-    int buffer_ref_queue[MAX_DEPTH] = {0}; //store previous block reference
-    int buffer_x_queue[MAX_DEPTH] = {0};  //store value index in block
-    int buffer_point = 0;
-    int x = ignore_ghosts;
-
-    while(breadth_first(buffer_point, current_depth,
-                    buffer_ref_queue, buffer_x_queue, refined_indices, x, sync_depth, ignore_ghosts)){
+    while(breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes)){
 
         //std::cout << current_depth << "," << x << "\n";
 
 
-        if(current_depth == sync_depth-1 && refined_indices[buffer_point+x]){
+        if(state.current_depth == sync_depth-1 && refined_indices[state.current_indice]){
             // 0 0 0
-            // G G G     potentials[refined_indices[buffer_point+x]+0]
+            // G G G     potentials[refined_indices[block_beginning_indice+x]+0]
             //-^-^-^--
-            // 4 2 6     potentials[refined_indices[buffer_point+x-1]+sizes[current_depth+1]-2]
+            // 4 2 6     potentials[refined_indices[block_beginning_indice+x-1]+sizes[current_depth+1]-2]
 
-            if(refined_indices[buffer_point+x-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
+            if(refined_indices[state.current_indice-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
                                                     //index block before
                 //Update bottom ghost points
-                array[refined_indices[buffer_point+x]] = array[refined_indices[buffer_point+x-1]+SIZES[current_depth+1]-2];
+                array[refined_indices[state.current_indice]] = array[refined_indices[state.current_indice-1]+mesh_sizes[state.current_depth+1]-2];
             }
             else{
                 //pass
             }
 
-            if(refined_indices[buffer_point+x+1]){
+            if(refined_indices[state.current_indice+1]){
                 //Update top ghost points
-                array[refined_indices[buffer_point+x]+SIZES[current_depth]-1] = array[refined_indices[buffer_point+x+1]+1];
+                array[refined_indices[state.current_indice]+mesh_sizes[state.current_depth]-1] = array[refined_indices[state.current_indice+1]+1];
             }
             else{
                 //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges.
@@ -118,38 +114,14 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth){
 
         }
 
-        x+=1;
+        state.x+=1;
+        state.update_idx(mesh_sizes);
     }
 }
 
 
 
-void debug_preamble_printer(int line, std::string file, std::string name){
-  std::cout << "\033[1;36m";
-  std::cout << "\033[1;36m" << file << "\033[0m | \033[1;36m" << "line " << line << "\033[0m | \033[1;33m" << name;
-  std::cout << "\033[0m";
-}
 
-// template<typename T>
-// void array_stats(T * input, int start, int end, std::string name, std::string name, std::string name){
-//
-// }
-
-template<typename T>
-void pretty_print_array(T * input, int start, int end){
-  std::cout << "\033[1;33m" << "[" << end << "]" << "\033[0m = {";
-
-  for(int i = start; i < end-1; i++){
-    std::cout << input[i] << ",";
-  }
-  if(end-start > 0){
-    std::cout << input[end-1]; //handle trailing ,
-  }
-
-  std::cout << "};\n";
-}
-template void pretty_print_array(float * input, int start, int length);
-template void pretty_print_array(int * input, int start, int length);
 /*
 
  - particle moves
