@@ -46,8 +46,9 @@ TEST(data_structure_mesh, scale_tests){
   // std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
   traverse_state state;
   init_scales(state, mesh_sizes);
-
-  DOUBLES_EQUAL(state.mesh_scale[0], (1/3), 1e-5);
+  DOUBLES_EQUAL(ROOT_WORLD_SCALE*(1/3.0), state.world_scale[0], 1e-5);
+  DOUBLES_EQUAL(ROOT_WORLD_SCALE*(1/3.0)*(1/5.0), state.world_scale[1], 1e-5);
+  DOUBLES_EQUAL(ROOT_WORLD_SCALE*(1/3.0)*(1/5.0)*(1/3.0),state.world_scale[2], 1e-5);
 }
 
 

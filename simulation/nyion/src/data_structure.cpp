@@ -31,9 +31,11 @@ void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
 //
 void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
     // pre-compute scales
+    float scale = ROOT_WORLD_SCALE;
     // state.world_scale[i] = ROOT_WORLD_SCALE; no! wrong!
-    for(int i = 0; i < state.current_depth; i++){
-      state.world_scale[i] /= mesh_sizes[i];
+    for(int i = 0; i < MAX_DEPTH; i++){
+      scale /= mesh_sizes[i];
+      state.world_scale[i] = scale;
     }
 }
 
@@ -134,13 +136,13 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
     }
 }
 
-void world_cell_lookup(float x, float y, float z, int max_depth){
-  int x_,y_,z_;
-  for(int depth = 0, depth < max_depth; depth++){
-      x_ += x/(mesh_scale[depth]); //remember ghosts!
-      x -= x_*mesh_scale[depth]
-  }
-}
+// void world_cell_lookup(float x, float y, float z, int max_depth){
+//   int x_,y_,z_;
+//   for(int depth = 0, depth < max_depth; depth++){
+//       x_ += x/(mesh_scale[depth]); //remember ghosts!
+//       x -= x_*mesh_scale[depth]
+//   }
+// }
 
 
 /*
