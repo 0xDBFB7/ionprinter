@@ -200,32 +200,21 @@ void opengl_test_prism() {
       glVertex3f(-0.5,0,-0.5);
   glEnd();
 }
+
+// void draw_mesh(float * array, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH]){
 //
-// void draw_mesh(std::vector<std::vector<double>>& input_mesh){
-//   /* -----------------------------------------------------------------------------
-//   Draw cubes
-//   ----------------------------------------------------------------------------- */
-//   for(int x = 0; x < SIZE_X; x++){
-//     for(int y = 0; y < SIZE_X; y++){
-//       for(int z = 0; z < SIZE_X; z++){
+//   traverse_state s; // this is quite clunky.
+//   while(breadth_first(s,)){
+//     glPushMatrix();
+//       glTranslatef();
+//       glColor4f(0,255.0,0,255);
 //
-//   glPushMatrix();
-//     glTranslatef((r_x*mesh_geometry.root_scale+x*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-//                   (r_y*mesh_geometry.root_scale+y*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0),
-//                   (r_z*mesh_geometry.root_scale+z*fine_scale)/OPENGL_WORLD_SCALE+(cube_size/2.0));
+//       glutWireCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
+//     glPopMatrix();
+//   }
 //
-//     if(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)] > 0){
-//       glColor4f((255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max)),0,255,
-//                                   (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/max));
-//     }
-//     else{
-//       glColor4f(0,(255.0*(input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min)),0,
-//                                   (input_mesh[root_idx][idx(x,y,z,sub_len,sub_len)]/min));
-//     }
-//     glutSolidCube((mesh_geometry.root_scale/sub_len)/OPENGL_WORLD_SCALE);
-//   glPopMatrix();
 // }
-//
+
 
 void update_screen(){
   glLoadIdentity();

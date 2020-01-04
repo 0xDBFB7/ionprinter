@@ -34,4 +34,6 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]);
 void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 
+void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
+
 #endif

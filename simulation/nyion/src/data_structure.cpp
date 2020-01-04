@@ -27,8 +27,7 @@ void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
   state.current_indice = (mesh_sizes[state.current_depth]*mesh_sizes[state.current_depth]*state.z)
                                                   + (mesh_sizes[state.current_depth]*state.y) + state.x;
 }
-//
-//
+
 void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
     // pre-compute scales
     float scale = ROOT_WORLD_SCALE;
@@ -43,7 +42,7 @@ void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
 //
 // }
 
-bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]){
+bool breadth_first(traverse_state &state, int * (refined_indices), int desired_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]){
 
     /*
     It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
@@ -64,7 +63,7 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth
 
       state.block_beginning_indice = state.ref_queue[state.current_depth]; //block_begin
 
-      if(state.current_depth != max_depth-1 && refined_indices[state.current_indice]){
+      if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice]){
           //Descend
           state.x_queue[state.current_depth] = state.x;
           state.current_depth += 1;
@@ -89,9 +88,12 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth
       break;
     }
 
+    state.x+=1; //might be broken
+
+    update_idx(state,mesh_sizes);
+
     return true;
 }
-
 
 
 
@@ -131,15 +133,17 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
 
         }
 
-        state.x+=1;
-        update_idx(state,mesh_sizes);
     }
 }
 
-// void world_cell_lookup(float x, float y, float z, int max_depth){
+
+// int world_cell_index_lookup(float x, float y, float z, int max_depth){
 //   int x_,y_,z_;
 //   for(int depth = 0, depth < max_depth; depth++){
-//       x_ += x/(mesh_scale[depth]); //remember ghosts!
+//       x_ = (int)floor(x/(mesh_scale[depth]));
+//       y_ = (int)floor(y/(mesh_scale[depth]));
+//       z_ = (int)floor(z/(mesh_scale[depth]));
+//
 //       x -= x_*mesh_scale[depth]
 //   }
 // }

@@ -62,12 +62,10 @@ TEST(data_structure_mesh, traverse_tests){
   std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
 
   traverse_state state;
-
   //first we encounter a ghost.
-  breadth_first(state, refined_indices, 1, 1, mesh_sizes);
+  breadth_first(state, refined_indices, 1, 0, mesh_sizes);
 
-
-
+  
 
   delete [] potentials;
   delete [] refined_indices;
