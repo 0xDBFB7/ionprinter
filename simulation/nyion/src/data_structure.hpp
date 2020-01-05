@@ -5,7 +5,7 @@
 
 // I don't think it makes much sense to have this variable. It'll complicate all sorts of allocs.
 const int MAX_DEPTH = 3;
-const int MESH_BUFFER_SIZE = 40;
+const int MESH_BUFFER_SIZE = 10000;
 
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
@@ -36,5 +36,6 @@ void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts);
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
+void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH]);
 
 #endif

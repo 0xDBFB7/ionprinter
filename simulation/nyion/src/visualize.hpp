@@ -44,7 +44,7 @@ void opengl_3d_mode();
 void opengl_test_prism();
 // void opengl_2d_mode();
 //
-// void draw_mesh(std::vector<std::vector<double>>& input_mesh,root_mesh_geometry mesh_geometry);
+void draw_mesh(float * array, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH], bool level_splitting);
 //
 //
 // void opengl_apply_camera_rotation();

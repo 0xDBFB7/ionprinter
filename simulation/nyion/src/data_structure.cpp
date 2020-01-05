@@ -74,9 +74,9 @@ void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
 
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
   if(state.x == 0 || state.y == 0 || state.z == 0
-      || state.x == mesh_sizes[state.current_depth]
-      || state.y == mesh_sizes[state.current_depth]
-      || state.z == mesh_sizes[state.current_depth]){
+      || state.x == mesh_sizes[state.current_depth]-1
+      || state.y == mesh_sizes[state.current_depth]-1
+      || state.z == mesh_sizes[state.current_depth]-1){
         return true;
   }
   else{
@@ -181,6 +181,17 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
         }
 
     }
+}
+
+void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH]){
+  x = 0;
+  y = 0;
+  z = 0;
+  for(int i = 0; i < state.current_depth; i++){
+    x += state.world_scale[i]*(state.x_queue[i]-1); //ghost offset
+    y += state.world_scale[i]*(state.y_queue[i]-1);
+    z += state.world_scale[i]*(state.z_queue[i]-1);
+  }
 }
 
 

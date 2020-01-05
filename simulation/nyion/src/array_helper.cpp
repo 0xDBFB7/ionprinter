@@ -15,58 +15,49 @@ int main(int argc, char **argv)
   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
   init_state(user_state,mesh_sizes);
 
-  int * potentials = new int[MESH_BUFFER_SIZE];
+  float * potentials = new float[MESH_BUFFER_SIZE];
   int * refined_indices = new int[MESH_BUFFER_SIZE];
   std::fill(potentials, potentials + MESH_BUFFER_SIZE, 0);
   std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
 
-  bool level_splitting = true;// render meshes with an offset corresponding to their level
+  bool level_splitting = true;
+
+  int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0]+1;
+
+  refined_indices[14] = heap_end;
 
   while(true){
 
-    // while(true){
-    //   if (std::cin >> user_state.x >> user_state.y >> user_state.z) {
-    //     update_idx(user_state,);
-    //     // array[current_indice] =
-    //   }
-    //   else {
-    //       std::cout << "Couldn't parse input. \n";
-    //   }
-    // }
-
-
-    traverse_state t_state;
 
     opengl_clear_screen();
     opengl_draw_axis_cross();
 
-    for(init_state(t_state, mesh_sizes); breadth_first(t_state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(t_state, mesh_sizes, 0)){
-      glPushMatrix();
-        float current_scale = t_state.world_scale[t_state.current_depth];
-
-        float level_split_offset = 0;
-        if(t_state.current_depth){
-          level_split_offset = (level_splitting * t_state.world_scale[t_state.current_depth-1]*1.5);
-        }
-
-        float gl_x = ((t_state.x-1)*current_scale)*OPENGL_SCALE + level_split_offset;
-        float gl_y = ((t_state.y-1)*current_scale)*OPENGL_SCALE + level_split_offset;
-        float gl_z = ((t_state.z-1)*current_scale)*OPENGL_SCALE + level_split_offset;
-
-        glTranslatef(gl_x, gl_y, gl_z);
-        if(is_ghost(t_state,mesh_sizes)){
-          glColor4f(0,255.0,0,255);
-        }
-        else{
-          glColor4f(255.0,0,0,255);
-
-        }
-
-        glutWireCube(current_scale*OPENGL_SCALE);
-      glPopMatrix();
-    }
+    draw_mesh(potentials, refined_indices, mesh_sizes, level_splitting);
 
     update_screen();
+
+    //x to select a new cell within mesh,
+    //d to go down a level,
+    //s to set cell to a value,
+    //f to fill block with a value,
+
+    // std::cout << "Enter x to select a new cell, "
+    // std::cout << ;
+    // std::cout << "\n> ";
+    // while(true){
+
+    // char menu;
+    // if(std::cin >> menu){
+    //   if(menu == 'x'){
+    //     if (std::cin >> user_state.x >> user_state.y >> user_state.z) {
+    //       user_state.current_indice = user_state.block_beginning_indice+idx(user_state.x,user_state.y,user_state.z,mesh_sizes[user_state.current_depth]);
+    //       // array[current_indice] =
+    //     }
+    //   }
+    // }
+    // else {
+    //     std::cout << "Couldn't parse input. \n";
+    // }
 
   }
 
