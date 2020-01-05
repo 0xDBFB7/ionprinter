@@ -1,5 +1,9 @@
 Why's this here? I don't know, I'm not a psychologist. 
 
+
+
+R. P. Feynman, (1963). "Quantum Theory of Gravitation"...And so I'm stuck to have to continue this investigation, and of course you appreciate that this is the secret reason for doing any work, no matter how absurd and irrational and academic it looks: we all realize that no matter how small a thing is, if it has physical interest and is thought about carefully enough, you're bound to think of something that's good for something else."
+
 <hr>
 
 Apparently unlike many animals, humans have the capacity to construct an internal model of the world. This allows us to generalize known situations with new inputs. 
