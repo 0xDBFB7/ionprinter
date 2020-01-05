@@ -38,6 +38,37 @@ TEST_GROUP(data_structure_mesh){
 };
 //
 
+TEST(data_structure_mesh, traverse_test){
+  int mesh_sizes[MAX_DEPTH];
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+
+  traverse_state state;
+  init_state(state, mesh_sizes);
+  CHECK_EQUAL(0,state.x);
+  CHECK_EQUAL(0,state.y);
+  CHECK_EQUAL(0,state.z);
+  xyz_traverse(state,mesh_sizes,0);
+  CHECK_EQUAL(1,state.x);
+  CHECK_EQUAL(0,state.y);
+  CHECK_EQUAL(0,state.z);
+  xyz_traverse(state,mesh_sizes,0);
+  CHECK_EQUAL(2,state.x);
+  CHECK_EQUAL(0,state.y);
+  CHECK_EQUAL(0,state.z);
+  xyz_traverse(state,mesh_sizes,0);
+  CHECK_EQUAL(0,state.x);
+  CHECK_EQUAL(1,state.y);
+  CHECK_EQUAL(0,state.z);
+
+  //with ghost ignore
+  init_state(state, mesh_sizes);
+
+  xyz_traverse(state,mesh_sizes,1);
+  CHECK_EQUAL(1,state.x);
+  CHECK_EQUAL(1,state.y);
+  CHECK_EQUAL(1,state.z);
+}
+
 TEST(data_structure_mesh, scale_tests){
   int mesh_sizes[MAX_DEPTH];
   mesh_sizes[0] = 3;
@@ -45,14 +76,14 @@ TEST(data_structure_mesh, scale_tests){
   mesh_sizes[2] = 3;
   // std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
   traverse_state state;
-  init_scales(state, mesh_sizes);
+  init_state(state, mesh_sizes);
   DOUBLES_EQUAL(ROOT_WORLD_SCALE*(1/3.0), state.world_scale[0], 1e-5);
   DOUBLES_EQUAL(ROOT_WORLD_SCALE*(1/3.0)*(1/5.0), state.world_scale[1], 1e-5);
   DOUBLES_EQUAL(ROOT_WORLD_SCALE*(1/3.0)*(1/5.0)*(1/3.0),state.world_scale[2], 1e-5);
 }
 
 
-TEST(data_structure_mesh, traverse_tests){
+IGNORE_TEST(data_structure_mesh, traverse_tests){
   int mesh_sizes[MAX_DEPTH];
   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
 
@@ -65,13 +96,13 @@ TEST(data_structure_mesh, traverse_tests){
   //first we encounter a ghost.
   breadth_first(state, refined_indices, 1, 0, mesh_sizes);
 
-  
+
 
   delete [] potentials;
   delete [] refined_indices;
 }
 
-TEST(data_structure_mesh, data_structure_mesh_1d){
+IGNORE_TEST(data_structure_mesh, data_structure_mesh_1d){
   int mesh_sizes[MAX_DEPTH];
   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
 

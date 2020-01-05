@@ -3,7 +3,7 @@
 
 // _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
 
-int idx(int x, int y, int z, int xlen, int ylen);
+int idx(int x, int y, int z, int xlen);
 
 #include <iostream>
 #include <string>

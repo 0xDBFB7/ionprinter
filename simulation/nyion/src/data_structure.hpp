@@ -32,7 +32,8 @@ struct traverse_state{
 
 bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]);
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]);
-void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
+void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts);
+void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts);
 
 void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 

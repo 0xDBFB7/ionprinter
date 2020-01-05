@@ -1,7 +1,7 @@
 // #include <iostream>
 
-int idx(int x, int y, int z, int xlen, int ylen){
-  return (x + (y*xlen) + (z*xlen*ylen));
+int idx(int x, int y, int z, int xlen){
+  return (x + (y*xlen) + (z*xlen*xlen));
 }
 //
 // int main(int ac, char** av){

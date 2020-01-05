@@ -20,15 +20,25 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 
 */
 
+__inline__
+void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
 
-void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
-  //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
+  state.x++;
+  if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
+  if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
 
-  state.current_indice = (mesh_sizes[state.current_depth]*mesh_sizes[state.current_depth]*state.z)
-                                                  + (mesh_sizes[state.current_depth]*state.y) + state.x;
+  state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 }
 
-void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+// void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+//   //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
+//
+//   state.current_indice = (mesh_sizes[state.current_depth]*mesh_sizes[state.current_depth]*state.z)
+//                                                   + (mesh_sizes[state.current_depth]*state.y) + state.x;
+// }
+
+
+void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
     // pre-compute scales
     float scale = ROOT_WORLD_SCALE;
     // state.world_scale[i] = ROOT_WORLD_SCALE; no! wrong!
@@ -36,6 +46,20 @@ void init_scales(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
       scale /= mesh_sizes[i];
       state.world_scale[i] = scale;
     }
+
+    //this isn't strictly necessary, but explicit is better than implicit.
+    state.current_depth = 0;
+    state.block_beginning_indice = 0;
+    state.current_indice = 0; //ideally traverse_state would contain a reset_ function,
+                              //however I'm not sure that'll be GPU-portable.
+    std::fill(state.x_queue, state.x_queue + MAX_DEPTH, 0);
+    std::fill(state.y_queue, state.y_queue + MAX_DEPTH, 0);
+    std::fill(state.z_queue, state.z_queue + MAX_DEPTH, 0);
+    std::fill(state.ref_queue, state.ref_queue + MAX_DEPTH, 0);
+    state.x = ignore_ghosts;
+    state.y = ignore_ghosts;
+    state.z = ignore_ghosts;
+
 }
 
 // void unroll_traverse(){
@@ -61,26 +85,34 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
 
     while(true){
 
-      state.block_beginning_indice = state.ref_queue[state.current_depth]; //block_begin
+      state.block_beginning_indice = state.ref_queue[state.current_depth];
 
       if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice]){
           //Descend
           state.x_queue[state.current_depth] = state.x;
+          state.y_queue[state.current_depth] = state.y;
+          state.z_queue[state.current_depth] = state.z;
           state.current_depth += 1;
           state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
           state.x = ignore_ghosts;
+          state.y = ignore_ghosts;
+          state.z = ignore_ghosts;
 
           continue;
       }
 
-      if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts){
+      if(state.z == mesh_sizes[state.current_depth]-ignore_ghosts){
           //Ascend
           if(state.current_depth == 0){
               return false;
           }
 
           state.current_depth-=1;
-          state.x = state.x_queue[state.current_depth]+1;
+          state.x = state.x_queue[state.current_depth];
+          state.y = state.y_queue[state.current_depth];
+          state.z = state.z_queue[state.current_depth];
+
+          xyz_traverse(state,mesh_sizes,ignore_ghosts);
 
           continue;
       }
@@ -88,9 +120,7 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
       break;
     }
 
-    state.x+=1; //might be broken
 
-    update_idx(state,mesh_sizes);
 
     return true;
 }
@@ -102,7 +132,7 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
 
     traverse_state state;
 
-    while(breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes)){
+    for(init_state(state, mesh_sizes, ignore_ghosts); breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes); xyz_traverse(state, mesh_sizes, 1)){
 
         //std::cout << current_depth << "," << x << "\n";
 
