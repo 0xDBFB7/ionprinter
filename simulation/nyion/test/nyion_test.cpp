@@ -6,6 +6,8 @@
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 
+#include "benchmarks.hpp"
+
 TEST_GROUP(MathGL)
 {
 };
@@ -36,7 +38,6 @@ IGNORE_TEST(OpenGL, OpenGL_Basic)
 
 TEST_GROUP(data_structure_mesh){
 };
-//
 
 TEST(data_structure_mesh, traverse_test){
   int mesh_sizes[MAX_DEPTH];
@@ -113,7 +114,6 @@ IGNORE_TEST(data_structure_mesh, data_structure_mesh_1d){
 
   potentials[14] = 14;
   potentials[17] = 17;
-
 
   refined_indices[1] = 8;
   refined_indices[2] = 16;

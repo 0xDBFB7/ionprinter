@@ -1,0 +1,19 @@
+digraph D {
+
+    test [label="Unit tests"]
+    test [label=<Physical accuracy<br/><FONT POINT-SIZE="13"></FONT>>]
+    test [label="Comparison with analytic methods"]
+    test [label="Comparison with published data"]
+
+    test [label="Electrical test"]
+    test [label="Optical inspection"]
+    
+  A [label="Simulation\n Nyion"]
+  B [label="Hardware"]
+  C [label="Firmware"]
+
+  A -> B [dir=both]
+  A -> C
+  A -> D
+
+}
