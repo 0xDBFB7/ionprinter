@@ -23,6 +23,12 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 __inline__
 void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
 
+  //ensure that we don't start in the corner if ghosts are to be ignored.
+  if(ignore_ghosts && !state.y){ //slow, stupid
+    state.y = 1;
+    state.z = 1;
+  }
+
   state.x++;
   if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
   if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
@@ -38,7 +44,7 @@ void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool igno
 // }
 
 
-void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
+void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
     // pre-compute scales
     float scale = ROOT_WORLD_SCALE;
     // state.world_scale[i] = ROOT_WORLD_SCALE; no! wrong!
@@ -56,15 +62,27 @@ void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore
     std::fill(state.y_queue, state.y_queue + MAX_DEPTH, 0);
     std::fill(state.z_queue, state.z_queue + MAX_DEPTH, 0);
     std::fill(state.ref_queue, state.ref_queue + MAX_DEPTH, 0);
-    state.x = ignore_ghosts;
-    state.y = ignore_ghosts;
-    state.z = ignore_ghosts;
-
+    state.x = 0;
+    state.y = 0;
+    state.z = 0;
+    // state.ignore_ghosts = 0;
 }
 
 // void unroll_traverse(){
 //
 // }
+
+bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+  if(state.x == 0 || state.y == 0 || state.z == 0
+      || state.x == mesh_sizes[state.current_depth]
+      || state.y == mesh_sizes[state.current_depth]
+      || state.z == mesh_sizes[state.current_depth]){
+        return true;
+  }
+  else{
+    return false;
+  }
+}
 
 bool breadth_first(traverse_state &state, int * (refined_indices), int desired_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]){
 
@@ -121,7 +139,6 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
     }
 
 
-
     return true;
 }
 
@@ -132,7 +149,7 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
 
     traverse_state state;
 
-    for(init_state(state, mesh_sizes, ignore_ghosts); breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes); xyz_traverse(state, mesh_sizes, 1)){
+    for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes); xyz_traverse(state, mesh_sizes, 1)){
 
         //std::cout << current_depth << "," << x << "\n";
 
@@ -172,7 +189,7 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
 //   for(int depth = 0, depth < max_depth; depth++){
 //       x_ = (int)floor(x/(mesh_scale[depth]));
 //       y_ = (int)floor(y/(mesh_scale[depth]));
-//       z_ = (int)floor(z/(mesh_scale[depth]));
+//       z_ = (int)floor(z/(mesh_scale[depth])); //remember ghosts!
 //
 //       x -= x_*mesh_scale[depth]
 //   }

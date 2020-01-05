@@ -26,15 +26,15 @@ struct traverse_state{
     int x = 0;
     int y = 0;
     int z = 0;
-
+    // bool is_ghost = 0;
     // void update_idx(int (&mesh_sizes)[MAX_DEPTH]);
 };
 
 bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]);
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]);
-void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts);
+void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts);
-
+bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 
 #endif

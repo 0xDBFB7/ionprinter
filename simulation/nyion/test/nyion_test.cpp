@@ -63,7 +63,7 @@ TEST(data_structure_mesh, traverse_test){
   //with ghost ignore
   init_state(state, mesh_sizes);
 
-  xyz_traverse(state,mesh_sizes,1);
+  xyz_traverse(state,mesh_sizes, 1);
   CHECK_EQUAL(1,state.x);
   CHECK_EQUAL(1,state.y);
   CHECK_EQUAL(1,state.z);
