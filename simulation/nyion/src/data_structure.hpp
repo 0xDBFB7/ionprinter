@@ -11,9 +11,6 @@ const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
 // Similarly, I can't think of a compelling reason to have non-square arrays.
 //
-
-
-
 struct traverse_state{
     float world_scale[MAX_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int current_depth = 0;
@@ -37,5 +34,6 @@ void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool igno
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH]);
+
 
 #endif

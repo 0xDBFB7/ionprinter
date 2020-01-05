@@ -32,7 +32,6 @@ void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool igno
   state.x++;
   if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
   if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
-
   state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 }
 
@@ -104,6 +103,7 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
     while(true){
 
       state.block_beginning_indice = state.ref_queue[state.current_depth];
+      state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 
       if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice]){
           //Descend

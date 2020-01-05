@@ -204,23 +204,23 @@ void opengl_test_prism() {
 void draw_mesh(float * array, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH], bool level_splitting){
 
   //level split: render meshes with an offset corresponding to their level
-  traverse_state t_state;
+  traverse_state state;
 
-  for(init_state(t_state, mesh_sizes); breadth_first(t_state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(t_state, mesh_sizes, 0)){
+  for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
     glPushMatrix();
 
-      float current_scale = t_state.world_scale[t_state.current_depth];
+      float current_scale = state.world_scale[state.current_depth];
 
       float level_split_offset = 0;
 
       float cube_size = current_scale*OPENGL_SCALE*0.95;
 
-      if(t_state.current_depth){
-        level_split_offset = (level_splitting * t_state.world_scale[t_state.current_depth-1]*1.5);
+      if(state.current_depth){
+        level_split_offset = (level_splitting * state.world_scale[state.current_depth-1]*1.5);
       }
 
       float gl_x,gl_y,gl_z;
-      cell_world_lookup(t_state, gl_x, gl_y, gl_z, mesh_sizes);
+      cell_world_lookup(state, gl_x, gl_y, gl_z, mesh_sizes);
       gl_x *= OPENGL_SCALE;
       gl_y *= OPENGL_SCALE;
       gl_z *= OPENGL_SCALE;
@@ -232,14 +232,14 @@ void draw_mesh(float * array, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH
 
       glTranslatef(gl_x, gl_y, gl_z);
 
-      // if(user_state.x == t_state.x &&
-      //     user_state.y == t_state.y &&
-      //     user_state.z == t_state.z &&
-      //     user_state.current_depth == t_state.current_depth){
+      // if(user_state.x == state.x &&
+      //     user_state.y == state.y &&
+      //     user_state.z == state.z &&
+      //     user_state.current_depth == state.current_depth){
       //
       // }
       // else{
-      if(is_ghost(t_state,mesh_sizes)){
+      if(is_ghost(state,mesh_sizes)){
         glColor4f(0,255.0,0,255);
       }
       else{
