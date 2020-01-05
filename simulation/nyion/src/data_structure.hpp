@@ -5,7 +5,7 @@
 
 // I don't think it makes much sense to have this variable. It'll complicate all sorts of allocs.
 const int MAX_DEPTH = 3;
-const int MESH_BUFFER_SIZE = 10000;
+const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
 
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 

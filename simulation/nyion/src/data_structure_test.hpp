@@ -55,8 +55,9 @@ TEST(data_structure_mesh, scale_tests){
 
 
 TEST(data_structure_mesh, traverse_tests){
+  int test_mesh_size = 2;
   int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, test_mesh_size);
 
   int * test = new int[MESH_BUFFER_SIZE];
   int * refined_indices = new int[MESH_BUFFER_SIZE];
@@ -69,10 +70,11 @@ TEST(data_structure_mesh, traverse_tests){
   traverse_state state;
 
   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
-    test[state.current_indice] = state.block_beginning_indice;
+    //test[state.current_indice] = state.current_indice-state.block_beginning_indice;
+    test[state.current_indice] = state.current_depth+1;
   }
 
-  pretty_print_named_array(test, 0, 2*(3*3*3));
+  pretty_print_named_array(test, 0, 2*(test_mesh_size*test_mesh_size*test_mesh_size));
 
   delete [] test;
   delete [] refined_indices;
@@ -106,6 +108,40 @@ IGNORE_TEST(data_structure_mesh, data_structure_mesh_1d){
 
 
   delete [] potentials;
+  delete [] refined_indices;
+}
+
+
+
+
+TEST_GROUP(data_structure_benchmark){
+};
+
+
+TEST(data_structure_mesh, traverse_benchmark){
+  int test_mesh_size = 100;
+
+  int mesh_sizes[MAX_DEPTH];
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, test_mesh_size);
+
+
+  int * test = new int[MESH_BUFFER_SIZE];
+  int * refined_indices = new int[MESH_BUFFER_SIZE];
+  std::fill(test, test + MESH_BUFFER_SIZE, 0);
+  std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
+
+  int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0]+1;
+  for(int i = 0; i < MAX_DEPTH; i++){
+    refined_indices[14] = heap_end;//center-middle
+  }
+
+  traverse_state state;
+
+  for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
+    test[state.current_indice] = state.current_indice-state.block_beginning_indice;
+  }
+
+  delete [] test;
   delete [] refined_indices;
 }
 
