@@ -1,6 +1,7 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
 #include "data_structure.hpp"
+#include "unrolled_operations.hpp"
 
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
@@ -33,6 +34,17 @@ IGNORE_TEST(OpenGL, OpenGL_Basic)
     opengl_test_prism();
     update_screen();
   }
+}
+
+TEST_GROUP(CUDA)
+{
+};
+
+TEST(CUDA, CUDA_basic)
+{
+
+  for(int i = 0; i < 100; i++){ test_cuda_2();}
+
 }
 
 

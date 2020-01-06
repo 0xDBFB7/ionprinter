@@ -15,9 +15,9 @@ int idx(int x, int y, int z, int xlen);
 #include <omp.h>
 
 #include "debug_helpers.hpp"
-// #include <cuda.h>
-
-
+#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
+#include <cuda.h>
 
 #include <mgl2/mgl.h>
 
