@@ -3692,3 +3692,26 @@ Using OpenMP requires re-compiling GCC with support for Nvidia PTX. This would b
 
 Google Benchmark looks good. There doesn't seem to be a way to access results programmatically, unfortunately.
 
+
+
+Re-organizing references.
+
+Copied all .pdfs from deep/downloads.
+
+All .ppt done.
+All .dvis done.
+All .doc done.
+All ps 
+phone? looks like it's done.
+
+All of the above on laptop are also done.
+
+
+
+Refbase's been copied
+Zotero too.
+
+
+
+ fdupes -rdN .
+

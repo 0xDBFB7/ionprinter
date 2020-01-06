@@ -80,6 +80,7 @@ TEST(data_structure_mesh, traverse_tests){
   delete [] refined_indices;
 }
 
+
 IGNORE_TEST(data_structure_mesh, data_structure_mesh_1d){
   int mesh_sizes[MAX_DEPTH];
   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);

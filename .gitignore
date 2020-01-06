@@ -1,5 +1,6 @@
 media/
 references/
+references2/
 *.msh
 *.dat
 *.vtk
@@ -13,3 +14,4 @@ references/
 .ipynb_checkpoints
 */.ipynb_checkpoints/*
 .fcstd1
+*.bak
