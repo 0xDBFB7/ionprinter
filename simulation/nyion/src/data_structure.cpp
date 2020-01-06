@@ -20,20 +20,6 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 
 */
 
-__inline__
-void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
-
-  //ensure that we don't start in the corner if ghosts are to be ignored.
-  if(ignore_ghosts && !state.y){ //slow, stupid
-    state.y = 1;
-    state.z = 1;
-  }
-
-  state.x++;
-  if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
-  if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
-  state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
-}
 
 // void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
 //   //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
@@ -100,12 +86,13 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
 
     */
 
+    bool just_visited = 0;
     while(true){
 
       state.block_beginning_indice = state.ref_queue[state.current_depth];
       state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 
-      if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice]){
+      if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice] && !just_visited){
           //Descend
           state.x_queue[state.current_depth] = state.x;
           state.y_queue[state.current_depth] = state.y;
@@ -130,7 +117,8 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
           state.y = state.y_queue[state.current_depth];
           state.z = state.z_queue[state.current_depth];
 
-          xyz_traverse(state,mesh_sizes,ignore_ghosts);
+          just_visited = true;
+          // xyz_traverse(state,mesh_sizes,ignore_ghosts);
 
           continue;
       }

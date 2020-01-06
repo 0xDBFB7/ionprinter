@@ -1,5 +1,6 @@
 #include "nyion.hpp"
 
+#define DEBUG_PRINT
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 //make filename__ preprocessor directive relative - thanks red1ynx!
@@ -8,6 +9,10 @@
 template<typename T>
 void pretty_print_array(T * input, int start, int end);
 
-void debug_preamble_printer(int line, std::string file, std::string name);
+void debug_preamble_printer(std::string function, int line, std::string file, std::string name);
 
-#define pretty_print_named_array(input, start, end) debug_preamble_printer(__LINE__, __FILENAME__, #input); pretty_print_array(input, start, end);
+#ifndef DEBUG_PRINT
+  #define pretty_print_named_array(a,b,c) //disable pretty-printing
+#else
+  #define pretty_print_named_array(input, start, end) debug_preamble_printer(__FUNCTION__, __LINE__, __FILENAME__, #input); pretty_print_array(input, start, end);
+#endif

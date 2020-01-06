@@ -30,7 +30,22 @@ struct traverse_state{
 bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]);
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]);
 void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
-void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts);
+
+__inline__
+void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
+
+  //ensure that we don't start in the corner if ghosts are to be ignored.
+  if(ignore_ghosts && !state.y){ //slow, stupid
+    state.y = 1;
+    state.z = 1;
+  }
+
+  state.x++;
+  if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
+  if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
+  state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
+}
+
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH]);
