@@ -2,33 +2,29 @@
 
 ##### Brief description
 
+
+
+Wait, why not publish it? If the technique is unfounded, then I will waste a great deal of scientists time, and  
+
+
+
 > Reality must take precedence over public relations, for nature cannot be fooled. - *Feynman*
 
 Behold, the central thesis of the *Ionolith*:
 
-> Can macroscopic solid objects be produced by connecting a CRT monitor to an ion thruster connected to a furnace?
-
 Less facetiously, this technique is known as ion beam deposition (or lithography). It is currently limited to producing objects at a scale of angstroms per hour, and the machines cost many millions. 
 
-Building on 1,600 scientific papers, I have not been able to demonstrate that it is entirely impossible to print centimeters per hour with a $1000 machine. 
+Very unfortunately for my studies, parents, and mental health, I've been unable to conclusively demonstrate that it is entirely impossible to simply scale this up to $\text{cm}^3$/hour with a $1000 consumer machine, despite 3 years and 1,600 papers.
 
-This is almost certainly impossible, of course, since nobody is doing it; but it's such an absurd and fantastic problem that I've been unable to stop working on it; and to date I have not found a complete theoretical basis for its impossibility. 
+This is almost certainly impossible, of course, since nobody is doing it; but it's such an absurd and fantastic problem that I've been unable to stop working on it.
 
 I am buoyed by the fact that a very closely related thin-film technique called Physical Vapor Deposition was once demonstrated to produce millimeter-scale layers.
 
 Even when it ends up being impossible, I have learned a great deal from the process; so I'm not altogether concerned about when that day comes - though I must admit to hoping that it won't.
 
-Difficult problems:
 
-#### An inexpensive, demountable, user-friendly high vacuum system
 
-This turned out to be the easiest part of the whole system; in fact, I have a system built from scrap for \$250 that easily attains $10^{-5}$ mBar. 
-
-Together with ceramic techniques from below, 
-
-Building diffusion pumps has revealed their ludicrously simple construction that is belied by their high market prices.
-
-Because of the temperatures involved, the contamination that  the bane of all are not expected to cause difficulty.
+### Problems in order of difficulty
 
 #### Space-charge neutralization
 
@@ -46,13 +42,13 @@ Compounded with these difficulties are the limited power consumption and target 
 
 Physics does not demand space charge, however. There are many 
 
-Largely due to progress in accelerator science and, somewhat surprisingly, industrial ion-beam implantation systems for semiconductor doping, a great deal has been learned about implementing space charge compensation, neutralization, and beam cooling since Feynman's talk.
+Largely due to progress in accelerator science, the prevalence (ha!) of industrial ion-beam implantation systems for semiconductor doping, and  a great deal has been learned about implementing space charge neutralization, compensation, and beam cooling since Feynman's talk.
 
 The simulation detail required to resolve these effects did not exist at the time. 
 
 The current design somewhat mitigates this issue with a massively-parallel many-beamlet design; but this may be completely wishful thinking.
 
-*It is entirely possible that this is unreasonable.* There are many regions of the beamline that are still opaque to the crude first-order analysis I've been able to produce so far.
+*It is entirely possible that this is unreasonable.* There are many regions of the beamline that are still opaque to the horribly crude zeroth-order analysis I've been able to produce so far.
 
 #### High-performance multiscale multiphysics simulation on consumer hardware
 
@@ -61,6 +57,24 @@ The current design somewhat mitigates this issue with a massively-parallel many-
 'common-beam' effects. 
 
 DSMC
+
+
+
+#### An inexpensive, 'demountable', user-friendly high vacuum system
+
+##### Status: not an issue.
+
+This turned out to be the easiest part of the whole system; in fact, I have a system built from scrap for \$250 that easily attains $10^{-5}$ mBar. 
+
+Together with ceramic techniques from below, 
+
+Attempts to build diffusion pumps have revealed a ludicrously simple construction belied by their high prices.
+
+Because of the temperatures involved, the contamination that  the bane of all are not expected to cause difficulty.
+
+
+
+
 
 
 
@@ -80,14 +94,17 @@ Simple tests with micro-machined graphite piping
 
 Even more concerning is the fact that superheated metals dissolve almost everything; only precious few materials can withstand prolonged exposure. Aluminum nitride is particularly convenient. 
 
-Still more concerning are the tremendous power consumption. The enthalpy of vaporization of the metals is only contributes a small fraction of the. 
+Still more concerning is the tremendous power consumption. The enthalpy of vaporization of the metals is only contributes a small fraction of the. 
 
-#### Surface effects: crystalline structure, adatom reflection, high sputter yields, skitter
+#### Surface effects: crystalline structure, ad-atom reflection, sputter yields, skitter
 
 It remains to be seen if so-called depressed collector systems will work.
 
 #### Inexpensive, high frequency, high voltage precision electronics for beam control
 
-The current design calls for 1024 to 2048 individually-controlled beamlet emitters, with approximately 8 electrodes that must switch
+The current design calls for 1024 to 2048 individually-controlled beamlet emitters, with approximately 8 electrodes that must switch 5Kv at a few Mhz within a tolerance of a few millivolts.
 
-Feedback is achieved via beam modulation, coupling into electrostatic beam position monitoring buttons.
+That number of high-voltage MOSFETs would already break the budget.  
+
+Feedback looks to be achievable via beam modulation, coupling into electrostatic beam position monitoring buttons.
+

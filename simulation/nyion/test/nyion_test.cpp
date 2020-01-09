@@ -8,6 +8,9 @@
 
 #include "data_structure_test.hpp"
 
+//rm -r * && cmake ../
+//make -j16 && ./test/nyion_test
+
 TEST_GROUP(MathGL)
 {
 };
@@ -43,8 +46,16 @@ TEST_GROUP(CUDA)
 TEST(CUDA, CUDA_basic)
 {
 
-  for(int i = 0; i < 100; i++){ test_cuda_2();}
+  float * x = new float[10];
+  float * y = new float[10];
 
+  test_cuda(x,y);
+
+  pretty_print_named_array(x,0,10);
+  pretty_print_named_array(y,0,10);
+
+  delete [] x;
+  delete [] y;
 }
 
 

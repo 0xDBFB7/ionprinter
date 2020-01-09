@@ -2,10 +2,7 @@
 #define UNROLLED_H
 
 #include "nyion.hpp"
-#include "unrolled_operations_cuh.h"
 
-void test_cuda_2(){
-  test_cuda();
-}
+void test_cuda(float * x, float * y);
 
 #endif

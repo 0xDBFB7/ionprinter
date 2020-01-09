@@ -1,4 +1,5 @@
-#include "unrolled_operations.hpp"
+//#include "unrolled_operations.hpp"
+#include "nyion.hpp"
 
 /*
 
@@ -20,14 +21,46 @@ can be constructed to traverse linearly.
 
 */
 
-__global__
-void cuda_hello(){
-    printf("Hello World from GPU!\n");
+#define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
+inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
+{
+   if (code != cudaSuccess)
+   {
+      fprintf(stderr,"GPU error: %s %s %d\n", cudaGetErrorString(code), file, line);
+      if (abort) exit(code);
+   }
 }
 
-int test_cuda(){
-  cuda_hello<<<1,1>>>();
-  cudaDeviceSynchronize();
 
-  return 0;
+__global__
+void add()
+{
+  // int i = blockIdx.x*blockDim.x + threadIdx.x;
+  // x[0] = 0;
+  // y[0] = 100;
+  printf("test\n");
+}
+
+
+void test_cuda(float * x, float * y)
+{
+
+  // int N = 10;
+  // float *d_x, *d_y;
+  // //
+  // gpu_error_check( cudaMalloc(&d_x, N*sizeof(float)));
+  // cudaMalloc(&d_y, N*sizeof(float));
+  // //
+  // // cudaMemcpy(d_x, x, N*sizeof(float), cudaMemcpyHostToDevice);
+  // // cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice);
+
+  // Perform SAXPY on 1M elements
+  add<<<1, 1>>>();
+
+
+  // cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost);
+  // cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
+  //
+  // cudaFree(d_x);
+  // cudaFree(d_y);
 }
