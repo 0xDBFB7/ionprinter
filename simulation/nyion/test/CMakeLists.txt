@@ -1,11 +1,11 @@
-
-
 include_directories(../src/)
 link_directories(../src/)
 
 add_executable (nyion_test nyion_test.cpp)
 target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES}
-                                    nyion_lib data_structure visualize debug_helpers unrolled_operations OpenMP::OpenMP_CXX )
+                                    nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
+
+target_link_libraries(nyion_test unrolled_operations)
 
 set_target_properties(nyion_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 

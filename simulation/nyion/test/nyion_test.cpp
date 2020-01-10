@@ -49,7 +49,7 @@ TEST(CUDA, CUDA_basic)
   float * x = new float[10];
   float * y = new float[10];
 
-  test_cuda(x,y);
+  test_cuda();
 
   pretty_print_named_array(x,0,10);
   pretty_print_named_array(y,0,10);

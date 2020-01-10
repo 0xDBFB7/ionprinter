@@ -1,5 +1,5 @@
 //#include "unrolled_operations.hpp"
-#include "nyion.hpp"
+// #include "nyion.hpp"
 
 /*
 
@@ -21,6 +21,14 @@ can be constructed to traverse linearly.
 
 */
 
+#include <iostream>
+#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
+#include <cuda.h>
+
+using namespace std;
+
+
 #define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
 {
@@ -38,26 +46,55 @@ void add()
   // int i = blockIdx.x*blockDim.x + threadIdx.x;
   // x[0] = 0;
   // y[0] = 100;
-  printf("test\n");
 }
 
+void DisplayHeader()
+{
+    const int kb = 1024;
+    const int mb = kb * kb;
+    wcout << "NBody.GPU" << endl << "=========" << endl << endl;
 
-void test_cuda(float * x, float * y)
+    wcout << "CUDA version:   v" << CUDART_VERSION << endl;
+
+    int devCount;
+    cudaGetDeviceCount(&devCount);
+    wcout << "CUDA Devices: " << endl << endl;
+
+    for(int i = 0; i < devCount; ++i)
+    {
+        cudaDeviceProp props;
+        cudaGetDeviceProperties(&props, i);
+        wcout << i << ": " << props.name << ": " << props.major << "." << props.minor << endl;
+        wcout << "  Global memory:   " << props.totalGlobalMem / mb << "mb" << endl;
+        wcout << "  Shared memory:   " << props.sharedMemPerBlock / kb << "kb" << endl;
+        wcout << "  Constant memory: " << props.totalConstMem / kb << "kb" << endl;
+        wcout << "  Block registers: " << props.regsPerBlock << endl << endl;
+
+        wcout << "  Warp size:         " << props.warpSize << endl;
+        wcout << "  Threads per block: " << props.maxThreadsPerBlock << endl;
+        wcout << "  Max block dimensions: [ " << props.maxThreadsDim[0] << ", " << props.maxThreadsDim[1]  << ", " << props.maxThreadsDim[2] << " ]" << endl;
+        wcout << "  Max grid dimensions:  [ " << props.maxGridSize[0] << ", " << props.maxGridSize[1]  << ", " << props.maxGridSize[2] << " ]" << endl;
+        wcout << endl;
+    }
+}
+
+void test_cuda()
 {
 
-  // int N = 10;
+  // const int N = 10;
   // float *d_x, *d_y;
   // //
   // gpu_error_check( cudaMalloc(&d_x, N*sizeof(float)));
-  // cudaMalloc(&d_y, N*sizeof(float));
+  // gpu_error_check( cudaMalloc(&d_y, N*sizeof(float)) );
   // //
   // // cudaMemcpy(d_x, x, N*sizeof(float), cudaMemcpyHostToDevice);
   // // cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice);
 
   // Perform SAXPY on 1M elements
-  add<<<1, 1>>>();
+  // gpu_error_check( add<<<1, 1>>>(); );
+  // printf("aaaaaaaaaaaaaaaaaaaa\n");
 
-
+  DisplayHeader();
   // cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost);
   // cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
   //
