@@ -171,7 +171,7 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
     }
 }
 
-void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH]){
+void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH] __attribute__((unused))){
   x = 0;
   y = 0;
   z = 0;

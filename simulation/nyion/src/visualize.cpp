@@ -201,7 +201,7 @@ void opengl_test_prism() {
   glEnd();
 }
 
-void draw_mesh(float * array, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH], bool level_splitting){
+void draw_mesh(__attribute__((unused)) float * array, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH], bool level_splitting){
 
   //level split: render meshes with an offset corresponding to their level
   traverse_state state;
