@@ -2,13 +2,10 @@ add_library (nyion_lib nyion.cpp nyion.hpp)
 add_library (data_structure data_structure.cpp data_structure.hpp)
 add_library (visualize visualize.cpp visualize.hpp)
 add_library (debug_helpers debug_helpers.cpp debug_helpers.hpp)
-cuda_add_library (unrolled_operations SHARED unrolled_operations.cu)
-set_property(TARGET unrolled_operations PROPERTY CUDA_STANDARD 11)
+add_library (unrolled_operations unrolled_operations.cu)
 
 add_executable(nyion main.cpp)
 add_executable(array_helper array_helper.cpp)
-
-set_source_files_properties(unrolled_operations.cu PROPERTIES LANGUAGE CUDA)
 
 set_target_properties(nyion_lib PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 set_target_properties(unrolled_operations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)

@@ -2,31 +2,24 @@
 # this flag may introduce strange bugs. The new dynamic shadow feature of ASAN might fix this.
 
 cmake_minimum_required(VERSION 3.9)
-#set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.2/bin/nvcc)
 
-#add_compile_options(-Wall -Wextra -pedantic -Werror -std=c++17 -fopenmp -foffload=-lm -Wno-unused-parameter)
-
-#set(CMAKE_C_COMPILER ~/Programs/gcc-offload/gcc-offload/install/bin/gcc CACHE PATH "")
-#set(CMAKE_CXX_COMPILER ~/Programs/gcc-offload/gcc-offload/install/bin/g++ CACHE PATH "")
-
+set(CUDA_NVCC_FLAGS -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v)
+#one -O3 for host, one for device.
+#-v verbose mode - thanks Luca Ferraro!
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
- -foffload=-lm -Wno-unused-parameter -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -g")
+ -foffload=-lm -Wno-unused-parameter -fno-omit-frame-pointer  -fsanitize=address -fsanitize=undefined -fsanitize=leak -g")
+
+#Turbo Boost: -ffast-math on host, -use_fast_math nvcc
 
 set(CUDA_PROPAGATE_HOST_FLAGS OFF)
-#set(CUDA_HOST_COMPILATION_CPP ON)
-set(CUDA_NVCC_FLAGS -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC)
-#set(CMAKE_C_FLAGS "-g -fPIC")
-#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-g -fPIC")
-set(CUDA_SEPARABLE_COMPILATION ON)
 
 set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -g")
 #apparently not good cmake. Works, however.
 
-
-message(${CUDA_NVCC_FLAGS})
 
 PROJECT(nyion LANGUAGES CUDA CXX C)
 

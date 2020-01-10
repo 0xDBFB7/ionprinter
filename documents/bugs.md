@@ -256,3 +256,12 @@ std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
 is a good idea.
 
 
+#### Issue:
+
+Adding CUDA to cmake caused a range of strange errors; the GPU reported an out of memory condition for any alloc or kernel launch and all gpu versioning and identifiers were garbage. It seemed that nvcc wasn't running the code on the GPU, but this turns out to be a known issue with Address Sanitizers:
+
+https://github.com/google/sanitizers/issues/629
+
+##### Solution 
+
+Not sure of a systemic way to prevent this.
