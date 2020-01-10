@@ -21,14 +21,11 @@ can be constructed to traverse linearly.
 
 */
 
+// #include "unrolled_operations.hpp"
+
 #include <iostream>
-#include <cuda_runtime.h>
-#include <cuda_runtime_api.h>
-#include <cuda.h>
 
 using namespace std;
-
-
 #define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
 inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
 {
