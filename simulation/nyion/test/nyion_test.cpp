@@ -44,7 +44,7 @@ TEST_GROUP(CUDA)
 };
 
 
-TEST(CUDA, CUDA_display_info)
+IGNORE_TEST(CUDA, CUDA_display_info)
 {
   display_GPU_info();
 }
@@ -60,6 +60,7 @@ TEST(CUDA, CUDA_basic)
   float *d_x;
 
   gpu_error_check( cudaMalloc(&d_x, 100*sizeof(float)));
+
 
   pretty_print_named_array(x,0,10);
 

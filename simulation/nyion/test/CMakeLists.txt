@@ -1,6 +1,10 @@
 include_directories(../src/)
 link_directories(../src/)
 
+include_directories(../src/debug_helpers/ ../src/host_data_structure/ ../src/array_helper_program/ ../src/physics/ ../src/visualize/ ../src/device_data_structure/)
+link_directories(../src/debug_helpers/ ../src/host_data_structure/ ../src/array_helper_program/ ../src/physics/ ../src/visualize/ ../src/device_data_structure/)
+
+
 add_executable (nyion_test nyion_test.cpp)
 target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES}
                                     nyion_lib data_structure visualize debug_helpers unrolled_operations OpenMP::OpenMP_CXX )

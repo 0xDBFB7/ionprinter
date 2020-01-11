@@ -168,9 +168,6 @@ void opengl_draw_axis_cross(){
   glEnd();
 }
 
-
-
-
 void opengl_test_prism() {
   //thanks to mina michael
   //https://gamedev.stackexchange.com/questions/150802/drawing-a-simple-triangular-prism-in-opengl-in-3d
@@ -207,6 +204,7 @@ void draw_mesh(__attribute__((unused)) float * array, int * refined_indices, int
   traverse_state state;
 
   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
+
     glPushMatrix();
 
       float current_scale = state.world_scale[state.current_depth];
@@ -221,6 +219,7 @@ void draw_mesh(__attribute__((unused)) float * array, int * refined_indices, int
 
       float gl_x,gl_y,gl_z;
       cell_world_lookup(state, gl_x, gl_y, gl_z, mesh_sizes);
+      pretty_print_named_value(gl_x);
       gl_x *= OPENGL_SCALE;
       gl_y *= OPENGL_SCALE;
       gl_z *= OPENGL_SCALE;

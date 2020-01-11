@@ -13,7 +13,7 @@ set(CUDA_NVCC_FLAGS -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -
 #-v verbose mode - thanks Luca Ferraro!
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
- -foffload=-lm -Wno-unused-parameter -fno-omit-frame-pointer  -fsanitize=address -fsanitize=undefined -fsanitize=leak -g")
+ -foffload=-lm -Wno-unused-parameter -fno-omit-frame-pointer  -fsanitize=address -fsanitize=undefined -fsanitize=leak -g --coverage")
 
 #Turbo Boost: -ffast-math on host, -use_fast_math nvcc
 

@@ -3711,7 +3711,12 @@ All of the above on laptop are also done.
 Refbase's been copied
 Zotero too.
 
-
-
  fdupes -rdN .
+
+
+
+
+/usr/bin/time -v has a very useful "Percent of CPU this job got: 97%". Probably good for multithreading!
+
+sudo perf stat is also fantastic.
 

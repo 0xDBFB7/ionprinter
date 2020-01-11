@@ -9,10 +9,13 @@
 template<typename T>
 void pretty_print_array(T * input, int start, int end);
 
+
 void debug_preamble_printer(std::string function, int line, std::string file, std::string name);
 
 #ifndef DEBUG_PRINT
-  #define pretty_print_named_array(a,b,c) //disable pretty-printing
+  #define pretty_print_named_array(a,b,c) //disable prints
 #else
   #define pretty_print_named_array(input, start, end) debug_preamble_printer(__FUNCTION__, __LINE__, __FILENAME__, #input); pretty_print_array(input, start, end);
+  #define pretty_print_named_value(input) debug_preamble_printer(__FUNCTION__, __LINE__, __FILENAME__, #input); std::cout << input;
+
 #endif
