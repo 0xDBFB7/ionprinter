@@ -1,5 +1,5 @@
 #include "nyion.hpp"
-#include "data_structure.hpp"
+#include "host_data_structure.hpp"
 
 
 /*

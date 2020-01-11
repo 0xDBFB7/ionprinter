@@ -5,7 +5,7 @@
 #include <iterator> // for ostream_iterator
 #include <algorithm>
 #include <cmath>
-#include "data_structure.hpp"
+#include "host_data_structure.hpp"
 
 
 

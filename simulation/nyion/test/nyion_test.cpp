@@ -1,12 +1,12 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
-#include "data_structure.hpp"
+#include "host_data_structure.hpp"
 #include "unrolled_operations.hpp"
 
 #include "CppUTest/CommandLineTestRunner.h"
 #include "CppUTest/TestHarness.h"
 
-#include "data_structure_test.hpp"
+#include "host_data_structure_test.hpp"
 
 //rm -r * && cmake ../
 //make -j16 && ./test/nyion_test

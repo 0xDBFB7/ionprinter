@@ -1,6 +1,6 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
-#include "data_structure.hpp"
+#include "host_data_structure.hpp"
 
 
 
