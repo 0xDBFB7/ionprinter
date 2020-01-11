@@ -1,5 +1,7 @@
-#ASAN_OPTIONS=protect_shadow_gap=0 must be set prior to running this program.
-# this flag may introduce strange bugs. The new dynamic shadow feature of ASAN might fix this.
+#export ASAN_OPTIONS=protect_shadow_gap=0:replace_intrin=0
+# and possibly detect_leaks=0
+# must be set prior to running this program.
+# these flags may introduce strange bugs. The new dynamic shadow feature of ASAN might fix this.
 
 cmake_minimum_required(VERSION 3.9)
 set (CMAKE_CXX_STANDARD 17)

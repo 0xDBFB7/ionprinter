@@ -15,9 +15,19 @@ int idx(int x, int y, int z, int xlen);
 #include <omp.h>
 
 #include "debug_helpers.hpp"
+
+
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
 #include <cuda.h>
+
+#include <curand.h>
+#include <curand_kernel.h>
+
+#include "CUDA_helpers.hpp"
+
+#define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
+
 
 #include <mgl2/mgl.h>
 

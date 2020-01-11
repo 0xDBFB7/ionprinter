@@ -43,16 +43,25 @@ TEST_GROUP(CUDA)
 {
 };
 
+
+TEST(CUDA, CUDA_display_info)
+{
+  display_GPU_info();
+}
+
 TEST(CUDA, CUDA_basic)
 {
 
   float * x = new float[10];
   float * y = new float[10];
 
-  test_cuda();
+  // test_cuda(x);
+
+  float *d_x;
+
+  gpu_error_check( cudaMalloc(&d_x, 100*sizeof(float)));
 
   pretty_print_named_array(x,0,10);
-  pretty_print_named_array(y,0,10);
 
   delete [] x;
   delete [] y;

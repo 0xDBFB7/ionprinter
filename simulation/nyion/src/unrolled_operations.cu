@@ -1,6 +1,3 @@
-//#include "unrolled_operations.hpp"
-// #include "nyion.hpp"
-
 /*
 
 Here's the situation.
@@ -21,23 +18,69 @@ can be constructed to traverse linearly.
 
 */
 
-// #include "unrolled_operations.hpp"
+#include "unrolled_operations.hpp"
 
-#include <iostream>
+//Special thanks to http://ianfinlayson.net/class/cpsc425/notes/cuda-random!
 
-using namespace std;
 
-#define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
-inline void gpuAssert(cudaError_t code, const char *file, int line, bool abort=true)
-{
-   if (code != cudaSuccess)
-   {
-      fprintf(stderr,"GPU error: %s %s %d\n", cudaGetErrorString(code), file, line);
-      if (abort) exit(code);
-   }
+#define N 10
+
+#define MAX 100
+
+/* this GPU kernel function is used to initialize the random states */
+__global__ void init(unsigned int seed, curandState_t* states) {
+
+  /* we have to initialize the state */
+  curand_init(seed, /* the seed can be the same for each core, here we pass the time in from the CPU */
+              blockIdx.x, /* the sequence number should be different for each core (unless you want all
+                             cores to get the same sequence of numbers for some reason - use thread id! */
+              0, /* the offset is how much extra we advance in the sequence for each call, can be 0 */
+              &states[blockIdx.x]);
 }
 
+/* this GPU kernel takes an array of states, and an array of ints, and puts a random int into each */
+__global__ void randoms(curandState_t* states, unsigned int* numbers) {
+  /* curand works like rand - except that it takes a state as a parameter */
+  numbers[blockIdx.x] = curand_uniform(&states[blockIdx.x]) * MAX;
+}
 
+int random_numbers() {
+  /* CUDA's random number library uses curandState_t to keep track of the seed value
+     we will store a random state for every thread  */
+  curandState_t* states;
+
+  /* allocate space on the GPU for the random states */
+  cudaMalloc((void**) &states, N * sizeof(curandState_t));
+
+  /* invoke the GPU to initialize all of the random states */
+  init<<<N, 1>>>(time(0), states);
+
+  /* allocate an array of unsigned ints on the CPU and GPU */
+  unsigned int cpu_nums[N];
+  unsigned int* gpu_nums;
+  cudaMalloc((void**) &gpu_nums, N * sizeof(unsigned int));
+
+  /* invoke the kernel to get some random numbers */
+  randoms<<<N, 1>>>(states, gpu_nums);
+
+  /* copy the random numbers back */
+  cudaMemcpy(cpu_nums, gpu_nums, N * sizeof(unsigned int), cudaMemcpyDeviceToHost);
+
+  /* print them out */
+  for (int i = 0; i < N; i++) {
+    printf("%u\n", cpu_nums[i]);
+  }
+
+  /* free the memory we allocated for the states and numbers */
+  cudaFree(states);
+  cudaFree(gpu_nums);
+
+  return 0;
+}
+//
+// __device__ float curand_uniform (curandState_t *state)
+// __device__ float curand_normal (curandState_t *state)
+//                  curand(&state)
 __global__
 void add()
 {
@@ -46,37 +89,8 @@ void add()
   // y[0] = 100;
 }
 
-void DisplayHeader()
-{
-    const int kb = 1024;
-    const int mb = kb * kb;
-    wcout << "NBody.GPU" << endl << "=========" << endl << endl;
 
-    wcout << "CUDA version:   v" << CUDART_VERSION << endl;
-
-    int devCount;
-    cudaGetDeviceCount(&devCount);
-    wcout << "CUDA Devices: " << endl << endl;
-
-    for(int i = 0; i < devCount; ++i)
-    {
-        cudaDeviceProp props;
-        cudaGetDeviceProperties(&props, i);
-        wcout << i << ": " << props.name << ": " << props.major << "." << props.minor << endl;
-        wcout << "  Global memory:   " << props.totalGlobalMem / mb << "mb" << endl;
-        wcout << "  Shared memory:   " << props.sharedMemPerBlock / kb << "kb" << endl;
-        wcout << "  Constant memory: " << props.totalConstMem / kb << "kb" << endl;
-        wcout << "  Block registers: " << props.regsPerBlock << endl << endl;
-
-        wcout << "  Warp size:         " << props.warpSize << endl;
-        wcout << "  Threads per block: " << props.maxThreadsPerBlock << endl;
-        wcout << "  Max block dimensions: [ " << props.maxThreadsDim[0] << ", " << props.maxThreadsDim[1]  << ", " << props.maxThreadsDim[2] << " ]" << endl;
-        wcout << "  Max grid dimensions:  [ " << props.maxGridSize[0] << ", " << props.maxGridSize[1]  << ", " << props.maxGridSize[2] << " ]" << endl;
-        wcout << endl;
-    }
-}
-
-void test_cuda()
+void test_cuda(float * x)
 {
 
   // const int N = 10;
@@ -90,9 +104,10 @@ void test_cuda()
 
   // Perform SAXPY on 1M elements
   // gpu_error_check( add<<<1, 1>>>(); );
-  // printf("aaaaaaaaaaaaaaaaaaaa\n");
 
-  DisplayHeader();
+  random_numbers();
+
+  // DisplayHeader();
   // cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost);
   // cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
   //
