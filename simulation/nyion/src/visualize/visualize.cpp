@@ -218,8 +218,8 @@ void draw_mesh(__attribute__((unused)) float * array, int * refined_indices, int
       }
 
       float gl_x,gl_y,gl_z;
-      cell_world_lookup(state, gl_x, gl_y, gl_z, mesh_sizes);
-      pretty_print_named_value(gl_x);
+      cell_world_lookup(state, gl_x, gl_y, gl_z);
+
       gl_x *= OPENGL_SCALE;
       gl_y *= OPENGL_SCALE;
       gl_z *= OPENGL_SCALE;

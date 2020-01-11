@@ -70,7 +70,7 @@ TEST(exhaustive_traverse, traverse_test_2x2_2x2){
   std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
 
   int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
-  refined_indices[2] = heap_end;//center-middle
+  refined_indices[2] = heap_end;//create refinement in the center-middle
 
   traverse_state state;
   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
@@ -99,38 +99,34 @@ TEST(exhaustive_traverse, traverse_test_2x2_2x2){
 }
 
 
-IGNORE_TEST(data_structure_mesh, data_structure_mesh_1d){
+TEST_GROUP(world_space_conversions){};
+
+TEST(world_space_conversions, cell_world_lookup_test){
+
+  float x,y,z;
+  traverse_state state;
   int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 2);
+  init_state(state, mesh_sizes);
+  // refined_indices[1] = 30;
 
-  int * potentials = new int[MESH_BUFFER_SIZE];
-  int * refined_indices = new int[MESH_BUFFER_SIZE];
-  std::fill(potentials, potentials + MESH_BUFFER_SIZE, 0);
-  std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
+  cell_world_lookup(state, x, y, z);
 
-  potentials[14] = 14;
-  potentials[17] = 17;
-
-  refined_indices[1] = 8;
-  refined_indices[2] = 16;
-  refined_indices[5] = 24;
-  refined_indices[21] = 32;
-
-  sync_ghosts(potentials,refined_indices,1,mesh_sizes);
-  pretty_print_named_array(potentials, 0, 40);
-
-  CHECK_EQUAL(14,potentials[14]);
-  CHECK_EQUAL(17,potentials[15]);
-
-  CHECK_EQUAL(14,potentials[16]);
-  CHECK_EQUAL(17,potentials[17]);
+  DOUBLES_EQUAL(-ROOT_WORLD_SCALE/2, x, 1e-5);
+  DOUBLES_EQUAL(-ROOT_WORLD_SCALE/2, y, 1e-5);
+  DOUBLES_EQUAL(-ROOT_WORLD_SCALE/2, z, 1e-5);
 
 
-  delete [] potentials;
-  delete [] refined_indices;
+  xyz_traverse(state, mesh_sizes, 0);
+
+  cell_world_lookup(state, x, y, z);
+  pretty_print_named_value(state.x);
+
+  DOUBLES_EQUAL(0, x, 1e-5);
+  DOUBLES_EQUAL(-ROOT_WORLD_SCALE/2, y, 1e-5);
+  DOUBLES_EQUAL(-ROOT_WORLD_SCALE/2, z, 1e-5);
+
 }
-
-
 
 
 TEST_GROUP(data_structure_benchmark){

@@ -171,11 +171,11 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
     }
 }
 
-void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH] __attribute__((unused))){
+void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
   x = 0;
   y = 0;
   z = 0;
-  for(int i = 0; i < state.current_depth; i++){
+  for(int i = 0; i < ((state.current_depth+1)) && (i < MAX_DEPTH); i++){
     x += state.world_scale[i]*(state.x_queue[i]-1); //ghost offset
     y += state.world_scale[i]*(state.y_queue[i]-1);
     z += state.world_scale[i]*(state.z_queue[i]-1);

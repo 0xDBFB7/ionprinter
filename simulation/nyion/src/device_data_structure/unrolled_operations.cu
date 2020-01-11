@@ -37,7 +37,7 @@ https://en.wikichip.org/wiki/amd/ryzen_7/1700
 
 #define MAX 100
 
-//
+
 // __device__ float curand_uniform (curandState_t *state)
 // __device__ float curand_normal (curandState_t *state)
 //                  curand(&state)

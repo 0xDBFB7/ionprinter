@@ -43,12 +43,17 @@ void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool igno
   state.x++;
   if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
   if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
+
+  state.x_queue[state.current_depth] = state.x;
+  state.y_queue[state.current_depth] = state.y;
+  state.z_queue[state.current_depth] = state.z;
+
   state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 }
 
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
 void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
-void cell_world_lookup(traverse_state &state, float &x, float &y, float &z, int (&mesh_sizes)[MAX_DEPTH]);
+void cell_world_lookup(traverse_state &state, float &x, float &y, float &z);
 
 
 #endif
