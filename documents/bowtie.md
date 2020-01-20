@@ -173,11 +173,16 @@ The gas that exits the bowtie has a certain temperature distribution.
 
 
 
+The primary reason for the large array of smaller emitter bowties is to reduce the space-charge forces before neutralization. Confining 
 
+The pressure required in each bowtie is also far lower. This eases simulation, as the low Knudsen number avoids turbulent effects and allows simple rarefied-gas monte-carlo methods to be used. 
 
-Another reason why a large array of bowties is desirable is that the pressure required in each bowtie is far lower. This eases simulation, as the low Knudsen number avoids turbulent effects and allows simple rarefied-gas monte-carlo methods to be used. 
-
-High pressures would also mandate temperatures well above the boiling point of the print material, which would complicate things from a materials science viewpoint (by accelerating interfacial reactions, increasing vapor pressures), produce messy, ill-defined vapor that could be contaminated with macro-scale droplets (as learned from early zinc testing), increase power consumption (though this may be offset by the greater surface area), and require that all upstream systems be gas-tight.
+High pressures would also mandate temperatures well above the boiling point of the print material, which would complicate things from a materials science viewpoint (by accelerating interfacial reactions, increasing vapor pressures), produce messy, ill-defined vapor that could be contaminated with macro-scale droplets (as learned from early zinc testing), increase power consumption (though this may be offset by the greater surface area), and require that all upstream systems be gas-tight, rather than simply optically opaque.
 
 Because the bowties approach the part from different angles, this also eliminates the need for a linear stage to move different faces of the part into line-of-sight. As long as the print array is slightly larger than the part, 
+
+The arraying also happens to be very helpful for surface physics. First, the surface power flux density (W/m^2) is more variable, allowing the deposition temperature to be precisely controlled. This is essential for control over the crystalline structure of the print. 
+
+The wide range of angles is also essential to prevent defects from propogating. A single beam will tend to exponentially amplify any pits and lands in the substrate, whereas the array will provide a smoothing set of lines-of-sight.
+
 

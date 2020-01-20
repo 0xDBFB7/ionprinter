@@ -17,6 +17,8 @@ set_target_properties(unrolled_operations PROPERTIES CUDA_SEPARABLE_COMPILATION 
 
 target_link_libraries(nyion ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
 target_link_libraries(array_helper ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
+target_link_libraries(array_helper ${CURSES_LIBRARIES})
+
 target_link_libraries(data_structure ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib visualize debug_helpers OpenMP::OpenMP_CXX )
 
 target_link_libraries(unrolled_operations ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib visualize debug_helpers OpenMP::OpenMP_CXX )

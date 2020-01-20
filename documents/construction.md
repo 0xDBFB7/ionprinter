@@ -3374,7 +3374,7 @@ If you thought alginate was complex and ill-defined for technical use, get a loa
 
 Interestingly, the molecular weights that cause high viscosity in gelatine solutions are not the same as those which confer strength; that is, strength and viscosity can be varied relatively independently.
 
-Gelatine's strength degrades 
+Gelatine's strength degrades when subjected to high temperatures
 
 
 
@@ -3719,4 +3719,19 @@ Zotero too.
 /usr/bin/time -v has a very useful "Percent of CPU this job got: 97%". Probably good for multithreading!
 
 sudo perf stat is also fantastic.
+
+
+Maintaining a naitive program all of the various platforms that one might want to use will be a bit annoying, especially since we depend on so many bare-metal libs like CUDA. We'll have to hire devs to support all these platforms and have test cells for each. 
+
+A little ARM SoC integrated in the ionolith that hosts a print server webpage might work; but managing all of the GPU heavy lifting will be tricky.
+
+Using a browser-based GUI with a WebGL frontend will remove some of the hassle.
+
+Docker could work. 
+
+
+Looking again at reference managers. Paperpile's annotation export feature is fantastic, and is a good way to work around paywalls; information can be condensed into linear notes and put inline with descriptions.
+
+There's cool stuff like 
+
 

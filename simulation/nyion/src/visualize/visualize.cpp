@@ -239,14 +239,16 @@ void draw_mesh(__attribute__((unused)) float * array, int * refined_indices, int
       // }
       // else{
       if(is_ghost(state,mesh_sizes)){
-        glColor4f(0,255.0,0,255);
+        glColor4f(0,255.0,0,0.1);
+        glutWireCube(cube_size);
       }
       else{
         glColor4f(255.0,0,0,255);
+        glutWireCube(cube_size);
+
       }
       // }
 
-      glutWireCube(cube_size); //make slightly smaller to
     glPopMatrix();
   }
 }

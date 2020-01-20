@@ -176,9 +176,9 @@ void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
   y = 0;
   z = 0;
   for(int i = 0; i < ((state.current_depth+1)) && (i < MAX_DEPTH); i++){
-    x += state.world_scale[i]*(state.x_queue[i]-1); //ghost offset
-    y += state.world_scale[i]*(state.y_queue[i]-1);
-    z += state.world_scale[i]*(state.z_queue[i]-1);
+    x += state.world_scale[i]*(state.x_queue[i]); //ghost offset
+    y += state.world_scale[i]*(state.y_queue[i]);
+    z += state.world_scale[i]*(state.z_queue[i]);
   }
 }
 
