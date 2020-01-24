@@ -17,15 +17,6 @@
 #include <chrono>
 #include <vector>
 
-#include <GL/glew.h>
-#include <GL/glut.h>
-#include <GL/freeglut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#include <GL/glx.h>
-
-
 /* -----------------------------------------------------------------------------
 DISPLAY SETTINGS
 ----------------------------------------------------------------------------- */

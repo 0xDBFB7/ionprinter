@@ -3735,3 +3735,4 @@ Looking again at reference managers. Paperpile's annotation export feature is fa
 There's cool stuff like 
 
 
+ /usr/local/cuda/bin/nvprof

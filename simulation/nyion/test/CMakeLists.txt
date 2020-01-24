@@ -10,8 +10,9 @@ target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_L
                                     nyion_lib data_structure visualize debug_helpers unrolled_operations OpenMP::OpenMP_CXX )
 
 
-target_link_libraries(nyion_test CppUTest )
-target_link_libraries(nyion_test CppUTestExt )
+#target_link_libraries(nyion_test CppUTest )
+#target_link_libraries(nyion_test CppUTestExt )
+target_link_libraries(nyion_test gtest gtest_main )
 
 target_compile_options(nyion_test PRIVATE)
 

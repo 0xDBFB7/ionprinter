@@ -2,7 +2,6 @@ include_directories(debug_helpers/ host_data_structure/ array_helper_program/ ph
 link_directories(debug_helpers/ host_data_structure/ array_helper_program/ physics/ visualize/ device_data_structure/ ./)
 
 
-
 add_library (nyion_lib nyion.cpp nyion.hpp)
 add_library (data_structure host_data_structure/host_data_structure.cpp host_data_structure/host_data_structure.hpp)
 add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)

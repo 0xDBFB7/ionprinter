@@ -1,3 +1,6 @@
+//for consideration:
+//https://google.github.io/styleguide/cppguide.html#Names_and_Order_of_Includes
+
 #ifndef NYION_H
 #define NYION_H
 

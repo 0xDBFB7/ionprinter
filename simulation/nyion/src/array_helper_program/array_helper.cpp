@@ -54,7 +54,7 @@ int main()
 
     update_screen();
 
-    menu(user_state,refined_indices,mesh_sizes);
+    // menu(user_state,refined_indices,mesh_sizes);
 
     //x to select a new cell within mesh,
     //d to go down a level,

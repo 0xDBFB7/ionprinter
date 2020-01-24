@@ -1,7 +1,7 @@
 #include "unrolled_operations.hpp"
 
 //Special thanks to http://ianfinlayson.net/class/cpsc425/notes/cuda-random!
-
+///usr/local/cuda/bin/nvprof
 
 #define N 10
 
