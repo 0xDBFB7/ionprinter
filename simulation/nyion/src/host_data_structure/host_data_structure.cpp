@@ -32,9 +32,9 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
     // pre-compute scales
     float scale = ROOT_WORLD_SCALE;
-    // state.world_scale[i] = ROOT_WORLD_SCALE; no! wrong!
+
     for(int i = 0; i < MAX_DEPTH; i++){
-      scale /= mesh_sizes[i];
+      scale /= mesh_sizes[i]-2;
       state.world_scale[i] = scale;
     }
 
@@ -52,10 +52,6 @@ void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
     state.z = 0;
     // state.ignore_ghosts = 0;
 }
-
-// void unroll_traverse(){
-//
-// }
 
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
   if(state.x == 0 || state.y == 0 || state.z == 0
@@ -118,7 +114,6 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
           state.z = state.z_queue[state.current_depth];
 
           just_visited = true;
-          // xyz_traverse(state,mesh_sizes,ignore_ghosts);
 
           continue;
       }
@@ -176,9 +171,9 @@ void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
   y = 0;
   z = 0;
   for(int i = 0; i < ((state.current_depth+1)) && (i < MAX_DEPTH); i++){
-    x += state.world_scale[i]*(state.x_queue[i]); //ghost offset
-    y += state.world_scale[i]*(state.y_queue[i]);
-    z += state.world_scale[i]*(state.z_queue[i]);
+    x += state.world_scale[i]*(state.x_queue[i]-1); //ghost offset
+    y += state.world_scale[i]*(state.y_queue[i]-1);
+    z += state.world_scale[i]*(state.z_queue[i]-1);
   }
 }
 

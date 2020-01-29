@@ -117,6 +117,7 @@ void initialize_opengl(){
   glMatrixMode(GL_MODELVIEW);
   // glLoadIdentity();
 
+
 }
 
 void opengl_switch_to_graph_window(){
@@ -220,7 +221,7 @@ void draw_mesh(__attribute__((unused)) float * array, int * refined_indices, int
       float cube_size = current_scale*OPENGL_SCALE*0.95;
 
       if(state.current_depth){
-        level_split_offset = (level_splitting * state.world_scale[state.current_depth-1]*1.5);
+        level_split_offset = (level_splitting * state.world_scale[state.current_depth-1]*2);
       }
 
       float gl_x,gl_y,gl_z;

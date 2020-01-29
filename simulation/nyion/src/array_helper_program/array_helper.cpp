@@ -31,7 +31,8 @@ int main()
   opengl_3d_mode();
 
   int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 5);
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+  mesh_sizes[1] = 5;
   init_state(user_state,mesh_sizes);
 
   float * potentials = new float[MESH_BUFFER_SIZE];
@@ -39,11 +40,11 @@ int main()
   std::fill(potentials, potentials + MESH_BUFFER_SIZE, 0);
   std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
 
-  bool level_splitting = true;
+  bool level_splitting = false;
 
   int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0]+1;
 
-  refined_indices[14] = heap_end;
+  refined_indices[13] = heap_end;
 
   while(true){
 
