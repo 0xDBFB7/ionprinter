@@ -5,6 +5,14 @@
 
 void menu(traverse_state &user_state, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH]){
 
+
+    //x to select a new cell within mesh,
+    //d to go down a level,
+    //s to set cell to a value,
+    //f to fill block with a value,
+    //b
+
+
   std::cout << "\n> ";
   char menu;
   if(std::cin >> menu){
@@ -23,8 +31,6 @@ void menu(traverse_state &user_state, int * refined_indices, int (&mesh_sizes)[M
 
 int main()
 {
-
-
   traverse_state user_state;
 
   initialize_opengl();
@@ -57,17 +63,11 @@ int main()
 
     // menu(user_state,refined_indices,mesh_sizes);
 
-    //x to select a new cell within mesh,
-    //d to go down a level,
-    //s to set cell to a value,
-    //f to fill block with a value,
-    //b
-
     // std::cout << "Enter x to select a new cell, "
     // std::cout << ;
     // std::cout << "\n> ";
     // while(true){
-
+    
 
 
   }

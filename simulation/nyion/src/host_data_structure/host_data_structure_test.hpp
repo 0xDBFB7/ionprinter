@@ -60,22 +60,43 @@ TEST(init_state, scale_tests){
   ASSERT_NEAR(ROOT_WORLD_SCALE*(1/(3.0-2))*(1/(5.0-2))*(1/(5.0-2)),state.world_scale[2], 1e-5);
 }
 
-TEST(cell_world_lookup, scale_tests){
+TEST(cell_world_lookup, cell_world_lookup_test_3){
   float x,y,z;
   traverse_state state;
   int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 2);
+  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
   init_state(state, mesh_sizes);
 
   cell_world_lookup(state, x, y, z);
 
-  ASSERT_NEAR(-ROOT_WORLD_SCALE/2, x, 1e-5);
-  ASSERT_NEAR(-ROOT_WORLD_SCALE/2, y, 1e-5);
-  ASSERT_NEAR(-ROOT_WORLD_SCALE/2, z, 1e-5);
+  ASSERT_NEAR(-ROOT_WORLD_SCALE, x, 1e-5);
+  ASSERT_NEAR(-ROOT_WORLD_SCALE, y, 1e-5);
+  ASSERT_NEAR(-ROOT_WORLD_SCALE, z, 1e-5);
 
   xyz_traverse(state, mesh_sizes, 0);
 
 }
+
+
+// TEST(cell_world_lookup, cell_world_lookup_test_5){
+//   float x,y,z;
+//   traverse_state state;
+//   int mesh_sizes[MAX_DEPTH];
+//   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 5);
+//   init_state(state, mesh_sizes);
+//
+//   state.current_depth = 2;
+//   state.x_queue[0] = 1;
+//   state.x_queue[1] = 1;
+//   state.x_queue[2] = 1;
+//   cell_world_lookup(state, x, y, z);
+//
+//   ASSERT_NEAR(, x, 1e-5);
+//   ASSERT_NEAR(-ROOT_WORLD_SCALE, y, 1e-5);
+//   ASSERT_NEAR(-ROOT_WORLD_SCALE, z, 1e-5);
+//
+// }
+
 
 
 class breadth_first_test : public ::testing::Test {

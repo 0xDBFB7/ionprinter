@@ -34,6 +34,7 @@ find_package(GLUT REQUIRED)
 find_package(MathGL2 REQUIRED)
 find_package(CUDA REQUIRED)
 
+
 include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} $(CPPUTEST_HOME)/include ${OPENGL_INCLUDE_DIRS}
                                                         ${GLUT_INCLUDE_DIRS} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ../src/)
 
@@ -42,6 +43,10 @@ add_subdirectory (src)
 
 enable_testing ()
 add_subdirectory (test)
+
+add_subdirectory (imgui)
+
+
 
 
 configure_file(CMakeLists.txt.in googletest-download/CMakeLists.txt)
