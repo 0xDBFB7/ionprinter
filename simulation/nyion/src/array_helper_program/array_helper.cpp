@@ -1,7 +1,9 @@
+#include <FL/Fl.H>
+#include <FL/Fl_Window.H>
+#include <FL/Fl_Box.H>
+
 #include "array_helper.hpp"
 #include "visualize.hpp"
-
-
 
 void menu(traverse_state &user_state, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH]){
 
@@ -67,7 +69,7 @@ int main()
     // std::cout << ;
     // std::cout << "\n> ";
     // while(true){
-    
+
 
 
   }

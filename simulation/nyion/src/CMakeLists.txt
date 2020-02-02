@@ -1,4 +1,4 @@
-include_directories(debug_helpers/ host_data_structure/ array_helper_program/ physics/ visualize/ device_data_structure/ ./ ../imgui/examples)
+include_directories(debug_helpers/ host_data_structure/ array_helper_program/ physics/ visualize/ device_data_structure/ ./)
 link_directories(debug_helpers/ host_data_structure/ array_helper_program/ physics/ visualize/ device_data_structure/ ./)
 
 
@@ -15,8 +15,7 @@ set_target_properties(unrolled_operations PROPERTIES CUDA_SEPARABLE_COMPILATION 
 
 
 target_link_libraries(nyion ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
-target_link_libraries(array_helper ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} imgui nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
-target_link_libraries(array_helper ${CURSES_LIBRARIES})
+target_link_libraries(array_helper ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} fltk nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
 
 target_link_libraries(data_structure ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib visualize debug_helpers OpenMP::OpenMP_CXX )
 

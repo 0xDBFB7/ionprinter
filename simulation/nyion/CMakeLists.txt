@@ -27,15 +27,17 @@ set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-point
 
 PROJECT(nyion LANGUAGES CUDA CXX C)
 
-find_package(Curses REQUIRED)
+
+set(FLTK_DIR ~/Programs/fltk-1.3.5/build/)
+
+find_package(FLTK REQUIRED NO_MODULE)
 find_package(OpenMP REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(MathGL2 REQUIRED)
 find_package(CUDA REQUIRED)
 
-
-include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} $(CPPUTEST_HOME)/include ${OPENGL_INCLUDE_DIRS}
+include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL ${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS}
                                                         ${GLUT_INCLUDE_DIRS} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ../src/)
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -43,8 +45,6 @@ add_subdirectory (src)
 
 enable_testing ()
 add_subdirectory (test)
-
-add_subdirectory (imgui)
 
 
 
