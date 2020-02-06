@@ -70,7 +70,7 @@ int main()
     // std::cout << "\n> ";
     // while(true){
 
-
+    Fl::wait();
 
   }
 

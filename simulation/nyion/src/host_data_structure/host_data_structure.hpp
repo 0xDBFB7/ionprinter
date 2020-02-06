@@ -10,7 +10,6 @@ const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
 // Similarly, I can't think of a compelling reason to have non-square arrays.
-//
 struct traverse_state{
     float world_scale[MAX_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int current_depth = 0;
@@ -26,6 +25,22 @@ struct traverse_state{
     // bool is_ghost = 0;
     // void update_idx(int (&mesh_sizes)[MAX_DEPTH]);
 };
+//Using std::vector  would be a good idea. However, this complicates many things with CUDA:
+//vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
+
+
+struct physics_mesh{
+    float * temperature;
+    float * potential;
+    int32_t * space_charge;
+    uint16_t * boundary_conditions;
+    uint16_t * refined_indices;
+    uint16_t * ghost_linkages;
+
+    uint_fast32_t buffer_end_pointer = 0;
+};
+
+
 
 bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]);
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]);

@@ -37,6 +37,7 @@ find_package(GLUT REQUIRED)
 find_package(MathGL2 REQUIRED)
 find_package(CUDA REQUIRED)
 
+### Note that FLTK's OpenGL support has been disabled. Probably can be re-enabled.
 include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL ${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS}
                                                         ${GLUT_INCLUDE_DIRS} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ../src/)
 
