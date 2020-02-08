@@ -34,16 +34,16 @@ TEST(MathGL, MathGL_Basic)
 //     update_screen();
 //   }
 // }
-//
-// TEST_GROUP(CUDA)
-// {
-// };
-//
-//
-// IGNORE_TEST(CUDA, CUDA_display_info)
-// {
-//   display_GPU_info();
-// }
+
+
+TEST(CUDA, CUDA_display_info)
+{
+  display_GPU_info();
+}
+
+TEST(){
+    random_numbers();
+}
 //
 // TEST(CUDA, CUDA_basic)
 // {

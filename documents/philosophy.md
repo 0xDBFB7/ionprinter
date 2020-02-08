@@ -518,6 +518,21 @@ Unix and C++, both of which could only have be developed because their authors h
 
 
 
+
+
+
+What I consider to be my best work has largely been done as a recluse. 
+
+> Writing, at its best, is a lonely life. Organizations for writers palliate the writer's loneliness but I doubt if they improve his writing. He grows in public stature as he sheds his loneliness and often his work deteriorates. For he does his work alone and if he is a good enough writer he must face eternity, or the lack of it, each day.
+
+
+
+
+
+
+
+
+
 #### State of C++ graphing, 2019:
 
 Gnuplot-iostream - ???

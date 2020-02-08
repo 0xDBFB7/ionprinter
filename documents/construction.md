@@ -3721,7 +3721,7 @@ Zotero too.
 sudo perf stat is also fantastic.
 
 
-Maintaining a naitive program all of the various platforms that one might want to use will be a bit annoying, especially since we depend on so many bare-metal libs like CUDA. We'll have to hire devs to support all these platforms and have test cells for each. 
+Maintaining a native program on all of the various platforms that one might want to use will be a bit annoying, especially since we depend on so many bare-metal libs like CUDA. We'll have to hire devs to support all these platforms and have test cells for each. 
 
 A little ARM SoC integrated in the ionolith that hosts a print server webpage might work; but managing all of the GPU heavy lifting will be tricky.
 
@@ -3736,3 +3736,16 @@ There's cool stuff like
 
 
  /usr/local/cuda/bin/nvprof
+
+
+
+
+
+ less -r ~/ion_printer/documents/shell_logs/general
+
+ Fixed gnome-terminal jumps by adding 
+ 
+ "\e[1;5C": forward-word
+ "\e[1;5D": backward-word
+
+ To .inputrc.

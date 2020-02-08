@@ -25,9 +25,8 @@ struct traverse_state{
     // bool is_ghost = 0;
     // void update_idx(int (&mesh_sizes)[MAX_DEPTH]);
 };
-//Using std::vector  would be a good idea. However, this complicates many things with CUDA:
+//Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
-
 
 struct physics_mesh{
     float * temperature;
@@ -37,9 +36,9 @@ struct physics_mesh{
     uint16_t * refined_indices;
     uint16_t * ghost_linkages;
 
-    uint_fast32_t buffer_end_pointer = 0;
+    uint32_t buffer_end_pointer = 0;
 };
-
+//uint_fast32_t probably contraindicated - again, because CUDA.
 
 
 bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]);

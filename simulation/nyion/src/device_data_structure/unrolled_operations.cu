@@ -37,17 +37,23 @@ https://en.wikichip.org/wiki/amd/ryzen_7/1700
 
 #define MAX 100
 
+struct test_struct{
+    int test_int = 0;
+    __device__ void increment(){
+        test_int++;
+    }
+};
 
 // __device__ float curand_uniform (curandState_t *state)
 // __device__ float curand_normal (curandState_t *state)
 //                  curand(&state)
-__global__
-void add()
-{
+__global__ void add(test_struct * d_a) {
+    d_a->increment();
   // int i = blockIdx.x*blockDim.x + threadIdx.x;
   // x[0] = 0;
   // y[0] = 100;
 }
+
 
 
 void test_cuda(float * x)
@@ -61,10 +67,16 @@ void test_cuda(float * x)
   // //
   // // cudaMemcpy(d_x, x, N*sizeof(float), cudaMemcpyHostToDevice);
   // // cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice);
+  test_struct * a;
+  test_struct * d_a;
 
+  gpu_error_check( cudaMalloc(&a, sizeof(test_struct)));
+  cudaMemcpy(d_a, a, sizeof(test_struct), cudaMemcpyHostToDevice);
   // Perform SAXPY on 1M elements
   // gpu_error_check( add<<<1, 1>>>(); );
 
+  add<<<1, 1>>>(d_a);
+  // gpu_error_check( add<<<1, 1>>>(); );
 
   // DisplayHeader();
   // cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost);

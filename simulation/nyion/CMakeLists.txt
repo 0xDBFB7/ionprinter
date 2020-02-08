@@ -10,7 +10,7 @@ set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.2/bin/nvcc)
 
 set (GTEST_DONT_DEFINE_TEST 1)
 
-set(CUDA_NVCC_FLAGS -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v)
+set(CUDA_NVCC_FLAGS -arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v)
 #one -O3 for host, one for device.
 #-v verbose mode - thanks Luca Ferraro!
 

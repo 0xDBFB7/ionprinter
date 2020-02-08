@@ -2,15 +2,16 @@
 
 //Special thanks to http://ianfinlayson.net/class/cpsc425/notes/cuda-random!
 ///usr/local/cuda/bin/nvprof
+//https://xmartlabs.github.io/cuda-calculator/ CUDA Occupancy Calculator
 
 #define N 10
 
 #define MAX 100
 
 
-/* this GPU kernel function is used to initialize the random states */
-__global__ void init(unsigned int seed, curandState_t* states) {
 
+/* this GPU kernel function is used to initialize the random states */
+__global__ void init(unsigned int seed, curandState_t* states, struct test test_struct) {
   /* we have to initialize the state */
   curand_init(seed, /* the seed can be the same for each core, here we pass the time in from the CPU */
               blockIdx.x, /* the sequence number should be different for each core (unless you want all

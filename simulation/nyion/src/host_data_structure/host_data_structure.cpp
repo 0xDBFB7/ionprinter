@@ -178,6 +178,7 @@ void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
 }
 
 
+
 // int world_cell_index_lookup(float x, float y, float z, int max_depth){
 //   int x_,y_,z_;
 //   for(int depth = 0, depth < max_depth; depth++){
