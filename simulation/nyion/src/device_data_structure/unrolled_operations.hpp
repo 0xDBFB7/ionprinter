@@ -10,5 +10,5 @@
 // void test_cuda(float * x, float * y);
 void test_cuda(float * x);
  // test_cuda();
-
+void test_cuda_struct();
 #endif

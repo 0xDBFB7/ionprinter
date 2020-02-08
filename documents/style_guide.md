@@ -54,7 +54,17 @@ It is important to give credit where it's due, of course, but consider this: if 
 
 SOR actually means "standard relaxation times 1.7 or so." - so we've really inferred a very accurate understanding just from the name. It's still not perfect terminology, but it's pretty good.
 
-On the other hand, a very similar concept is known as the "Gauss-Seidel method". If you haven't experience in the field, you have to dump your cache, go hit a lookup table like Wikipedia, and try to parse its explanation. "Gauss-Seidel" actually means "average the neighbors and update the value in-place".
+On the other hand, a very similar concept is known as the "Gauss-Seidel method". If you haven't experience in the field, you have to dump your cache, go hit a lookup table like Wikipedia, and try to parse its explanation. Gauss-Seidel is a general technique for linear equations, but in numerical practice it actually means "average the neighbors and update the value in-place", and this is the notion to which the authors most often refer. 'the single-matrix method' could equally be used. Of course, experts are not hindered by this subterfuge, but it might help the neophyte. 
 
-If you read any of Feynman's work, I think you'll find that he 
+On the other hand, maybe an approximate understanding isn't good enough. Maybe it's useful to force people to read deeply about a new technique. I don't know.
+
+Just something to think about in case we have to name something.
+
+<hr>
+
+<hr>
+
+Programming Style Guide
+
+The command line to compile and run a program and all the environment variables should be in a comment block at the beginning. 
 

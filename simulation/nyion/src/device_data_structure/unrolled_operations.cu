@@ -56,6 +56,20 @@ __global__ void add(test_struct * d_a) {
 
 
 
+void test_cuda_struct(){
+    test_struct * a;
+    test_struct * d_a;
+
+    gpu_error_check( cudaMalloc(&d_a, sizeof(test_struct)));
+    cudaMemcpy(d_a, a, sizeof(test_struct), cudaMemcpyHostToDevice);
+
+    add<<<1, 1>>>(d_a);
+
+    cudaFree(d_a);
+    free(a);
+}
+
+
 void test_cuda(float * x)
 {
 
@@ -75,7 +89,6 @@ void test_cuda(float * x)
   // Perform SAXPY on 1M elements
   // gpu_error_check( add<<<1, 1>>>(); );
 
-  add<<<1, 1>>>(d_a);
   // gpu_error_check( add<<<1, 1>>>(); );
 
   // DisplayHeader();

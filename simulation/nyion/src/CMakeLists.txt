@@ -13,7 +13,6 @@ add_executable(array_helper array_helper_program/array_helper.cpp)
 
 set_target_properties(unrolled_operations PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
-
 target_link_libraries(nyion ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
 target_link_libraries(array_helper ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} fltk nyion_lib data_structure visualize debug_helpers OpenMP::OpenMP_CXX )
 

@@ -32,6 +32,7 @@ int idx(int x, int y, int z, int xlen);
 #define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
 
 
+
 #include <mgl2/mgl.h>
 
 #endif

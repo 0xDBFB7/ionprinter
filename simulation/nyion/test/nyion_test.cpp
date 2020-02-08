@@ -41,9 +41,9 @@ TEST(CUDA, CUDA_display_info)
   display_GPU_info();
 }
 
-TEST(){
-    random_numbers();
-}
+// TEST(CUDA, CUDA_test){
+//     test_cuda_struct();
+// }
 //
 // TEST(CUDA, CUDA_basic)
 // {

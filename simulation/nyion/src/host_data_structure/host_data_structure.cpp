@@ -21,6 +21,13 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 */
 
 
+void refine_cell(){
+    
+}
+
+
+
+
 // void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
 //   //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
 //

@@ -37,6 +37,8 @@ struct physics_mesh{
     uint16_t * ghost_linkages;
 
     uint32_t buffer_end_pointer = 0;
+
+    void refine_cell();
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
