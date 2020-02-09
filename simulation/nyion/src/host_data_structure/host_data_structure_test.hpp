@@ -63,8 +63,7 @@ TEST(init_state, scale_tests){
 TEST(cell_world_lookup, cell_world_lookup_test_3){
   float x,y,z;
   traverse_state state;
-  int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+  int mesh_sizes[MAX_DEPTH] = {3, 3, 3};
   init_state(state, mesh_sizes);
 
   cell_world_lookup(state, x, y, z);
@@ -127,37 +126,36 @@ class breadth_first_test : public ::testing::Test {
 
 };
 
-TEST(physics_mesh_test, create_test){
-    int mesh_sizes[MAX_DEPTH];
-    std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
-    physics_mesh test_mesh(mesh_sizes);
-    test_mesh.temperature[10] = 1;
-}
-
-TEST_F(breadth_first_test, traverse_test_2x2_2x2){
-  int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
-  refined_indices[2] = heap_end;//create refinement in the center-middle
-
-  traverse_state state;
-  for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
-    test[state.current_indice] = state.current_indice-state.block_beginning_indice;
-  }
-
-  pretty_print_named_array(test, 0, 2*(test_mesh_size*test_mesh_size*test_mesh_size));
-
-  for(int i = 0; i < pow(test_mesh_size,3); i++){ EXPECT_EQ(i,test[i]); }; //root region
-  for(int i = pow(test_mesh_size,3); i < pow(test_mesh_size,3)*2; i++){ EXPECT_EQ(i-pow(test_mesh_size,3),test[i]); }; //level 1
-
-  std::fill(test, test + MESH_BUFFER_SIZE, 100);
-  std::fill(order, order + MESH_BUFFER_SIZE, 100);
-
-  pretty_print_named_array(test, 0, 2*(test_mesh_size*test_mesh_size*test_mesh_size));
-
-}
-
-TEST_F(breadth_first_test, traverse_test_3x3_3x3){
-
-}
+// TEST(physics_mesh_test, create_test){
+//     int mesh_sizes[MAX_DEPTH] = {3, 3, 3};
+//     physics_mesh test_mesh(mesh_sizes);
+//     test_mesh.temperature[10] = 1;
+// }
+//
+// TEST_F(breadth_first_test, traverse_test_2x2_2x2){
+//   int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
+//   refined_indices[2] = heap_end;//create refinement in the center-middle
+//
+//   traverse_state state;
+//   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
+//     test[state.current_indice] = state.current_indice-state.block_beginning_indice;
+//   }
+//
+//   pretty_print_named_array(test, 0, 2*(test_mesh_size*test_mesh_size*test_mesh_size));
+//
+//   for(int i = 0; i < pow(test_mesh_size,3); i++){ EXPECT_EQ(i,test[i]); }; //root region
+//   for(int i = pow(test_mesh_size,3); i < pow(test_mesh_size,3)*2; i++){ EXPECT_EQ(i-pow(test_mesh_size,3),test[i]); }; //level 1
+//
+//   std::fill(test, test + MESH_BUFFER_SIZE, 100);
+//   std::fill(order, order + MESH_BUFFER_SIZE, 100);
+//
+//   pretty_print_named_array(test, 0, 2*(test_mesh_size*test_mesh_size*test_mesh_size));
+//
+// }
+//
+// TEST_F(breadth_first_test, traverse_test_3x3_3x3){
+//
+// }
 
 //
 // TEST_GROUP(data_structure_benchmark){

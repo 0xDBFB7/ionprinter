@@ -1,15 +1,18 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
+
 #include "host_data_structure.hpp"
-#include "unrolled_operations.hpp"
+#include "device_data_structure.hpp"
 
 #include "host_data_structure_test.hpp"
-
+#include "device_data_structure_test.hpp"
 
 #include "gtest/gtest.h"
 
 //rm -r * && cmake ../
 //make -j16 && ./test/nyion_test
+
+//this file calls the modules' respective test functions.
 
 
 TEST(MathGL, MathGL_Basic)
@@ -36,14 +39,6 @@ TEST(MathGL, MathGL_Basic)
 // }
 
 
-TEST(CUDA, CUDA_display_info)
-{
-  display_GPU_info();
-}
-
-// TEST(CUDA, CUDA_test){
-//     test_cuda_struct();
-// }
 //
 // TEST(CUDA, CUDA_basic)
 // {

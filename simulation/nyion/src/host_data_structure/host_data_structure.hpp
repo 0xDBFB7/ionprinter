@@ -12,6 +12,7 @@ const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 // Similarly, I can't think of a compelling reason to have non-square arrays.
 struct traverse_state{
     float world_scale[MAX_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
+    int max_mesh_depth = MAX_DEPTH;
     int current_depth = 0;
     int block_beginning_indice = 0;
     int current_indice = 0;
@@ -22,14 +23,39 @@ struct traverse_state{
     int x = 0;
     int y = 0;
     int z = 0;
-    // bool is_ghost = 0;
-    // void update_idx(int (&mesh_sizes)[MAX_DEPTH]);
+
+    traverse_state(int (&mesh_sizes)[MAX_DEPTH], int max_depth){
+        assert(MAX_DEPTH >= max_depth);
+        // pre-compute scales
+        float scale = ROOT_WORLD_SCALE;
+
+        for(int i = 0; i < MAX_DEPTH; i++){
+          scale /= mesh_sizes[i]-2; //-2 compensates for ghost points.
+          world_scale[i] = scale;
+        }
+
+        //this isn't strictly necessary, but explicit is better than implicit.
+        current_depth = 0;
+        block_beginning_indice = 0;
+        current_indice = 0;
+
+        for(int i = 0; i < MAX_DEPTH; i++){
+            x_queue[i] = 0;
+            y_queue[i] = 0;
+            z_queue[i] = 0;
+            ref_queue[i] = 0;
+        }
+        x = 0;
+        y = 0;
+        z = 0;
+    }
+
 };
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
 
 struct physics_mesh{
-    
+
     float * temperature;
     float * potential;
     int32_t * space_charge; //charge probably can't reasonably be fractional - we're not working with quarks?
@@ -54,7 +80,7 @@ struct physics_mesh{
         for(int i = 0; i < MESH_BUFFER_SIZE; i++){
             temperature[i] = 0;
             potential[i] = 0;
-            space_charge[i] = 0;
+            space_charge[i] = 0; //a canary (perhaps -inf?) might be useful
             boundary_conditions[i] = 0;
             refined_indices[i] = 0;
             ghost_linkages[i] = 0;

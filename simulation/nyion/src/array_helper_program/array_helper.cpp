@@ -33,7 +33,6 @@ void menu(traverse_state &user_state, int * refined_indices, int (&mesh_sizes)[M
 
 int main()
 {
-  traverse_state user_state;
 
   initialize_opengl();
   opengl_3d_mode();
@@ -41,7 +40,7 @@ int main()
   int mesh_sizes[MAX_DEPTH];
   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
   mesh_sizes[1] = 5;
-  init_state(user_state,mesh_sizes);
+  traverse_state user_state(mesh_sizes);
 
   float * potentials = new float[MESH_BUFFER_SIZE];
   int * refined_indices = new int[MESH_BUFFER_SIZE];

@@ -29,3 +29,17 @@ void pretty_print_array(T * input, int start, int end){
 }
 template void pretty_print_array(float * input, int start, int length);
 template void pretty_print_array(int * input, int start, int length);
+
+//
+// void pretty_print_mesh(physics_mesh (&(input)), ){
+//   std::cout << "\033[1;33m" << "[" << end << "]" << "\033[0m = {";
+//
+//   for(int i = start; i < end-1; i++){
+//     std::cout << input[i] << ",";
+//   }
+//   if(end-start > 0){
+//     std::cout << input[end-1]; //handle trailing ,
+//   }
+//
+//   std::cout << "};\n";
+// }

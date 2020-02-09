@@ -27,8 +27,6 @@ void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int 
 }
 
 
-
-
 // void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
 //   //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
 //
@@ -36,30 +34,6 @@ void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int 
 //                                                   + (mesh_sizes[state.current_depth]*state.y) + state.x;
 // }
 
-
-void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
-    // pre-compute scales
-    float scale = ROOT_WORLD_SCALE;
-
-    for(int i = 0; i < MAX_DEPTH; i++){
-      scale /= mesh_sizes[i]-2;
-      state.world_scale[i] = scale;
-    }
-
-    //this isn't strictly necessary, but explicit is better than implicit.
-    state.current_depth = 0;
-    state.block_beginning_indice = 0;
-    state.current_indice = 0; //ideally traverse_state would contain a reset_ function,
-                              //however I'm not sure that'll be GPU-portable.
-    std::fill(state.x_queue, state.x_queue + MAX_DEPTH, 0);
-    std::fill(state.y_queue, state.y_queue + MAX_DEPTH, 0);
-    std::fill(state.z_queue, state.z_queue + MAX_DEPTH, 0);
-    std::fill(state.ref_queue, state.ref_queue + MAX_DEPTH, 0);
-    state.x = 0;
-    state.y = 0;
-    state.z = 0;
-    // state.ignore_ghosts = 0;
-}
 
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
   if(state.x == 0 || state.y == 0 || state.z == 0
@@ -138,9 +112,9 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
 void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]){
     // static_assert (sync_depth < MAX_DEPTH, "Assert failed");
 
-    traverse_state state;
+    traverse_state state(mesh_sizes);
 
-    for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes); xyz_traverse(state, mesh_sizes, 1)){
+    for(; breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes); xyz_traverse(state, mesh_sizes, 1)){
 
         //std::cout << current_depth << "," << x << "\n";
 
