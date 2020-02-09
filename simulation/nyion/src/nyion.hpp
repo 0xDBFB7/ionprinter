@@ -14,6 +14,8 @@ int idx(int x, int y, int z, int xlen);
 #include <chrono>
 #include <math.h>
 #include <dbg.h>
+#include <assert.h>
+
 
 #include <omp.h>
 

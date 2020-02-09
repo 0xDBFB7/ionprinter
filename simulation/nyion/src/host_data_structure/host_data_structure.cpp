@@ -21,13 +21,13 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 */
 
 
-void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int (&mesh_sizes)[MAX_DEPTH]){
+void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
     mesh.refined_indices[current_indice] = mesh.buffer_end_pointer;
     mesh.buffer_end_pointer += mesh_sizes[current_depth]*mesh_sizes[current_depth]*mesh_sizes[current_depth];
 }
 
 
-// void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+// void update_idx(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
 //   //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
 //
 //   state.current_indice = (mesh_sizes[state.current_depth]*mesh_sizes[state.current_depth]*state.z)
@@ -35,7 +35,7 @@ void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int 
 // }
 
 
-bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
+bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
   if(state.x == 0 || state.y == 0 || state.z == 0
       || state.x == mesh_sizes[state.current_depth]-1
       || state.y == mesh_sizes[state.current_depth]-1
@@ -47,7 +47,7 @@ bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]){
   }
 }
 
-bool breadth_first(traverse_state &state, int * (refined_indices), int desired_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]){
+bool breadth_first(traverse_state &state, int * (refined_indices), int desired_depth, int ignore_ghosts, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
 
     /*
     It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
@@ -109,8 +109,8 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
 
 
 
-void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]){
-    // static_assert (sync_depth < MAX_DEPTH, "Assert failed");
+void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
+    // static_assert (sync_depth < MESH_BUFFER_DEPTH, "Assert failed");
 
     traverse_state state(mesh_sizes);
 
@@ -152,7 +152,7 @@ void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
   x = 0;
   y = 0;
   z = 0;
-  for(int i = 0; i < ((state.current_depth+1)) && (i < MAX_DEPTH); i++){
+  for(int i = 0; i < ((state.current_depth+1)) && (i < MESH_BUFFER_DEPTH); i++){
     x += state.world_scale[i]*(state.x_queue[i]-1); //ghost offset
     y += state.world_scale[i]*(state.y_queue[i]-1);
     z += state.world_scale[i]*(state.z_queue[i]-1);
@@ -161,9 +161,9 @@ void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
 
 
 
-// int world_cell_index_lookup(float x, float y, float z, int max_depth){
+// int world_cell_index_lookup(float x, float y, float z, int MESH_BUFFER_DEPTH){
 //   int x_,y_,z_;
-//   for(int depth = 0, depth < max_depth; depth++){
+//   for(int depth = 0, depth < MESH_BUFFER_DEPTH; depth++){
 //       x_ = (int)floor(x/(mesh_scale[depth]));
 //       y_ = (int)floor(y/(mesh_scale[depth]));
 //       z_ = (int)floor(z/(mesh_scale[depth])); //remember ghosts!

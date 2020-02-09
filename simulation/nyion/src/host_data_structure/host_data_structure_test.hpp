@@ -8,8 +8,8 @@
 
 
 TEST(xyz_traverse, ghost_traverse_test){
-  int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+  int mesh_sizes[MESH_BUFFER_DEPTH];
+  std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, 3);
 
   traverse_state state;
   init_state(state, mesh_sizes);
@@ -32,8 +32,8 @@ TEST(xyz_traverse, ghost_traverse_test){
 
 
 TEST(xyz_traverse, non_ghost_traverse_test){
-  int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 4);
+  int mesh_sizes[MESH_BUFFER_DEPTH];
+  std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, 4);
 
   traverse_state state;
   init_state(state, mesh_sizes);
@@ -49,7 +49,7 @@ TEST(xyz_traverse, non_ghost_traverse_test){
 }
 
 TEST(init_state, scale_tests){
-  int mesh_sizes[MAX_DEPTH];
+  int mesh_sizes[MESH_BUFFER_DEPTH];
   mesh_sizes[0] = 3;
   mesh_sizes[1] = 5;
   mesh_sizes[2] = 5;
@@ -63,7 +63,7 @@ TEST(init_state, scale_tests){
 TEST(cell_world_lookup, cell_world_lookup_test_3){
   float x,y,z;
   traverse_state state;
-  int mesh_sizes[MAX_DEPTH] = {3, 3, 3};
+  int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
   init_state(state, mesh_sizes);
 
   cell_world_lookup(state, x, y, z);
@@ -80,8 +80,8 @@ TEST(cell_world_lookup, cell_world_lookup_test_3){
 // TEST(cell_world_lookup, cell_world_lookup_test_5){
 //   float x,y,z;
 //   traverse_state state;
-//   int mesh_sizes[MAX_DEPTH];
-//   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 5);
+//   int mesh_sizes[MESH_BUFFER_DEPTH];
+//   std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, 5);
 //   init_state(state, mesh_sizes);
 //
 //   state.current_depth = 2;
@@ -101,7 +101,7 @@ TEST(cell_world_lookup, cell_world_lookup_test_3){
 class breadth_first_test : public ::testing::Test {
  protected:
   void SetUp() override {
-    std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, test_mesh_size);
+    std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, test_mesh_size);
 
     test = new int[MESH_BUFFER_SIZE];
     order = new int[MESH_BUFFER_SIZE];
@@ -121,13 +121,13 @@ class breadth_first_test : public ::testing::Test {
   int * test;
   int * order;
   int * refined_indices;
-  int mesh_sizes[MAX_DEPTH];
+  int mesh_sizes[MESH_BUFFER_DEPTH];
   int test_mesh_size = 2;
 
 };
 
 // TEST(physics_mesh_test, create_test){
-//     int mesh_sizes[MAX_DEPTH] = {3, 3, 3};
+//     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
 //     physics_mesh test_mesh(mesh_sizes);
 //     test_mesh.temperature[10] = 1;
 // }
@@ -137,7 +137,7 @@ class breadth_first_test : public ::testing::Test {
 //   refined_indices[2] = heap_end;//create refinement in the center-middle
 //
 //   traverse_state state;
-//   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
+//   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MESH_BUFFER_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
 //     test[state.current_indice] = state.current_indice-state.block_beginning_indice;
 //   }
 //
@@ -165,8 +165,8 @@ class breadth_first_test : public ::testing::Test {
 // TEST(data_structure_mesh, traverse_benchmark){
 //   int test_mesh_size = 10;
 //
-//   int mesh_sizes[MAX_DEPTH];
-//   std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, test_mesh_size);
+//   int mesh_sizes[MESH_BUFFER_DEPTH];
+//   std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, test_mesh_size);
 //
 //
 //   int * test = new int[MESH_BUFFER_SIZE];
@@ -185,7 +185,7 @@ class breadth_first_test : public ::testing::Test {
 //
 //   auto start = std::chrono::high_resolution_clock::now();
 //
-//   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MAX_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
+//   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MESH_BUFFER_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
 //     test[state.current_indice] = state.current_indice-state.block_beginning_indice;
 //   }
 //

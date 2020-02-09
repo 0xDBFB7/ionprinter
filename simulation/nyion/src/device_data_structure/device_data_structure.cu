@@ -53,7 +53,7 @@ __global__ void add(physics_mesh * d_a) {
 // void test_cuda_struct(){
 //     physics_mesh a;
 //     physics_mesh d_a;
-//     int mesh_sizes[MAX_DEPTH] = {3, 3, 3};
+//     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
 //
 //     a = physics_mesh(mesh_sizes);
 //

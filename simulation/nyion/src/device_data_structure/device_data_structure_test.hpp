@@ -15,7 +15,7 @@ TEST(CUDA, CUDA_display_info)
 }
 //
 // TEST(CUDA, CUDA_struct_copy_test){
-//     int mesh_sizes[MAX_DEPTH] = {3, 3, 3};
+//     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
 //     physics_mesh a(mesh_sizes);
 //     physics_mesh * d_a;
 //

@@ -5,7 +5,7 @@
 #include "array_helper.hpp"
 #include "visualize.hpp"
 
-void menu(traverse_state &user_state, int * refined_indices, int (&mesh_sizes)[MAX_DEPTH]){
+void menu(traverse_state &user_state, int * refined_indices, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
 
 
     //x to select a new cell within mesh,
@@ -37,8 +37,8 @@ int main()
   initialize_opengl();
   opengl_3d_mode();
 
-  int mesh_sizes[MAX_DEPTH];
-  std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+  int mesh_sizes[MESH_BUFFER_DEPTH];
+  std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, 3);
   mesh_sizes[1] = 5;
   traverse_state user_state(mesh_sizes);
 

@@ -4,32 +4,32 @@
 #include "nyion.hpp"
 
 // I don't think it makes much sense to have this variable. It'll complicate all sorts of allocs.
-const int MAX_DEPTH = 3;
+const int MESH_BUFFER_DEPTH = 3;
 const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
 
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
 // Similarly, I can't think of a compelling reason to have non-square arrays.
 struct traverse_state{
-    float world_scale[MAX_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
-    int max_mesh_depth = MAX_DEPTH;
+    float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
+    int mesh_depth;
     int current_depth = 0;
     int block_beginning_indice = 0;
     int current_indice = 0;
-    int x_queue[MAX_DEPTH] = {0};
-    int y_queue[MAX_DEPTH] = {0};
-    int z_queue[MAX_DEPTH] = {0};
-    int ref_queue[MAX_DEPTH] = {0};
+    int x_queue[MESH_BUFFER_DEPTH] = {0};
+    int y_queue[MESH_BUFFER_DEPTH] = {0};
+    int z_queue[MESH_BUFFER_DEPTH] = {0};
+    int ref_queue[MESH_BUFFER_DEPTH] = {0};
     int x = 0;
     int y = 0;
     int z = 0;
 
-    traverse_state(int (&mesh_sizes)[MAX_DEPTH], int max_depth){
-        assert(MAX_DEPTH >= max_depth);
+    traverse_state(int (&mesh_sizes)[MESH_BUFFER_DEPTH], int MESH_BUFFER_DEPTH){
+        assert("Increase MESH_BUFFER_DEPTH" && MESH_BUFFER_DEPTH >= mesh_depth);
         // pre-compute scales
         float scale = ROOT_WORLD_SCALE;
 
-        for(int i = 0; i < MAX_DEPTH; i++){
+        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
           scale /= mesh_sizes[i]-2; //-2 compensates for ghost points.
           world_scale[i] = scale;
         }
@@ -39,7 +39,7 @@ struct traverse_state{
         block_beginning_indice = 0;
         current_indice = 0;
 
-        for(int i = 0; i < MAX_DEPTH; i++){
+        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
             x_queue[i] = 0;
             y_queue[i] = 0;
             z_queue[i] = 0;
@@ -65,7 +65,7 @@ struct physics_mesh{
 
     uint32_t buffer_end_pointer;
 
-    physics_mesh(int (&mesh_sizes)[MAX_DEPTH]){
+    physics_mesh(int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
         //on construction, initialize root
         buffer_end_pointer = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
         //and allocate memory
@@ -102,12 +102,12 @@ struct physics_mesh{
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
 
-bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MAX_DEPTH]);
-void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MAX_DEPTH]);
-void init_state(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
+bool breadth_first(traverse_state &state, int * (refined_indices), int max_depth, int ignore_ghosts, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
+void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
+void init_state(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
 
 __inline__
-void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool ignore_ghosts){
+void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH], bool ignore_ghosts){
 
   //ensure that we don't start in the corner if ghosts are to be ignored.
   if(ignore_ghosts && !state.y){ //slow, stupid
@@ -126,8 +126,8 @@ void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH], bool igno
   state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 }
 
-bool is_ghost(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
-void update_idx(traverse_state &state, int (&mesh_sizes)[MAX_DEPTH]);
+bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
+void update_idx(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
 void cell_world_lookup(traverse_state &state, float &x, float &y, float &z);
 
 
