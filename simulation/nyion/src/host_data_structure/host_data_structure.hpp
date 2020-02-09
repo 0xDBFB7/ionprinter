@@ -29,14 +29,47 @@ struct traverse_state{
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
 
 struct physics_mesh{
+    
     float * temperature;
     float * potential;
-    int32_t * space_charge;
+    int32_t * space_charge; //charge probably can't reasonably be fractional - we're not working with quarks?
     uint16_t * boundary_conditions;
-    uint16_t * refined_indices;
-    uint16_t * ghost_linkages;
+    uint32_t * refined_indices;
+    uint32_t * ghost_linkages;
 
-    uint32_t buffer_end_pointer = 0;
+    uint32_t buffer_end_pointer;
+
+    physics_mesh(int (&mesh_sizes)[MAX_DEPTH]){
+        //on construction, initialize root
+        buffer_end_pointer = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
+        //and allocate memory
+        temperature = new float[MESH_BUFFER_SIZE];
+        potential = new float[MESH_BUFFER_SIZE];
+        space_charge = new int32_t[MESH_BUFFER_SIZE];
+        boundary_conditions = new uint16_t[MESH_BUFFER_SIZE];
+        refined_indices = new uint32_t[MESH_BUFFER_SIZE];
+        ghost_linkages = new uint32_t[MESH_BUFFER_SIZE];
+
+        //std::fill not available on GPU.
+        for(int i = 0; i < MESH_BUFFER_SIZE; i++){
+            temperature[i] = 0;
+            potential[i] = 0;
+            space_charge[i] = 0;
+            boundary_conditions[i] = 0;
+            refined_indices[i] = 0;
+            ghost_linkages[i] = 0;
+        }
+    }
+
+    ~physics_mesh(){
+        //on destruction,
+        delete [] temperature;
+        delete [] potential;
+        delete [] space_charge;
+        delete [] boundary_conditions;
+        delete [] refined_indices;
+        delete [] ghost_linkages;
+    }
 
     void refine_cell();
 };

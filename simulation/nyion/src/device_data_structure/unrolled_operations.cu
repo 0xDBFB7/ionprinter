@@ -29,6 +29,7 @@ https://en.wikichip.org/wiki/amd/ryzen_7/1700
 */
 
 #include "unrolled_operations.hpp"
+#include "host_data_structure.hpp"
 
 //Special thanks to http://ianfinlayson.net/class/cpsc425/notes/cuda-random!
 

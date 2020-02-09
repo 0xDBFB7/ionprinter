@@ -127,6 +127,13 @@ class breadth_first_test : public ::testing::Test {
 
 };
 
+TEST(physics_mesh_test, create_test){
+    int mesh_sizes[MAX_DEPTH];
+    std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 3);
+    physics_mesh test_mesh(mesh_sizes);
+    test_mesh.temperature[10] = 1;
+}
+
 TEST_F(breadth_first_test, traverse_test_2x2_2x2){
   int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
   refined_indices[2] = heap_end;//create refinement in the center-middle

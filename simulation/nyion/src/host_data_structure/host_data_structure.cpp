@@ -21,8 +21,9 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 */
 
 
-void refine_cell(){
-    
+void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int (&mesh_sizes)[MAX_DEPTH]){
+    mesh.refined_indices[current_indice] = mesh.buffer_end_pointer;
+    mesh.buffer_end_pointer += mesh_sizes[current_depth]*mesh_sizes[current_depth]*mesh_sizes[current_depth];
 }
 
 
