@@ -21,18 +21,10 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 */
 
 
-void refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
+void physics_mesh::refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
     mesh.refined_indices[current_indice] = mesh.buffer_end_pointer;
     mesh.buffer_end_pointer += mesh_sizes[current_depth]*mesh_sizes[current_depth]*mesh_sizes[current_depth];
 }
-
-
-// void update_idx(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
-//   //    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
-//
-//   state.current_indice = (mesh_sizes[state.current_depth]*mesh_sizes[state.current_depth]*state.z)
-//                                                   + (mesh_sizes[state.current_depth]*state.y) + state.x;
-// }
 
 
 bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
@@ -47,11 +39,10 @@ bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
   }
 }
 
-bool breadth_first(traverse_state &state, int * (refined_indices), int desired_depth, int ignore_ghosts, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
+
+bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int ignore_ghosts){
 
     /*
-    It seems like this should be better placed in traverse_state:: - however, this would make CUDA integration more difficult.
-
     A traverse through all the cells of all the blocks at a specified level.
     'Breadth first' is perhaps a bit misleading; more precisely it's depth first then breadth across
     depth
@@ -107,10 +98,7 @@ bool breadth_first(traverse_state &state, int * (refined_indices), int desired_d
     return true;
 }
 
-
-
-void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
-    // static_assert (sync_depth < MESH_BUFFER_DEPTH, "Assert failed");
+void physics_mesh::set_ghost_linkages(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
 
     traverse_state state(mesh_sizes);
 
@@ -142,9 +130,7 @@ void sync_ghosts(int * array, int * refined_indices, int sync_depth, int (&mesh_
                 //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges.
                 // it would probably make sense to set thes
             }
-
         }
-
     }
 }
 
@@ -189,23 +175,6 @@ void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
  - visualization
 
 */
-//
-// int main(){
-//
-//     potentials[14] = 14;
-//     potentials[17] = 17;
-//
-//
-//     refined_indices[1] = 8;
-//     refined_indices[2] = 16;
-//     refined_indices[5] = 24;
-//     refined_indices[21] = 32;
-//
-//     sync_ghosts(potentials,1);
-//     dbg(potentials);
-// }
-//
-
 
 
 

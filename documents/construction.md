@@ -3749,3 +3749,19 @@ There's cool stuff like
  "\e[1;5D": backward-word
 
  To .inputrc.
+
+<hr>
+
+Hold up. There's something a little interesting going on with Nvidia's Xavier/Jetson SoCs. The T194, for instance - 256 bit bus, a decent CPU and reasonable GPU... but they're operating on the same memory bank.
+
+Some typical specs: 
+
+PCIe x8 transfer: ~8 GBps.
+GTX 1060: 160 GBps, 3 TFLOPS.
+V100: 900GBps, 14 TFLOPS.
+Xavier T194: 140 GBps, 1 TFLOPS GPU. CPU results on par with a 2007 Xeon.
+
+A PCIe transfer to the GPU costs about 10 GB/s both ways; so most small problems take longer to copy to GPU and back than to just run on the CPU. If your problem is highly hetrogenous, that link bandwidth is a killer. Depending on how the memory arch is arranged, that could be zeroed out.
+
+If the next generation of Xavier has Volta's HBM2... that's going to be pretty awesome.
+

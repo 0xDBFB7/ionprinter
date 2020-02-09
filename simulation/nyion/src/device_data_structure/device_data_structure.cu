@@ -20,8 +20,8 @@ can be constructed to traverse linearly.
 //Ryzen 7: 0.25 TF/40 gbps.
 https://en.wikichip.org/wiki/amd/ryzen_7/1700
 //
-//GTX 1060 is 3 TFlops/160 gbps,
-//An RTX 2070 Super hits 8.2 TF/448.0 gbps, and 21 to 51 TFlops half precision.
+//GTX 1060 is 3 TFlops/160 GBps,
+//An RTX 2070 Super hits 8.2 TF/448.0 GBps, and 21 to 51 TFlops half precision.
 //V100 hits 14TF/900 +100TF half.
 //https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
 //
