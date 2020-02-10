@@ -21,9 +21,10 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 */
 
 
-void physics_mesh::refine_cell(physics_mesh &mesh, int current_depth, int current_indice, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
-    mesh.refined_indices[current_indice] = mesh.buffer_end_pointer;
-    mesh.buffer_end_pointer += mesh_sizes[current_depth]*mesh_sizes[current_depth]*mesh_sizes[current_depth];
+void physics_mesh::refine_cell(int current_depth, int current_indice){
+    assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
+    refined_indices[current_indice] = buffer_end_pointer;
+    buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
 }
 
 
@@ -98,50 +99,50 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
     return true;
 }
 
-void physics_mesh::set_ghost_linkages(int * array, int * refined_indices, int sync_depth, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
+void physics_mesh::set_ghost_linkages(){
 
-    traverse_state state(mesh_sizes);
+    traverse_state state;
 
-    for(; breadth_first(state, refined_indices, sync_depth, 1, mesh_sizes); xyz_traverse(state, mesh_sizes, 1)){
+    for(; breadth_first(state, mesh_depth, 1); xyz_traverse(state, mesh_sizes, 1)){
 
         //std::cout << current_depth << "," << x << "\n";
 
 
-        if(state.current_depth == sync_depth-1 && refined_indices[state.current_indice]){
-            // 0 0 0
-            // G G G     potentials[refined_indices[block_beginning_indice+x]+0]
-            //-^-^-^--
-            // 4 2 6     potentials[refined_indices[block_beginning_indice+x-1]+sizes[current_depth+1]-2]
-
-            if(refined_indices[state.current_indice-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
-                                                    //index block before
-                //Update bottom ghost points
-                array[refined_indices[state.current_indice]] = array[refined_indices[state.current_indice-1]+mesh_sizes[state.current_depth+1]-2];
-            }
-            else{
-                //pass
-            }
-
-            if(refined_indices[state.current_indice+1]){
-                //Update top ghost points
-                array[refined_indices[state.current_indice]+mesh_sizes[state.current_depth]-1] = array[refined_indices[state.current_indice+1]+1];
-            }
-            else{
-                //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges.
-                // it would probably make sense to set thes
-            }
-        }
+        // if(state.current_depth == sync_depth-1 && refined_indices[state.current_indice]){
+        //     // 0 0 0
+        //     // G G G     potentials[refined_indices[block_beginning_indice+x]+0]
+        //     //-^-^-^--
+        //     // 4 2 6     potentials[refined_indices[block_beginning_indice+x-1]+sizes[current_depth+1]-2]
+        //
+        //     if(refined_indices[state.current_indice-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
+        //                                             //index block before
+        //         //Update bottom ghost points
+        //         // array[refined_indices[state.current_indice]] = array[refined_indices[state.current_indice-1]+mesh_sizes[state.current_depth+1]-2];
+        //     }
+        //     else{
+        //         //pass
+        //     }
+        //
+        //     if(refined_indices[state.current_indice+1]){
+        //         //Update top ghost points
+        //         // array[refined_indices[state.current_indice]+mesh_sizes[state.current_depth]-1] = array[refined_indices[state.current_indice+1]+1];
+        //     }
+        //     else{
+        //         //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges.
+        //         // it would probably make sense to set thes
+        //     }
+        // }
     }
 }
 
-void cell_world_lookup(traverse_state &state, float &x, float &y, float &z){
+void cell_world_lookup(physics_mesh &mesh, traverse_state &state, float &x, float &y, float &z){
   x = 0;
   y = 0;
   z = 0;
   for(int i = 0; i < ((state.current_depth+1)) && (i < MESH_BUFFER_DEPTH); i++){
-    x += state.world_scale[i]*(state.x_queue[i]-1); //ghost offset
-    y += state.world_scale[i]*(state.y_queue[i]-1);
-    z += state.world_scale[i]*(state.z_queue[i]-1);
+    x += mesh.world_scale[i]*(state.x_queue[i]-1); //ghost offset
+    y += mesh.world_scale[i]*(state.y_queue[i]-1);
+    z += mesh.world_scale[i]*(state.z_queue[i]-1);
   }
 }
 

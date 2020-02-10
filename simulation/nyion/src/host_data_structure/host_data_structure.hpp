@@ -3,10 +3,13 @@
 
 #include "nyion.hpp"
 
-const int MESH_BUFFER_DEPTH = 3;
+const int MESH_BUFFER_DEPTH = 3; //includes root
 const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
 
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
+
+struct traverse_state;
+struct physics_mesh;
 
 struct physics_mesh{
 
@@ -28,7 +31,7 @@ struct physics_mesh{
         //set scales and sizes
         assert("Increase MESH_BUFFER_DEPTH" && MESH_BUFFER_DEPTH >= new_mesh_depth);
         mesh_depth = new_mesh_depth;
-        for(int i = 0; i < MESH_BUFFER_SIZE; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
+        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
 
         // pre-compute scales
         float scale = ROOT_WORLD_SCALE;
@@ -62,9 +65,9 @@ struct physics_mesh{
     }
 
     void copy_to_gpu();
-    //first copy struct; constructor never runs on device.
-    // Then malloc and memcpy temperature...
-    // create device-only destructor with cudaFree.
+    //first copy struct; constructor never runs on device?
+    // Then malloc and memcpy temperature...?
+    // create device-only destructor with cudaFree?
 
 
     ~physics_mesh(){
@@ -77,8 +80,9 @@ struct physics_mesh{
         delete [] ghost_linkages;
     }
 
-    void refine_cell();
+    void refine_cell(int current_depth, int current_indice);
     bool breadth_first(traverse_state &state, int desired_depth, int ignore_ghosts);
+    void set_ghost_linkages();
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
@@ -138,10 +142,12 @@ void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH], b
   state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 }
 
-bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
-void cell_world_lookup(traverse_state &state, float &x, float &y, float &z);
+// bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
+// void cell_world_lookup(physics_mesh &mesh, traverse_state &state, float &x, float &y, float &z);
 
-
+__host__ __device__ __inline__ int cube(int input){
+    return input*input*input;
+}
 //might be helpful:
 // #ifdef __CUDA_ARCH__
 //
