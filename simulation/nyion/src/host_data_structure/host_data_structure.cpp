@@ -56,6 +56,30 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
 
     */
 
+
+    if(state.current_indice == state.block_beginning_indice){
+        if(ignore_ghosts){ //slow, stupid
+            state.x = 1;
+            state.y = 1;
+            state.z = 1;
+        }
+    }
+    else{
+        state.x++;
+    }
+
+    //ensure that we don't start in the corner if ghosts are to be ignored.
+
+
+    if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
+    if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
+
+    state.x_queue[state.current_depth] = state.x;
+    state.y_queue[state.current_depth] = state.y;
+    state.z_queue[state.current_depth] = state.z;
+
+    state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
+
     bool just_visited = 0;
     while(true){
 
@@ -103,7 +127,7 @@ void physics_mesh::set_ghost_linkages(){
 
     traverse_state state;
 
-    for(; breadth_first(state, mesh_depth, 1); xyz_traverse(state, mesh_sizes, 1)){
+    while(breadth_first(state, mesh_depth, 1)){
 
         //std::cout << current_depth << "," << x << "\n";
 

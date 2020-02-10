@@ -8,6 +8,10 @@ const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
 
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
+__host__ __device__ __inline__ int cube(int input){
+    return input*input*input;
+}
+
 struct traverse_state;
 struct physics_mesh;
 
@@ -22,7 +26,12 @@ struct physics_mesh{
     int32_t * space_charge; //charge probably can't reasonably be fractional - we're not working with quarks?
     uint16_t * boundary_conditions;
     uint32_t * refined_indices;
-    uint32_t * ghost_linkages;
+    uint32_t * ghost_linkages; // can't include ghosts at 'overhangs' - those'll be handled by 'copy_down' I suppose?
+                               // - just those on the same level
+                               // - could also have 6 pointers to blocks up/down/left/right
+                               // I suppose
+
+
 
     uint32_t buffer_end_pointer;
 
@@ -42,8 +51,7 @@ struct physics_mesh{
         }
 
         //on construction, initialize root
-        buffer_end_pointer = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
-        //set size
+        buffer_end_pointer = cube(mesh_sizes[0]);
 
         //and allocate memory
         temperature = new float[MESH_BUFFER_SIZE];
@@ -122,32 +130,11 @@ struct traverse_state{
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
 
 
-__inline__
-void xyz_traverse(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH], bool ignore_ghosts){
-
-  //ensure that we don't start in the corner if ghosts are to be ignored.
-  if(ignore_ghosts && !state.y){ //slow, stupid
-    state.y = 1;
-    state.z = 1;
-  }
-
-  state.x++;
-  if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
-  if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
-
-  state.x_queue[state.current_depth] = state.x;
-  state.y_queue[state.current_depth] = state.y;
-  state.z_queue[state.current_depth] = state.z;
-
-  state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
-}
 
 // bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
 // void cell_world_lookup(physics_mesh &mesh, traverse_state &state, float &x, float &y, float &z);
 
-__host__ __device__ __inline__ int cube(int input){
-    return input*input*input;
-}
+
 //might be helpful:
 // #ifdef __CUDA_ARCH__
 //
