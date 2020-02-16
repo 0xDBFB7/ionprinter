@@ -499,7 +499,7 @@ The ionolith is perhaps one of the first truly self-replicating products. The de
 
 No matter how much money is being made, production of Hargrave Sciences ionoliths will cease 4 years from the launch date; and all service will be terminated 6 months later.
 
-This will allow us to focus on what truly benefits society, rather than just pumping out S/N N+1. In a century, 
+This will allow us to focus on what truly benefits society, rather than just pumping out S/N N+1. In a century, not a single Whimsy ionolith will be functional.
 
 For this to be successful, the design must be maintainable by the end-user, well-documented, and free of planned obscelescence.
 
@@ -541,3 +541,15 @@ PLPlot - 'non-sensible defaults' personified, pretty clunky, but usable in a pin
 ROOT - Hell of an import if all you're after is plotting. Breaks builds, segfaults at random.
 
 MathGL - Trying now. needed to compile with cmake ../ -Denable-glut=on. The FindMathGL2.cmake script doesn't currently link libmgl-glut.so. I had to add that manually.
+
+
+
+
+<hr>
+
+The process really is no more complex than baking cookies - the oven just happens to be hotter than peak reentry temperatures on the Space Shuttle.
+
+Tg PVA=85c
+
+<hr>
+

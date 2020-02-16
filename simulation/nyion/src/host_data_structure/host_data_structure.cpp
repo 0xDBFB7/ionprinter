@@ -57,77 +57,88 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
     */
 
 
-    if(state.current_indice == state.block_beginning_indice){
-        if(ignore_ghosts){ //slow, stupid
-            state.x = 1;
-            state.y = 1;
-            state.z = 1;
-        }
-    }
-    else{
-        state.x++;
-    }
-
-    //ensure that we don't start in the corner if ghosts are to be ignored.
-
-
-    if(state.x == mesh_sizes[state.current_depth]-ignore_ghosts) {state.x=ignore_ghosts; state.y++;}
-    if(state.y == mesh_sizes[state.current_depth]-ignore_ghosts) {state.y=ignore_ghosts; state.z++;}
-
-    state.x_queue[state.current_depth] = state.x;
-    state.y_queue[state.current_depth] = state.y;
-    state.z_queue[state.current_depth] = state.z;
-
-    state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
-
-    bool just_visited = 0;
     while(true){
+        if(state.started_traverse){
+            if(ignore_ghosts){ //slow, stupid
+                state.x = 1;
+                state.y = 1;
+                state.z = 1;
+            }
+            else{
+                state.x = 0;
+                state.y = 0;
+                state.z = 0;
+            }
+            state.started_traverse=false;
+        }
+        else{
+            state.x++;
+        }
 
-      state.block_beginning_indice = state.ref_queue[state.current_depth];
-      state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
+        //ensure that we don't start in the corner if ghosts are to be ignored.
 
-      if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice] && !just_visited){
-          //Descend
-          state.x_queue[state.current_depth] = state.x;
-          state.y_queue[state.current_depth] = state.y;
-          state.z_queue[state.current_depth] = state.z;
-          state.current_depth += 1;
-          state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
-          state.x = ignore_ghosts;
-          state.y = ignore_ghosts;
-          state.z = ignore_ghosts;
+        if(state.x == (mesh_sizes[state.current_depth]-ignore_ghosts)+1) {state.x=ignore_ghosts; state.y++;}
+        if(state.y == (mesh_sizes[state.current_depth]-ignore_ghosts)+1) {state.y=ignore_ghosts; state.z++;}
 
-          continue;
-      }
+        state.x_queue[state.current_depth] = state.x;
+        state.y_queue[state.current_depth] = state.y;
+        state.z_queue[state.current_depth] = state.z;
 
-      if(state.z == mesh_sizes[state.current_depth]-ignore_ghosts){
-          //Ascend
-          if(state.current_depth == 0){
-              return false;
+        state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
+
+        bool just_visited = 0;
+
+        while(true){
+
+          state.block_beginning_indice = state.ref_queue[state.current_depth];
+          state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
+
+          if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice] && !just_visited){
+              //Descend
+              state.x_queue[state.current_depth] = state.x;
+              state.y_queue[state.current_depth] = state.y;
+              state.z_queue[state.current_depth] = state.z;
+              state.current_depth += 1;
+              state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
+              state.x = ignore_ghosts;
+              state.y = ignore_ghosts;
+              state.z = ignore_ghosts;
+
+              continue;
           }
 
-          state.current_depth-=1;
-          state.x = state.x_queue[state.current_depth];
-          state.y = state.y_queue[state.current_depth];
-          state.z = state.z_queue[state.current_depth];
+          if(state.z == (mesh_sizes[state.current_depth]-ignore_ghosts)+1){
+              //Ascend
+              if(state.current_depth == 0){
+                  return false;
+              }
 
-          just_visited = true;
+              state.current_depth-=1;
+              state.x = state.x_queue[state.current_depth];
+              state.y = state.y_queue[state.current_depth];
+              state.z = state.z_queue[state.current_depth];
 
-          continue;
-      }
+              just_visited = true;
 
-      break;
+              continue;
+          }
+
+          break;
+        }
+
+        if(state.current_depth == desired_depth){
+            return true;
+        }
+        else{
+            continue;
+        }
     }
-
-
-    return true;
 }
 
 void physics_mesh::set_ghost_linkages(){
 
-    traverse_state state;
 
-    while(breadth_first(state, mesh_depth, 1)){
+    for(traverse_state state; breadth_first(state, mesh_depth, 1);){
 
         //std::cout << current_depth << "," << x << "\n";
 

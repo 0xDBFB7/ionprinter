@@ -27,11 +27,9 @@ struct physics_mesh{
     uint16_t * boundary_conditions;
     uint32_t * refined_indices;
     uint32_t * ghost_linkages; // can't include ghosts at 'overhangs' - those'll be handled by 'copy_down' I suppose?
-                               // - just those on the same level
+                               // - just those on the same level, which'll be changed every iteration.
                                // - could also have 6 pointers to blocks up/down/left/right
                                // I suppose
-
-
 
     uint32_t buffer_end_pointer;
 
@@ -107,12 +105,13 @@ struct traverse_state{
     int y = 0;
     int z = 0;
 
-    traverse_state(){
+    bool started_traverse = true;
 
-        //this isn't strictly necessary, but explicit is better than implicit.
+    traverse_state(){
         current_depth = 0;
         block_beginning_indice = 0;
         current_indice = 0;
+        started_traverse = true;
 
         for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
             x_queue[i] = 0;
@@ -125,6 +124,25 @@ struct traverse_state{
         z = 0;
     }
 
+    bool equal(traverse_state &state_2, int depth){
+        bool e_s = true;
+        
+        e_s = e_s && (current_depth == state_2.current_depth);
+        e_s = e_s && (block_beginning_indice == state_2.block_beginning_indice);
+        e_s = e_s && (current_indice == state_2.current_indice);
+        e_s = e_s && (x == state_2.x);
+        e_s = e_s && (y == state_2.y);
+        e_s = e_s && (z == state_2.z);
+
+        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
+            e_s = e_s && (x_queue[i] == state_2.x_queue[i]);
+            e_s = e_s && (y_queue[i] == state_2.y_queue[i]);
+            e_s = e_s && (z_queue[i] == state_2.z_queue[i]);
+            e_s = e_s && (ref_queue[i] == state_2.ref_queue[i]);
+        }
+
+        return e_s;
+    }
 };
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.

@@ -2,6 +2,8 @@
 
 #include "gtest/gtest.h"
 
+#include "host_data_structure_test_cases.hpp"
+
 #ifndef DATA_STRUCTURE_TEST_H
 #define DATA_STRUCTURE_TEST_H
 
@@ -42,9 +44,26 @@ TEST(physics_mesh, breadth_first_1){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3};
     physics_mesh mesh(mesh_sizes,1);
 
-    
+    case_1_init();
+
+    traverse_state state;
+    mesh.breadth_first(state,0,0);
 
 }
+ 
+TEST(physics_mesh, breadth_first_2){
+    //traverse with ghosts, root only.
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3};
+    physics_mesh mesh(mesh_sizes,1);
+
+    mesh.refine_cell(0,14);
+    std::vector<traverse_state> case_2;
+
+    traverse_state state;
+    mesh.breadth_first(state,0,0);
+
+}
+
 
 // TEST(xyz_traverse, ghost_traverse_test){
 //   int mesh_sizes[MESH_BUFFER_DEPTH];
