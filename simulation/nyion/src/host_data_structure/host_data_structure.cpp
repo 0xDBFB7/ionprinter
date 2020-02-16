@@ -27,12 +27,11 @@ void physics_mesh::refine_cell(int current_depth, int current_indice){
     buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
 }
 
-
-bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]){
-  if(state.x == 0 || state.y == 0 || state.z == 0
-      || state.x == mesh_sizes[state.current_depth]-1
-      || state.y == mesh_sizes[state.current_depth]-1
-      || state.z == mesh_sizes[state.current_depth]-1){
+bool traverse_state::is_ghost(physics_mesh &mesh){
+  if(x == 0 || y == 0 || z == 0
+      || x == mesh.mesh_sizes[current_depth]-1
+      || y == mesh.mesh_sizes[current_depth]-1
+      || z == mesh.mesh_sizes[current_depth]-1){
         return true;
   }
   else{
@@ -55,7 +54,6 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
     block_beginning_indice
 
     */
-
 
     while(true){
         if(state.started_traverse){
@@ -170,22 +168,22 @@ void physics_mesh::set_ghost_linkages(){
     }
 }
 
-void cell_world_lookup(physics_mesh &mesh, traverse_state &state, float &x, float &y, float &z){
+void traverse_state::cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z){
   x = 0;
   y = 0;
   z = 0;
-  for(int i = 0; i < ((state.current_depth+1)) && (i < MESH_BUFFER_DEPTH); i++){
-    x += mesh.world_scale[i]*(state.x_queue[i]-1); //ghost offset
-    y += mesh.world_scale[i]*(state.y_queue[i]-1);
-    z += mesh.world_scale[i]*(state.z_queue[i]-1);
+  for(int i = 0; i < ((current_depth+1)) && (i < MESH_BUFFER_DEPTH); i++){
+    x += mesh.world_scale[i]*(x_queue[i]-1); //ghost offset
+    y += mesh.world_scale[i]*(y_queue[i]-1);
+    z += mesh.world_scale[i]*(z_queue[i]-1);
   }
 }
 
 
-
-// int world_cell_index_lookup(float x, float y, float z, int MESH_BUFFER_DEPTH){
+//
+// int world_cell_index_lookup(float x, float y, float z, int max_depth){
 //   int x_,y_,z_;
-//   for(int depth = 0, depth < MESH_BUFFER_DEPTH; depth++){
+//   for(int depth = 0, depth < max_depth; depth++){
 //       x_ = (int)floor(x/(mesh_scale[depth]));
 //       y_ = (int)floor(y/(mesh_scale[depth]));
 //       z_ = (int)floor(z/(mesh_scale[depth])); //remember ghosts!

@@ -92,6 +92,13 @@ struct physics_mesh{
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
+#define named_value(input) std::cout << "    \033[1;33m" << #input << "\033[0m" << " = " << input << "\n";
+#define named_array(input,len) std::cout << "    \033[1;33m" << #input << \
+                                        "\033[0m [" << len << "]" << " = {"; \
+                                        for(int i = 0; i < len-1; i++){std::cout << input[i] << ",";}; \
+                                        if(len){std::cout << input[len];} \
+                                        std::cout << "}\n";
+
 struct traverse_state{
 
     int current_depth = 0;
@@ -126,7 +133,7 @@ struct traverse_state{
 
     bool equal(traverse_state &state_2, int depth){
         bool e_s = true;
-        
+
         e_s = e_s && (current_depth == state_2.current_depth);
         e_s = e_s && (block_beginning_indice == state_2.block_beginning_indice);
         e_s = e_s && (current_indice == state_2.current_indice);
@@ -143,14 +150,35 @@ struct traverse_state{
 
         return e_s;
     }
+
+    bool is_ghost(physics_mesh &mesh);
+    void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
+    #ifndef __CUDA_ARCH__
+    void pretty_print(){
+        std::cout << "\n\033[1;32m traverse_state: \033[0m {\n";
+
+        named_value(current_depth);
+        named_value(x);
+        named_value(y);
+        named_value(z);
+        named_value(current_indice);
+        named_value(block_beginning_indice);
+        named_array(x_queue,current_depth+1);
+        named_array(y_queue,current_depth+1);
+        named_array(z_queue,current_depth+1);
+        named_array(ref_queue,current_depth+1);
+
+        std::cout << "}\n";
+    }
+    #endif
+
 };
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
 
 
 
-// bool is_ghost(traverse_state &state, int (&mesh_sizes)[MESH_BUFFER_DEPTH]);
-// void cell_world_lookup(physics_mesh &mesh, traverse_state &state, float &x, float &y, float &z);
+
 
 
 //might be helpful:

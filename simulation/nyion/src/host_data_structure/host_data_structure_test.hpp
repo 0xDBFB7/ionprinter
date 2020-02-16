@@ -44,17 +44,14 @@ TEST(physics_mesh, breadth_first_1){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3};
     physics_mesh mesh(mesh_sizes,1);
 
-    case_1_init();
-
     traverse_state state;
     mesh.breadth_first(state,0,0);
-
 }
- 
+
 TEST(physics_mesh, breadth_first_2){
     //traverse with ghosts, root only.
-    int mesh_sizes[MESH_BUFFER_DEPTH] = {3};
-    physics_mesh mesh(mesh_sizes,1);
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3};
+    physics_mesh mesh(mesh_sizes,2);
 
     mesh.refine_cell(0,14);
     std::vector<traverse_state> case_2;
@@ -62,6 +59,7 @@ TEST(physics_mesh, breadth_first_2){
     traverse_state state;
     mesh.breadth_first(state,0,0);
 
+    state.pretty_print();
 }
 
 
