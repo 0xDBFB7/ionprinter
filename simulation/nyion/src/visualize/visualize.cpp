@@ -209,7 +209,13 @@ void draw_mesh(physics_mesh &mesh, __attribute__((unused)) float * array, bool l
   //level split: render meshes with an offset corresponding to their level
 
   traverse_state state;
-  while(mesh.breadth_first(state,0,0)){
+  while(mesh.breadth_first(state,0,MESH_BUFFER_DEPTH,false)){
+
+
+  }
+}
+
+void draw_cell(physics_mesh &mesh, traverse_state &state, __attribute__((unused)) float * array, bool level_splitting){
 
     glPushMatrix();
 
@@ -237,13 +243,6 @@ void draw_mesh(physics_mesh &mesh, __attribute__((unused)) float * array, bool l
 
       glTranslatef(gl_x, gl_y, gl_z);
 
-      // if(user_state.x == state.x &&
-      //     user_state.y == state.y &&
-      //     user_state.z == state.z &&
-      //     user_state.current_depth == state.current_depth){
-      //
-      // }
-      // else{
       if(state.is_ghost(mesh)){
         glColor4f(0,255.0,0,0.1);
         glutWireCube(cube_size);
@@ -251,14 +250,11 @@ void draw_mesh(physics_mesh &mesh, __attribute__((unused)) float * array, bool l
       else{
         glColor4f(255.0,0,0,255);
         glutWireCube(cube_size);
-
       }
-      // }
+
 
     glPopMatrix();
-  }
 }
-
 
 void update_screen(){
   glLoadIdentity();

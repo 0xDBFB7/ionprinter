@@ -31,6 +31,13 @@ struct physics_mesh{
                                // - could also have 6 pointers to blocks up/down/left/right
                                // I suppose
 
+    uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
+                            //needed for fast traversal
+    uint32_t * block_depths; 
+    uint32_t block_num = 1; //root
+    //we need both block_indices and refined_indices:
+    //one provides the spatial data, and one the fast vectorized traverse
+
     uint32_t buffer_end_pointer;
 
     physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth){
@@ -87,7 +94,7 @@ struct physics_mesh{
     }
 
     void refine_cell(int current_depth, int current_indice);
-    bool breadth_first(traverse_state &state, int desired_depth, int ignore_ghosts);
+    bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
     void set_ghost_linkages();
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
@@ -96,7 +103,7 @@ struct physics_mesh{
 #define named_array(input,len) std::cout << "    \033[1;33m" << #input << \
                                         "\033[0m [" << len << "]" << " = {"; \
                                         for(int i = 0; i < len-1; i++){std::cout << input[i] << ",";}; \
-                                        if(len){std::cout << input[len];} \
+                                        if(len){std::cout << input[len-1];} \
                                         std::cout << "}\n";
 
 struct traverse_state{
@@ -163,10 +170,10 @@ struct traverse_state{
         named_value(z);
         named_value(current_indice);
         named_value(block_beginning_indice);
-        named_array(x_queue,current_depth+1);
-        named_array(y_queue,current_depth+1);
-        named_array(z_queue,current_depth+1);
-        named_array(ref_queue,current_depth+1);
+        named_array(x_queue,MESH_BUFFER_DEPTH);
+        named_array(y_queue,MESH_BUFFER_DEPTH);
+        named_array(z_queue,MESH_BUFFER_DEPTH);
+        named_array(ref_queue,MESH_BUFFER_DEPTH);
 
         std::cout << "}\n";
     }

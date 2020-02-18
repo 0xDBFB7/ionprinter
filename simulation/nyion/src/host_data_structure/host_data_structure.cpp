@@ -24,7 +24,10 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 void physics_mesh::refine_cell(int current_depth, int current_indice){
     assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
     refined_indices[current_indice] = buffer_end_pointer;
+    block_indices[block_num] = buffer_end_pointer;
+
     buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
+
 }
 
 bool traverse_state::is_ghost(physics_mesh &mesh){
@@ -40,7 +43,7 @@ bool traverse_state::is_ghost(physics_mesh &mesh){
 }
 
 
-bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int ignore_ghosts){
+bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts){
 
     /*
     A traverse through all the cells of all the blocks at a specified level.
@@ -75,8 +78,8 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
 
         //ensure that we don't start in the corner if ghosts are to be ignored.
 
-        if(state.x == (mesh_sizes[state.current_depth]-ignore_ghosts)+1) {state.x=ignore_ghosts; state.y++;}
-        if(state.y == (mesh_sizes[state.current_depth]-ignore_ghosts)+1) {state.y=ignore_ghosts; state.z++;}
+        if(state.x == (mesh_sizes[state.current_depth]-ignore_ghosts)) {state.x=ignore_ghosts; state.y++;}
+        if(state.y == (mesh_sizes[state.current_depth]-ignore_ghosts)) {state.y=ignore_ghosts; state.z++;}
 
         state.x_queue[state.current_depth] = state.x;
         state.y_queue[state.current_depth] = state.y;
@@ -91,7 +94,7 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
           state.block_beginning_indice = state.ref_queue[state.current_depth];
           state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
 
-          if(state.current_depth != desired_depth-1 && refined_indices[state.current_indice] && !just_visited){
+          if(state.current_depth < end_depth && refined_indices[state.current_indice] && !just_visited){
               //Descend
               state.x_queue[state.current_depth] = state.x;
               state.y_queue[state.current_depth] = state.y;
@@ -105,7 +108,7 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
               continue;
           }
 
-          if(state.z == (mesh_sizes[state.current_depth]-ignore_ghosts)+1){
+          if(state.z == (mesh_sizes[state.current_depth]-ignore_ghosts)){
               //Ascend
               if(state.current_depth == 0){
                   return false;
@@ -124,7 +127,7 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
           break;
         }
 
-        if(state.current_depth == desired_depth){
+        if(state.current_depth >= start_depth && state.current_depth <= end_depth){
             return true;
         }
         else{
@@ -136,7 +139,7 @@ bool physics_mesh::breadth_first(traverse_state &state, int desired_depth, int i
 void physics_mesh::set_ghost_linkages(){
 
 
-    for(traverse_state state; breadth_first(state, mesh_depth, 1);){
+    // for(traverse_state state; breadth_first(state, mesh_depth, 1, true);){
 
         //std::cout << current_depth << "," << x << "\n";
 
@@ -165,7 +168,7 @@ void physics_mesh::set_ghost_linkages(){
         //         // it would probably make sense to set thes
         //     }
         // }
-    }
+    // }
 }
 
 void traverse_state::cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z){

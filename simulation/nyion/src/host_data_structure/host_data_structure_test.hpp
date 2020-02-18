@@ -45,7 +45,11 @@ TEST(physics_mesh, breadth_first_1){
     physics_mesh mesh(mesh_sizes,1);
 
     traverse_state state;
-    mesh.breadth_first(state,0,0);
+
+    while(mesh.breadth_first(state,0,1,false)){
+        state.pretty_print();
+    }
+
 }
 
 TEST(physics_mesh, breadth_first_2){
@@ -57,9 +61,10 @@ TEST(physics_mesh, breadth_first_2){
     std::vector<traverse_state> case_2;
 
     traverse_state state;
-    mesh.breadth_first(state,0,0);
 
-    state.pretty_print();
+    while(mesh.breadth_first(state,0,0,false)){
+        state.pretty_print();
+    }
 }
 
 
