@@ -68,3 +68,5 @@ Programming Style Guide
 
 The command line to compile and run a program and all the environment variables should be in a comment block at the beginning. 
 
+
+There's a neat documentation paradigm where example code is next to plaintext documentation. That might be useful.

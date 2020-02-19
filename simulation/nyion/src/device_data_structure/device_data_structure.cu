@@ -78,6 +78,8 @@ __global__ void add_() {
 
 
 
+
+
 void test_cuda(float * x)
 {
 

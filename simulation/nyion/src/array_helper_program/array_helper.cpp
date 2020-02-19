@@ -10,6 +10,8 @@
 #include <FL/Fl_Check_Button.H>
 #include <FL/Fl_Spinner.H>
 
+#include <linenoise.hpp>
+
 #include "array_helper.hpp"
 #include "visualize.hpp"
 
@@ -71,7 +73,7 @@ struct menu_struct{
         opengl_3d_mode();
 
     }
-    // 
+    //
     // void handle_inputs(traverse_state &user_state){
     //     current_depth_counter =
     //     x_counter =

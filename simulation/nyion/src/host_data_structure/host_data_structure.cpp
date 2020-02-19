@@ -27,7 +27,6 @@ void physics_mesh::refine_cell(int current_depth, int current_indice){
     // block_indices[block_num] = buffer_end_pointer; //figure this out!
 
     buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
-
 }
 
 bool traverse_state::is_ghost(physics_mesh &mesh){

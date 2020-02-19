@@ -68,49 +68,6 @@ TEST(physics_mesh, breadth_first_2){
 }
 
 
-// TEST(xyz_traverse, ghost_traverse_test){
-//   int mesh_sizes[MESH_BUFFER_DEPTH];
-//   std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, 3);
-//
-//   traverse_state state;
-//   init_state(state, mesh_sizes);
-//   EXPECT_EQ(0,state.x);
-//   EXPECT_EQ(0,state.y);
-//   EXPECT_EQ(0,state.z);
-//   xyz_traverse(state,mesh_sizes,0);
-//   EXPECT_EQ(1,state.x);
-//   EXPECT_EQ(0,state.y);
-//   EXPECT_EQ(0,state.z);
-//   xyz_traverse(state,mesh_sizes,0);
-//   EXPECT_EQ(2,state.x);
-//   EXPECT_EQ(0,state.y);
-//   EXPECT_EQ(0,state.z);
-//   xyz_traverse(state,mesh_sizes,0);
-//   EXPECT_EQ(0,state.x);
-//   EXPECT_EQ(1,state.y);
-//   EXPECT_EQ(0,state.z);
-// }
-//
-//
-// TEST(xyz_traverse, non_ghost_traverse_test){
-//   int mesh_sizes[MESH_BUFFER_DEPTH];
-//   std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, 4);
-//
-//   traverse_state state;
-//   init_state(state, mesh_sizes);
-//
-//   xyz_traverse(state,mesh_sizes, 1);
-//   EXPECT_EQ(1,state.x);
-//   EXPECT_EQ(1,state.y);
-//   EXPECT_EQ(1,state.z);
-//   xyz_traverse(state,mesh_sizes, 1);
-//   EXPECT_EQ(2,state.x);
-//   EXPECT_EQ(1,state.y);
-//   EXPECT_EQ(1,state.z);
-// }
-
-
-
 // TEST(cell_world_lookup, cell_world_lookup_test_3){
 //   float x,y,z;
 //

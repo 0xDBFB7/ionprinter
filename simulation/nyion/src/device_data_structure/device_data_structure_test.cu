@@ -15,6 +15,8 @@ void CUDA_struct_copy_test(){
     cudaMemcpy(d_a, &a, sizeof(physics_mesh), cudaMemcpyHostToDevice);
 
     add_<<<1, 1>>>();
+    //<<<block # in level, cube(mesh_sizes[level])>>>
+    //both can be dim3
 
     cudaFree(d_a);
 }

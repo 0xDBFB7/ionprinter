@@ -5,7 +5,7 @@
 
 const int MESH_BUFFER_DEPTH = 3; //includes root
 const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
-
+// const int MESH_BUFFER_MAX_BLOCKS = 1000000;
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
 __host__ __device__ __inline__ int cube(int input){
@@ -33,8 +33,8 @@ struct physics_mesh{
 
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
-    uint8_t * block_depths;
-    uint32_t block_num = 1; //root
+                            //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
+    uint32_t block_num[MESH_BUFFER_DEPTH]; //1,4,3,0 //including root
     //we need both block_indices and refined_indices:
     //one provides the spatial data, and one the fast vectorized traverse
 
@@ -46,6 +46,8 @@ struct physics_mesh{
         assert("Increase MESH_BUFFER_DEPTH" && MESH_BUFFER_DEPTH >= new_mesh_depth);
         mesh_depth = new_mesh_depth;
         for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
+
+        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_num
 
         // pre-compute scales
         float scale = ROOT_WORLD_SCALE;
@@ -65,8 +67,7 @@ struct physics_mesh{
         boundary_conditions = new uint16_t[MESH_BUFFER_SIZE];
         refined_indices = new uint32_t[MESH_BUFFER_SIZE];
         ghost_linkages = new uint32_t[MESH_BUFFER_SIZE];
-        block_indices = new uint32_t[MESH_BUFFER_SIZE];
-        block_depths = new uint8_t[MESH_BUFFER_SIZE];
+        block_indices = new uint32_t[MESH_BUFFER_SIZE];//max blocks?
 
         //std::fill not available on GPU.
         for(int i = 0; i < MESH_BUFFER_SIZE; i++){
@@ -76,6 +77,7 @@ struct physics_mesh{
             boundary_conditions[i] = 0;
             refined_indices[i] = 0;
             ghost_linkages[i] = 0;
+            block_indices[i] = 0;
         }
     }
 
