@@ -36,6 +36,7 @@ void opengl_test_prism();
 // void opengl_2d_mode();
 //
 void draw_mesh(physics_mesh &mesh, __attribute__((unused)) float * array, bool level_splitting);
+void draw_cell(physics_mesh &mesh, traverse_state &state, float R, float G, float B, float A, bool solid, bool level_splitting);
 //
 //
 // void opengl_apply_camera_rotation();

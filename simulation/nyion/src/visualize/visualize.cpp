@@ -176,9 +176,9 @@ void opengl_draw_axis_cross(){
 }
 
 void opengl_test_prism() {
-  //thanks to mina michael
-  //https://gamedev.stackexchange.com/questions/150802/drawing-a-simple-triangular-prism-in-opengl-in-3d
-  glBegin(GL_QUADS);
+    //thanks to mina michael
+    //https://gamedev.stackexchange.com/questions/150802/drawing-a-simple-triangular-prism-in-opengl-in-3d
+    glBegin(GL_QUADS);
       glVertex3f(0.5, 0, 0.5);
       glVertex3f(0.5, 0, -0.5);
       glVertex3f(-0.5, 0, -0.5);
@@ -193,8 +193,8 @@ void opengl_test_prism() {
       glVertex3f(-0.5,1,-0.5);
       glVertex3f(-0.5,0,0.5);
       glVertex3f(0.5,0,0.5);
-  glEnd();
-  glBegin(GL_TRIANGLES);
+    glEnd();
+    glBegin(GL_TRIANGLES);
       glVertex3f(0.5,0,0.5);
       glVertex3f(0.5,1,-0.5);
       glVertex3f(0.5,0,-0.5);
@@ -202,56 +202,55 @@ void opengl_test_prism() {
       glVertex3f(-0.5,0,0.5);
       glVertex3f(-0.5,1,-0.5);
       glVertex3f(-0.5,0,-0.5);
-  glEnd();
+    glEnd();
 }
 
 void draw_mesh(physics_mesh &mesh, __attribute__((unused)) float * array, bool level_splitting){
-  //level split: render meshes with an offset corresponding to their level
+    //level split: render meshes with an offset corresponding to their level
 
-  traverse_state state;
-  while(mesh.breadth_first(state,0,MESH_BUFFER_DEPTH,false)){
+    traverse_state state;
+    while(mesh.breadth_first(state,0,MESH_BUFFER_DEPTH,false)){
 
+        if(state.is_ghost(mesh)){
+            draw_cell(mesh, state, 0,1.0,0,0.1, false, level_splitting);
+        }
+        else{
+            draw_cell(mesh, state, 1.0,0,0,0.3, false, level_splitting);
+        }
 
-  }
+    }
 }
 
-void draw_cell(physics_mesh &mesh, traverse_state &state, __attribute__((unused)) float * array, bool level_splitting){
+void draw_cell(physics_mesh &mesh, traverse_state &state, float R, float G, float B, float A, bool solid, bool level_splitting){
 
     glPushMatrix();
 
-      float current_scale = mesh.world_scale[state.current_depth];
+        float current_scale = mesh.world_scale[state.current_depth];
 
-      float level_split_offset = 0;
+        float level_split_offset = 0;
 
-      float cube_size = current_scale*OPENGL_SCALE*0.95;
+        float cube_size = current_scale*OPENGL_SCALE*0.95;
 
-      if(state.current_depth){
+        if(state.current_depth){
         level_split_offset = (level_splitting * mesh.world_scale[state.current_depth-1]*2);
-      }
+        }
 
-      float gl_x,gl_y,gl_z;
-      state.cell_world_lookup(mesh, gl_x, gl_y, gl_z);
+        float gl_x,gl_y,gl_z;
+        state.cell_world_lookup(mesh, gl_x, gl_y, gl_z);
 
-      gl_x *= OPENGL_SCALE;
-      gl_y *= OPENGL_SCALE;
-      gl_z *= OPENGL_SCALE;
+        gl_x *= OPENGL_SCALE;
+        gl_y *= OPENGL_SCALE;
+        gl_z *= OPENGL_SCALE;
 
-      gl_x += level_split_offset*OPENGL_SCALE + 0.5*cube_size;
-      gl_y += 0.5*cube_size;
-      gl_z += 0.5*cube_size;
+        gl_x += level_split_offset*OPENGL_SCALE + 0.5*cube_size;
+        gl_y += 0.5*cube_size;
+        gl_z += 0.5*cube_size;
 
+        glTranslatef(gl_x, gl_y, gl_z);
 
-      glTranslatef(gl_x, gl_y, gl_z);
-
-      if(state.is_ghost(mesh)){
-        glColor4f(0,255.0,0,0.1);
-        glutWireCube(cube_size);
-      }
-      else{
-        glColor4f(255.0,0,0,255);
-        glutWireCube(cube_size);
-      }
-
+        glColor4f(R,G,B,A);
+        if(solid){ glutSolidCube(cube_size); }
+        else{ glutWireCube(cube_size); }
 
     glPopMatrix();
 }

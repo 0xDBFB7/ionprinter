@@ -17,9 +17,14 @@
 
 TEST(MathGL, MathGL_Basic)
 {
-  mglGraph gr;
-  gr.FPlot("sin(pi*x)");
+    mglGraph gr;
+    gr.FPlot("sin(pi*x)"); //recall: array linking:
+    // double *a = new double[50];
+    // for(int i=0;i<50;i++)   a[i] = sin(M_PI*i/49.);
+    // mglData y;
+    // y.Link(a,50);
   // gr.WriteFrame("test.png");
+
 }
 //
 // TEST_GROUP(OpenGL)
