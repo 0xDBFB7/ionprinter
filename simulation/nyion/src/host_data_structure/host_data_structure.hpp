@@ -192,8 +192,7 @@ struct traverse_state{
 void transform_coordinates(uint8_t direction, uint8_t in_x, uint8_t in_y, uint8_t in_z, uint8_t out_x, uint8_t out_y, uint8_t out_z){
     //there are six possible directions in 3d space:
     //+x, +y, +z, -x, -y, -z
-    //what about transforms involving the queue?
-
+    //what about transforms involving the queue? I guess we'll burn that bridge later...
 }
 
 

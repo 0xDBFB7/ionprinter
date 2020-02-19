@@ -7,6 +7,8 @@
 #ifndef DATA_STRUCTURE_TEST_H
 #define DATA_STRUCTURE_TEST_H
 
+// https://softwareengineering.stackexchange.com/questions/379575/how-do-you-write-unit-tests-for-code-with-difficult-to-predict-results
+// great resource
 
 TEST(physics_mesh, refine_test){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};

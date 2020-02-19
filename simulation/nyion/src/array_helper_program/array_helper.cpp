@@ -175,12 +175,14 @@ int main()
             if(args[0] == "refine"){
                 if(user_state.current_depth < MESH_BUFFER_DEPTH-1){
                     mesh.refine_cell(user_state.current_depth,user_state.current_indice);
-                    user_state.current_depth++;
-                    user_state.
+                    user_state.current_depth++; //descend_into() function?
+                    user_state.x_queue[current_depth] = 0;
+                    user_state.z_queue[current_depth] = 0;
+                    user_state.y_queue[current_depth] = 0;
                 }
                 user_state.pretty_print();
             }
-            if(args[0] == "refine"){
+            if(args[0] == ""){
             }
         }
         else{
