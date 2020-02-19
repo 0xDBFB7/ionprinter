@@ -7,7 +7,7 @@ link_directories(../src/debug_helpers/ ../src/host_data_structure/ ../src/array_
 
 add_executable (nyion_test nyion_test.cpp)
 target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES}
-                                    nyion_lib data_structure visualize debug_helpers unrolled_operations OpenMP::OpenMP_CXX)
+                                    nyion_lib data_structure visualize debug_helpers device_data_structure OpenMP::OpenMP_CXX)
 
 
 #target_link_libraries(nyion_test CppUTest )

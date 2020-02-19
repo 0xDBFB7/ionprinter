@@ -3,6 +3,12 @@
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Counter.H>
 #include <FL/Fl_Simple_Counter.H>
+#include <FL/Fl_Choice.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Float_Input.H>
+#include <FL/Fl_Input.H>
+#include <FL/Fl_Check_Button.H>
+#include <FL/Fl_Spinner.H>
 
 #include "array_helper.hpp"
 #include "visualize.hpp"
@@ -25,43 +31,64 @@
 //huh
 
 struct menu_struct{
-    Fl_Simple_Counter * x_counter;
-    Fl_Simple_Counter * y_counter;
-    Fl_Simple_Counter * z_counter;
-    Fl_Simple_Counter * current_depth_counter;
-    Fl_Simple_Counter * size_counter;
-    Fl_Simple_Counter * mesh_depth_counter;
-    Fl_Button * ;
-    Fl_File_Chooser * file_input;
+    Fl_Spinner * x_counter;
+    Fl_Spinner * y_counter;
+    Fl_Spinner * z_counter;
+    Fl_Spinner * step_counter;
+    Fl_Spinner * current_depth_counter;
+    Fl_Spinner * size_counter;
+    Fl_Spinner * mesh_depth_counter;
+    Fl_Check_Button * level_splitting;
+    Fl_Button * read_button;
+    Fl_Button * write_button;
+    Fl_Input * file_input;
     Fl_Choice * array_menu;
     Fl_Float_Input * set_value;
-
+    Fl_Window * window;
 
     menu_struct(){
-        const int counter_height = 100;
+        window = new Fl_Window(500,500);
+
+        const int counter_height = 20;
+        const int counter_width = 100;
+
         const int text_height = 20;
-        int window_x = 0;
-        x_counter = new Fl_Simple_Counter(20,40,300,counter_height,"x"); window_x += counter_height + text_height;
-        y_counter = new Fl_Simple_Counter(20,40,300,counter_height,"y"); window_x += counter_height + text_height;
-        z_counter = new Fl_Simple_Counter(20,40,300,counter_height,"z"); window_x += counter_height + text_height;
-        depth_counter = new Fl_Simple_Counter(window_x,40,300,counter_height,"current_depth"); window_x += counter_height + text_height;
-        size_counter = new Fl_Simple_Counter(window_x,40,300,counter_height,"size"); window_x += counter_height + text_height;
-        mesh_depth_counter = new Fl_Simple_Counter(window_x,40,300,counter_height,"mesh_depth"); window_x += counter_height + text_height;
-        //FL_Input
+        int widget_x = 20;
+        int widget_y = 40;
+
+        x_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"x"); widget_y += counter_height + text_height;
+        y_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"y"); widget_y += counter_height + text_height;
+        z_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"z"); widget_y += counter_height + text_height;
+        current_depth_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"current_depth"); widget_y += counter_height + text_height;
+        size_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"size"); widget_y += counter_height + text_height;
+        mesh_depth_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"mesh_depth"); widget_y += counter_height + text_height;
+        step_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"step"); widget_y += counter_height + text_height;
+
+        window->end();
+        window->show();
+
+        initialize_opengl();
+        opengl_3d_mode();
+
     }
-}
+    // 
+    // void handle_inputs(traverse_state &user_state){
+    //     current_depth_counter =
+    //     x_counter =
+    // }
+
+    void inspect(traverse_state &system_state, physics_mesh &mesh); //manual "step" button
+};
 
 void init_inspect();
 
-void inspect(traverse_state &system_state, physics_mesh &mesh, inspect_state ); //manual "step" button
 
 void show_image(); //for MathGL
 
 int main()
 {
 
-    initialize_opengl();
-    opengl_3d_mode();
+    menu_struct menu;
 
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh mesh(mesh_sizes, 1);
@@ -70,10 +97,7 @@ int main()
 
     bool level_splitting = true;
 
-    Fl_Window * window = new Fl_Window(340,180);
 
-    window->end();
-    window->show();
 
     while(true){
 

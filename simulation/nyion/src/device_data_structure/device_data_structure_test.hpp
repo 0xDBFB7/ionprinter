@@ -13,17 +13,10 @@ TEST(CUDA, CUDA_display_info)
 {
   display_GPU_info();
 }
-//
-// TEST(CUDA, CUDA_struct_copy_test){
-//     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
-//     physics_mesh a(mesh_sizes);
-//     physics_mesh * d_a;
-//
-//
-//     gpu_error_check(cudaMalloc(&d_a, sizeof(physics_mesh)));
-//     cudaMemcpy(d_a, a, sizeof(physics_mesh), cudaMemcpyHostToDevice);
-//
-//     add<<<1, 1>>>(d_a);
-//
-//     cudaFree(d_a);
-// }
+
+void CUDA_struct_copy_test();
+
+
+TEST(CUDA, CUDA_struct_copy_test){
+    CUDA_struct_copy_test();
+}

@@ -41,7 +41,7 @@ https://en.wikichip.org/wiki/amd/ryzen_7/1700
 // __device__ float curand_uniform (curandState_t *state)
 // __device__ float curand_normal (curandState_t *state)
 //                  curand(&state)
-__global__ void add(physics_mesh * d_a) {
+__global__ void add_() {
 
   // int i = blockIdx.x*blockDim.x + threadIdx.x;
   // x[0] = 0;
@@ -65,6 +65,7 @@ __global__ void add(physics_mesh * d_a) {
 //     cudaFree(d_a);
 //     free(a);
 // }
+
 
 
 void test_cuda(float * x)
