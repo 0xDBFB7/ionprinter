@@ -47,7 +47,7 @@ struct physics_mesh{
         mesh_depth = new_mesh_depth;
         for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
 
-        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_num
+        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_num[i] = 0; };
 
         // pre-compute scales
         float scale = ROOT_WORLD_SCALE;
