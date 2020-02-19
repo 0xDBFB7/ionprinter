@@ -6,7 +6,8 @@ having a structure to traverse is great for cell-world and world-cell lookups,
 and to generate the linkages between ghosts.
 It's also easier to code the construction of meshes.
 
-However, traversing the tree takes jumps and is generally poorly optimized.
+However, traversing the tree takes jumps and is generally poorly optimized,
+especially on a GPU, where a jump stalls the warp.
 Once the trees are established on the heap, however, a simple list of indices
 can be constructed to traverse linearly.
 
@@ -18,20 +19,20 @@ It's important to note that this entire implementation completely disregards
 the cache altogether. The indice system means the next block could be halfway to Manitoba
 out of cache; there's no cache concurrency, congruency, or congealency; the
 &mesh argument means we're probably bringing 20x as much data along as we need for each function;
+etc.
 
-
+If one were truly smart, one could probably eek the same performance out of a
+homogenous computing system. I am not.
 
 //block_list
 //block_sizes
 //connections
 
 //
-//Ryzen 7: 0.25 TF/40 gbps.
-https://en.wikichip.org/wiki/amd/ryzen_7/1700
-//
-//GTX 1060 is 3 TFlops/160 GBps,
-//An RTX 2070 Super hits 8.2 TF/448.0 GBps, and 21 to 51 TFlops half precision.
-//V100 hits 14TF/900 +100TF half.
+//Ryzen 7: 0.25 TF/40 gbps. https://en.wikichip.org/wiki/amd/ryzen_7/1700
+//GTX 1060: 3 TFlops/160 GBps.
+//RTX 2070 Super: 8.2 TF/448.0 GBps - 21 to 51 TFlops half precision.
+//V100 hits 14TF/900 GBps + 100TF half.
 //https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
 //
 //

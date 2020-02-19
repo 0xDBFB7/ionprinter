@@ -18,5 +18,5 @@ void CUDA_struct_copy_test();
 
 
 TEST(CUDA, CUDA_struct_copy_test){
-    // CUDA_struct_copy_test();
+    CUDA_struct_copy_test();
 }

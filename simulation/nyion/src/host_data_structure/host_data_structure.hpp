@@ -33,7 +33,7 @@ struct physics_mesh{
 
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
-    uint32_t * block_depths;
+    uint8_t * block_depths;
     uint32_t block_num = 1; //root
     //we need both block_indices and refined_indices:
     //one provides the spatial data, and one the fast vectorized traverse
