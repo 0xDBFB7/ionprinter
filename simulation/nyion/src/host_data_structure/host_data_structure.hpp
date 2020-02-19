@@ -96,7 +96,6 @@ struct physics_mesh{
         delete [] refined_indices;
         delete [] ghost_linkages;
         delete [] block_indices;
-        delete [] block_depths;
     }
 
 
@@ -190,7 +189,12 @@ struct traverse_state{
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
 
+void transform_coordinates(uint8_t direction, uint8_t in_x, uint8_t in_y, uint8_t in_z, uint8_t out_x, uint8_t out_y, uint8_t out_z){
+    //there are six possible directions in 3d space:
+    //+x, +y, +z, -x, -y, -z
+    //what about transforms involving the queue?
 
+}
 
 
 

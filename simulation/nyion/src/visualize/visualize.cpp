@@ -19,7 +19,7 @@ float camera_z = 0;
 float camera_angle_pitch = -0.785398;
 float camera_angle_yaw = -0.785398;
 
-
+bool esc_hit = false;
 
 GLXDrawable mesh_window;
 GLXDrawable graph_window;
@@ -36,15 +36,21 @@ void keyboard_handler(unsigned char key,__attribute__((unused)) int x,__attribut
   if(key == 'd') camera_x += -0.1;
   if(key == 'w') camera_y += 0.1;
   if(key == 's') camera_y += -0.1;
-  if(key == '0'){ camera_angle_pitch = -0.785398; camera_angle_yaw = 0; camera_x = 0; camera_y = 0; camera_z = 0; camera_distance = -10;};
+  // if(key == '0'){ camera_angle_pitch = -0.785398; camera_angle_yaw = 0; camera_x = 0; camera_y = 0; camera_z = 0; camera_distance = -10;};
+  if(key == 27) esc_hit = true; //escape
   if(key == '+') camera_distance += -1;
   if(key == '-') camera_distance += +1;
 }
 
-void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute__((unused)) int y){
-  if(key == GLUT_KEY_F6){
+bool escape_hit(){
+    //stupid, clunky way to avoid using async io in array_helper
+    return esc_hit;
+}
 
-  }
+void special_keyboard_handler(int key,__attribute__((unused)) int x,__attribute__((unused)) int y){
+  // if(key == GLUT_KEU){
+  //
+  // }
 }
 
 void initialize_opengl(){
@@ -147,7 +153,8 @@ void opengl_2d_mode(){
 void opengl_clear_screen(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
-
+  
+  esc_hit = false;
 }
 
 
