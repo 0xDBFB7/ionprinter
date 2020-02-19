@@ -1,15 +1,24 @@
 /*
 
-Here's the situation.
-
-Having a tree relationship between levels and blocks makes some kind of sense.
+Having a tree relationship between with levels and blocks makes some kind of sense.
 Everything multigrid is naturally tree-based,
-having a structure to traverse is great for cell-world and world-cell lookups, etc.
+having a structure to traverse is great for cell-world and world-cell lookups,
+and to generate the linkages between ghosts.
 It's also easier to code the construction of meshes.
 
 However, traversing the tree takes jumps and is generally poorly optimized.
 Once the trees are established on the heap, however, a simple list of indices
 can be constructed to traverse linearly.
+
+It might be possible to do away with the tree entirely, but
+trying to visualize 'neighbors' with arbitrarily placed blocks
+does my head in.
+
+It's important to note that this entire implementation completely disregards
+the cache altogether. The indice system means the next block could be halfway to Manitoba
+out of cache; there's no cache concurrency, congruency, or congealency; the
+&mesh argument means we're probably bringing 20x as much data along as we need for each function;
+
 
 
 //block_list

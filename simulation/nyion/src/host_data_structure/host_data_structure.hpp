@@ -33,7 +33,7 @@ struct physics_mesh{
 
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
-    uint32_t * block_depths; 
+    uint32_t * block_depths;
     uint32_t block_num = 1; //root
     //we need both block_indices and refined_indices:
     //one provides the spatial data, and one the fast vectorized traverse
@@ -65,6 +65,8 @@ struct physics_mesh{
         boundary_conditions = new uint16_t[MESH_BUFFER_SIZE];
         refined_indices = new uint32_t[MESH_BUFFER_SIZE];
         ghost_linkages = new uint32_t[MESH_BUFFER_SIZE];
+        block_indices = new uint32_t[MESH_BUFFER_SIZE];
+        block_depths = new uint8_t[MESH_BUFFER_SIZE];
 
         //std::fill not available on GPU.
         for(int i = 0; i < MESH_BUFFER_SIZE; i++){
@@ -91,7 +93,10 @@ struct physics_mesh{
         delete [] boundary_conditions;
         delete [] refined_indices;
         delete [] ghost_linkages;
+        delete [] block_indices;
+        delete [] block_depths;
     }
+
 
     void refine_cell(int current_depth, int current_indice);
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
