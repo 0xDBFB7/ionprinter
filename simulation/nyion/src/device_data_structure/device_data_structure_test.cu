@@ -138,16 +138,22 @@ __host__ void CUDA_simple_struct_copy_test(){
     delete host_input;
 }
 
-void construct_device_struct(test_struct ** device_data_structure){
+void construct_device_struct(test_struct ** device_struct){
     //construct the struct
-    gpu_error_check(cudaMalloc(device_data_structure, sizeof(test_struct)));
+    gpu_error_check(cudaMalloc(device_struct, sizeof(test_struct)));
 
     float * device_storage;
-    gpu_error_check(cudaMalloc(&device_storage, 10*sizeof(float)));
+    gpu_error_check(cudaMalloc(&device_storage, 10*sizeof(* device_storage)));
+    //copy pointer to array into struct
+    gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
 }
 
-void copy_to_device_struct(test_struct  * pointer_to_device_data_structure, test_struct * host_data_structure){
-    gpu_error_check(cudaMemcpy(pointer_to_device_data_structure, host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
+void copy_to_device_struct(test_struct * pointer_to_device_struct, test_struct * host_data_structure){
+    //copy struct itself
+    gpu_error_check(cudaMemcpy(pointer_to_device_struct, host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
+
+    float * device_storage;
+    gpu_error_check(cudaMemcpy(&device_storage, &((*pointer_to_device_struct).storage), sizeof(((*pointer_to_device_struct).storage)), cudaMemcpyDeviceToHost));
 }
 
 __host__ void CUDA_simple_struct_copy_test_2(){
@@ -161,9 +167,8 @@ __host__ void CUDA_simple_struct_copy_test_2(){
 
     test_struct device_data_structure;
     test_struct * pointer_to_device_data_structure = &device_data_structure;
-
-    construct_device_struct(&pointer_to_device_data_structure);
-    // gpu_error_check(cudaMemcpy(pointer_to_device_data_structure, &host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
+    construct_device_struct(&pointer_to_device_data_structure); //s
+    //double pointer required to preserve malloc edit
 
     copy_to_device_struct(pointer_to_device_data_structure, &host_data_structure);
 
