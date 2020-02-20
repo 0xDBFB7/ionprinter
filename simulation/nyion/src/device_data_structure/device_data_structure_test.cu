@@ -68,20 +68,21 @@ __global__ void test_fill_simple(test_struct * d_a) {
 
 
 
-__host__ void CUDA_simple_struct_copy_test(){
+//Wwwwhat the fff
+//cudaMemcpy(device->storage,...)     does not work.
+//cudaMemcpy(host->storage,...)  does,
+//no matter the direction.
+//So that means the pointer device->storage must first be copied to a simple
+//float *,
+// then copied to host.
+// ??? okay
+//Wait, no, that makes perfect sense.
+//if you call device.storage from the host,
+//the host tries to find...
+//wait, but why does it work when copying to a float *?
 
-    //Wwwwhat the fff
-    //cudaMemcpy(device->storage,...)     does not work.
-    //cudaMemcpy(host->storage,...)  does,
-    //no matter the direction.
-    //So that means the pointer device->storage must first be copied to a simple
-    //float *,
-    // then copied to host.
-    // ??? okay
-    //Wait, no, that makes perfect sense.
-    //if you call device.storage from the host,
-    //the host tries to find...
-    //wait, but why does it work when copying to a float *?
+
+__host__ void CUDA_simple_struct_copy_test(){
 
     const int N = 10;
 
@@ -181,6 +182,15 @@ void copy_to_host_struct(test_struct ** device_struct, test_struct ** host_struc
     (**host_struct).storage = host_storage;
 }
 
+void destruct_device_struct(test_struct ** device_struct){
+    float * device_output_storage;
+    //copy the pointer to the data
+    gpu_error_check(cudaMemcpy(&device_output_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+
+    gpu_error_check(cudaFree(device_output_storage));
+    gpu_error_check(cudaFree(&(**device_struct)));
+}
+
 __host__ void CUDA_simple_struct_copy_test_2(){
 
     const int N = 10;
@@ -213,6 +223,7 @@ __host__ void CUDA_simple_struct_copy_test_2(){
     ASSERT_NEAR(host_struct->test_int[5],15,1e-3);
 
     delete [] (*host_struct).storage;
+    destruct_device_struct(&device_struct);
     //copy the struct, plus values on the stack
 
 
