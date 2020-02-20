@@ -146,8 +146,9 @@ void construct_device_struct(test_struct ** device_data_structure){
     gpu_error_check(cudaMalloc(&device_storage, 10*sizeof(float)));
 }
 
-// void copy_to_device_struct(test_struct * host_data_structure, test_struct * device_data_structure){
-// }
+void copy_to_device_struct(test_struct  * pointer_to_device_data_structure, test_struct * host_data_structure){
+    gpu_error_check(cudaMemcpy(pointer_to_device_data_structure, host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
+}
 
 __host__ void CUDA_simple_struct_copy_test_2(){
 
@@ -162,9 +163,9 @@ __host__ void CUDA_simple_struct_copy_test_2(){
     test_struct * pointer_to_device_data_structure = &device_data_structure;
 
     construct_device_struct(&pointer_to_device_data_structure);
-    gpu_error_check(cudaMemcpy(pointer_to_device_data_structure, &host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
+    // gpu_error_check(cudaMemcpy(pointer_to_device_data_structure, &host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
 
-    // copy_to_device_struct(&host_data_structure, &device_data_structure);
+    copy_to_device_struct(pointer_to_device_data_structure, &host_data_structure);
 
     //copy the struct, plus values on the stack
 
