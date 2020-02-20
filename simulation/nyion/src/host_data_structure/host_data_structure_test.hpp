@@ -38,7 +38,6 @@ TEST(physics_mesh, scale_test){
     ASSERT_EQ(mesh.mesh_sizes[0],3);
     ASSERT_EQ(mesh.mesh_sizes[1],5);
     ASSERT_EQ(mesh.mesh_sizes[2],5);
-
 }
 
 TEST(physics_mesh, breadth_first_1){
@@ -49,7 +48,7 @@ TEST(physics_mesh, breadth_first_1){
     traverse_state state;
 
     while(mesh.breadth_first(state,0,1,false)){
-        state.pretty_print();
+        // state.pretty_print();
     }
 
 }
@@ -65,7 +64,7 @@ TEST(physics_mesh, breadth_first_2){
     traverse_state state;
 
     while(mesh.breadth_first(state,0,0,false)){
-        state.pretty_print();
+        // state.pretty_print();
     }
 }
 

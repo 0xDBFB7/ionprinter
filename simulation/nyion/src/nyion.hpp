@@ -31,7 +31,6 @@ int idx(int x, int y, int z, int xlen);
 
 #include "CUDA_helpers.hpp"
 
-#define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
 
 
 

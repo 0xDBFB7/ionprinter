@@ -8,6 +8,8 @@ const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
 // const int MESH_BUFFER_MAX_BLOCKS = 1000000;
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
+#define POTENTIAL_BUFFER_TYPE float
+
 __host__ __device__ __inline__ int cube(int input){
     return input*input*input;
 }
@@ -98,13 +100,13 @@ struct physics_mesh{
     // Then malloc and memcpy temperature...?
     // create device-only destructor with cudaFree?
 
-    void descend_into(){
-        state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
-        user_state.current_depth++; //descend_into() function?
-        user_state.x_queue[user_state.current_depth] = 0; //state.x,y,z should go.
-        user_state.z_queue[user_state.current_depth] = 0; //everything has to be updated simultaneously anyhow,
-        user_state.y_queue[user_state.current_depth] = 0; //and state. should never be in the hot loop anyhow.
-    }
+    // void descend_into(){
+    //     state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
+    //     user_state.current_depth++; //descend_into() function?
+    //     user_state.x_queue[user_state.current_depth] = 0; //state.x,y,z should go.
+    //     user_state.z_queue[user_state.current_depth] = 0; //everything has to be updated simultaneously anyhow,
+    //     user_state.y_queue[user_state.current_depth] = 0; //and state. should never be in the hot loop anyhow.
+    // }
 
     ~physics_mesh(){
         //on destruction,
