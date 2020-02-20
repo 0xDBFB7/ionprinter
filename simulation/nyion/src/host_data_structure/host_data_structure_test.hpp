@@ -2,8 +2,6 @@
 
 #include "gtest/gtest.h"
 
-#include "host_data_structure_test_cases.hpp"
-
 #ifndef DATA_STRUCTURE_TEST_H
 #define DATA_STRUCTURE_TEST_H
 

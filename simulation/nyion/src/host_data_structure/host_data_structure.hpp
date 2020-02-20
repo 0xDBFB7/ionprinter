@@ -8,8 +8,6 @@ const int MESH_BUFFER_SIZE = (100*100*100)+(1*(100*100*100));
 // const int MESH_BUFFER_MAX_BLOCKS = 1000000;
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
-#define POTENTIAL_TYPE float
-
 __host__ __device__ __inline__ int cube(int input){
     return input*input*input;
 }
@@ -24,6 +22,8 @@ struct physics_mesh;
                                         if(len){std::cout << input[len-1];} \
                                         std::cout << "}\n";
 
+
+#define POTENTIAL_TYPE float
 
 //the size of this on the stack must be < 4 KB for reasons of cuda kernel arguments.
 struct physics_mesh{
@@ -51,12 +51,17 @@ struct physics_mesh{
 
     uint32_t buffer_end_pointer;
 
-    uint32_t device_only = false;
+    physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth);
+    ~physics_mesh();
 
 
     void refine_cell(int current_depth, int current_indice);
-    bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
+    void compute_world_scale();
     void set_ghost_linkages();
+    void pretty_print();
+
+
+    bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
@@ -72,66 +77,14 @@ struct traverse_state{
     int x = 0;
     int y = 0;
     int z = 0;
-
     bool started_traverse = true;
 
-    traverse_state(){
-        current_depth = 0;
-        block_beginning_indice = 0;
-        current_indice = 0;
-        started_traverse = true;
+    traverse_state();
 
-        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
-            x_queue[i] = 0;
-            y_queue[i] = 0;
-            z_queue[i] = 0;
-            ref_queue[i] = 0;
-        }
-        x = 0;
-        y = 0;
-        z = 0;
-    }
-
-    bool equal(traverse_state &state_2, int depth){
-        bool e_s = true;
-
-        e_s = e_s && (current_depth == state_2.current_depth);
-        e_s = e_s && (block_beginning_indice == state_2.block_beginning_indice);
-        e_s = e_s && (current_indice == state_2.current_indice);
-        e_s = e_s && (x == state_2.x);
-        e_s = e_s && (y == state_2.y);
-        e_s = e_s && (z == state_2.z);
-
-        for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
-            e_s = e_s && (x_queue[i] == state_2.x_queue[i]);
-            e_s = e_s && (y_queue[i] == state_2.y_queue[i]);
-            e_s = e_s && (z_queue[i] == state_2.z_queue[i]);
-            e_s = e_s && (ref_queue[i] == state_2.ref_queue[i]);
-        }
-
-        return e_s;
-    }
-
+    bool equal(traverse_state &state_2, int depth);
     bool is_ghost(physics_mesh &mesh);
+    void pretty_print();
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
-    #ifndef __CUDA_ARCH__
-    void pretty_print(){
-        std::cout << "\n\033[1;32mtraverse_state: \033[0m {\n";
-
-        named_value(current_depth);
-        named_value(x);
-        named_value(y);
-        named_value(z);
-        named_value(current_indice);
-        named_value(block_beginning_indice);
-        named_array(x_queue,MESH_BUFFER_DEPTH);
-        named_array(y_queue,MESH_BUFFER_DEPTH);
-        named_array(z_queue,MESH_BUFFER_DEPTH);
-        named_array(ref_queue,MESH_BUFFER_DEPTH);
-
-        std::cout << "}\n";
-    }
-    #endif
 
 };
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:

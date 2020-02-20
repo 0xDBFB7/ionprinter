@@ -1,24 +1,4 @@
-
-void physics_mesh::refine_cell(int current_depth, int current_indice){
-    assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
-    refined_indices[current_indice] = buffer_end_pointer;
-    // block_indices[block_num] = buffer_end_pointer; //figure this out!
-
-    buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
-}
-
-
-__host__ void physics_mesh::compute_world_scale(){  //must be called if mesh_depth is changed
-    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
-    // pre-compute scales
-    float scale = ROOT_WORLD_SCALE;
-    for(int i = 0; i < mesh_depth; i++){
-        assert("Mesh size must be > 2" && mesh_sizes[i]-2 > 0);
-        scale /= mesh_sizes[i]-2; //-2 compensates for ghost points.
-        world_scale[i] = scale;
-    } // TODO: Scales must be re-computed if the size changes!
-}
-
+#include "host_data_structure.hpp"
 
 //constructor
 __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth){
@@ -55,10 +35,62 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
     }
 }
 
-void physics_mesh::copy_to_gpu();
-//first copy struct; constructor never runs on device?
-// Then malloc and memcpy temperature...?
-// create device-only destructor with cudaFree?
+void physics_mesh::refine_cell(int current_depth, int current_indice){
+    assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
+    refined_indices[current_indice] = buffer_end_pointer;
+    // block_indices[block_num] = buffer_end_pointer; //figure this out!
+
+    buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
+}
+
+
+__host__ void physics_mesh::compute_world_scale(){  //must be called if mesh_depth is changed
+    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
+    // pre-compute scales
+    float scale = ROOT_WORLD_SCALE;
+    for(int i = 0; i < mesh_depth; i++){
+        assert("Mesh size must be > 2" && mesh_sizes[i]-2 > 0);
+        scale /= mesh_sizes[i]-2; //-2 compensates for ghost points.
+        world_scale[i] = scale;
+    } // TODO: Scales must be re-computed if the size changes!
+}
+
+
+void physics_mesh::set_ghost_linkages(){
+
+
+    // for(traverse_state state; breadth_first(state, mesh_depth, 1, true);){
+
+        //std::cout << current_depth << "," << x << "\n";
+
+
+        // if(state.current_depth == sync_depth-1 && refined_indices[state.current_indice]){
+        //     // 0 0 0
+        //     // G G G     potentials[refined_indices[block_beginning_indice+x]+0]
+        //     //-^-^-^--
+        //     // 4 2 6     potentials[refined_indices[block_beginning_indice+x-1]+sizes[current_depth+1]-2]
+        //
+        //     if(refined_indices[state.current_indice-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
+        //                                             //index block before
+        //         //Update bottom ghost points
+        //         // array[refined_indices[state.current_indice]] = array[refined_indices[state.current_indice-1]+mesh_sizes[state.current_depth+1]-2];
+        //     }
+        //     else{
+        //         //pass
+        //     }
+        //
+        //     if(refined_indices[state.current_indice+1]){
+        //         //Update top ghost points
+        //         // array[refined_indices[state.current_indice]+mesh_sizes[state.current_depth]-1] = array[refined_indices[state.current_indice+1]+1];
+        //     }
+        //     else{
+        //         //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges.
+        //         // it would probably make sense to set thes
+        //     }
+        // }
+    // }
+}
+
 
 // void descend_into(){
 //     state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
@@ -68,20 +100,8 @@ void physics_mesh::copy_to_gpu();
 //     user_state.y_queue[user_state.current_depth] = 0; //and state. should never be in the hot loop anyhow.
 // }
 
-physics_mesh::~physics_mesh(){
-        //on destruction,
-        if(!device_only){
-            delete [] temperature;
-            delete [] potential;
-            delete [] space_charge;
-            delete [] boundary_conditions;
-            delete [] refined_indices;
-            delete [] ghost_linkages;
-            delete [] block_indices;
-        }
-}
 
-__host__ void pretty_print(){
+__host__ void physics_mesh::pretty_print(){
     std::cout << "\n\033[1;32mtraverse_state: \033[0m {\n";
 
     named_array(world_scale,MESH_BUFFER_DEPTH);
@@ -109,4 +129,17 @@ __host__ void pretty_print(){
     // uint32_t buffer_end_pointer;
 
     std::cout << "}\n";
+}
+
+
+//destructor
+physics_mesh::~physics_mesh(){
+    //on destruction,
+    delete [] temperature;
+    delete [] potential;
+    delete [] space_charge;
+    delete [] boundary_conditions;
+    delete [] refined_indices;
+    delete [] ghost_linkages;
+    delete [] block_indices;
 }

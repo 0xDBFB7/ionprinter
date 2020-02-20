@@ -3,7 +3,7 @@ link_directories(debug_helpers/ host_data_structure/ array_helper_program/ physi
 
 
 add_library (nyion_lib nyion.cpp nyion.hpp)
-add_library (data_structure host_data_structure/host_data_structure.cpp host_data_structure/host_data_structure.hpp)
+add_library (data_structure host_data_structure/physics_mesh.cpp host_data_structure/traverse_state.cpp host_data_structure/host_data_structure.hpp)
 add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)
 add_library (debug_helpers debug_helpers/debug_helpers.cpp debug_helpers/debug_helpers.hpp)
 add_library (device_data_structure device_data_structure/device_data_structure.cu device_data_structure/device_data_structure_test.cu debug_helpers/CUDA_helpers.cu)
