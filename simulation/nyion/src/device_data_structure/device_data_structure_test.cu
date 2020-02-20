@@ -61,6 +61,8 @@ __global__ void test_fill_simple(test_struct * d_a) {
     d_a->test_int[5] = 15;
 }
 
+
+
 __host__ void CUDA_simple_struct_copy_test(){
 
 
@@ -76,7 +78,7 @@ __host__ void CUDA_simple_struct_copy_test(){
     for(int i = 0; i < N; i++){ host_input->storage[i] = i;};
 
 
-    //copy the struct
+    //copy the struct, plus values on the stack
     test_struct * device;
     gpu_error_check(cudaMalloc((void**)&device, sizeof(test_struct)));
     gpu_error_check(cudaMemcpy(device, host_input, sizeof(test_struct), cudaMemcpyHostToDevice));
@@ -93,6 +95,7 @@ __host__ void CUDA_simple_struct_copy_test(){
     gpu_error_check( cudaPeekAtLastError() );
     gpu_error_check( cudaDeviceSynchronize() );
 
+    delete [] host_input->storage;
 
     //then copy the struct itself
     gpu_error_check(cudaMemcpy(host_input, device, sizeof(test_struct), cudaMemcpyDeviceToHost));
@@ -126,8 +129,7 @@ __host__ void CUDA_simple_struct_copy_test(){
 }
 
 
-// remember sizeof = buffer_end_pointer!
-// __host__ void CUDA_struct_copy_test(){
+__host__ void CUDA_struct_copy_test(){
 //     //cuda Unified Memory with ManagedMemcpy would be much simpler,
 //     //but I think I prefer to see precisely when a PCIe transfer will occur.
 //
@@ -176,7 +178,5 @@ __host__ void CUDA_simple_struct_copy_test(){
 //     // delete [] device_a->potential;
 //     delete [] output_potential;
 //
-// }
-//
-__host__ void CUDA_struct_copy_test(){
 }
+//

@@ -59,47 +59,29 @@ __global__ void add_() {
 }
 
 
-//
-// void test_cuda_struct(){
-//     physics_mesh a;
-//     physics_mesh d_a;
-//     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
-//
-//     a = physics_mesh(mesh_sizes);
-//
-//     gpu_error_check( cudaMalloc(&d_a, sizeof(physics_mesh)));
-//     cudaMemcpy(d_a, a, sizeof(physics_mesh), cudaMemcpyHostToDevice);
-//
-//     add<<<1, 1>>>(d_a);
-//
-//     cudaFree(d_a);
-//     free(a);
-// }
+__host__ void copy_physics_mesh_to_gpu(physics_mesh &physics_mesh){
+    //
+    // test_struct * host_input = new test_struct;
+    // host_input->test_int[5] = 10;
+    // host_input->storage = new float[N];
+    // for(int i = 0; i < N; i++){ host_input->storage[i] = i;};
+    //
+    //
+    // //copy the struct, plus values on the stack
+    // test_struct * device;
+    // gpu_error_check(cudaMalloc((void**)&device, sizeof(test_struct)));
+    // gpu_error_check(cudaMemcpy(device, host_input, sizeof(test_struct), cudaMemcpyHostToDevice));
+    //
+    // float * device_storage;
+    // gpu_error_check(cudaMalloc(&device_storage, N*sizeof(float)));
+    // //copy the data
+    // gpu_error_check(cudaMemcpy(device_storage, host_input->storage, N*sizeof(float), cudaMemcpyHostToDevice));
+    // //bind - copy the pointer itself
+    // gpu_error_check(cudaMemcpy(&(device->storage), &device_storage, sizeof(device->storage), cudaMemcpyHostToDevice));
+}
 
 
 
 
-
-void test_cuda(float * x)
-{
-
-  // const int N = 10;
-  // float *d_x, *d_y;
-  // //
-  // gpu_error_check( cudaMalloc(&d_x, N*sizeof(float)));
-  // gpu_error_check( cudaMalloc(&d_y, N*sizeof(float)) );
-  // //
-  // // cudaMemcpy(d_x, x, N*sizeof(float), cudaMemcpyHostToDevice);
-  // // cudaMemcpy(d_y, y, N*sizeof(float), cudaMemcpyHostToDevice
-  // Perform SAXPY on 1M elements
-  // gpu_error_check( add<<<1, 1>>>(); );
-
-  // gpu_error_check( add<<<1, 1>>>(); );
-
-  // DisplayHeader();
-  // cudaMemcpy(x, d_x, N*sizeof(float), cudaMemcpyDeviceToHost);
-  // cudaMemcpy(y, d_y, N*sizeof(float), cudaMemcpyDeviceToHost);
-  //
-  // cudaFree(d_x);
-  // cudaFree(d_y);
+void test_cuda(float * x){
 }
