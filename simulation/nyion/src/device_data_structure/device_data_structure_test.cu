@@ -55,6 +55,8 @@ __host__ void CUDA_simple_copy_test(){
 struct test_struct{
     int test_int[10];
     float * storage;
+    uint8_t * small_storage;
+    //must try different size types
 };
 
 __global__ void test_fill_simple(test_struct * d_a) {
@@ -76,6 +78,10 @@ __host__ void CUDA_simple_struct_copy_test(){
     //float *,
     // then copied to host.
     // ??? okay
+    //Wait, no, that makes perfect sense.
+    //if you call device.storage from the host,
+    //the host tries to find...
+    //wait, but why does it work when copying to a float *?
 
     const int N = 10;
 
@@ -102,12 +108,10 @@ __host__ void CUDA_simple_struct_copy_test(){
     gpu_error_check( cudaPeekAtLastError() );
     gpu_error_check( cudaDeviceSynchronize() );
 
-    delete [] host_input->storage;
-
+    float * host_output_storage = host_input->storage;
     //then copy the struct itself
     gpu_error_check(cudaMemcpy(host_input, device, sizeof(test_struct), cudaMemcpyDeviceToHost));
-    //but of course now the pointers are overwritten with device pointers, so we need to fix that:
-    float * host_output_storage = new float[N];
+    //but of course now the host pointers are overwritten with device pointers, so we need to fix that:
     host_input->storage = host_output_storage;
 
     //copy the data back
@@ -125,15 +129,10 @@ __host__ void CUDA_simple_struct_copy_test(){
     ASSERT_NEAR(host_input->test_int[5],15,1e-3);
     //ASSERT_NEAR(host_input->test_int[0],0,1e-3); //zero test case!
 
-    // //
-    // gpu_error_check(cudaMemcpy(host_input, device, sizeof(test_struct), cudaMemcpyDeviceToHost));
-    // gpu_error_check(cudaMemcpy(host_input->storage, device->storage, N*sizeof(float), cudaMemcpyDeviceToHost));
-    //
-    //
-    //
+
     // gpu_error_check(cudaFree(device->storage));
     // gpu_error_check(cudaFree(device));
-    //
+
     delete [] host_input->storage;
     delete host_input;
 }
@@ -148,12 +147,37 @@ void construct_device_struct(test_struct ** device_struct){
     gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
 }
 
-void copy_to_device_struct(test_struct ** device_struct, test_struct ** host_data_structure){
-    //copy struct itself
-    gpu_error_check(cudaMemcpy(*device_struct, *host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
-
-    float * device_storage;
+void copy_to_device_struct(test_struct ** device_struct, test_struct ** host_struct){
+    float * device_storage; //get the pointer from the device
     gpu_error_check(cudaMemcpy(&device_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+    //and now copy the data.
+    gpu_error_check(cudaMemcpy(device_storage, (**host_struct).storage,  10*sizeof(* device_storage), cudaMemcpyHostToDevice));
+
+    //copy struct itself, wiping all the pointers,
+    gpu_error_check(cudaMemcpy(*device_struct, *host_struct, sizeof(test_struct), cudaMemcpyHostToDevice));
+
+    //then re-copy the pointers.
+    gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
+    //There's a PCIe latency issue here, since we're going * -> host, data -> device,
+    //but whatever!
+}
+
+
+void copy_to_host_struct(test_struct ** device_struct, test_struct ** host_struct){
+
+    float * device_output_storage;
+    //copy the pointer to the data
+    gpu_error_check(cudaMemcpy(&device_output_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+    //then the data itself
+    gpu_error_check(cudaMemcpy((**host_struct).storage, device_output_storage, 10*sizeof(* device_output_storage), cudaMemcpyDeviceToHost));
+
+    //save for after the wipe
+    float * host_storage = (**host_struct).storage;
+
+    //copy struct itself, wiping all the host pointers,
+    gpu_error_check(cudaMemcpy(*host_struct, *device_struct, sizeof(test_struct), cudaMemcpyDeviceToHost));
+
+    (**host_struct).storage = host_storage;
 }
 
 __host__ void CUDA_simple_struct_copy_test_2(){
@@ -172,7 +196,22 @@ __host__ void CUDA_simple_struct_copy_test_2(){
     //double pointer required to preserve malloc edit
 
     copy_to_device_struct(&device_struct, &host_struct);
+    copy_to_device_struct(&device_struct, &host_struct); //check if our pointers were preserved
 
+    test_fill_simple<<<1, 1>>>(device_struct);
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
+    copy_to_host_struct(&device_struct, &host_struct);
+    copy_to_host_struct(&device_struct, &host_struct);
+
+    pretty_print_array(host_struct->storage, 0, N);
+    pretty_print_array(host_struct->test_int, 0, N);
+
+    ASSERT_NEAR(host_struct->storage[0],10,1e-3);
+    ASSERT_NEAR(host_struct->test_int[5],15,1e-3);
+
+    delete [] (*host_struct).storage;
     //copy the struct, plus values on the stack
 
 

@@ -18,4 +18,7 @@ void debug_preamble_printer(std::string function, int line, std::string file, st
   #define pretty_print_named_array(input, start, end) debug_preamble_printer(__FUNCTION__, __LINE__, __FILENAME__, #input); pretty_print_array(input, start, end);
   // #define pretty_print_named_value(input) debug_preamble_printer(__FUNCTION__, __LINE__, __FILENAME__, #input); std::cout << " = " << input;
 
+
+//add pointer location to printed info? 
+
 #endif
