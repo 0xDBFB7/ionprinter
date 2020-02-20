@@ -21,13 +21,6 @@ Ghost updates, too - run through once in tree mode, establish ghost link indices
 */
 
 
-void physics_mesh::refine_cell(int current_depth, int current_indice){
-    assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
-    refined_indices[current_indice] = buffer_end_pointer;
-    // block_indices[block_num] = buffer_end_pointer; //figure this out!
-
-    buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
-}
 
 bool traverse_state::is_ghost(physics_mesh &mesh){
   if(x == 0 || y == 0 || z == 0

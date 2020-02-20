@@ -178,7 +178,7 @@ void copy_to_host_struct(test_struct ** device_struct, test_struct ** host_struc
     gpu_error_check(cudaMemcpy(*host_struct, *device_struct, sizeof(test_struct), cudaMemcpyDeviceToHost));
 
     //must be done simultaneously!
-    (**host_struct).storage = host_storage;
+    (**host_struct).storage = host_temp;
 }
 
 void destruct_device_struct(test_struct ** device_struct){

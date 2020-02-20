@@ -4,6 +4,12 @@
 ///usr/local/cuda/bin/nvprof
 //https://xmartlabs.github.io/cuda-calculator/ CUDA Occupancy Calculator
 
+
+
+// __device__ float curand_uniform (curandState_t *state)
+// __device__ float curand_normal (curandState_t *state)
+//                  curand(&state)
+
 #define N 10
 
 #define MAX 100

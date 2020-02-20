@@ -35,53 +35,74 @@ homogenous computing system. I am not.
 //V100 hits 14TF/900 GBps + 100TF half.
 //https://en.wikipedia.org/wiki/List_of_Nvidia_graphics_processing_units
 //
+//Special thanks to http://ianfinlayson.net/class/cpsc425/notes/cuda-random!
 //
 */
 
 #include "device_data_structure.hpp"
 #include "host_data_structure.hpp"
 
-//Special thanks to http://ianfinlayson.net/class/cpsc425/notes/cuda-random!
 
-
-#define N 10
-
-#define MAX 100
-
-// __device__ float curand_uniform (curandState_t *state)
-// __device__ float curand_normal (curandState_t *state)
-//                  curand(&state)
-__global__ void add_() {
-
-  // int i = blockIdx.x*blockDim.x + threadIdx.x;
-  // x[0] = 0;
-  // y[0] = 100;
-}
-
-__host__ void construct_device_physics_mesh(physics_mesh * device_physics_mesh){
-    gpu_error_check(cudaMalloc((void**)&device_physics_mesh, sizeof(physics_mesh)));
-
-
-}
-
-// 
-// __host__ void copy_physics_mesh_to_gpu(physics_mesh * host_physics_mesh, physics_mesh * device_physics_mesh){
-//     //remember to zero allocated arrays!
-//     //override new with zero constructor?
 //
-//     //copy struct and data on stack
-//     gpu_error_check(cudaMemcpy(device_physics_mesh, host_physics_mesh, sizeof(physics_mesh), cudaMemcpyHostToDevice));
+// #define CONSTRUCTOR_MACRO(TYPE, NAME, SIZE)     \
+//     TYPE * device_temp;         \
+//     gpu_error_check(cudaMalloc(&device_storage, (SIZE)*sizeof(* device_temp)));\
+//     gpu_error_check(cudaMemset(device_storage,0,(SIZE)*sizeof(* device_temp))); \//must memset the whole array!
+//     ;\ //copy pointer to array into struct
+//     gpu_error_check(cudaMemcpy(&((**device_struct).NAME), &device_temp, sizeof((**device_struct).NAME), cudaMemcpyHostToDevice));
 //
 //
-//     float * device_storage;
-//     gpu_error_check(cudaMalloc(&device_storage, N*sizeof(float)));
-//     // //copy the data
-//     gpu_error_check(cudaMemcpy(device_storage, host_input->storage, N*sizeof(float), cudaMemcpyHostToDevice));
-//     // //bind - copy the pointer itself
-//     gpu_error_check(cudaMemcpy(&(device->storage), &device_storage, sizeof(device->storage), cudaMemcpyHostToDevice));
+// void physics_mesh::device_constructor(physics_mesh ** device_struct){
+//     //construct the struct itself
+//     gpu_error_check(cudaMalloc(device_struct, sizeof(physics_mesh)));
+//
 // }
 //
+// void copy_to_device_struct(test_struct ** device_struct, test_struct ** host_struct){
+//     float * device_storage; //get the pointer from the device
+//     gpu_error_check(cudaMemcpy(&device_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+//     //and now copy the data.
+//     gpu_error_check(cudaMemcpy(device_storage, (**host_struct).storage,  10*sizeof(* device_storage), cudaMemcpyHostToDevice));
 //
+//     //copy struct itself, wiping all the pointers,
+//     gpu_error_check(cudaMemcpy(*device_struct, *host_struct, sizeof(test_struct), cudaMemcpyHostToDevice));
+//
+//     //then re-copy the pointers.
+//     gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
+//     //There's a PCIe latency issue here, since we're going * -> host, data -> device,
+//     //but whatever!
+// }
+//
+// void copy_to_host_struct(test_struct ** device_struct, test_struct ** host_struct){
+//     float * device_temp;
+//     //copy the pointer to the data
+//     gpu_error_check(cudaMemcpy(&device_temp, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+//     //then the data itself
+//     gpu_error_check(cudaMemcpy((**host_struct).storage, device_temp, 10*sizeof(* device_temp), cudaMemcpyDeviceToHost));
+//
+//     //save for after the wipe
+//     float * host_temp = (**host_struct).storage;
+//
+//     //copy struct itself, wiping all the host pointers,
+//     gpu_error_check(cudaMemcpy(*host_struct, *device_struct, sizeof(test_struct), cudaMemcpyDeviceToHost));
+//
+//     //must be done simultaneously!
+//     (**host_struct).storage = host_storage;
+// }
+//
+// void destruct_device_struct(test_struct ** device_struct){
+//     float * device_output_storage;
+//     //copy the pointer to the data
+//     gpu_error_check(cudaMemcpy(&device_output_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+//     //then destroy it!
+//     gpu_error_check(cudaFree(device_output_storage));
+//
+//
+//     gpu_error_check(cudaFree(&(**device_struct)));
+// }
+
+
+
 
 
 void test_cuda(float * x){
