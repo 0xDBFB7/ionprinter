@@ -4,11 +4,11 @@
 #include "nyion.hpp"
 
 const int MESH_BUFFER_DEPTH = 3; //includes root
-const int MESH_BUFFER_SIZE = (100*100*100)+(10*(100*100*100));
+const int MESH_BUFFER_SIZE = (100*100*100)+(1*(100*100*100));
 // const int MESH_BUFFER_MAX_BLOCKS = 1000000;
 const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
-#define POTENTIAL_BUFFER_TYPE float
+#define POTENTIAL_TYPE float
 
 __host__ __device__ __inline__ int cube(int input){
     return input*input*input;
@@ -49,6 +49,7 @@ struct physics_mesh{
 
     uint32_t buffer_end_pointer;
 
+    uint32_t device_only = false;
 
     __host__ void compute_world_scale(){  //must be called if mesh_depth is changed
         for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
@@ -60,6 +61,11 @@ struct physics_mesh{
             world_scale[i] = scale;
         } // TODO: Scales must be re-computed if the size changes!
     }
+
+    __host__ physics_mesh(bool o){
+        device_only = true;
+    }
+
 
     __host__ physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth){
         //set scales and sizes
@@ -109,14 +115,16 @@ struct physics_mesh{
     // }
 
     ~physics_mesh(){
-        //on destruction,
-        delete [] temperature;
-        delete [] potential;
-        delete [] space_charge;
-        delete [] boundary_conditions;
-        delete [] refined_indices;
-        delete [] ghost_linkages;
-        delete [] block_indices;
+            //on destruction,
+            if(!device_only){
+                delete [] temperature;
+                delete [] potential;
+                delete [] space_charge;
+                delete [] boundary_conditions;
+                delete [] refined_indices;
+                delete [] ghost_linkages;
+                delete [] block_indices;
+            }
     }
 
     __host__ void pretty_print(){

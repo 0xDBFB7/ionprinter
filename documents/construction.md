@@ -3765,3 +3765,10 @@ A PCIe transfer to the GPU costs about 10 GB/s both ways; so most small problems
 
 If the next generation of Xavier has Volta's HBM2... that's going to be pretty awesome.
 
+
+
+
+What did the class say to the constructor?
+
+I'm incomplete without you <3 <3 <3
+
