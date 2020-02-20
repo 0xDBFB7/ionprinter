@@ -164,21 +164,20 @@ void copy_to_device_struct(test_struct ** device_struct, test_struct ** host_str
     //but whatever!
 }
 
-
 void copy_to_host_struct(test_struct ** device_struct, test_struct ** host_struct){
-
-    float * device_output_storage;
+    float * device_temp;
     //copy the pointer to the data
-    gpu_error_check(cudaMemcpy(&device_output_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
+    gpu_error_check(cudaMemcpy(&device_temp, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
     //then the data itself
-    gpu_error_check(cudaMemcpy((**host_struct).storage, device_output_storage, 10*sizeof(* device_output_storage), cudaMemcpyDeviceToHost));
+    gpu_error_check(cudaMemcpy((**host_struct).storage, device_temp, 10*sizeof(* device_temp), cudaMemcpyDeviceToHost));
 
     //save for after the wipe
-    float * host_storage = (**host_struct).storage;
+    float * host_temp = (**host_struct).storage;
 
     //copy struct itself, wiping all the host pointers,
     gpu_error_check(cudaMemcpy(*host_struct, *device_struct, sizeof(test_struct), cudaMemcpyDeviceToHost));
 
+    //must be done simultaneously!
     (**host_struct).storage = host_storage;
 }
 
@@ -186,8 +185,10 @@ void destruct_device_struct(test_struct ** device_struct){
     float * device_output_storage;
     //copy the pointer to the data
     gpu_error_check(cudaMemcpy(&device_output_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
-
+    //then destroy it!
     gpu_error_check(cudaFree(device_output_storage));
+
+
     gpu_error_check(cudaFree(&(**device_struct)));
 }
 
