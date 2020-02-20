@@ -22,7 +22,7 @@ DISPLAY SETTINGS
 ----------------------------------------------------------------------------- */
 #define OPENGL_SCALE 10
 
-#define OPENGL_3D_WINDOW_X 1920
+#define OPENGL_3D_WINDOW_X (1920/2)
 #define OPENGL_3D_WINDOW_Y 1080
 
 

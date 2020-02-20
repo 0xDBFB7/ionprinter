@@ -69,9 +69,6 @@ struct menu_struct{
         window->end();
         window->show();
 
-        initialize_opengl();
-        opengl_3d_mode();
-
     }
     //
     // void handle_inputs(traverse_state &user_state){
@@ -136,7 +133,10 @@ void move_cursor(physics_mesh &mesh, traverse_state &user_state, std::vector<std
 int main()
 {
 
-    menu_struct menu;
+    // menu_struct menu;
+
+    initialize_opengl();
+    opengl_3d_mode();
 
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh mesh(mesh_sizes, 1);
@@ -152,8 +152,13 @@ int main()
     //     }
     // });
 
+    gui_loop(mesh, user_state, level_splitting,true);
+    gui_loop(mesh, user_state, level_splitting,true); //required for stable start for unknown reason
+
 
     while(true){
+
+
 
         std::string line;
 
@@ -172,15 +177,27 @@ int main()
             if(args[0] == "move" && args.size() == 3){
                 move_cursor(mesh, user_state, args);
             }
-            if(args[0] == "refine"){
-                if(user_state.current_depth < MESH_BUFFER_DEPTH-1){
-                    mesh.refine_cell(user_state.current_depth,user_state.current_indice);
-                    user_state.current_depth++; //descend_into() function?
-                    user_state.x_queue[current_depth] = 0;
-                    user_state.z_queue[current_depth] = 0;
-                    user_state.y_queue[current_depth] = 0;
+            if(args[0] == "info" && args.size() == 2){
+                if(args[1] == "mesh"){
+                    mesh.pretty_print();
                 }
-                user_state.pretty_print();
+                if(args[1] == "state"){
+                    user_state.pretty_print();
+                }
+            }
+            if(args[0] == "mesh_depth" && args.size() == 2){
+                if(mesh.mesh_depth < MESH_BUFFER_DEPTH-2){
+                    mesh.mesh_depth += ((args[1] == "+") ? 1 : -1);
+                    mesh.pretty_print();
+                }
+            }
+            if(args[0] == "refine"){
+                if(user_state.current_depth < mesh.mesh_depth-1){
+                    mesh.refine_cell(user_state.current_depth,user_state.current_indice);
+                                            //how about a wrapper state.x() that just returns user_state.x_queue[user_state.current_depth]?
+                    user_state.pretty_print();
+
+                }
             }
             if(args[0] == ""){
             }
@@ -188,7 +205,6 @@ int main()
         else{
             gui_loop(mesh, user_state, level_splitting,false);
         }
-        gui_loop(mesh, user_state, level_splitting,true);
 
     }
 

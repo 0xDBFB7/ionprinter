@@ -10,6 +10,8 @@
 #include <GL/glext.h>
 #include <GL/glx.h>
 
+
+
 float camera_distance = -10;
 
 float camera_x = 0;
@@ -153,7 +155,7 @@ void opengl_2d_mode(){
 void opengl_clear_screen(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glFlush();
-  
+
   esc_hit = false;
 }
 
