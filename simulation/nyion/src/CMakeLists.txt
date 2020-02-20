@@ -19,4 +19,4 @@ target_link_libraries(visualize ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LI
 
 target_link_libraries(data_structure nyion_lib)
 
-target_link_libraries(device_data_structure ${MATHGL2_LIBRARY} ${CUDA_LIBRARIES} debug_helpers OpenMP::OpenMP_CXX )
+target_link_libraries(device_data_structure ${MATHGL2_LIBRARY} ${CUDA_LIBRARIES} debug_helpers OpenMP::OpenMP_CXX gtest gtest_main )

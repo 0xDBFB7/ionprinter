@@ -58,29 +58,30 @@ __global__ void add_() {
   // y[0] = 100;
 }
 
+__host__ void construct_device_physics_mesh(physics_mesh * device_physics_mesh){
+    gpu_error_check(cudaMalloc((void**)&device_physics_mesh, sizeof(physics_mesh)));
 
-__host__ void copy_physics_mesh_to_gpu(physics_mesh &physics_mesh){
-    //
-    // test_struct * host_input = new test_struct;
-    // host_input->test_int[5] = 10;
-    // host_input->storage = new float[N];
-    // for(int i = 0; i < N; i++){ host_input->storage[i] = i;};
-    //
-    //
-    // //copy the struct, plus values on the stack
-    // test_struct * device;
-    // gpu_error_check(cudaMalloc((void**)&device, sizeof(test_struct)));
-    // gpu_error_check(cudaMemcpy(device, host_input, sizeof(test_struct), cudaMemcpyHostToDevice));
-    //
-    // float * device_storage;
-    // gpu_error_check(cudaMalloc(&device_storage, N*sizeof(float)));
-    // //copy the data
-    // gpu_error_check(cudaMemcpy(device_storage, host_input->storage, N*sizeof(float), cudaMemcpyHostToDevice));
-    // //bind - copy the pointer itself
-    // gpu_error_check(cudaMemcpy(&(device->storage), &device_storage, sizeof(device->storage), cudaMemcpyHostToDevice));
+
 }
 
-
+// 
+// __host__ void copy_physics_mesh_to_gpu(physics_mesh * host_physics_mesh, physics_mesh * device_physics_mesh){
+//     //remember to zero allocated arrays!
+//     //override new with zero constructor?
+//
+//     //copy struct and data on stack
+//     gpu_error_check(cudaMemcpy(device_physics_mesh, host_physics_mesh, sizeof(physics_mesh), cudaMemcpyHostToDevice));
+//
+//
+//     float * device_storage;
+//     gpu_error_check(cudaMalloc(&device_storage, N*sizeof(float)));
+//     // //copy the data
+//     gpu_error_check(cudaMemcpy(device_storage, host_input->storage, N*sizeof(float), cudaMemcpyHostToDevice));
+//     // //bind - copy the pointer itself
+//     gpu_error_check(cudaMemcpy(&(device->storage), &device_storage, sizeof(device->storage), cudaMemcpyHostToDevice));
+// }
+//
+//
 
 
 void test_cuda(float * x){
