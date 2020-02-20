@@ -148,29 +148,30 @@ void construct_device_struct(test_struct ** device_struct){
     gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
 }
 
-void copy_to_device_struct(test_struct * pointer_to_device_struct, test_struct * host_data_structure){
+void copy_to_device_struct(test_struct ** device_struct, test_struct ** host_data_structure){
     //copy struct itself
-    gpu_error_check(cudaMemcpy(pointer_to_device_struct, host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
+    gpu_error_check(cudaMemcpy(*device_struct, *host_data_structure, sizeof(test_struct), cudaMemcpyHostToDevice));
 
     float * device_storage;
-    gpu_error_check(cudaMemcpy(&device_storage, &((*pointer_to_device_struct).storage), sizeof(((*pointer_to_device_struct).storage)), cudaMemcpyDeviceToHost));
+    gpu_error_check(cudaMemcpy(&device_storage, &((**device_struct).storage), sizeof(((**device_struct).storage)), cudaMemcpyDeviceToHost));
 }
 
 __host__ void CUDA_simple_struct_copy_test_2(){
 
     const int N = 10;
 
-    test_struct host_data_structure;
-    host_data_structure.test_int[5] = 10;
-    host_data_structure.storage = new float[N];
-    for(int i = 0; i < N; i++){ host_data_structure.storage[i] = i;};
+    test_struct origin_host_struct;
+    test_struct * host_struct = &origin_host_struct;
 
-    test_struct device_data_structure;
-    test_struct * pointer_to_device_data_structure = &device_data_structure;
-    construct_device_struct(&pointer_to_device_data_structure); //s
+    (*host_struct).test_int[5] = 10;
+    (*host_struct).storage = new float[N];
+    for(int i = 0; i < N; i++){ (*host_struct).storage[i] = i;};
+
+    test_struct * device_struct;
+    construct_device_struct(&device_struct); //s
     //double pointer required to preserve malloc edit
 
-    copy_to_device_struct(pointer_to_device_data_structure, &host_data_structure);
+    copy_to_device_struct(&device_struct, &host_struct);
 
     //copy the struct, plus values on the stack
 
