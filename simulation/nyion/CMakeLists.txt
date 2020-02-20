@@ -17,15 +17,13 @@ set(CUDA_NVCC_FLAGS -arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompiler
 #-v verbose mode - thanks Luca Ferraro!
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
- -foffload=-lm -Wno-unused-parameter -g --coverage")
-
-# -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak
+ -foffload=-lm -Wno-unused-parameter -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -g --coverage")
 
 #Turbo Boost: -ffast-math on host, -use_fast_math nvcc
 
 set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -g")
+set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -g")
 #apparently not good cmake. Works, however.
 
 PROJECT(nyion LANGUAGES CUDA CXX C)

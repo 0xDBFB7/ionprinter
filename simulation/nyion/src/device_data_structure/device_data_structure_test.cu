@@ -2,7 +2,7 @@
 #include "host_data_structure.hpp"
 
 //make -j16 && /usr/local/cuda-10.2/bin/nvprof ./test/nyion_test
-
+//make -j16 && /usr/local/cuda-10.2/bin/cuda-memcheck ./test/nyion_test
 
 //https://stackoverflow.com/questions/9309195/copying-a-struct-containing-pointers-to-cuda-device
 //the input to a kernel can actually be a host structure
@@ -60,20 +60,23 @@ __host__ void CUDA_struct_copy_test(){
     gpu_error_check( cudaDeviceSynchronize() );
 
 
-    //and back again
-    physics_mesh * host_output = new physics_mesh(1); // no destructors!
+    // //and back again
+    // physics_mesh * host_output = new physics_mesh(1); // no destructors!
     // gpu_error_check(cudaMemcpy(host_output, device_a, sizeof(physics_mesh), cudaMemcpyDeviceToHost));
-    POTENTIAL_TYPE * output_potential = new POTENTIAL_TYPE(MESH_BUFFER_SIZE);
+    POTENTIAL_TYPE * output_potential;
     // host_output->potential =
     gpu_error_check(cudaMemcpy(output_potential, device_a->potential, MESH_BUFFER_SIZE*sizeof(POTENTIAL_TYPE), cudaMemcpyDeviceToHost));
 
 
     cudaFree(device_potential);
+    cudaFree(device_a->potential);
     cudaFree(device_a);
     delete host_b;
     delete host_input;
-    // delete host_output->potential;
-    delete host_output;
+
+    // delete [] host_output->potential;
+    // delete host_output;
+    // delete [] device_a->potential;
     delete output_potential;
 
 }
