@@ -15,7 +15,17 @@ TEST(CUDA, CUDA_display_info)
 }
 
 void CUDA_struct_copy_test();
+void CUDA_simple_struct_copy_test();
+void CUDA_simple_copy_test();
 
+
+TEST(CUDA, CUDA_simple_copy_test){
+    CUDA_simple_copy_test();
+}
+
+TEST(CUDA, CUDA_simple_struct_copy_test){
+    CUDA_simple_struct_copy_test();
+}
 
 TEST(CUDA, CUDA_struct_copy_test){
     CUDA_struct_copy_test();

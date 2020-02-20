@@ -1,4 +1,5 @@
 # export ASAN_OPTIONS=protect_shadow_gap=0:replace_intrin=0
+# or ASAN_OPTIONS=protect_shadow_gap=0:replace_intrin=0:halt_on_error=0:verbosity=1
 # and possibly detect_leaks=0
 # must be set prior to running this program.
 # If you get strange garbage from cuda code, this probably broke.
@@ -8,23 +9,27 @@
 
 cmake_minimum_required(VERSION 3.9)
 set (CMAKE_CXX_STANDARD 17)
+
 set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.2/bin/nvcc)
 
-#set (GTEST_DONT_DEFINE_TEST 1)
-
-set(CUDA_NVCC_FLAGS -arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v)
+set(CUDA_NVCC_FLAGS "-arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v")
 #one -O3 for host, one for device. Set -arch appropriately for your GPU.
 #-v verbose mode - thanks Luca Ferraro!
-
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
- -foffload=-lm -Wno-unused-parameter -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -g --coverage")
-
-#Turbo Boost: -ffast-math on host, -use_fast_math nvcc
+# --generate-line-info?
+# --compiler-options -Wall -Wextra -pedantic -Werror --resource-usage?
 
 set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 
-set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -g")
-#apparently not good cmake. Works, however.
+
+set(CXX_ASAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -fsanitize-recover=address")
+
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
+ -foffload=-lm -Wno-unused-parameter ${CXX_ASAN_FLAGS} -g --coverage")
+
+#Turbo Boost: -ffast-math on host, -use_fast_math nvcc
+
+set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} ${CXX_ASAN_FLAGS} -g")
+
 
 PROJECT(nyion LANGUAGES CUDA CXX C)
 

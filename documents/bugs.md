@@ -265,3 +265,12 @@ https://github.com/google/sanitizers/issues/629
 ##### Solution 
 
 Not sure of a systemic way to prevent this.
+
+
+#### Issue:
+
+ASAN is not particularly reliable with CUDA code, and so I became conditioned to blaming errors on ASAN itself.
+
+However, after spending a while trying to diagnose why ASAN was crashing even with -recover, I disabled ASAN altogether, and
+
+Segmentation fault.

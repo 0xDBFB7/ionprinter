@@ -24,6 +24,8 @@ struct physics_mesh;
                                         if(len){std::cout << input[len-1];} \
                                         std::cout << "}\n";
 
+
+//the size of this on the stack must be < 4 KB for reasons of cuda kernel arguments.
 struct physics_mesh{
 
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
