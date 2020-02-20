@@ -143,6 +143,7 @@ void construct_device_struct(test_struct ** device_struct){
 
     float * device_storage;
     gpu_error_check(cudaMalloc(&device_storage, 10*sizeof(* device_storage)));
+    gpu_error_check(cudaMemset(device_storage,0,10*sizeof(* device_storage))); //must memset the whole array!
     //copy pointer to array into struct
     gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
 }
