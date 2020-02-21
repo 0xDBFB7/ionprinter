@@ -130,6 +130,9 @@ void copy_to_device_struct(test_struct ** device_struct, test_struct ** host_str
     //copy struct itself, wiping all the pointers,
     gpu_error_check(cudaMemcpy(*device_struct, *host_struct, sizeof(test_struct), cudaMemcpyHostToDevice));
 
+    //if all the pointers were put to the end of physics_mesh, perhaps this wipe wouldn't occur?⁠
+    //sizeof = &(struct) -  &(struct->canary)
+
     //then re-copy the pointers.
     gpu_error_check(cudaMemcpy(&((**device_struct).storage), &device_storage, sizeof((**device_struct).storage), cudaMemcpyHostToDevice));
     //There's a PCIe latency issue here, since we're going * -> host, data -> device,

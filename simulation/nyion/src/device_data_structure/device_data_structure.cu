@@ -43,12 +43,12 @@ homogenous computing system. I am not.
 #include "host_data_structure.hpp"
 
 
-#define CONSTRUCTOR_MACRO(TYPE, NAME, SIZE)     \
+#define CONSTRUCTOR_MACRO(TYPE, NAME, N)     \
     TYPE * device_temp;         \
     /* malloc an array on the device, */ \
-    gpu_error_check(cudaMalloc(&device_temp, (SIZE)*sizeof(* device_temp))); \
+    gpu_error_check(cudaMalloc(&device_temp, (N)*sizeof(* device_temp))); \
     /* memset the whole array, not just a buffer_end_pointer's worth */ \
-    gpu_error_check(cudaMemset(device_temp,0,(SIZE)*sizeof(* device_temp))); \
+    gpu_error_check(cudaMemset(device_temp,0,(N)*sizeof(* device_temp))); \
     /* then copy the pointer to the new array into the struct. */ \
     gpu_error_check(cudaMemcpy(&((**device_struct).NAME), &device_temp, sizeof((**device_struct).NAME), cudaMemcpyHostToDevice));
 
@@ -57,32 +57,41 @@ void physics_mesh::device_constructor(physics_mesh ** device_struct){
     //construct the struct itself
     gpu_error_check(cudaMalloc(device_struct, sizeof(physics_mesh)));
 
-    CONSTRUCTOR_MACRO( float, potential, MESH_BUFFER_SIZE);
+    //construct the arrays and copy to the GPU
+    CONSTRUCTOR_MACRO(float, potential, MESH_BUFFER_SIZE);
 }
 
 
 
 
 
-// #define COPY_ARRAY_MACRO(TYPE, NAME, SIZE)     \
+#define COPY_ARRAY_MACRO(TYPE, NAME, N)     \
+    TYPE * NAME; \
+    /* get the pointer from the device */ \
+    gpu_error_check(cudaMemcpy(&NAME, &((**device_struct).NAME), sizeof(((**device_struct).NAME)), cudaMemcpyDeviceToHost)); \
+    /* and now copy the data. */ \
+    gpu_error_check(cudaMemcpy(NAME, (**host_struct).NAME,  (N)*sizeof(* NAME), cudaMemcpyHostToDevice));
+
 
 void physics_mesh::copy_to_device_struct(physics_mesh ** device_struct, physics_mesh ** host_struct){
-    float * device_temp; //get the pointer from the device
-        //must be uniquely named and kept for later.
-    gpu_error_check(cudaMemcpy(&device_temp, &((**device_struct).potential), sizeof(((**device_struct).potential)), cudaMemcpyDeviceToHost));
-    //and now copy the data.
-    gpu_error_check(cudaMemcpy(device_temp, (**host_struct).potential,  10*sizeof(* device_temp), cudaMemcpyHostToDevice));
+
+    uint32_t length = (**host_struct).buffer_end_pointer;
+    COPY_ARRAY_MACRO(float, potential, length);
 
     //copy struct itself, wiping all the pointers,
     gpu_error_check(cudaMemcpy(*device_struct, *host_struct, sizeof(physics_mesh), cudaMemcpyHostToDevice));
 
     //then re-copy the pointers.
-    gpu_error_check(cudaMemcpy(&((**device_struct).potential), &device_temp, sizeof((**device_struct).potential), cudaMemcpyHostToDevice));
+    gpu_error_check(cudaMemcpy(&((**device_struct).potential), &potential, sizeof((**device_struct).potential), cudaMemcpyHostToDevice));
 
 
     //There's a PCIe latency thing here, since we're going * -> host, data -> device,
     //but whatever!
 }
+
+
+
+
 
 void physics_mesh::copy_to_host_struct(physics_mesh ** device_struct, physics_mesh ** host_struct){
     float * device_temp;

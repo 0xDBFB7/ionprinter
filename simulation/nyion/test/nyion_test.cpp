@@ -69,6 +69,8 @@ TEST(MathGL, MathGL_Basic)
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    // return CommandLineTestRunner::RunAllTests(ac, av);
-    return RUN_ALL_TESTS();
+
+    int retval = RUN_ALL_TESTS();
+    cudaDeviceReset();
+    return retval;
 }

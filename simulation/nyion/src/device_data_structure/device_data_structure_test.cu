@@ -5,7 +5,7 @@
 #include "gtest/gtest.h"
 
 //make -j16 && /usr/local/cuda-10.2/bin/nvprof ./test/nyion_test
-//make -j16 && /usr/local/cuda-10.2/bin/cuda-memcheck ./test/nyion_test
+//make -j16 && /usr/local/cuda-10.2/bin/cuda-memcheck --leak-check full ./test/nyion_test
 
 //https://stackoverflow.com/questions/9309195/copying-a-struct-containing-pointers-to-cuda-device
 //the input to a kernel can actually be a host structure
@@ -38,7 +38,6 @@ __global__ void physics_test_fill_simple(physics_mesh * d_a) {
 }
 
 __host__ void CUDA_physics_mesh_copy_test(){
-
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;

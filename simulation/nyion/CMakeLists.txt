@@ -17,6 +17,9 @@ set(CUDA_NVCC_FLAGS "-arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompile
 #-v verbose mode - thanks Luca Ferraro!
 # --generate-line-info?
 # --compiler-options -Wall -Wextra -pedantic -Werror --resource-usage?
+# -lineinfo, -G
+# -rdynamic on host
+# for more useful cuda-memcheck
 
 set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 
