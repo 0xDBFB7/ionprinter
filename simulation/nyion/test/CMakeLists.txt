@@ -9,10 +9,9 @@ add_executable (nyion_test nyion_test.cpp)
 target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES}
                                     nyion_lib data_structure visualize debug_helpers device_data_structure OpenMP::OpenMP_CXX)
 
-
-#target_link_libraries(nyion_test CppUTest )
-#target_link_libraries(nyion_test CppUTestExt )
 target_link_libraries(nyion_test gtest gtest_main )
+
+target_link_libraries(nyion_test test_persistence)
 
 target_compile_options(nyion_test PRIVATE)
 

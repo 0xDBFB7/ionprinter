@@ -101,6 +101,8 @@ void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh **
 
 
 
+
+
 void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** host_struct){
     float * device_temp;
     //copy the pointer to the data
@@ -117,6 +119,11 @@ void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** h
     //then restore host pointers to host arrays
     (**host_struct).potential = host_temp;
 }
+
+
+
+
+
 
 void physics_mesh::device_destructor(physics_mesh ** device_struct){
     float * device_temp;

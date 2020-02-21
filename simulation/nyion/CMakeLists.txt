@@ -49,9 +49,13 @@ find_package(CUDA REQUIRED)
 include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS}
                                                         ${GLUT_INCLUDE_DIRS} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ../src/)
 
-include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL)
-include_directories(/home/arthurdent/Programs/cpp-linenoise)
 
+include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL)
+
+include_directories(/home/arthurdent/Programs/cpp-linenoise)
+# from https://github.com/yhirose/cpp-linenoise/commits/master, version 5ea11d5d97e1f770524c300dd67db009dd4a3ab4
+include_directories(/home/arthurdent/Programs/nlohmann-json/)
+# from https://github.com/nlohmann/json, version 3.7.3
 
 set(CMAKE_BUILD_TYPE Debug)
 add_subdirectory (src)
