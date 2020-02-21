@@ -14,6 +14,8 @@
 
 //this file calls the modules' respective test functions.
 
+//Test names cannot contain _
+//big deal
 
 TEST(MathGL, MathGL_Basic)
 {
@@ -26,44 +28,18 @@ TEST(MathGL, MathGL_Basic)
   // gr.WriteFrame("test.png");
 
 }
-//
-// TEST_GROUP(OpenGL)
-// {
-// };
-//
-// IGNORE_TEST(OpenGL, OpenGL_Basic)
-// {
-//   initialize_opengl();
-//   opengl_3d_mode();
-//   while(true){
-//     opengl_clear_screen();
-//     opengl_draw_axis_cross();
-//     opengl_test_prism();
-//     update_screen();
-//   }
-// }
 
-
-//
-// TEST(CUDA, CUDA_basic)
-// {
-//
-//   float * x = new float[10];
-//   float * y = new float[10];
-//
-//   // test_cuda(x);
-//
-//   float *d_x;
-//
-//   gpu_error_check( cudaMalloc(&d_x, 100*sizeof(float)));
-//
-//
-//   pretty_print_named_array(x,0,10);
-//
-//   delete [] x;
-//   delete [] y;
-// }
-
+TEST(OpenGL, DISABLED_OpenGL_Basic)
+{
+  initialize_opengl();
+  opengl_3d_mode();
+  while(true){
+    opengl_clear_screen();
+    opengl_draw_axis_cross();
+    opengl_test_prism();
+    update_screen();
+  }
+}
 
 
 int main(int argc, char** argv)

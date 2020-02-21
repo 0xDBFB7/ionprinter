@@ -31,9 +31,9 @@
 //unified memory allows multiple GPUs, which might be useful down the road.
 
 
-__global__ void physics_test_fill_simple(physics_mesh * d_a) {
-    for(int i = 0; i < 10; i++){
-        d_a->potential[i] = 100;
+__global__ void physics_test_fill_simple(physics_mesh &mesh) {
+    for(int i = 0; i < mesh.buffer_end_pointer; i++){
+        mesh.potential[i] = i+100;
     }
 }
 
@@ -46,30 +46,61 @@ __host__ void CUDA_physics_mesh_copy_test(){
 
     physics_mesh * device_struct;
 
-    physics_mesh::device_constructor(&device_struct); //s
-    //double pointer required to preserve malloc edit
+    physics_mesh::device_constructor(&device_struct);
 
     physics_mesh::copy_to_device_struct(&device_struct, &host_struct);
-    physics_mesh::copy_to_device_struct(&device_struct, &host_struct); //check if our pointers were preserved
-
+    physics_mesh::copy_to_device_struct(&device_struct, &host_struct);
+    //we do this twice to check if our pointers were preserved correctly - seperate into other test
 
     //run kernel
-    physics_test_fill_simple<<<1, 1>>>(device_struct);
+    physics_test_fill_simple<<<1, 1>>>(*device_struct);
     gpu_error_check( cudaPeekAtLastError() );
     gpu_error_check( cudaDeviceSynchronize() );
 
+    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
+    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
 
-    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
-    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
+    cudaDeviceSynchronize();
 
     pretty_print_array(origin_host.potential, 0, 20);
 
     origin_host.pretty_print();
 
     ASSERT_NEAR(origin_host.potential[0],100,1e-3);
+    ASSERT_NEAR(origin_host.potential[origin_host.buffer_end_pointer+1],0,1e-3);
+    //testing the zero case, to catch garbage on initialization
     ASSERT_NEAR(origin_host.mesh_sizes[0],3,1e-3);
-    //remember to test the zero case, to catch garbage on initialization
 
     physics_mesh::device_destructor(&device_struct);
 
+}
+
+TEST(CUDA, CUDA_physics_mesh_copy_benchmark){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+    physics_mesh origin_host(mesh_sizes, 1);
+    physics_mesh * host_struct = &origin_host;
+
+    physics_mesh * device_struct;
+
+    physics_mesh::device_constructor(&device_struct);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    physics_mesh::copy_to_device_struct(&device_struct, &host_struct);
+    //we do this twice to check if our pointers were preserved correctly
+
+    //run kernel
+    physics_test_fill_simple<<<1, 1>>>(*device_struct);
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
+    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
+
+    cudaDeviceSynchronize();
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count();
+    std::cout << duration << " us, " << "\n";
+
+    physics_mesh::device_destructor(&device_struct);
 }

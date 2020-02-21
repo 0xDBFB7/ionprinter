@@ -255,6 +255,7 @@ std::fill(mesh_sizes, mesh_sizes + MAX_DEPTH, 8);
 
 is a good idea.
 
+Overriding the default constructor to add an initialization step might be a good idea!
 
 #### Issue:
 
@@ -271,7 +272,7 @@ Not sure of a systemic way to prevent this.
 
 ASAN is not particularly reliable with CUDA code, and so I became conditioned to blaming errors on ASAN itself.
 
-However, after spending a while trying to diagnose why ASAN was crashing even with -recover, I disabled ASAN altogether, and
+However, after spending a while trying to diagnose why ASAN was crashing even with -recover, I disabled ASAN altogether, and...
 
 Segmentation fault.
 
@@ -285,9 +286,9 @@ Guidelines:
 
 Choose a->b or (*a).b and stick with it. I prefer (*a).b.
 
-Choose a sensible 'root' value to pass around. For instance, if most of your functions need a \*\*, switch to p \* =.
+Choose a sensible 'root' value to pass around. For instance, if most of your functions need a \*\*, switch to p \* = rather than p.
 
-Be verbose! If your function takes a **, try writing:
+You can be verbose; specifically, 'return to base' constantly. If your function takes a \*\* and you want a \*, try writing:
 
 &(**x)
 
@@ -295,7 +296,8 @@ Rather than
 
 (*x). 
 
-Then everything feels like an atomic operation on a base.
+Then everything feels like an atomic operation on a base. 
 
-Perhaps there's some performance cost, but if you're working with pointers it's almost certainly nothing anyhow.
+Perhaps there's some performance cost, but if you're working with pointers it's certainly irrelevant anyhow.
 
+I like it! You might not, though, and that's fine.

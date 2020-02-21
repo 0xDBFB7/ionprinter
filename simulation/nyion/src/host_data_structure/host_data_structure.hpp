@@ -54,7 +54,7 @@ struct physics_mesh{
     physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth);
     ~physics_mesh();
 
-
+    void equal(physics_mesh &mesh_2);
     void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_ghost_linkages();
