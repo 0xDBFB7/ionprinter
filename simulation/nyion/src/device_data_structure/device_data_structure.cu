@@ -69,13 +69,16 @@ void physics_mesh::device_constructor(physics_mesh ** device_struct){
 
 
 
-
 #define COPY_ARRAY_MACRO(TYPE, NAME, N)     \
     TYPE * NAME; \
     /* get the pointer from the device */ \
     gpu_error_check(cudaMemcpy(&NAME, &((**device_struct).NAME), sizeof(((**device_struct).NAME)), cudaMemcpyDeviceToHost)); \
     /* and now copy the data. */ \
     gpu_error_check(cudaMemcpy(NAME, (**host_struct).NAME,  (N)*sizeof(* NAME), cudaMemcpyHostToDevice));
+
+
+#define COPY_POINTERS_BACK_TO_DEVICE(NAME)     \
+    gpu_error_check(cudaMemcpy(&((**device_struct).NAME), &NAME, sizeof((**device_struct).NAME), cudaMemcpyHostToDevice));
 
 
 void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct){
@@ -88,15 +91,12 @@ void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh **
     //copy struct itself, wiping all the pointers,
     gpu_error_check(cudaMemcpy(*device_struct, *host_struct, sizeof(physics_mesh), cudaMemcpyHostToDevice));
 
-
-
     //then re-copy the pointers.
-    gpu_error_check(cudaMemcpy(&((**device_struct).potential), &potential, sizeof((**device_struct).potential), cudaMemcpyHostToDevice));
+    COPY_POINTERS_BACK_TO_DEVICE(potential);
 
-    //There's a PCIe latency thing here, since we're going * -> host, data -> device,
-    //but whatever!
 }
-
+//There's a PCIe latency thing here, since we're going * -> host, data -> device,
+//but whatever!
 
 
 
