@@ -1,9 +1,19 @@
 #include <nlohmann/json.hpp>
 
+#include "host_data_structure.hpp"
+
+
 using json = nlohmann::json;
 
-physics_mesh::persist_to_file(){
+void persist_to_file(){
+    std::vector<physics_mesh> sub;
 
+    //Push back new subject created with default constructor.
+    sub.push_back(subject());
+
+
+    //Add a new element if you want another:
+    sub.push_back(subject());
 }
 // // read a JSON file
 // std::ifstream i("file.json");

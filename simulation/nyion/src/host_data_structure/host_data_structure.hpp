@@ -25,16 +25,19 @@ struct physics_mesh;
 
 #define POTENTIAL_TYPE float
 
+
+
 //the size of this on the stack must be < 4 KB for reasons of cuda kernel arguments.
+//no temporal data needed on device?
 struct physics_mesh{
 
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int mesh_sizes[MESH_BUFFER_DEPTH];
     int mesh_depth; //must be enforced because of world_scale issues.
 
-    float * temperature;
-    float * potential;
-    int32_t * space_charge; //charge probably can't reasonably be fractional - we're not working with quarks?
+    float * temperature; //Kelvin
+    POTENTIAL_TYPE * potential; //Volts
+    int32_t * space_charge; //e+ , charge probably can't reasonably be fractional - we're not working with quarks?
     uint16_t * boundary_conditions;
     uint32_t * refined_indices;
     uint32_t * ghost_linkages; // can't include ghosts at 'overhangs' - those'll be handled by 'copy_down' I suppose?
@@ -60,7 +63,6 @@ struct physics_mesh{
     void set_ghost_linkages();
     void pretty_print();
 
-
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
 
 
@@ -68,8 +70,11 @@ struct physics_mesh{
     static void copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct);
     static void copy_to_host(physics_mesh ** device_struct, physics_mesh ** host_struct);
     static void device_destructor(physics_mesh ** device_struct);
+
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
+
+
 
 struct traverse_state{
 
@@ -93,6 +98,32 @@ struct traverse_state{
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
 
 };
+
+#define PARTICLE_TYPE double
+
+const int MAX_TIMESTEPS = 3; //includes root
+
+struct particles{
+    //SoA
+    PARTICLE_TYPE * x;
+    PARTICLE_TYPE * y;
+    PARTICLE_TYPE * z;
+
+    PARTICLE_TYPE * v_x;
+    PARTICLE_TYPE * v_y;
+    PARTICLE_TYPE * v_z;
+
+    uint16_t * particle_category;
+
+    uint32_t num_particles[timesteps]; //heap
+    //a lookup
+    //lookup(number, timestep);
+    //timestep*num_particles[timestep] + number?
+
+
+}
+
+
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
 
