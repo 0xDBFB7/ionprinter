@@ -42,7 +42,7 @@ homogenous computing system. I am not.
 //if all the pointers were put to the end of physics_mesh, perhaps we could simplify the pointer wipe code?
 //cudaMemcpy(...,&(struct) -  &(struct->canary)...)
 //
-// oh, no, structure order doesn't seem to be preserved in the case of 
+// oh, no, structure order doesn't seem to be preserved in the case of
 
 #include "device_data_structure.hpp"
 #include "host_data_structure.hpp"
@@ -78,7 +78,7 @@ void physics_mesh::device_constructor(physics_mesh ** device_struct){
     gpu_error_check(cudaMemcpy(NAME, (**host_struct).NAME,  (N)*sizeof(* NAME), cudaMemcpyHostToDevice));
 
 
-void physics_mesh::copy_to_device_struct(physics_mesh ** device_struct, physics_mesh ** host_struct){
+void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct){
     //double pointer required to preserve malloc edit
 
     uint32_t length = (**host_struct).buffer_end_pointer;
@@ -101,7 +101,7 @@ void physics_mesh::copy_to_device_struct(physics_mesh ** device_struct, physics_
 
 
 
-void physics_mesh::copy_to_host_struct(physics_mesh ** device_struct, physics_mesh ** host_struct){
+void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** host_struct){
     float * device_temp;
     //copy the pointer to the data
     gpu_error_check(cudaMemcpy(&device_temp, &((**device_struct).potential), sizeof(((**device_struct).potential)), cudaMemcpyDeviceToHost));

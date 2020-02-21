@@ -200,8 +200,6 @@ int main()
 
                 }
             }
-            if(args[0] == ""){
-            }
         }
         else{
             gui_loop(mesh, user_state, level_splitting,false);

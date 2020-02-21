@@ -48,8 +48,8 @@ __host__ void CUDA_physics_mesh_copy_test(){
 
     physics_mesh::device_constructor(&device_struct);
 
-    physics_mesh::copy_to_device_struct(&device_struct, &host_struct);
-    physics_mesh::copy_to_device_struct(&device_struct, &host_struct);
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
     //we do this twice to check if our pointers were preserved correctly - seperate into other test
 
     //run kernel
@@ -57,8 +57,8 @@ __host__ void CUDA_physics_mesh_copy_test(){
     gpu_error_check( cudaPeekAtLastError() );
     gpu_error_check( cudaDeviceSynchronize() );
 
-    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
-    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
 
     cudaDeviceSynchronize();
 
@@ -76,7 +76,7 @@ __host__ void CUDA_physics_mesh_copy_test(){
 }
 
 TEST(CUDA, CUDA_physics_mesh_copy_benchmark){
-    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {100, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;
 
@@ -86,15 +86,9 @@ TEST(CUDA, CUDA_physics_mesh_copy_benchmark){
 
     auto start = std::chrono::high_resolution_clock::now();
 
-    physics_mesh::copy_to_device_struct(&device_struct, &host_struct);
-    //we do this twice to check if our pointers were preserved correctly
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
 
-    //run kernel
-    physics_test_fill_simple<<<1, 1>>>(*device_struct);
-    gpu_error_check( cudaPeekAtLastError() );
-    gpu_error_check( cudaDeviceSynchronize() );
-
-    physics_mesh::copy_to_host_struct(&device_struct, &host_struct);
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
 
     cudaDeviceSynchronize();
 

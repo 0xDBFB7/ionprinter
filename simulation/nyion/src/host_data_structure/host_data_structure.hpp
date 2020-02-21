@@ -65,8 +65,8 @@ struct physics_mesh{
 
 
     static void device_constructor(physics_mesh ** device_struct);
-    static void copy_to_device_struct(physics_mesh ** device_struct, physics_mesh ** host_struct);
-    static void copy_to_host_struct(physics_mesh ** device_struct, physics_mesh ** host_struct);
+    static void copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct);
+    static void copy_to_host(physics_mesh ** device_struct, physics_mesh ** host_struct);
     static void device_destructor(physics_mesh ** device_struct);
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
