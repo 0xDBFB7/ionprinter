@@ -98,30 +98,30 @@ struct traverse_state{
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
 
 };
-
-#define PARTICLE_TYPE double
-
-const int MAX_TIMESTEPS = 3; //includes root
-
-struct particles{
-    //SoA
-    PARTICLE_TYPE * x;
-    PARTICLE_TYPE * y;
-    PARTICLE_TYPE * z;
-
-    PARTICLE_TYPE * v_x;
-    PARTICLE_TYPE * v_y;
-    PARTICLE_TYPE * v_z;
-
-    uint16_t * particle_category;
-
-    uint32_t num_particles[timesteps]; //heap
-    //a lookup
-    //lookup(number, timestep);
-    //timestep*num_particles[timestep] + number?
-
-
-}
+//
+// #define PARTICLE_TYPE double
+//
+// const int MAX_TIMESTEPS = 3; //includes root
+//
+// struct particles{
+//     //SoA
+//     PARTICLE_TYPE * x;
+//     PARTICLE_TYPE * y;
+//     PARTICLE_TYPE * z;
+//
+//     PARTICLE_TYPE * v_x;
+//     PARTICLE_TYPE * v_y;
+//     PARTICLE_TYPE * v_z;
+//
+//     uint16_t * particle_category;
+//
+//     uint32_t num_particles[timesteps]; //heap
+//     //a lookup
+//     //lookup(number, timestep);
+//     //timestep*num_particles[timestep] + number?
+//
+//
+// }
 
 
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:

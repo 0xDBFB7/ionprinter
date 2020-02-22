@@ -69,7 +69,7 @@ void physics_mesh::device_constructor(physics_mesh ** device_struct){
 
 
 
-#define COPY_ARRAY_MACRO(TYPE, NAME, N)     \
+#define COPY_ARRAY_TO_DEVICE_MACRO(TYPE, NAME, N)     \
     TYPE * NAME; \
     /* get the pointer from the device */ \
     gpu_error_check(cudaMemcpy(&NAME, &((**device_struct).NAME), sizeof(((**device_struct).NAME)), cudaMemcpyDeviceToHost)); \
@@ -83,10 +83,10 @@ void physics_mesh::device_constructor(physics_mesh ** device_struct){
 
 void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct){
     //double pointer required to preserve malloc edit
-
     uint32_t length = (**host_struct).buffer_end_pointer;
 
-    COPY_ARRAY_MACRO(float, potential, length);
+    //copy array and also save a copy of each array pointer for later
+    COPY_ARRAY_TO_DEVICE_MACRO(POTENTIAL_TYPE, potential, length);
 
     //copy struct itself, wiping all the pointers,
     gpu_error_check(cudaMemcpy(*device_struct, *host_struct, sizeof(physics_mesh), cudaMemcpyHostToDevice));
@@ -101,14 +101,16 @@ void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh **
 
 
 
+#define COPY_ARRAY_TO_HOST_MACRO(TYPE, NAME, N) \
+    TYPE * NAME_temp;    \
+    /* copy the pointer to the data */  \
+    gpu_error_check(cudaMemcpy(&NAME_temp, &((**device_struct).NAME), sizeof(((**device_struct).NAME)), cudaMemcpyDeviceToHost)); \
+    /*  then the data itself */ \
+    gpu_error_check(cudaMemcpy((**host_struct).NAME, NAME_temp, N*sizeof(* NAME_temp), cudaMemcpyDeviceToHost));
+
 
 
 void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** host_struct){
-    float * device_temp;
-    //copy the pointer to the data
-    gpu_error_check(cudaMemcpy(&device_temp, &((**device_struct).potential), sizeof(((**device_struct).potential)), cudaMemcpyDeviceToHost));
-    //then the data itself
-    gpu_error_check(cudaMemcpy((**host_struct).potential, device_temp, 10*sizeof(* device_temp), cudaMemcpyDeviceToHost));
 
     //save host array pointers for after the wipe
     float * host_temp = (**host_struct).potential;
@@ -118,20 +120,23 @@ void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** h
 
     //then restore host pointers to host arrays
     (**host_struct).potential = host_temp;
+
+    COPY_ARRAY_TO_HOST_MACRO(POTENTIAL_TYPE, potential, ((**host_struct).buffer_end_pointer));
+
 }
 
 
 
-
-
+#define DEFENESTRATE_ARRAY(TYPE, NAME) \
+    TYPE * NAME; \
+    /* //copy the pointer to the data */ \
+    gpu_error_check(cudaMemcpy(&NAME, &((**device_struct).NAME), sizeof(((**device_struct).NAME)), cudaMemcpyDeviceToHost)); \
+    /* //then destroy it! */ \
+    gpu_error_check(cudaFree(NAME)); \
 
 void physics_mesh::device_destructor(physics_mesh ** device_struct){
-    float * device_temp;
-    //copy the pointer to the data
-    gpu_error_check(cudaMemcpy(&device_temp, &((**device_struct).potential), sizeof(((**device_struct).potential)), cudaMemcpyDeviceToHost));
-    //then destroy it!
-    gpu_error_check(cudaFree(device_temp));
 
+    DEFENESTRATE_ARRAY(POTENTIAL_TYPE, potential);
 
     //then destroy the struct itself.
     gpu_error_check(cudaFree(&(**device_struct)));

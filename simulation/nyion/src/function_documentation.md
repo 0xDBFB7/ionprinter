@@ -24,3 +24,16 @@ TODO:
 A lot of programs have huge config files and tons of options for flexibility.
 This program should be built on the paradigm of 'sensible defaults':
 an engineer should be able to import a mesh and have it just be solved.
+
+
+Less than 15 years ago this level of performance would have cost $150,000 (3 TFLOPS).
+
+(TF is a useless metric, but approximately)
+
+born too late to explore the earth,
+born too early to explore the galaxy,
+born just in time to build some seriously awesome stuff?
+
+now a single card can do >100 Tflops fp16
+
+that's FRIGGIN AMAZING
