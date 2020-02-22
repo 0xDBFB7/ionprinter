@@ -1,0 +1,119 @@
+Install https://atom.io/packages/scroll-sync for the magic!
+or set scrollbind in vim
+It's somewhat difficult to document code without making each source file bulky, unwieldy and
+difficult to navigate - c.f. literate programming.
+but you still want to have a spatial correspondence between the words and the source.
+This sort of two-pane doc would be great,
+especially if there was some sort of active system anchoring things in sync...
+
+scrollbound-drivel -
+
+//This is simple, so I'm sure someone else has done a better job implementing it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define CONSTRUCTOR_MACRO(TYPE, NAME, N)     \
+
+
+
+
+
+//anchor text in place
+//-> html, with little drop-down where folded
+
+
+void physics_mesh::device_constructor(physics_mesh ** device_struct){
+What does this do?
+
+This is the story Spin us a yarn.
+
+//this part does this part
+
+//this part defenestrates the combobulator
+
+References:
+//https://docs.nvidia.com/cuda/cuda-memcheck/index.html#example-use-of-racecheck
+Math:
+//This implements Planck's law,
+/**
+ * Short one line description.                           (1)
+ * <p>
+ * Longer description. If there were any, it would be    (2)
+ * here.
+ * </p>
+ * And even more explanations to follow in consecutive
+ * paragraphs separated by HTML paragraph breaks.
+
+ %>
+ ..clipped below,
+ *
+ * @param  variable Description text text text.          (3)
+ * @return Description text text text.
+ */
+
+You can type whatever you want (even below next function), then '%%>> clip', script copies cut-off description to the bottom of the page.
+
+if you type '%%>> ...', the script pastes the rest of the description from below.
+
+functions, #defines added to files are automatically copied here.
+
+Non-whitespace is never clipped when syncing positions unless >>clip is called.
+
+COPY_ARRAY_MACRO(TYPE, NAME, N)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+physics_mesh::device_constructor(physics_mesh ** device_struct){
+test

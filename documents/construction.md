@@ -3772,3 +3772,5 @@ What did the class say to the constructor?
 
 I'm incomplete without you <3 <3 <3
 
+
+Julia is a cool language.

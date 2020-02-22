@@ -18,3 +18,9 @@ TODO:
 - []
 - []
 - []
+
+
+
+A lot of programs have huge config files and tons of options for flexibility.
+This program should be built on the paradigm of 'sensible defaults':
+an engineer should be able to import a mesh and have it just be solved.
