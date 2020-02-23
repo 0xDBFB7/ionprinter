@@ -22,7 +22,7 @@ target_link_libraries(debug_helpers gtest gtest_main)
 set_target_properties(debug_helpers PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 
-add_library (test_persistence test_persistence/store_tests.cpp test_persistence/store_tests.hpp)
+add_library (state_persist state_persist/state_persist.cpp)
 
 
 add_library (device_data_structure device_data_structure/struct_transfer_helpers.cu device_data_structure/struct_transfer_helpers.hpp)
@@ -37,7 +37,7 @@ target_link_libraries(nyion ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRAR
 
 add_executable(array_helper array_helper_program/array_helper.cpp)
 target_link_libraries(array_helper ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} OpenMP::OpenMP_CXX )
-target_link_libraries(array_helper fltk nyion_lib physics_mesh test_persistence visualize debug_helpers)
+target_link_libraries(array_helper fltk nyion_lib physics_mesh state_persist visualize debug_helpers)
 
 
 add_library (nyion_lib nyion.cpp nyion.hpp)

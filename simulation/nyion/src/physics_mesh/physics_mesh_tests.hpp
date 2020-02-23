@@ -66,6 +66,9 @@ TEST(physics_mesh, breadth_first_2){
     }
 }
 
+TEST(physics_mesh, serialization){
+    
+}
 
 // TEST(cell_world_lookup, cell_world_lookup_test_3){
 //   float x,y,z;

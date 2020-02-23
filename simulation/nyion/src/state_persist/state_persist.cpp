@@ -2,6 +2,14 @@
 
 using json = nlohmann::json;
 
+/*
+
+The data structures are of sufficient complexity that it's impossible to write test cases for them manually.
+The array_helper_program allows one to diagram operations which are then serialized and saved with this program.
+These are later loaded and compared for unit testing.
+
+*/
+
 // void persist_to_file(std::vector<physics_mesh> meshes, std::vector<traverse_state> states, std::vector<particles> states){
     // std::vector<physics_mesh> sub;
     // sub.push_back();

@@ -101,6 +101,9 @@ void physics_mesh::set_level_ghost_linkages(){
 // }
 
 
+__host__ void physics_mesh::serialize(){
+}
+
 
 __host__ void physics_mesh::pretty_print(){
     std::cout << "\n\033[1;32mtraverse_state: \033[0m {\n";
@@ -109,7 +112,7 @@ __host__ void physics_mesh::pretty_print(){
     named_array(mesh_sizes,MESH_BUFFER_DEPTH);
     named_value(mesh_depth);
 
-    named_array(temperature,buffer_end_pointer);
+    named_array(temperature, buffer_end_pointer);
     named_array(potential, buffer_end_pointer);
     // float * potential;
     // int32_t * space_charge; //charge probably can't reasonably be fractional - we're not working with quarks?

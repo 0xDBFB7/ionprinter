@@ -3,6 +3,9 @@
 
 #include "nyion.hpp"
 
+#include <nlohmann/json.hpp>
+
+
 const int MESH_BUFFER_DEPTH = 3; //includes root
 const int MESH_BUFFER_SIZE = (100*100*100)+(1*(100*100*100));
 // const int MESH_BUFFER_MAX_BLOCKS = 1000000;
@@ -14,14 +17,6 @@ __host__ __device__ __inline__ int cube(int input){
 
 struct traverse_state;
 struct physics_mesh;
-
-#define named_value(input) std::cout << "    \033[1;33m" << #input << "\033[0m" << " = " << input << "\n";
-#define named_array(input,len) std::cout << "    \033[1;33m" << #input << \
-                                        "\033[0m [" << len << "]" << " = {"; \
-                                        for(uint32_t i = 0; i < len-1; i++){std::cout << input[i] << ",";}; \
-                                        if(len){std::cout << input[len-1];} \
-                                        std::cout << "}\n";
-
 
 #define POTENTIAL_TYPE float
 
@@ -70,6 +65,7 @@ struct physics_mesh{
     void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_level_ghost_linkages();
+    void serialize();
     void pretty_print();
 
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
