@@ -5,8 +5,8 @@
 
 #include "config.hpp"
 
-// #include <nlohmann/json.hpp>
-
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 
 __host__ __device__ __inline__ int cube(int input){
@@ -62,7 +62,7 @@ struct physics_mesh{
     void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_level_ghost_linkages();
-    void serialize();
+    json serialize();
     void pretty_print();
 
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);

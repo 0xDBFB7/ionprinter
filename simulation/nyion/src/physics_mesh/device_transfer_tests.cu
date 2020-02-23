@@ -40,7 +40,7 @@ __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     }
 }
 
-TEST(CUDA,bla2){
+TEST(CUDA,CUDA_physics_mesh_copy){
 
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
@@ -78,32 +78,3 @@ TEST(CUDA,bla2){
     physics_mesh::device_destructor(&device_struct);
 
 }
-
-void CUDA_physics_mesh_copy(){
-    
-}
-//
-//
-//
-//     int mesh_sizes[MESH_BUFFER_DEPTH] = {100, 5, 5};
-//     physics_mesh origin_host(mesh_sizes, 1);
-//     physics_mesh * host_struct = &origin_host;
-//
-//     physics_mesh * device_struct;
-//
-//     physics_mesh::device_constructor(&device_struct);
-//
-//     auto start = std::chrono::high_resolution_clock::now();
-//
-//     physics_mesh::copy_to_device(&device_struct, &host_struct);
-//
-//     physics_mesh::copy_to_host(&device_struct, &host_struct);
-//
-//     cudaDeviceSynchronize();
-//
-//     auto end = std::chrono::high_resolution_clock::now();
-//     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count();
-//     std::cout << duration << " us, " << "\n";
-//
-//     physics_mesh::device_destructor(&device_struct);
-// }

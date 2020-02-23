@@ -2,6 +2,9 @@
 
 #include "physics_mesh.hpp"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 //constructor
 __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth){
     //set scales and sizes
@@ -103,7 +106,9 @@ void physics_mesh::set_level_ghost_linkages(){
 // }
 
 
-__host__ void physics_mesh::serialize(){
+__host__ json physics_mesh::serialize(){
+    json object;
+    return object;
 }
 
 

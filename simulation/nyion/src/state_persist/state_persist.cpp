@@ -1,5 +1,6 @@
+#include <physics_mesh.hpp>
+#include <traverse_state.hpp>
 #include <nlohmann/json.hpp>
-
 using json = nlohmann::json;
 
 /*
@@ -10,7 +11,7 @@ These are later loaded and compared for unit testing.
 
 */
 
-// void persist_to_file(std::vector<physics_mesh> meshes, std::vector<traverse_state> states, std::vector<particles> states){
+void persist_to_file(std::vector<physics_mesh> &meshes, std::vector<traverse_state> &states, std::string filename){
     // std::vector<physics_mesh> sub;
     // sub.push_back();
 
@@ -20,10 +21,10 @@ These are later loaded and compared for unit testing.
     // i >> j;
     //
     // // write prettified JSON to another file
-    // std::ofstream o("pretty.json");
+    // std::ofstream o(filename);
     // o << std::setw(4) << j << std::endl;
 
-// }
+}
 
 
 // void read_from_file(){
