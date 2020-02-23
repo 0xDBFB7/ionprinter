@@ -13,6 +13,8 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
 
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_num[i] = 0; };
+    block_num[0] = 1; //add root block
+
 
     compute_world_scale();
 
@@ -38,12 +40,33 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
         ghost_linkages[i] = 0;
         block_indices[i] = 0;
     }
+
+}
+
+void physics_mesh::block_position(){
+
+
+void physics_mesh::add_block(){
+    //to accomodate iterating over blocks without traversing a tree,
+    //block IDs are also stored in an array.
+    //block_num stores how many indices are in each level.
+    
 }
 
 void physics_mesh::refine_cell(int current_depth, int current_indice){
+    if(refined_indices[current_indice]){ //if mesh is already refined, ignore.
+        return;
+    }
+
+    //should mesh_depth be increased here?
+    //and compute_world_scale() re-run?
+
     assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
+
     refined_indices[current_indice] = buffer_end_pointer;
-    // block_indices[block_num] = buffer_end_pointer; //figure this out!
+
+    block_indices[block_num] = buffer_end_pointer; //figure this out!
+    block_num[current_depth]
 
     buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
 }
@@ -63,37 +86,6 @@ __host__ void physics_mesh::compute_world_scale(){  //must be called if mesh_dep
 
 void physics_mesh::set_level_ghost_linkages(){
 
-
-    // for(traverse_state state; breadth_first(state, mesh_depth, 1, true);){
-
-        //std::cout << current_depth << "," << x << "\n";
-
-
-        // if(state.current_depth == sync_depth-1 && refined_indices[state.current_indice]){
-        //     // 0 0 0
-        //     // G G G     potentials[refined_indices[block_beginning_indice+x]+0]
-        //     //-^-^-^--
-        //     // 4 2 6     potentials[refined_indices[block_beginning_indice+x-1]+sizes[current_depth+1]-2]
-        //
-        //     if(refined_indices[state.current_indice-1]){ //shouldn't have to worry about buffer overrun, because ghosts are ignored
-        //                                             //index block before
-        //         //Update bottom ghost points
-        //         // array[refined_indices[state.current_indice]] = array[refined_indices[state.current_indice-1]+mesh_sizes[state.current_depth+1]-2];
-        //     }
-        //     else{
-        //         //pass
-        //     }
-        //
-        //     if(refined_indices[state.current_indice+1]){
-        //         //Update top ghost points
-        //         // array[refined_indices[state.current_indice]+mesh_sizes[state.current_depth]-1] = array[refined_indices[state.current_indice+1]+1];
-        //     }
-        //     else{
-        //         //pass // Ghosts at the edge are currently ignored; it must be ensured that no E-field lookups occur near the edges.
-        //         // it would probably make sense to set thes
-        //     }
-        // }
-    // }
 }
 
 
@@ -108,6 +100,7 @@ void physics_mesh::set_level_ghost_linkages(){
 
 __host__ json physics_mesh::serialize(){
     json object;
+
     return object;
 }
 
