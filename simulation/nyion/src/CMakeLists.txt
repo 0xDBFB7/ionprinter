@@ -11,13 +11,15 @@ add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)
 add_library (common common/debug_helpers.cpp common/debug_helpers.hpp)
 
 
+target_link_libraries(physics_mesh ${CUDA_LIBRARIES} gtest gtest_main)
+
+
 target_link_libraries(common gtest gtest_main)
 
-target_link_libraries(physics_mesh ${CUDA_LIBRARIES} physics_mesh_transfers gtest gtest_main)
 
-
-target_link_libraries(physics_mesh_transfers ${CUDA_LIBRARIES} common gtest gtest_main)
+target_link_libraries(physics_mesh_transfers ${CUDA_LIBRARIES} physics_mesh common gtest gtest_main)
 set_target_properties(physics_mesh_transfers PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
 
 
 

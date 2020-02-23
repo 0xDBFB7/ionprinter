@@ -47,7 +47,6 @@ homogenous computing system. I am not.
 #include "physics_mesh.hpp"
 #include "struct_transfer_helpers.hpp"
 
-
 void physics_mesh::device_constructor(physics_mesh ** device_struct){
     //construct the struct itself
     gpu_error_check(cudaMalloc(device_struct, sizeof(physics_mesh)));
