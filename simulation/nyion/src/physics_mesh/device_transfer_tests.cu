@@ -1,7 +1,10 @@
-#include "physics_mesh.hpp"
-#include "struct_transfer_helpers.hpp"
+#include "nyion.hpp"
 
-#include "gtest/gtest.h"
+#include "physics_mesh.hpp"
+// #include "traverse_state.hpp"
+// #include "struct_transfer_helpers.hpp"
+
+
 
 //make -j16 && /usr/local/cuda-10.2/bin/nvprof ./test/nyion_test
 //make -j16 && /usr/local/cuda-10.2/bin/cuda-memcheck --leak-check full ./test/nyion_test
@@ -36,12 +39,12 @@ __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     }
 }
 
-TEST(CUDA, CUDA_physics_mesh_copy_test){
+void copy_test(){
 
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;
-
+//
     for(int i = 0; i < 10; i++){ origin_host.potential[i] = i;};
 
     physics_mesh * device_struct;

@@ -7,7 +7,7 @@ link_directories(../src/debug_helpers/ ../src/physics_mesh ../src/array_helper_p
 
 add_executable (nyion_test nyion_test.cpp)
 target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES}
-                                    nyion_lib physics_mesh visualize debug_helpers device_data_structure OpenMP::OpenMP_CXX)
+                                    nyion_lib physics_mesh physics_mesh_transfers visualize debug_helpers OpenMP::OpenMP_CXX)
 
 target_link_libraries(nyion_test state_persist)
 

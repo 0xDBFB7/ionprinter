@@ -1,5 +1,13 @@
+#ifndef TRAVERSE_STATE_H
+#define TRAVERSE_STATE_H
+
+#include "nyion.hpp"
+
+#include "config.hpp"
 
 #include "physics_mesh.hpp"
+
+struct physics_mesh;
 
 struct traverse_state{
 
@@ -23,3 +31,6 @@ struct traverse_state{
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
 
 };
+
+
+#endif

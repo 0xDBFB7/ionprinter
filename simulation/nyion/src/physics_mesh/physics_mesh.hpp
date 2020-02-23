@@ -3,25 +3,23 @@
 
 #include "nyion.hpp"
 
-#include <nlohmann/json.hpp>
+#include "config.hpp"
+
+// #include <nlohmann/json.hpp>
 
 
-const int MESH_BUFFER_DEPTH = 3; //includes root
-const int MESH_BUFFER_SIZE = (100*100*100)+(1*(100*100*100));
-// const int MESH_BUFFER_MAX_BLOCKS = 1000000;
-const float ROOT_WORLD_SCALE = 0.1; //meters per root cell
 
 __host__ __device__ __inline__ int cube(int input){
     return input*input*input;
 }
 
-struct traverse_state;
-struct physics_mesh;
+#include "traverse_state.hpp"
+
 
 #define POTENTIAL_TYPE float
 
-
-
+struct traverse_state;
+struct physics_mesh;
 //the size of this on the stack must be < 4 KB for reasons of cuda kernel arguments.
 //no temporal data needed on device?
 struct physics_mesh{
@@ -79,7 +77,7 @@ struct physics_mesh{
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
-int idx(int x, int y, int z, int xlen);
+int idx(int x, int y, int z, int len);
 
 
 
