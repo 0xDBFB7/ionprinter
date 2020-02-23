@@ -19,7 +19,6 @@ __host__ __device__ __inline__ int cube(int input){
 #define POTENTIAL_TYPE float
 
 struct traverse_state;
-struct physics_mesh;
 //the size of this on the stack must be < 4 KB for reasons of cuda kernel arguments.
 //no temporal data needed on device?
 struct physics_mesh{

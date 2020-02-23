@@ -1,3 +1,5 @@
+#include "nyion.hpp"
+
 #include "physics_mesh.hpp"
 
 //constructor

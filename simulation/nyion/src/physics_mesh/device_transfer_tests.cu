@@ -39,7 +39,7 @@ __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     }
 }
 
-void copy_test(){
+void CUDA_physics_mesh_copy(){
 
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
