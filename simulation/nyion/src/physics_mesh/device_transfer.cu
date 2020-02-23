@@ -44,8 +44,8 @@ homogenous computing system. I am not.
 //
 // oh, no, structure order doesn't seem to be preserved in some cases.
 
+#include "physics_mesh.hpp"
 #include "struct_transfer_helpers.hpp"
-#include "host_data_structure.hpp"
 
 
 void physics_mesh::device_constructor(physics_mesh ** device_struct){

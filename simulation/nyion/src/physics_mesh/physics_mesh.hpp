@@ -69,7 +69,7 @@ struct physics_mesh{
     void equal(physics_mesh &mesh_2);
     void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
-    void set_ghost_linkages();
+    void set_level_ghost_linkages();
     void pretty_print();
 
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
@@ -83,30 +83,8 @@ struct physics_mesh{
 };
 //uint_fast32_t probably contraindicated - again, because CUDA.
 
+int idx(int x, int y, int z, int xlen);
 
-
-struct traverse_state{
-
-    int current_depth = 0;
-    int block_beginning_indice = 0;
-    int current_indice = 0;
-    int x_queue[MESH_BUFFER_DEPTH] = {0};
-    int y_queue[MESH_BUFFER_DEPTH] = {0};
-    int z_queue[MESH_BUFFER_DEPTH] = {0};
-    int ref_queue[MESH_BUFFER_DEPTH] = {0};
-    int x = 0;
-    int y = 0;
-    int z = 0;
-    bool started_traverse = true;
-
-    traverse_state();
-
-    bool equal(traverse_state &state_2, int depth);
-    bool is_ghost(physics_mesh &mesh);
-    void pretty_print();
-    void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
-
-};
 
 
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:

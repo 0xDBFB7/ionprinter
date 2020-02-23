@@ -1,4 +1,4 @@
-#include "host_data_structure.hpp"
+#include "traverse_state.hpp"
 
 traverse_state::traverse_state(){
     current_depth = 0;

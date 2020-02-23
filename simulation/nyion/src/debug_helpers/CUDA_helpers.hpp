@@ -3,7 +3,10 @@
 
 #include "nyion.hpp"
 
+
+
 void display_GPU_info();
+
 
 #define gpu_error_check(ans) { gpuAssert((ans), __FILE__, __LINE__); } //thanks to talonmies!
 

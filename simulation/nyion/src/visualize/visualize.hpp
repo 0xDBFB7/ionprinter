@@ -1,21 +1,18 @@
+
+#include "physics_mesh.hpp"
+#include "traverse_state.hpp"
+
+
 #include <vector>
 #include <math.h>
 #include <iostream>
 #include <algorithm> // for copy
 #include <iterator> // for ostream_iterator
-#include <algorithm>
-#include <cmath>
-#include "host_data_structure.hpp"
-
-
-
 #include <fstream>
-
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
 #include <chrono>
-#include <vector>
+#include <cmath>
 
 /* -----------------------------------------------------------------------------
 DISPLAY SETTINGS

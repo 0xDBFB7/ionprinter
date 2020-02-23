@@ -1,4 +1,4 @@
-#include "host_data_structure.hpp"
+#include "physics_mesh.hpp"
 
 //constructor
 __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth){
@@ -56,7 +56,7 @@ __host__ void physics_mesh::compute_world_scale(){  //must be called if mesh_dep
 }
 
 
-void physics_mesh::set_ghost_linkages(){
+void physics_mesh::set_level_ghost_linkages(){
 
 
     // for(traverse_state state; breadth_first(state, mesh_depth, 1, true);){
@@ -143,4 +143,9 @@ physics_mesh::~physics_mesh(){
     delete [] refined_indices;
     delete [] ghost_linkages;
     delete [] block_indices;
+}
+
+
+int idx(int x, int y, int z, int len){
+  return (x + (y*len) + (z*len*len));
 }

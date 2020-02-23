@@ -31,3 +31,9 @@ void display_GPU_info(){
         std::wcout << std::endl;
     }
 }
+
+
+TEST(CUDA, CUDA_display_info)
+{
+  display_GPU_info();
+}

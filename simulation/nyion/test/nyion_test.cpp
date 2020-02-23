@@ -1,11 +1,9 @@
 #include "nyion.hpp"
 #include "visualize.hpp"
 
-#include "host_data_structure.hpp"
-#include "device_data_structure.hpp"
+#include "physics_mesh.hpp"
 
-#include "host_data_structure_test.hpp"
-#include "device_data_structure_test.hpp"
+#include "physics_mesh_tests.hpp"
 
 #include "gtest/gtest.h"
 

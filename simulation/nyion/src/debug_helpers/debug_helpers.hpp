@@ -1,5 +1,8 @@
 #include "nyion.hpp"
 
+#include "gtest/gtest.h"
+
+
 #define DEBUG_PRINT
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
@@ -19,6 +22,6 @@ void debug_preamble_printer(std::string function, int line, std::string file, st
   // #define pretty_print_named_value(input) debug_preamble_printer(__FUNCTION__, __LINE__, __FILENAME__, #input); std::cout << " = " << input;
 
 
-//add pointer location to printed info? 
+//add pointer location to printed info?
 
 #endif
