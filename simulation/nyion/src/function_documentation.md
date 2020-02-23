@@ -37,3 +37,6 @@ born just in time to build some seriously awesome stuff?
 now a single card can do >100 Tflops fp16
 
 that's FRIGGIN AMAZING
+
+
+ASAN and cuda-memcheck don't play well together.

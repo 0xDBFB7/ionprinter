@@ -31,9 +31,16 @@ struct physics_mesh;
 //no temporal data needed on device?
 struct physics_mesh{
 
+    // Changes to this data structure must be applied to:
+    // - physics_mesh::pretty_print()
+    // - physics_mesh::serializer()
+    // - Host constructor, zero fill, and destructor
+    // - Device functions: constructor, copy to host, copy to device, destructor
+
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int mesh_sizes[MESH_BUFFER_DEPTH];
     int mesh_depth; //must be enforced because of world_scale issues.
+
 
     float * temperature; //Kelvin
     POTENTIAL_TYPE * potential; //Volts
@@ -48,6 +55,8 @@ struct physics_mesh{
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
                             //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
+
+
     uint32_t block_num[MESH_BUFFER_DEPTH]; //1,4,3,0 //including root
     //we need both block_indices and refined_indices:
     //one provides the spatial data, and one the fast vectorized traverse
@@ -98,30 +107,6 @@ struct traverse_state{
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
 
 };
-//
-// #define PARTICLE_TYPE double
-//
-// const int MAX_TIMESTEPS = 3; //includes root
-//
-// struct particles{
-//     //SoA
-//     PARTICLE_TYPE * x;
-//     PARTICLE_TYPE * y;
-//     PARTICLE_TYPE * z;
-//
-//     PARTICLE_TYPE * v_x;
-//     PARTICLE_TYPE * v_y;
-//     PARTICLE_TYPE * v_z;
-//
-//     uint16_t * particle_category;
-//
-//     uint32_t num_particles[timesteps]; //heap
-//     //a lookup
-//     //lookup(number, timestep);
-//     //timestep*num_particles[timestep] + number?
-//
-//
-// }
 
 
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:

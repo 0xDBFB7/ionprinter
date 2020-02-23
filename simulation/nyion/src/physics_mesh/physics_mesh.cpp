@@ -101,6 +101,7 @@ void physics_mesh::set_ghost_linkages(){
 // }
 
 
+
 __host__ void physics_mesh::pretty_print(){
     std::cout << "\n\033[1;32mtraverse_state: \033[0m {\n";
 

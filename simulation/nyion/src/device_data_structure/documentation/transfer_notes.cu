@@ -40,6 +40,7 @@ __global__ void test_fill_simple(test_struct * d_a) {
     d_a->test_int[5] = 15;
 }
 
+
 //Wwwwhat the fff
 //cudaMemcpy(device->storage,...)     does not work.
 //cudaMemcpy(host->storage,...)  does,
