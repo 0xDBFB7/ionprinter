@@ -21,7 +21,7 @@ TEST(physics_mesh, block_depth_lookup_1){
     mesh.block_list_insert(1, 24);
     mesh.block_list_insert(2, 32);
 
-    // mesh.pretty_print();
+    mesh.pretty_print();
 
     ASSERT_EQ(mesh.blocks_on_level(0), 1);
     ASSERT_EQ(mesh.blocks_on_level(1), 3);
@@ -32,6 +32,11 @@ TEST(physics_mesh, block_depth_lookup_1){
     ASSERT_EQ(mesh.block_depth_lookup[2], 4);
     ASSERT_EQ(mesh.block_depth_lookup[3], 5);
 
+    ASSERT_EQ(mesh.block_indices[0], 0);
+    ASSERT_EQ(mesh.block_indices[1], 24); //order is irrelevant within levels
+    ASSERT_EQ(mesh.block_indices[2], 16);
+    ASSERT_EQ(mesh.block_indices[3], 8);
+    ASSERT_EQ(mesh.block_indices[4], 32);
 }
 
 #endif

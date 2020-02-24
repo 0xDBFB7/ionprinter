@@ -73,7 +73,7 @@ void physics_mesh::block_list_insert(int depth, int refined_indice){
 
     block_indices[tail_position] = refined_indice;
 
-    for(int i = depth+1; i < mesh_depth+1; i++){ block_depth_lookup[i]+=1; }
+    for(int i = depth+1; i < MESH_BUFFER_DEPTH+1; i++){ block_depth_lookup[i]+=1; }
 
 }
 
@@ -85,12 +85,11 @@ void physics_mesh::refine_cell(int current_depth, int current_indice){
         return;
     }
 
-    // if(mesh_depth-1){ //if this would be beyond the depth, break
-    //
-    // }
-    // else{
-    //     return;
-    // }
+    assert("Tried to refine too deep!" && current_depth+1 < MESH_BUFFER_DEPTH);
+
+    if(mesh_depth < current_depth+2){
+        mesh_depth = current_depth+2;
+    }
 
     refined_indices[current_indice] = buffer_end_pointer;
 
@@ -122,13 +121,6 @@ void physics_mesh::set_level_ghost_linkages(){
 }
 
 
-// void descend_into(){
-//     state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
-//     user_state.current_depth++; //descend_into() function?
-//     user_state.x_queue[user_state.current_depth] = 0; //state.x,y,z should go.
-//     user_state.z_queue[user_state.current_depth] = 0; //everything has to be updated simultaneously anyhow,
-//     user_state.y_queue[user_state.current_depth] = 0; //and state. should never be in the hot loop anyhow.
-// }
 
 
 __host__ json physics_mesh::serialize(){
@@ -139,7 +131,7 @@ __host__ json physics_mesh::serialize(){
 
 
 __host__ void physics_mesh::pretty_print(){
-    std::cout << "\n\033[1;32mtraverse_state: \033[0m {\n";
+    std::cout << "\n\033[1;32mphysics_mesh: \033[0m {\n";
 
     named_array(world_scale, MESH_BUFFER_DEPTH);
     named_array(mesh_sizes, MESH_BUFFER_DEPTH);

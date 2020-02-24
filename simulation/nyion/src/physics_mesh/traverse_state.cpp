@@ -92,6 +92,25 @@ void traverse_state::cell_world_lookup(physics_mesh &mesh, float &x, float &y, f
 //   }
 // }
 
+void traverse_state::descend_into(physics_mesh &mesh){
+    ref_queue[current_depth] = mesh.refined_indices[current_indice];
+    block_beginning_indice = mesh.refined_indices[current_indice];
+    current_depth++; //descend_into() function?
+    x_queue[current_depth] = 0; //state.x,y,z should go.
+    z_queue[current_depth] = 0; //everything has to be updated simultaneously anyhow,
+    y_queue[current_depth] = 0; //and state. should never be in the hot loop anyhow.
+    x = 0;
+    y = 0;
+    z = 0;
+    update_position(mesh);
+}
+
+void traverse_state::update_position(physics_mesh &mesh){
+    current_indice = block_beginning_indice+
+                    idx(x,y,z,mesh.mesh_sizes[current_depth]);
+
+}
+
 bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts){
 
     /*

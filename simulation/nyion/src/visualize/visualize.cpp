@@ -239,7 +239,7 @@ void draw_cell(physics_mesh &mesh, traverse_state &state, float R, float G, floa
         float cube_size = current_scale*OPENGL_SCALE*0.95;
 
         if(state.current_depth){
-        level_split_offset = (level_splitting * mesh.world_scale[state.current_depth-1]*2);
+            level_split_offset = (level_splitting * mesh.world_scale[state.current_depth-1]*2);
         }
 
         float gl_x,gl_y,gl_z;
