@@ -73,19 +73,19 @@ digraph {
 		node [shape=record]
 		label=block_indices
 		40 [label=<Ref 0}> fillcolor=white style=filled]
-		41 [label=<Ref 24}> fillcolor=white style=filled]
+		41 [label=<Ref 8}> fillcolor=white style=filled]
 		42 [label=<Ref 16}> fillcolor=white style=filled]
-		43 [label=<Ref 8}> fillcolor=white style=filled]
+		43 [label=<Ref 24}> fillcolor=white style=filled]
 		44 [label=<Ref 32}> fillcolor=white style=filled]
 	{rank=same;40;41;42;43;44}
 	40 -> 41 -> 42 -> 43 -> 44[style=invis,weight=4.0]
 	}
 	subgraph cluster_45 {
 		node [shape=record]
-		label=block_num
-		45 [label=<1}> fillcolor=white style=filled]
-		46 [label=<3}> fillcolor=white style=filled]
-		47 [label=<1}> fillcolor=white style=filled]
+		label=block_depth_lookup
+		45 [label=<0}> fillcolor=white style=filled]
+		46 [label=<1}> fillcolor=white style=filled]
+		47 [label=<4}> fillcolor=white style=filled]
 	{rank=same;45;46;47}
 	45 -> 46 -> 47[style=invis,weight=4.0]
 	}
@@ -114,7 +114,5 @@ digraph {
 	22 -> 38 [color=red minlen=2 penwidth=3]
 	45 -> 40 [color=purple penwidth=3]
 	46 -> 41 [color=purple penwidth=3]
-	46 -> 42 [color=purple penwidth=3]
-	46 -> 43 [color=purple penwidth=3]
 	47 -> 44 [color=purple penwidth=3]
 }

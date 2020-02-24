@@ -15,9 +15,6 @@ __host__ __device__ __inline__ int cube(int input){
 
 #include "traverse_state.hpp"
 
-
-#define POTENTIAL_TYPE float
-
 struct traverse_state;
 //the size of this on the stack must be < 4 KB for reasons of cuda kernel arguments.
 //no temporal data needed on device?
@@ -25,18 +22,20 @@ struct physics_mesh{
 
     // Changes to this data structure must be applied to:
     // - physics_mesh::pretty_print()
-    // - physics_mesh::serializer()
-    // - Host constructor, zero fill, and destructor
-    // - Device functions: constructor, copy to host, copy to device, destructor
+    // - physics_mesh::serialize()
+    // - Host constructor, zero fills, and host destructor
+    // - Device constructor, copy to host, copy to device, device destructor
 
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int mesh_sizes[MESH_BUFFER_DEPTH];
-    int mesh_depth; //must be enforced because of world_scale issues.
+
+    int mesh_depth;
 
 
     float * temperature; //Kelvin
-    POTENTIAL_TYPE * potential; //Volts
+    float * potential; //Volts
     int32_t * space_charge; //e+ , charge probably can't reasonably be fractional - we're not working with quarks?
+                                //scratch that, charge can be fractional if using a higher-order deposition scheme
     uint16_t * boundary_conditions;
     uint32_t * refined_indices;
     uint32_t * ghost_linkages; // can't include ghosts at 'overhangs' - those'll be handled by 'copy_down' I suppose?
@@ -49,7 +48,7 @@ struct physics_mesh{
                             //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
 
 
-    uint32_t block_num[MESH_BUFFER_DEPTH]; //1,4,3,0 //including root
+    uint32_t block_depth_lookup[MESH_BUFFER_DEPTH]; //1,4,3,0 //including root
     //we need both block_indices and refined_indices:
     //one provides the spatial data, and one the fast vectorized traverse
 
@@ -63,9 +62,7 @@ struct physics_mesh{
     void compute_world_scale();
     void set_level_ghost_linkages();
 
-    uint32_t block_list_tail_position(int current_depth);
-    void add_block_to_list(int current_depth);
-
+    void block_list_insert(int current_depth, int refined_indice);
     json serialize();
     void pretty_print();
 

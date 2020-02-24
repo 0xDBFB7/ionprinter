@@ -49,8 +49,8 @@ new_block(0.01/5,0.04,24,8,'',[0]*8)
 new_block((0.01/5)/5,0.02,32,8,'',[0]*8)
 
 
-block_indices(40,[0,24,16,8,32],"block_indices", '<Ref {0}}}>')
-block_indices(45,[1,3,1],"block_num", '<{0}}}>')
+block_indices(40,[0,8,16,24,32],"block_indices", '<Ref {0}}}>')
+block_indices(45,[0,1,4],"block_depth_lookup", '<{0}}}>')
 
 legend(50,["reference linkages","ghosts","ghost updates","interpolated"],['orange','green','blue',"red"])
 
@@ -77,8 +77,6 @@ g.edge('22','38',color='red',minlen='2',penwidth='3')
 
 g.edge('45','40',color='purple',penwidth='3')
 g.edge('46','41',color='purple',penwidth='3')
-g.edge('46','42',color='purple',penwidth='3')
-g.edge('46','43',color='purple',penwidth='3')
 g.edge('47','44',color='purple',penwidth='3')
 
 #g.edge('40','7',weight='10')

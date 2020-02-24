@@ -12,8 +12,8 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
     mesh_depth = new_mesh_depth;
 
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
-    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_num[i] = 0; };
-    block_num[0] = 1; //add root block
+    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_depth_lookup[i] = 0; };
+    block_depth_lookup[0] = 1; //add root block
 
 
     compute_world_scale();
@@ -43,63 +43,59 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
 
 }
 
-uint32_t physics_mesh::block_list_tail_position(){
-    uint32_t pos = 0;
-    for(int i = 0; i < current_depth; i++){
-        pos += block_num[i];
-    }
-    return pos;
-}
-
 void physics_mesh::block_list_insert(int current_depth, int refined_indice){
-    uint32_t tail_position = 0;
-    //number before
-    for(int i = 0; i < current_depth; i++){
-        pos += block_num[i];
-    }
-    //number after - to shift minimum possible
-    for(int i = 0; i < mesh_depth; i++){
-        pos += block_num[i];
-    }
-
-
-    return pos;
-}
-
-
-void physics_mesh::add_block_to_list(int current_depth){
     //to accomodate iterating over blocks without traversing a tree,
     //block IDs are also stored in an array.
     //block_num stores how many indices are in each level.
-    // see digraph for details.
+    // we don't actually care about the order of block_indices
+    // between levels: popping can be a quick search.
+    // see digraph.
 
-    uint32_t tail_position = block_list_tail_position(current_depth);
-    block_indices[block] = buffer_end_pointer; //figure this out!
-    block_num[current_depth] +=1;
+    int tail_position = block_depth_lookup[current_depth];
+
+    int end_position = 0;
+    //number after - to shift minimum possible
+    for(int i = 0; i < mesh_depth; i++){ end_position += block_depth_lookup[i]; }
+
+    //shift data up
+    for(int i = end_position; i > tail_position; i--){
+        block_indices[i] = block_indices[i-1];
+    }
+
+    block_indices[tail_position] = refined_indice;
+
+    for(int i = current_depth; i < mesh_depth; i++){ block_depth_lookup[i]+=1; }
 
 }
 
 void physics_mesh::refine_cell(int current_depth, int current_indice){
+    //this will be called from depth 0:...
+    //the refinement will be added to depth 1:...
+
     if(refined_indices[current_indice]){ //if mesh is already refined, ignore.
         return;
     }
 
-    if(mesh_depth-1){ //if this would be beyond the depth, break
-
-    }
-    else{
-        return;
-    }
+    // if(mesh_depth-1){ //if this would be beyond the depth, break
+    //
+    // }
+    // else{
+    //     return;
+    // }
 
     refined_indices[current_indice] = buffer_end_pointer;
 
-    add_block_to_list(current_depth);
+    block_list_insert(current_depth+1, buffer_end_pointer);
 
     buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
+
+    compute_world_scale();
 }
 
 
-__host__ void physics_mesh::compute_world_scale(){  //must be called if mesh_depth is changed
+__host__ void physics_mesh::compute_world_scale(){
+    //we want to quickly init mesh_sizes like {3,3,5} for testing.
+    //however, that
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
     // pre-compute scales
     float scale = ROOT_WORLD_SCALE;

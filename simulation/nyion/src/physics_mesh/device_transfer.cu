@@ -7,9 +7,16 @@ and to generate the linkages between ghosts.
 It's also easier to code the construction of meshes.
 
 However, traversing the tree takes jumps and is generally poorly optimized,
-especially on a GPU, where a jump stalls the warp.
+especially on a GPU.
 Once the trees are established on the heap, however, a simple list of indices
-can be constructed to traverse linearly.
+to the start of blocks can be constructed to iterate easily.
+
+The kernel can then access it with block_indices[block_depth_lookup[level] + cuda.blockID] + idx(cuda.id x, ...)
+
+We want as little complexity in the GPU multigrid hot loop as possible, since it'll be called
+thousands of times per frame.
+
+Operations like refining can take some time.
 
 It might be possible to do away with the tree entirely, but
 trying to visualize 'neighbors' with arbitrarily placed blocks

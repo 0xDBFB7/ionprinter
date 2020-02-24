@@ -2,37 +2,6 @@
 
 #include "physics_mesh.hpp"
 
-// #include "traverse_state.hpp"
-// #include "struct_transfer_helpers.hpp"
-
-
-
-//make -j16 && /usr/local/cuda-10.2/bin/nvprof ./test/nyion_test
-//make -j16 && /usr/local/cuda-10.2/bin/cuda-memcheck --leak-check full ./test/nyion_test
-
-//https://stackoverflow.com/questions/9309195/copying-a-struct-containing-pointers-to-cuda-device
-//the input to a kernel can actually be a host structure
-//as long as all the pointers therein are to device arrays.
-//good to know! see also
-// --- Destructor (correct version)
-//  __host__ __device__ ~Lock(void) {
-//#if !defined(__CUDACC__)
-//      gpuErrchk(cudaFree(d_state));
-//#else
-//
-//#endif
-//  }
-//note:
-//Max block dimensions: [ 1024, 1024, 64 ]
-//Max grid dimensions:  [ 2147483647, 65535, 65535 ]
-// the grid is fine, but we might have more than 1024 blocks!
-
-
-// cuda Unified Memory with ManagedMemcpy would be much simpler,
-// but I think I prefer to see precisely when a PCIe transfer will occur.
-
-//unified memory allows multiple GPUs, which might be useful down the road.
-
 
 __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     for(int i = 0; i < mesh.buffer_end_pointer; i++){
