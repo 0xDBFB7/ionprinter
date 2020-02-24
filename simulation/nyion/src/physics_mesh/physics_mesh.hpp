@@ -27,9 +27,9 @@ struct physics_mesh{
     // - Device constructor, copy to host, copy to device, device destructor
 
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
-    int mesh_sizes[MESH_BUFFER_DEPTH];
+    int mesh_sizes[MESH_BUFFER_DEPTH];  
 
-    int mesh_depth;
+    int mesh_depth; //represents the maximum level of refinement present in the mesh.
 
 
     float * temperature; //Kelvin
