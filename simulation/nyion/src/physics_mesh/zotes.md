@@ -24,3 +24,13 @@
 // but I think I prefer to see precisely when a PCIe transfer will occur.
 
 //unified memory allows multiple GPUs, which might be useful down the road.
+
+/* @landaverde
+"We find that for the vast majority of applications,
+UMA generates significant overhead and results in notable performance loss.
+
+Furthermore, the UMA model only marginally simplifies the programming model for most applications.
+"
+*/
+
+//cool.

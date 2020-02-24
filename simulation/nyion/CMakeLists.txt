@@ -5,7 +5,9 @@
 # If you get strange garbage from cuda code, this probably broke.
 # these flags may introduce strange bugs. The new dynamic shadow feature of ASAN might fix this.
 # const char * __asan_default_options() would be a better solution; but it doesn't seem to work in this version of GCC.
-
+if(NOT DEFINED ENV{ASAN_OPTIONS})
+    message( FATAL_ERROR "oh no, ASAN_OPTIONS isn't set! This is zero cool.")
+endif()
 
 cmake_minimum_required(VERSION 3.9)
 set (CMAKE_CXX_STANDARD 17)
@@ -56,6 +58,8 @@ include_directories(/home/arthurdent/Programs/cpp-linenoise)
 # from https://github.com/yhirose/cpp-linenoise/commits/master, version 5ea11d5d97e1f770524c300dd67db009dd4a3ab4
 include_directories(/home/arthurdent/Programs/nlohmann-json/)
 # from https://github.com/nlohmann/json, version 3.7.3
+
+
 
 set(CMAKE_BUILD_TYPE Debug)
 add_subdirectory (src)

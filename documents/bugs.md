@@ -301,3 +301,11 @@ Then everything feels like an atomic operation on a base.
 Perhaps there's some performance cost, but if you're working with pointers it's certainly irrelevant anyhow.
 
 I like it! You might not, though, and that's fine.
+
+
+#### Issue:
+
+Exporting a few opaque values alieviates issues with ASAN. 
+
+However, if the terminal crashes, I inevitably forget to export the options; and the failure modes are always so subtle.
+

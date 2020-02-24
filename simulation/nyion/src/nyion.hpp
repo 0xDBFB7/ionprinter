@@ -32,8 +32,6 @@
 #include "CUDA_helpers.hpp"
 
 
-
-
 #include <mgl2/mgl.h>
 
 #endif
