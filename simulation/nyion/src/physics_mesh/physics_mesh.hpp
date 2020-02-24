@@ -62,6 +62,10 @@ struct physics_mesh{
     void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_level_ghost_linkages();
+
+    uint32_t block_list_tail_position(int current_depth);
+    void add_block_to_list(int current_depth);
+
     json serialize();
     void pretty_print();
 

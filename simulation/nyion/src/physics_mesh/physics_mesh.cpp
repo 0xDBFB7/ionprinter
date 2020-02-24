@@ -43,14 +43,40 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
 
 }
 
-void physics_mesh::block_position(){
+uint32_t physics_mesh::block_list_tail_position(){
+    uint32_t pos = 0;
+    for(int i = 0; i < current_depth; i++){
+        pos += block_num[i];
+    }
+    return pos;
+}
+
+void physics_mesh::block_list_insert(int current_depth, int refined_indice){
+    uint32_t tail_position = 0;
+    //number before
+    for(int i = 0; i < current_depth; i++){
+        pos += block_num[i];
+    }
+    //number after - to shift minimum possible
+    for(int i = 0; i < mesh_depth; i++){
+        pos += block_num[i];
+    }
 
 
-void physics_mesh::add_block(){
+    return pos;
+}
+
+
+void physics_mesh::add_block_to_list(int current_depth){
     //to accomodate iterating over blocks without traversing a tree,
     //block IDs are also stored in an array.
     //block_num stores how many indices are in each level.
-    
+    // see digraph for details.
+
+    uint32_t tail_position = block_list_tail_position(current_depth);
+    block_indices[block] = buffer_end_pointer; //figure this out!
+    block_num[current_depth] +=1;
+
 }
 
 void physics_mesh::refine_cell(int current_depth, int current_indice){
@@ -58,15 +84,16 @@ void physics_mesh::refine_cell(int current_depth, int current_indice){
         return;
     }
 
-    //should mesh_depth be increased here?
-    //and compute_world_scale() re-run?
+    if(mesh_depth-1){ //if this would be beyond the depth, break
 
-    assert("Tried to refine beyond acceptable depth." && current_depth+1 < mesh_depth);
+    }
+    else{
+        return;
+    }
 
     refined_indices[current_indice] = buffer_end_pointer;
 
-    block_indices[block_num] = buffer_end_pointer; //figure this out!
-    block_num[current_depth]
+    add_block_to_list(current_depth);
 
     buffer_end_pointer += cube(mesh_sizes[current_depth+1]);
 }
@@ -78,6 +105,7 @@ __host__ void physics_mesh::compute_world_scale(){  //must be called if mesh_dep
     float scale = ROOT_WORLD_SCALE;
     for(int i = 0; i < mesh_depth; i++){
         assert("Mesh size must be > 2" && mesh_sizes[i]-2 > 0);
+        assert("Mesh size must be < 200" && mesh_sizes[i]-2 < 200);
         scale /= mesh_sizes[i]-2; //-2 compensates for ghost points.
         world_scale[i] = scale;
     } // TODO: Scales must be re-computed if the size changes!

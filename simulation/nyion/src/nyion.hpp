@@ -20,6 +20,7 @@
 
 #include "debug_helpers.hpp"
 
+#include <stdint.h>
 
 #include <cuda_runtime.h>
 #include <cuda_runtime_api.h>
