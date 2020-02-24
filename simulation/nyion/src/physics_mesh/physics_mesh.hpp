@@ -27,7 +27,7 @@ struct physics_mesh{
     // - Device constructor, copy to host, copy to device, device destructor
 
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
-    int mesh_sizes[MESH_BUFFER_DEPTH];  
+    int mesh_sizes[MESH_BUFFER_DEPTH];
 
     float * temperature; //Kelvin
     float * potential; //Volts
@@ -55,7 +55,7 @@ struct physics_mesh{
     ~physics_mesh();
 
     void equal(physics_mesh &mesh_2);
-    void refine_cell(int current_depth, int current_indice);
+    __device__ __host__ void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_level_ghost_linkages();
     int blocks_on_level(int depth);

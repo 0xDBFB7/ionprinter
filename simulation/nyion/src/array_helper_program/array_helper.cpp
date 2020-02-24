@@ -189,16 +189,18 @@ int main()
             if(args[0] == "refine"){
                 mesh.refine_cell(user_state.current_depth,user_state.current_indice);
                                         //how about a wrapper state.x() that just returns user_state.x_queue[user_state.current_depth]?
-
-
+                                        
                 mesh.pretty_print();
 
             }
             if(args[0] == "descend"){
                 user_state.descend_into(mesh);
             }
-            if(args[0] == "descend"){
-                user_state.descend_into(mesh);
+            if(args[0] == "set" && args.size() == 3){
+                if(args[1] == "potential"){
+                    mesh.potential[user_state.current_indice] = std::stof(args[2]);
+                    mesh.pretty_print();
+                }
             }
         }
         else{

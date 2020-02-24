@@ -46,3 +46,34 @@ TEST(CUDA,CUDA_physics_mesh_copy){
     physics_mesh::device_destructor(&device_struct);
 
 }
+
+
+//
+//
+// __global__ void refine_on_device(physics_mesh &mesh) {
+//     mesh.refine_cell(0,0);
+// }
+//
+// TEST(CUDA,CUDA_refine_on_device){
+//     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+//     physics_mesh origin_host(mesh_sizes, 1);
+//     physics_mesh * host_struct = &origin_host;
+//
+//     physics_mesh * device_struct;
+//     physics_mesh::device_constructor(&device_struct);
+//
+//     physics_mesh::copy_to_device(&device_struct, &host_struct);
+//
+//     //run kernel
+//     refine_on_device<<<1, 1>>>(*device_struct);
+//     gpu_error_check( cudaPeekAtLastError() );
+//     gpu_error_check( cudaDeviceSynchronize() );
+//
+//     physics_mesh::copy_to_host(&device_struct, &host_struct);
+//
+//     cudaDeviceSynchronize();
+//
+//     ASSERT_EQ(origin_host.refined_indices[0],cube(3));
+//
+//     physics_mesh::device_destructor(&device_struct);
+// }

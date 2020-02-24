@@ -77,7 +77,7 @@ void physics_mesh::block_list_insert(int depth, int refined_indice){
 
 }
 
-void physics_mesh::refine_cell(int current_depth, int current_indice){
+__device__ __host__ void physics_mesh::refine_cell(int current_depth, int current_indice){
     //this will be called from depth 0:...
     //the refinement will be added to depth 1:...
 
@@ -97,7 +97,7 @@ void physics_mesh::refine_cell(int current_depth, int current_indice){
 }
 
 
-__host__ void physics_mesh::compute_world_scale(){
+__host__ __device__ void physics_mesh::compute_world_scale(){
     //we want to quickly init mesh_sizes like {3,3,5} for testing.
     //however, that
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
@@ -131,7 +131,6 @@ __host__ void physics_mesh::pretty_print(){
 
     named_array(world_scale, MESH_BUFFER_DEPTH);
     named_array(mesh_sizes, MESH_BUFFER_DEPTH);
-
     named_array(temperature, buffer_end_pointer);
     named_array(potential, buffer_end_pointer);
     named_array(space_charge, buffer_end_pointer);

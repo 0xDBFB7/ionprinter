@@ -5,5 +5,4 @@
 
 #include "gtest/gtest.h"
 
-
 #endif
