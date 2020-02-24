@@ -6,12 +6,12 @@
 using json = nlohmann::json;
 
 //constructor
-__host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth){
+__host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int init_mesh_depth){
     //set scales and sizes
-    assert("Increase MESH_BUFFER_DEPTH" && MESH_BUFFER_DEPTH >= new_mesh_depth);
-    mesh_depth = new_mesh_depth;
+    assert("Increase MESH_BUFFER_DEPTH" && MESH_BUFFER_DEPTH >= init_mesh_depth);
 
-    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
+    for(int i = 0; i < init_mesh_depth; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
+    for(int i = init_mesh_depth; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = 3; };
 
     //initialize root on unrolled array
     block_depth_lookup[0] = 0;
@@ -64,7 +64,7 @@ void physics_mesh::block_list_insert(int depth, int refined_indice){
     int tail_position = block_depth_lookup[depth];
 
     //number after - to shift minimum possible
-    int end_position = block_depth_lookup[mesh_depth-1];
+    int end_position = block_depth_lookup[MESH_BUFFER_DEPTH-1];
 
     //shift data up
     for(int i = end_position; i > tail_position; i--){
@@ -87,10 +87,6 @@ void physics_mesh::refine_cell(int current_depth, int current_indice){
 
     assert("Tried to refine too deep!" && current_depth+1 < MESH_BUFFER_DEPTH);
 
-    if(mesh_depth < current_depth+2){
-        mesh_depth = current_depth+2;
-    }
-
     refined_indices[current_indice] = buffer_end_pointer;
 
     block_list_insert(current_depth+1, buffer_end_pointer);
@@ -107,7 +103,7 @@ __host__ void physics_mesh::compute_world_scale(){
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
     // pre-compute scales
     float scale = ROOT_WORLD_SCALE;
-    for(int i = 0; i < mesh_depth; i++){
+    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
         assert("Mesh size must be > 2" && mesh_sizes[i]-2 > 0);
         assert("Mesh size must be < 200" && mesh_sizes[i]-2 < 200);
         scale /= mesh_sizes[i]-2; //-2 compensates for ghost points.
@@ -135,7 +131,6 @@ __host__ void physics_mesh::pretty_print(){
 
     named_array(world_scale, MESH_BUFFER_DEPTH);
     named_array(mesh_sizes, MESH_BUFFER_DEPTH);
-    named_value(mesh_depth);
 
     named_array(temperature, buffer_end_pointer);
     named_array(potential, buffer_end_pointer);

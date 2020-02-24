@@ -197,6 +197,9 @@ int main()
             if(args[0] == "descend"){
                 user_state.descend_into(mesh);
             }
+            if(args[0] == "descend"){
+                user_state.descend_into(mesh);
+            }
         }
         else{
             gui_loop(mesh, user_state, level_splitting,false);

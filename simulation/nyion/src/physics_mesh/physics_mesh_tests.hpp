@@ -16,15 +16,12 @@ TEST(physics_mesh, refine_test){
     physics_mesh mesh(mesh_sizes,3);
 
     ASSERT_EQ(mesh.buffer_end_pointer,cube(3)); //root initialized by default
-    ASSERT_EQ(mesh.mesh_depth, 1);
     int block_pointer = cube(3);
 
     mesh.refine_cell(0, 14); //refine level 0, position 14
-    ASSERT_EQ(mesh.mesh_depth, 2);
     ASSERT_EQ(mesh.buffer_end_pointer,cube(3) + cube(5)); // we refine
 
     mesh.refine_cell(1, block_pointer);
-    ASSERT_EQ(mesh.mesh_depth, 3);
     ASSERT_EQ(mesh.buffer_end_pointer,cube(3) + cube(5) + cube(5)); // we refine
 }
 
@@ -33,7 +30,6 @@ TEST(physics_mesh, scale_test){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh mesh(mesh_sizes,3);
 
-    ASSERT_EQ(mesh.mesh_depth,3);
     ASSERT_NEAR(ROOT_WORLD_SCALE*(1/(3.0-2)), mesh.world_scale[0], 1e-5); //-2 because ghosts
     ASSERT_NEAR(ROOT_WORLD_SCALE*(1/(3.0-2))*(1/(5.0-2)), mesh.world_scale[1], 1e-5);
     ASSERT_NEAR(ROOT_WORLD_SCALE*(1/(3.0-2))*(1/(5.0-2))*(1/(5.0-2)), mesh.world_scale[2], 1e-5);
