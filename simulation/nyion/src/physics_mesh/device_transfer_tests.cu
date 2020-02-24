@@ -35,9 +35,8 @@ TEST(CUDA,CUDA_physics_mesh_copy){
 
     cudaDeviceSynchronize();
 
-    pretty_print_array(origin_host.potential, 0, 20);
-
-    origin_host.pretty_print();
+    // pretty_print_array(origin_host.potential, 0, 20);
+    // origin_host.pretty_print();
 
     ASSERT_NEAR(origin_host.potential[0],100,1e-3);
     ASSERT_NEAR(origin_host.potential[origin_host.buffer_end_pointer+1],0,1e-3);

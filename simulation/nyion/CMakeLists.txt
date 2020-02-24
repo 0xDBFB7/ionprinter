@@ -26,7 +26,7 @@ set(CUDA_NVCC_FLAGS "-arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompile
 set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 
 
-set(CXX_ASAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak -fsanitize-recover=address")
+set(CXX_ASAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak ")
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
  -foffload=-lm -Wno-unused-parameter ${CXX_ASAN_FLAGS} -g --coverage")

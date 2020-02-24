@@ -48,7 +48,7 @@ struct physics_mesh{
                             //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
 
 
-    uint32_t block_depth_lookup[MESH_BUFFER_DEPTH]; //1,4,3,0 //including root
+    uint32_t block_depth_lookup[MESH_BUFFER_DEPTH+1]; //1,4,3,0 //including root
     //we need both block_indices and refined_indices:
     //one provides the spatial data, and one the fast vectorized traverse
 
@@ -61,7 +61,7 @@ struct physics_mesh{
     void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_level_ghost_linkages();
-
+    int blocks_on_level(int depth);
     void block_list_insert(int current_depth, int refined_indice);
     json serialize();
     void pretty_print();

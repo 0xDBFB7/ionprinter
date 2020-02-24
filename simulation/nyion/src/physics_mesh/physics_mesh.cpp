@@ -2,7 +2,7 @@
 
 #include "physics_mesh.hpp"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp> //big file, seperate serialization .cpp?
 using json = nlohmann::json;
 
 //constructor
@@ -12,8 +12,10 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
     mesh_depth = new_mesh_depth;
 
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ mesh_sizes[i] = set_mesh_sizes[i]; };
-    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ block_depth_lookup[i] = 0; };
-    block_depth_lookup[0] = 1; //add root block
+
+    //initialize root on unrolled array
+    block_depth_lookup[0] = 0;
+    for(int i = 1; i < MESH_BUFFER_DEPTH+1; i++){ block_depth_lookup[i] = 1; };
 
 
     compute_world_scale();
@@ -43,19 +45,26 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
 
 }
 
-void physics_mesh::block_list_insert(int current_depth, int refined_indice){
+int physics_mesh::blocks_on_level(int depth){
+    return block_depth_lookup[depth+1]-block_depth_lookup[depth];
+}
+
+
+void physics_mesh::block_list_insert(int depth, int refined_indice){
     //to accomodate iterating over blocks without traversing a tree,
     //block IDs are also stored in an array.
     //block_num stores how many indices are in each level.
     // we don't actually care about the order of block_indices
     // between levels: popping can be a quick search.
     // see digraph.
+    // Having the block_depth_lookup accumulative
+    // prevents us from having to sum on hot-loop operations,
+    // at a cost of needing one more indice to
 
-    int tail_position = block_depth_lookup[current_depth];
+    int tail_position = block_depth_lookup[depth];
 
-    int end_position = 0;
     //number after - to shift minimum possible
-    for(int i = 0; i < mesh_depth; i++){ end_position += block_depth_lookup[i]; }
+    int end_position = block_depth_lookup[mesh_depth-1];
 
     //shift data up
     for(int i = end_position; i > tail_position; i--){
@@ -64,7 +73,7 @@ void physics_mesh::block_list_insert(int current_depth, int refined_indice){
 
     block_indices[tail_position] = refined_indice;
 
-    for(int i = current_depth; i < mesh_depth; i++){ block_depth_lookup[i]+=1; }
+    for(int i = depth+1; i < mesh_depth+1; i++){ block_depth_lookup[i]+=1; }
 
 }
 
@@ -132,29 +141,18 @@ __host__ json physics_mesh::serialize(){
 __host__ void physics_mesh::pretty_print(){
     std::cout << "\n\033[1;32mtraverse_state: \033[0m {\n";
 
-    named_array(world_scale,MESH_BUFFER_DEPTH);
-    named_array(mesh_sizes,MESH_BUFFER_DEPTH);
+    named_array(world_scale, MESH_BUFFER_DEPTH);
+    named_array(mesh_sizes, MESH_BUFFER_DEPTH);
     named_value(mesh_depth);
 
     named_array(temperature, buffer_end_pointer);
     named_array(potential, buffer_end_pointer);
-    // float * potential;
-    // int32_t * space_charge; //charge probably can't reasonably be fractional - we're not working with quarks?
-    // uint16_t * boundary_conditions;
-    // uint32_t * refined_indices;
-    // uint32_t * ghost_linkages; // can't include ghosts at 'overhangs' - those'll be handled by 'copy_down' I suppose?
-    //                            // - just those on the same level, which'll be changed every iteration.
-    //                            // - could also have 6 pointers to blocks up/down/left/right
-    //                            // I suppose
-    //
-    // uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
-    //                         //needed for fast traversal
-    //                         //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
-    // uint32_t block_num[MESH_BUFFER_DEPTH]; //1,4,3,0 //including root
-    //we need both block_indices and refined_indices:
-    //one provides the spatial data, and one the fast vectorized traverse
-
-    // uint32_t buffer_end_pointer;
+    named_array(space_charge, buffer_end_pointer);
+    named_array(boundary_conditions, buffer_end_pointer);
+    named_array(refined_indices, buffer_end_pointer);
+    named_array(ghost_linkages, buffer_end_pointer);
+    named_array(block_indices, buffer_end_pointer);
+    named_array(block_depth_lookup, MESH_BUFFER_DEPTH+1);
 
     std::cout << "}\n";
 }
