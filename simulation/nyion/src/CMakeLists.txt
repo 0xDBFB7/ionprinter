@@ -4,13 +4,14 @@ link_directories(./ common/ physics_mesh/ array_helper_program/ visualize/ devic
 
 add_library (nyion_lib nyion.cpp nyion.hpp)
 
-add_library (physics_mesh physics_mesh/physics_mesh.cpp physics_mesh/traverse_state.cpp)
+add_library (physics_mesh physics_mesh/physics_mesh.cu physics_mesh/traverse_state.cpp)
 add_library (physics_mesh_transfers physics_mesh/device_transfer.cu physics_mesh/device_transfer_tests.cu common/CUDA_helpers.cu)
 add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)
 add_library (common common/debug_helpers.cpp common/debug_helpers.hpp)
 
 
-target_link_libraries(physics_mesh ${CUDA_LIBRARIES} gtest gtest_main)
+target_link_libraries(physics_mesh ${CUDA_LIBRARIES} physics_mesh_transfers gtest gtest_main)
+set_target_properties(physics_mesh PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 
 target_link_libraries(common gtest gtest_main)

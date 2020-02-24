@@ -3,6 +3,4 @@
 
 #include "nyion.hpp"
 
-#include "gtest/gtest.h"
-
 #endif

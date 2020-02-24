@@ -13,6 +13,8 @@ target_link_libraries(nyion_test state_persist)
 
 target_link_libraries(nyion_test gtest gtest_main )
 
+set_target_properties(nyion_test PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
+
 
 target_compile_options(nyion_test PRIVATE)
 

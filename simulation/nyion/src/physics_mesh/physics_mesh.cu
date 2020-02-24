@@ -50,7 +50,7 @@ int physics_mesh::blocks_on_level(int depth){
 }
 
 
-void physics_mesh::block_list_insert(int depth, int refined_indice){
+__device__ __host__ void physics_mesh::block_list_insert(int depth, int refined_indice){
     //to accomodate iterating over blocks without traversing a tree,
     //block IDs are also stored in an array.
     //block_num stores how many indices are in each level.

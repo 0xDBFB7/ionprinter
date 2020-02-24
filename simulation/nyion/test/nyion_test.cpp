@@ -3,7 +3,6 @@
 
 #include "physics_mesh.hpp"
 #include "physics_mesh_tests.hpp"
-#include "device_transfer_tests.hpp"
 
 #include "gtest/gtest.h"
 
