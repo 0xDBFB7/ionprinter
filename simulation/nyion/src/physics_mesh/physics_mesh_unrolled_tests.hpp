@@ -21,7 +21,7 @@ TEST(physics_mesh, block_depth_lookup_1){
     mesh.block_list_insert(1, 24);
     mesh.block_list_insert(2, 32);
 
-    mesh.pretty_print();
+    // mesh.pretty_print();
 
     ASSERT_EQ(mesh.blocks_on_level(0), 1);
     ASSERT_EQ(mesh.blocks_on_level(1), 3);

@@ -9,6 +9,7 @@ if(NOT DEFINED ENV{ASAN_OPTIONS})
     message( FATAL_ERROR "oh no, ASAN_OPTIONS isn't set! This is zero cool.")
 endif()
 
+
 cmake_minimum_required(VERSION 3.9)
 set (CMAKE_CXX_STANDARD 17)
 

@@ -84,7 +84,15 @@ TEST(physics_mesh, is_equal){
 TEST(physics_mesh, serialization){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3};
     physics_mesh mesh(mesh_sizes,2);
-    std::cout << mesh.serialize().dump(4);
+    mesh.potential[0] = 500;
+    // std::cout << mesh.serialize().dump(4);
+    std::string output = mesh.to_json_object().dump(4);
+
+    physics_mesh mesh_2(mesh_sizes,1);
+    json j = json::parse(output);
+    mesh_2.from_json_object(j);
+    ASSERT_EQ(mesh_2.equals(mesh), true);
+
 }
 
 

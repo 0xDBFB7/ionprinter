@@ -122,7 +122,7 @@ void add_to_object(json &object, T * input, std::string name, int n){
         object[name] = temp;
 }
 
-__host__ json physics_mesh::serialize(){
+__host__ json physics_mesh::to_json_object(){
     json object;
 
     add_to_object(object, world_scale, "world_scale", MESH_BUFFER_DEPTH);
@@ -139,11 +139,32 @@ __host__ json physics_mesh::serialize(){
     add_to_object(object, ghost_linkages, "ghost_linkages", buffer_end_pointer);
     add_to_object(object, block_indices, "block_indices", buffer_end_pointer);
 
-
-
     return object;
 }
 
+template <class T>
+void import_from_object(json &object, T * input, std::string name, int n){
+    for(int i = 0; i < n; i++){
+        input[i] = object[name][i];
+    }
+}
+
+__host__ void physics_mesh::from_json_object(json &object){
+
+    import_from_object(object, world_scale, "world_scale", MESH_BUFFER_DEPTH);
+    import_from_object(object, mesh_sizes, "mesh_sizes", MESH_BUFFER_DEPTH);
+    import_from_object(object, block_depth_lookup, "block_depth_lookup", MESH_BUFFER_DEPTH+1);
+
+    buffer_end_pointer = object["buffer_end_pointer"];
+
+    import_from_object(object, temperature, "temperature", buffer_end_pointer);
+    import_from_object(object, potential, "potential", buffer_end_pointer);
+    import_from_object(object, space_charge, "space_charge", buffer_end_pointer);
+    import_from_object(object, boundary_conditions, "boundary_conditions", buffer_end_pointer);
+    import_from_object(object, refined_indices, "refined_indices", buffer_end_pointer);
+    import_from_object(object, ghost_linkages, "ghost_linkages", buffer_end_pointer);
+    import_from_object(object, block_indices, "block_indices", buffer_end_pointer);
+}
 
 
 

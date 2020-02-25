@@ -164,14 +164,7 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
 
           if(state.current_depth < end_depth && refined_indices[state.current_indice] && !just_visited){
               //Descend
-              state.x_queue[state.current_depth] = state.x;
-              state.y_queue[state.current_depth] = state.y;
-              state.z_queue[state.current_depth] = state.z;
-              state.current_depth += 1;
-              state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
-              state.x = ignore_ghosts;
-              state.y = ignore_ghosts;
-              state.z = ignore_ghosts;
+              state.descend_into(*this);
 
               continue;
           }

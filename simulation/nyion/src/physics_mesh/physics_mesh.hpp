@@ -63,7 +63,8 @@ struct physics_mesh{
     void set_level_ghost_linkages();
     __device__ __host__ int blocks_on_level(int depth);
     __device__ __host__ void block_list_insert(int current_depth, int refined_indice);
-    json serialize();
+    json to_json_object();
+    void from_json_object(json &object);
     void pretty_print();
 
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);

@@ -12,7 +12,9 @@ TEST(statepersist, statepersisttest1){ //because googletest
     physics_mesh mesh_1(mesh_sizes, 1);
 
     std::vector<physics_mesh> meshes;
-    sub.push_back(mesh_1);
+    meshes.push_back(mesh_1);
+
+    
 
     // traverse_state state;
     // std::vector<traverse_state> states;

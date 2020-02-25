@@ -10,19 +10,32 @@ These are later loaded and compared for unit testing.
 */
 
 void persist_to_file(std::vector<physics_mesh> &meshes, std::vector<traverse_state> &states, std::string filename){
-    // std::vector<physics_mesh> sub;
-    // sub.push_back();
+    json meshes_json;
+    for(auto & i: meshes){
+        meshes_json.push_back(i.to_json_object());
+    }
+    json file_json;
+    file_json["meshes"] = meshes_json;
 
-    // // read a JSON file
-    // std::ifstream i("file.json");
-    // json j;
-    // i >> j;
-    //
-    // // write prettified JSON to another file
-    // std::ofstream o(filename);
-    // o << std::setw(4) << j << std::endl;
+    std::ofstream o(filename);
+    o << std::setw(4) << file_json << std::endl;
 
 }
 
+void restore_from_file(std::vector<physics_mesh> &meshes, std::vector<traverse_state> &states, std::string filename){
+    json file_json;
+
+    std::ifstream i(filename);
+    i >> file_json;
+
+    json meshes_json = file_json["meshes"];
+
+    for(auto & i: meshes_json){
+        int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+        physics_mesh mesh(mesh_sizes, 1);
+        mesh.from_json_object(i);
+        meshes.push_back(mesh);
+    }
+}
 
 // void read_from_file(){
