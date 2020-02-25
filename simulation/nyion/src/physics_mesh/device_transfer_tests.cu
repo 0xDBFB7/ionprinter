@@ -54,7 +54,7 @@ __global__ void refine_on_device(physics_mesh &mesh) {
     mesh.refine_cell(0,0);
 }
 
-TEST(CUDA,CUDA_refine_on_device){
+TEST(CUDA, CUDA_refine_on_device){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;

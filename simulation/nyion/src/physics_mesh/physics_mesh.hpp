@@ -5,7 +5,7 @@
 
 #include "config.hpp"
 
-#include <nlohmann/json.hpp>
+#include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
 
@@ -23,6 +23,7 @@ struct physics_mesh{
     // Changes to this data structure must be applied to:
     // - physics_mesh::pretty_print()
     // - physics_mesh::serialize()
+    // - equals()
     // - Host constructor, zero fills, and host destructor
     // - Device constructor, copy to host, copy to device, device destructor
 
@@ -54,7 +55,7 @@ struct physics_mesh{
     physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth);
     ~physics_mesh();
 
-    void equal(physics_mesh &mesh_2);
+    bool equals(physics_mesh &mesh_2);
     __device__ __host__ void refine_cell(int current_depth, int current_indice);
     void compute_world_scale();
     void set_level_ghost_linkages();

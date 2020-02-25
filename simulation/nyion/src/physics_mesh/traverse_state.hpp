@@ -25,7 +25,7 @@ struct traverse_state{
 
     traverse_state();
 
-    bool equal(traverse_state &state_2, int depth);
+    bool equals(traverse_state &state_2, int depth);
     bool is_ghost(physics_mesh &mesh);
     void pretty_print();
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);

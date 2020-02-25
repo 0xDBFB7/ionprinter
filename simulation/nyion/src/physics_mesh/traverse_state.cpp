@@ -18,7 +18,7 @@ traverse_state::traverse_state(){
     z = 0;
 }
 
-bool traverse_state::equal(traverse_state &state_2, int depth){
+bool traverse_state::equals(traverse_state &state_2, int depth){
     bool e_s = true;
 
     e_s = e_s && (current_depth == state_2.current_depth);

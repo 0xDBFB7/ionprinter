@@ -6,8 +6,8 @@ link_directories(../src/common/ ../src/physics_mesh ../src/array_helper_program/
 
 
 add_executable (nyion_test nyion_test.cpp)
-target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES}
-                                    nyion_lib physics_mesh physics_mesh_transfers visualize common OpenMP::OpenMP_CXX)
+target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${CUDA_LIBRARIES}
+                                 physics_mesh physics_mesh_transfers common)
 
 target_link_libraries(nyion_test state_persist)
 

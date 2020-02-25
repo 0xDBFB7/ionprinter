@@ -3,6 +3,7 @@
 
 #include "physics_mesh.hpp"
 #include "physics_mesh_tests.hpp"
+#include "device_transfer_tests.hpp"
 
 #include "gtest/gtest.h"
 
@@ -26,17 +27,17 @@ TEST(MathGL, MathGL_Basic)
 
 }
 
-TEST(OpenGL, DISABLED_OpenGL_Basic)
-{
-  initialize_opengl();
-  opengl_3d_mode();
-  while(true){
-    opengl_clear_screen();
-    opengl_draw_axis_cross();
-    opengl_test_prism();
-    update_screen();
-  }
-}
+// TEST(OpenGL, DISABLED_OpenGL_Basic)
+// {
+//   initialize_opengl();
+//   opengl_3d_mode();
+//   while(true){
+//     opengl_clear_screen();
+//     opengl_draw_axis_cross();
+//     opengl_test_prism();
+//     update_screen();
+//   }
+// }
 
 
 int main(int argc, char** argv)

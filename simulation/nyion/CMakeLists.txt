@@ -40,23 +40,25 @@ PROJECT(nyion LANGUAGES CUDA CXX C)
 
 
 set(FLTK_DIR ~/Programs/fltk-1.3.5/build/)
+set(nlohmann_json_DIR /home/arthurdent/Programs/json/build/)
 find_package(FLTK REQUIRED NO_MODULE)
 find_package(OpenMP REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(MathGL2 REQUIRED)
 find_package(CUDA REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 ### Note that FLTK's OpenGL support has been disabled. Probably can be re-enabled.
 include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} ${OPENGL_INCLUDE_DIRS}
                                                         ${GLUT_INCLUDE_DIRS} ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES} ../src/)
 
 
-include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL)
+include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL nlohmann_json::nlohmann_json)
 
 include_directories(/home/arthurdent/Programs/cpp-linenoise)
 # from https://github.com/yhirose/cpp-linenoise/commits/master, version 5ea11d5d97e1f770524c300dd67db009dd4a3ab4
-include_directories(/home/arthurdent/Programs/nlohmann-json/)
+#include_directories(/home/arthurdent/Programs/nlohmann-json/)
 # from https://github.com/nlohmann/json, version 3.7.3
 
 

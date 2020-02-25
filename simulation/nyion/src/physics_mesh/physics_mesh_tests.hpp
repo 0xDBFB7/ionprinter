@@ -67,8 +67,24 @@ TEST(physics_mesh, breadth_first_2){
     }
 }
 
-TEST(physics_mesh, serialization){
+TEST(physics_mesh, is_equal){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3};
+    physics_mesh mesh(mesh_sizes,2);
 
+    physics_mesh mesh_2(mesh_sizes,2);
+
+    ASSERT_EQ(mesh.equals(mesh),true);
+    ASSERT_EQ(mesh.equals(mesh_2),true);
+    mesh_2.refined_indices[0] = 56;
+
+    ASSERT_EQ(mesh.equals(mesh_2),false);
+}
+
+
+TEST(physics_mesh, serialization){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3};
+    physics_mesh mesh(mesh_sizes,2);
+    mesh.serialize();
 }
 
 

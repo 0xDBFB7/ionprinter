@@ -6,32 +6,29 @@ add_library (nyion_lib nyion.cpp nyion.hpp)
 
 add_library (physics_mesh physics_mesh/physics_mesh.cu physics_mesh/traverse_state.cpp)
 add_library (physics_mesh_transfers physics_mesh/device_transfer.cu physics_mesh/device_transfer_tests.cu common/CUDA_helpers.cu)
-add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)
-add_library (common common/debug_helpers.cpp common/debug_helpers.hpp)
 
 
 target_link_libraries(physics_mesh ${CUDA_LIBRARIES} physics_mesh_transfers gtest gtest_main)
+target_link_libraries(physics_mesh nlohmann_json::nlohmann_json)
 set_target_properties(physics_mesh PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 
-target_link_libraries(common gtest gtest_main)
-
-
-target_link_libraries(physics_mesh_transfers ${CUDA_LIBRARIES} physics_mesh common gtest gtest_main)
+target_link_libraries(physics_mesh_transfers ${CUDA_LIBRARIES} common gtest gtest_main)
 set_target_properties(physics_mesh_transfers PROPERTIES CUDA_SEPARABLE_COMPILATION ON)
 
 
 
+add_library (common common/debug_helpers.cpp common/debug_helpers.hpp)
+target_link_libraries(common gtest gtest_main)
+
+
 add_library (state_persist state_persist/state_persist.cpp)
 target_link_libraries(state_persist physics_mesh gtest gtest_main)
+target_link_libraries(state_persist nlohmann_json::nlohmann_json)
 
 
-
-
+add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)
 target_link_libraries(visualize ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} physics_mesh common)
-
-
-
 
 
 

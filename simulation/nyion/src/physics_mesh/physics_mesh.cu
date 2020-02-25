@@ -4,7 +4,6 @@
 
 //most of this isn't cuda: we just add the .cu extension to get cuda to link some of the __device__ code.
 
-
 //constructor
 __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int init_mesh_depth){
     //set scales and sizes
@@ -122,6 +121,36 @@ __host__ json physics_mesh::serialize(){
     json object;
 
     return object;
+}
+
+#define IS_EQUAL_MACRO(NAME) is_equal = is_equal && (NAME[i] == mesh_2.NAME[i]);
+
+__host__ bool physics_mesh::equals(physics_mesh &mesh_2){
+    bool is_equal = true;
+
+    is_equal = is_equal && (buffer_end_pointer == mesh_2.buffer_end_pointer);
+
+    for(int i = 0; i < MESH_BUFFER_SIZE; i++){
+        IS_EQUAL_MACRO(temperature);
+        IS_EQUAL_MACRO(potential);
+        IS_EQUAL_MACRO(space_charge);
+        IS_EQUAL_MACRO(boundary_conditions);
+        IS_EQUAL_MACRO(refined_indices);
+        IS_EQUAL_MACRO(ghost_linkages);
+        IS_EQUAL_MACRO(block_indices);
+    }
+
+    for(int i = 0; i < MESH_BUFFER_DEPTH; i++){
+        is_equal = is_equal && (mesh_sizes[i] == mesh_2.mesh_sizes[i]);
+        is_equal = is_equal && (world_scale[i] == mesh_2.world_scale[i]);
+
+    }
+
+    for(int i = 0; i < MESH_BUFFER_DEPTH+1; i++){
+        is_equal = is_equal && (block_depth_lookup[i] == mesh_2.block_depth_lookup[i]);
+    }
+
+    return is_equal;
 }
 
 
