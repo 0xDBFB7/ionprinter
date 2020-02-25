@@ -30,6 +30,13 @@ struct physics_mesh{
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int mesh_sizes[MESH_BUFFER_DEPTH];
 
+    uint32_t block_depth_lookup[MESH_BUFFER_DEPTH+1]; //1,4,3,0 //including root
+    //we need both block_indices and refined_indices:
+    //one provides the spatial data, and one the fast vectorized traverse
+
+    uint32_t buffer_end_pointer;
+
+
     float * temperature; //Kelvin
     float * potential; //Volts
     int32_t * space_charge; //e+ , charge probably can't reasonably be fractional - we're not working with quarks?
@@ -40,27 +47,22 @@ struct physics_mesh{
                                // - just those on the same level, which'll be changed every iteration.
                                // - could also have 6 pointers to blocks up/down/left/right
                                // I suppose
-
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
                             //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
 
 
-    uint32_t block_depth_lookup[MESH_BUFFER_DEPTH+1]; //1,4,3,0 //including root
-    //we need both block_indices and refined_indices:
-    //one provides the spatial data, and one the fast vectorized traverse
 
-    uint32_t buffer_end_pointer;
 
     physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth);
     ~physics_mesh();
 
     bool equals(physics_mesh &mesh_2);
     __device__ __host__ void refine_cell(int current_depth, int current_indice);
-    void compute_world_scale();
+    __device__ __host__ void compute_world_scale();
     void set_level_ghost_linkages();
-    int blocks_on_level(int depth);
-    void block_list_insert(int current_depth, int refined_indice);
+    __device__ __host__ int blocks_on_level(int depth);
+    __device__ __host__ void block_list_insert(int current_depth, int refined_indice);
     json serialize();
     void pretty_print();
 

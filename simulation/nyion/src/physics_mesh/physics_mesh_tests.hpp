@@ -84,7 +84,7 @@ TEST(physics_mesh, is_equal){
 TEST(physics_mesh, serialization){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3};
     physics_mesh mesh(mesh_sizes,2);
-    mesh.serialize();
+    std::cout << mesh.serialize().dump(4);
 }
 
 

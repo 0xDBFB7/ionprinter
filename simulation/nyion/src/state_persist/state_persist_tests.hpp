@@ -18,8 +18,6 @@ TEST(statepersist, statepersisttest1){ //because googletest
     // std::vector<traverse_state> states;
     // sub.push_back(state);
 
-    
-
 }
 
 

@@ -1,3 +1,6 @@
+# there's a weird heisenbug that yields
+# ../src/libstate_persist.a(cmake_device_link.o): In function undefined reference
+
 include_directories(common/ physics_mesh/ array_helper_program/ visualize/ device_data_structure/ ./)
 
 link_directories(./ common/ physics_mesh/ array_helper_program/ visualize/ device_data_structure/)
@@ -23,8 +26,7 @@ target_link_libraries(common gtest gtest_main)
 
 
 add_library (state_persist state_persist/state_persist.cpp)
-target_link_libraries(state_persist physics_mesh common gtest gtest_main)
-target_link_libraries(state_persist nlohmann_json::nlohmann_json)
+target_link_libraries(state_persist physics_mesh physics_mesh_transfers gtest gtest_main)
 
 
 add_library (visualize visualize/visualize.cpp visualize/visualize.hpp)

@@ -115,13 +115,37 @@ void physics_mesh::set_level_ghost_linkages(){
 }
 
 
-
+template <class T>
+void add_to_object(json &object, T * input, std::string name, int n){
+        std::vector<float> temp;
+        temp.assign(input, input+n);
+        object[name] = temp;
+}
 
 __host__ json physics_mesh::serialize(){
     json object;
-    // std::vector<float> = 
+
+    add_to_object(object, world_scale, "world_scale", MESH_BUFFER_DEPTH);
+    add_to_object(object, mesh_sizes, "mesh_sizes", MESH_BUFFER_DEPTH);
+    add_to_object(object, block_depth_lookup, "block_depth_lookup", MESH_BUFFER_DEPTH+1);
+
+    object["buffer_end_pointer"] = buffer_end_pointer;
+
+    add_to_object(object, temperature, "temperature", buffer_end_pointer);
+    add_to_object(object, potential, "potential", buffer_end_pointer);
+    add_to_object(object, space_charge, "space_charge", buffer_end_pointer);
+    add_to_object(object, boundary_conditions, "boundary_conditions", buffer_end_pointer);
+    add_to_object(object, refined_indices, "refined_indices", buffer_end_pointer);
+    add_to_object(object, ghost_linkages, "ghost_linkages", buffer_end_pointer);
+    add_to_object(object, block_indices, "block_indices", buffer_end_pointer);
+
+
+
     return object;
 }
+
+
+
 
 #define IS_EQUAL_MACRO(NAME) is_equal = is_equal && (NAME[i] == mesh_2.NAME[i]);
 
@@ -152,6 +176,8 @@ __host__ bool physics_mesh::equals(physics_mesh &mesh_2){
 
     return is_equal;
 }
+
+
 
 
 __host__ void physics_mesh::pretty_print(){
