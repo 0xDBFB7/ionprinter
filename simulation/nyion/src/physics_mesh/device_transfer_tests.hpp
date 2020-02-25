@@ -3,6 +3,8 @@
 
 #include "nyion.hpp"
 
+#include "CUDA_helpers.hpp"
+
 void link_cuda();
 
 #endif

@@ -30,10 +30,6 @@ void display_GPU_info(){
         std::wcout << "  Max grid dimensions:  [ " << props.maxGridSize[0] << ", " << props.maxGridSize[1]  << ", " << props.maxGridSize[2] << " ]" << std::endl;
         std::wcout << std::endl;
     }
-}
+    std::wcout << "" << std::endl << "=========" << std::endl << std::endl;
 
-
-TEST(CUDA, CUDA_display_info)
-{
-  display_GPU_info();
 }

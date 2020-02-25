@@ -23,7 +23,7 @@ target_link_libraries(common gtest gtest_main)
 
 
 add_library (state_persist state_persist/state_persist.cpp)
-target_link_libraries(state_persist physics_mesh gtest gtest_main)
+target_link_libraries(state_persist physics_mesh common gtest gtest_main)
 target_link_libraries(state_persist nlohmann_json::nlohmann_json)
 
 

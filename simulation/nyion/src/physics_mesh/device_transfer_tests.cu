@@ -6,7 +6,9 @@
 
 __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     for(int i = 0; i < mesh.buffer_end_pointer; i++){
-        mesh.potential[i] = i+100;
+        mesh.potential[i] += i+100;
+        mesh.boundary_conditions[i] += i+100;
+
     }
 }
 
@@ -16,7 +18,8 @@ TEST(CUDA, physics_mesh_device_copy_test){
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;
 //
-    for(int i = 0; i < 10; i++){ origin_host.potential[i] = i;};
+    for(int i = 0; i < origin_host.buffer_end_pointer; i++){ origin_host.potential[i] = 10+i;};
+    for(int i = 0; i < origin_host.buffer_end_pointer; i++){ origin_host.boundary_conditions[i] = 10+i;};
 
     physics_mesh * device_struct;
 
@@ -39,7 +42,8 @@ TEST(CUDA, physics_mesh_device_copy_test){
     // pretty_print_array(origin_host.potential, 0, 20);
     // origin_host.pretty_print();
 
-    ASSERT_NEAR(origin_host.potential[0],100,1e-3);
+    ASSERT_NEAR(origin_host.potential[0],110,1e-3);
+    ASSERT_NEAR(origin_host.boundary_conditions[0],110,1e-3);
     ASSERT_NEAR(origin_host.potential[origin_host.buffer_end_pointer+1],0,1e-3);
     //testing the zero case, to catch garbage on initialization
     ASSERT_NEAR(origin_host.mesh_sizes[0],3,1e-3);

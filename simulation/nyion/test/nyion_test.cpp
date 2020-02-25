@@ -5,6 +5,7 @@
 #include "physics_mesh_tests.hpp"
 #include "device_transfer_tests.hpp"
 
+
 #include "gtest/gtest.h"
 
 //rm -r * && cmake ../
@@ -25,6 +26,11 @@ TEST(MathGL, MathGL_Basic)
     // y.Link(a,50);
   // gr.WriteFrame("test.png");
 
+}
+
+TEST(CUDA, CUDA_display_info)
+{
+  display_GPU_info();
 }
 
 // TEST(OpenGL, DISABLED_OpenGL_Basic)

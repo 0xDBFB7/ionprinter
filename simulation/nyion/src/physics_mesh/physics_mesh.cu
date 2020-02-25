@@ -119,7 +119,7 @@ void physics_mesh::set_level_ghost_linkages(){
 
 __host__ json physics_mesh::serialize(){
     json object;
-
+    // std::vector<float> = 
     return object;
 }
 
