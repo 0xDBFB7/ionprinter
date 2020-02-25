@@ -1,6 +1,5 @@
 #include "device_transfer_tests.hpp"
 
-
 #include "nyion.hpp"
 
 #include "physics_mesh.hpp"
@@ -50,6 +49,7 @@ TEST(CUDA, physics_mesh_device_copy_test){
 
 
 
+
 __global__ void refine_on_device(physics_mesh &mesh) {
     mesh.refine_cell(0,0);
 }
@@ -77,3 +77,7 @@ TEST(CUDA, CUDA_refine_on_device){
 
     physics_mesh::device_destructor(&device_struct);
 }
+
+
+void link_cuda(); //forces CMAKE to link cuda test code.
+                    // there's probably a much more elegant way to do this.

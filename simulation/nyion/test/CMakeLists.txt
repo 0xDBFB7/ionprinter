@@ -1,8 +1,8 @@
 include_directories(../src/)
 link_directories(../src/)
 
-include_directories(../src/common/ ../src/physics_mesh ../src/array_helper_program/ ../src/visualize/ ../src/device_data_structure/)
-link_directories(../src/common/ ../src/physics_mesh ../src/array_helper_program/ ../src/visualize/ ../src/device_data_structure/)
+include_directories(../src/common/ ../src/physics_mesh ../src/visualize/ ../src/device_data_structure/)
+link_directories(../src/common/ ../src/physics_mesh ../src/visualize/ ../src/device_data_structure/)
 
 
 add_executable (nyion_test nyion_test.cpp)

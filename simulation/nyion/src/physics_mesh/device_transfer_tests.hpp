@@ -3,4 +3,6 @@
 
 #include "nyion.hpp"
 
+void link_cuda();
+
 #endif
