@@ -2,8 +2,8 @@
 
 #include "physics_mesh.hpp"
 
-#include <nlohmann/json.hpp> //big file, seperate serialization .cpp?
-using json = nlohmann::json;
+//most of this isn't cuda: we just add the .cu extension to get cuda to link some of the __device__ code.
+
 
 //constructor
 __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int init_mesh_depth){
@@ -42,10 +42,9 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
         ghost_linkages[i] = 0;
         block_indices[i] = 0;
     }
-
 }
 
-int physics_mesh::blocks_on_level(int depth){
+__device__ __host__ int physics_mesh::blocks_on_level(int depth){
     return block_depth_lookup[depth+1]-block_depth_lookup[depth];
 }
 
@@ -97,7 +96,7 @@ __device__ __host__ void physics_mesh::refine_cell(int current_depth, int curren
 }
 
 
-__host__ __device__ void physics_mesh::compute_world_scale(){
+__device__ __host__ void physics_mesh::compute_world_scale(){
     //we want to quickly init mesh_sizes like {3,3,5} for testing.
     //however, that
     for(int i = 0; i < MESH_BUFFER_DEPTH; i++){ world_scale[i] = 0; };
