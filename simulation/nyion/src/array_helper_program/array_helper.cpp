@@ -150,8 +150,8 @@ int main()
     initialize_opengl();
     opengl_3d_mode();
 
-    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 10, 10};
-    physics_mesh mesh(mesh_sizes, 1);
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+    physics_mesh mesh(mesh_sizes, 3);
 
     traverse_state user_state;
 
@@ -186,6 +186,7 @@ int main()
         linenoise::AddHistory(line.c_str());
 
         if(args.size() > 0){
+
             if(args[0] == "move" && args.size() == 3){
                 move_cursor(mesh, user_state, args);
             }
@@ -197,6 +198,7 @@ int main()
                     user_state.pretty_print();
                 }
             }
+
             if(args[0] == "refine"){
                 mesh.refine_cell(user_state.current_depth,user_state.current_indice);
                                         //how about a wrapper state.x() that just returns user_state.x_queue[user_state.current_depth]?
@@ -207,9 +209,26 @@ int main()
             if(args[0] == "descend"){
                 user_state.descend_into(mesh, false);
             }
+            if(args[0] == "ascend"){
+                user_state.ascend_from(mesh, false);
+            }
+
+
+            if(args[0] == "store"){
+                user_state.ascend_from(mesh, false);
+            }
+
+            if(args[0] == "step"){
+                user_state.ascend_from(mesh, false);
+            }
+
             if(args[0] == "set" && args.size() == 3){
                 if(args[1] == "potential"){
                     mesh.potential[user_state.current_indice] = std::stof(args[2]);
+                    mesh.pretty_print();
+                }
+                if(args[1] == "ghost_linkages"){
+                    mesh.ghost_linkages[user_state.current_indice] = std::stof(args[2]);
                     mesh.pretty_print();
                 }
             }

@@ -119,6 +119,14 @@ void traverse_state::descend_into(physics_mesh &mesh, bool ignore_ghosts){
     update_position(mesh);
 
 }
+
+void traverse_state::ascend_from(physics_mesh &mesh, bool ignore_ghosts){
+    current_depth-=1;
+    x = x_queue[current_depth];
+    y = y_queue[current_depth];
+    z = z_queue[current_depth];
+    update_position(mesh);
+}
 //
 // state.x_queue[state.current_depth] = state.x;
 //    state.y_queue[state.current_depth] = state.y;
@@ -131,6 +139,8 @@ void traverse_state::descend_into(physics_mesh &mesh, bool ignore_ghosts){
 
 
 void traverse_state::update_position(physics_mesh &mesh){
+    block_beginning_indice = ref_queue[current_depth];
+
     current_indice = block_beginning_indice+
                     idx(x,y,z,mesh.mesh_sizes[current_depth]);
 
@@ -184,16 +194,17 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
 
         while(true){
 
-          state.block_beginning_indice = state.ref_queue[state.current_depth];
-          state.update_position(*this);
+            state.update_position(*this);
 
-          if(state.current_depth < end_depth && refined_indices[state.current_indice] && !just_visited && state.z < mesh_sizes[state.current_depth]){
+          if(state.current_depth < end_depth && refined_indices[state.current_indice]
+                                && !just_visited && state.z < mesh_sizes[state.current_depth]){
               //Descend
               state.descend_into(*this, ignore_ghosts);
               continue;
           }
+
           if(state.z == (mesh_sizes[state.current_depth]-ignore_ghosts)){
-              //Ascend
+
               if(state.current_depth == 0){
                   return false;
               }
