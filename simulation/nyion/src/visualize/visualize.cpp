@@ -231,7 +231,7 @@ void draw_mesh(physics_mesh &mesh, __attribute__((unused)) float * array, bool l
 void draw_cell(physics_mesh &mesh, traverse_state &state, float R, float G, float B, float A, bool solid, bool level_splitting){
 
     glPushMatrix();
-
+    
         float current_scale = mesh.world_scale[state.current_depth];
 
         float level_split_offset = 0;

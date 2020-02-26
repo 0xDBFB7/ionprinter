@@ -76,12 +76,16 @@ struct menu_struct{
     //     x_counter =
     // }
 
-    void inspect(traverse_state &system_state, physics_mesh &mesh); //manual "step" button
 };
 
-void init_inspect();
 
 void show_image(); //for MathGL
+
+
+void init_inspect(){
+    initialize_opengl();
+    opengl_3d_mode();
+}
 
 void gui_loop(physics_mesh &mesh, traverse_state &user_state, bool level_splitting, bool single_loop){
     if(!single_loop){ std::cout << "\n GUI unlocked \n"; };
@@ -101,6 +105,13 @@ void gui_loop(physics_mesh &mesh, traverse_state &user_state, bool level_splitti
         }
     }
 }
+
+
+void inspect(traverse_state &state, physics_mesh &mesh){ //manual "step" button
+    gui_loop(mesh, state, false, true);
+    std::cin.get(); //wait for input
+}
+
 
 void move_cursor(physics_mesh &mesh, traverse_state &user_state, std::vector<std::string> &args){
     int action = (args[2] == "+") ? 1 : -1;
@@ -195,7 +206,6 @@ int main()
             }
             if(args[0] == "descend"){
                 user_state.descend_into(mesh, false);
-                user_state.update_position(mesh);
             }
             if(args[0] == "set" && args.size() == 3){
                 if(args[1] == "potential"){

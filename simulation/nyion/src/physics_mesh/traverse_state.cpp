@@ -109,9 +109,10 @@ void traverse_state::descend_into(physics_mesh &mesh, bool ignore_ghosts){
     x_queue[current_depth] = x;
     y_queue[current_depth] = y;
     z_queue[current_depth] = z;
+    ref_queue[current_depth] = block_beginning_indice;
     current_depth += 1;
     ref_queue[current_depth] = mesh.refined_indices[current_indice];
-    block_beginning_indice = ref_queue[current_depth];
+    block_beginning_indice = mesh.refined_indices[current_indice];
     x = ignore_ghosts;
     y = ignore_ghosts;
     z = ignore_ghosts;
@@ -173,9 +174,11 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
         if(state.x == (mesh_sizes[state.current_depth]-ignore_ghosts)) {state.x=ignore_ghosts; state.y++;}
         if(state.y == (mesh_sizes[state.current_depth]-ignore_ghosts)) {state.y=ignore_ghosts; state.z++;}
 
-        state.x_queue[state.current_depth] = state.x;
-        state.y_queue[state.current_depth] = state.y;
-        state.z_queue[state.current_depth] = state.z;
+        if(state.z < mesh_sizes[state.current_depth]){
+            state.x_queue[state.current_depth] = state.x;
+            state.y_queue[state.current_depth] = state.y;
+            state.z_queue[state.current_depth] = state.z;
+        }
 
         bool just_visited = 0;
 
@@ -184,26 +187,22 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
           state.block_beginning_indice = state.ref_queue[state.current_depth];
           state.update_position(*this);
 
-          if(state.current_depth < end_depth && refined_indices[state.current_indice] && !just_visited){
+          if(state.current_depth < end_depth && refined_indices[state.current_indice] && !just_visited && state.z < mesh_sizes[state.current_depth]){
               //Descend
               state.descend_into(*this, ignore_ghosts);
-
               continue;
           }
-
           if(state.z == (mesh_sizes[state.current_depth]-ignore_ghosts)){
               //Ascend
               if(state.current_depth == 0){
                   return false;
               }
-
               state.current_depth-=1;
               state.x = state.x_queue[state.current_depth];
               state.y = state.y_queue[state.current_depth];
               state.z = state.z_queue[state.current_depth];
 
               just_visited = true;
-
               continue;
           }
 

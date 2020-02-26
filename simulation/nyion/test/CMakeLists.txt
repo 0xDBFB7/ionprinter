@@ -7,7 +7,7 @@ link_directories(../src/common/ ../src/physics_mesh ../src/visualize/ ../src/dev
 
 add_executable (nyion_test nyion_test.cpp)
 target_link_libraries(nyion_test ${MATHGL2_LIBRARY} ${CUDA_LIBRARIES}
-                                 physics_mesh physics_mesh_transfers common)
+                                 physics_mesh physics_mesh_transfers visualize common)
 
 target_link_libraries(nyion_test state_persist)
 

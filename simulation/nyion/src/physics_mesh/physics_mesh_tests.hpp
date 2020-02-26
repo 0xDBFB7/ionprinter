@@ -81,6 +81,23 @@ TEST(physics_mesh, breadth_first_2){
     }
 }
 
+TEST(physics_mesh, breadth_first_3){
+    //traverse with ghosts, root only.
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3,3};
+    physics_mesh mesh(mesh_sizes,3);
+
+    mesh.refine_cell(0,14);
+    mesh.refine_cell(1, cube(3));
+
+    traverse_state state;
+
+    while(mesh.breadth_first(state,0,MESH_BUFFER_DEPTH,false)){
+        
+        state.pretty_print();
+    }
+}
+
+
 TEST(physics_mesh, is_equal){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3,3};
     physics_mesh mesh(mesh_sizes,2);
