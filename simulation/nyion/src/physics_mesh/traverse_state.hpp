@@ -29,7 +29,7 @@ struct traverse_state{
     bool is_ghost(physics_mesh &mesh);
     void pretty_print();
     void cell_world_lookup(physics_mesh &mesh, float &x, float &y, float &z);
-    void descend_into(physics_mesh &mesh);
+    void descend_into(physics_mesh &mesh, bool ignore_ghosts);
     void update_position(physics_mesh &mesh);
 };
 

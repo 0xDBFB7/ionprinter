@@ -92,18 +92,42 @@ void traverse_state::cell_world_lookup(physics_mesh &mesh, float &x, float &y, f
 //   }
 // }
 
-void traverse_state::descend_into(physics_mesh &mesh){
+void traverse_state::descend_into(physics_mesh &mesh, bool ignore_ghosts){
+    // x_queue[current_depth] = x; //state.x,y,z should go.
+    // z_queue[current_depth] = y; //everything has to be updated simultaneously anyhow,
+    // y_queue[current_depth] = z; //and state. should never be in the hot loop anyhow.
+    // current_depth++;
+    // ref_queue[current_depth] = mesh.refined_indices[current_indice];
+    // block_beginning_indice = mesh.refined_indices[current_indice];
+    // x_queue[current_depth] = ignore_ghosts; //state.x,y,z should go.
+    // z_queue[current_depth] = ignore_ghosts; //everything has to be updated simultaneously anyhow,
+    // y_queue[current_depth] = ignore_ghosts; //and state. should never be in the hot loop anyhow.
+    // x = ignore_ghosts;
+    // y = ignore_ghosts;
+    // z = ignore_ghosts;
+    // update_position(mesh);
+    x_queue[current_depth] = x;
+    y_queue[current_depth] = y;
+    z_queue[current_depth] = z;
+    current_depth += 1;
     ref_queue[current_depth] = mesh.refined_indices[current_indice];
-    block_beginning_indice = mesh.refined_indices[current_indice];
-    current_depth++; //descend_into() function?
-    x_queue[current_depth] = 0; //state.x,y,z should go.
-    z_queue[current_depth] = 0; //everything has to be updated simultaneously anyhow,
-    y_queue[current_depth] = 0; //and state. should never be in the hot loop anyhow.
-    x = 0;
-    y = 0;
-    z = 0;
+    block_beginning_indice = ref_queue[current_depth];
+    x = ignore_ghosts;
+    y = ignore_ghosts;
+    z = ignore_ghosts;
     update_position(mesh);
+
 }
+//
+// state.x_queue[state.current_depth] = state.x;
+//    state.y_queue[state.current_depth] = state.y;
+//    state.z_queue[state.current_depth] = state.z;
+//    state.current_depth += 1;
+//    state.ref_queue[state.current_depth] = refined_indices[state.current_indice];
+//    state.x = ignore_ghosts;
+//    state.y = ignore_ghosts;
+//    state.z = ignore_ghosts;
+
 
 void traverse_state::update_position(physics_mesh &mesh){
     current_indice = block_beginning_indice+
@@ -153,18 +177,16 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
         state.y_queue[state.current_depth] = state.y;
         state.z_queue[state.current_depth] = state.z;
 
-        state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
-
         bool just_visited = 0;
 
         while(true){
 
           state.block_beginning_indice = state.ref_queue[state.current_depth];
-          state.current_indice = state.block_beginning_indice+idx(state.x,state.y,state.z,mesh_sizes[state.current_depth]);
+          state.update_position(*this);
 
           if(state.current_depth < end_depth && refined_indices[state.current_indice] && !just_visited){
               //Descend
-              state.descend_into(*this);
+              state.descend_into(*this, ignore_ghosts);
 
               continue;
           }

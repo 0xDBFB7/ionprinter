@@ -26,6 +26,20 @@ TEST(physics_mesh, refine_test){
 }
 
 
+TEST(physics_mesh, descend_test_1){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
+    physics_mesh mesh(mesh_sizes,3);
+    traverse_state state;
+
+    mesh.refine_cell(0, 14); //refine level 0, position 14
+    // state.descend_into();
+
+    mesh.refine_cell(1, mesh.buffer_end_pointer-1);
+
+}
+
+
+
 TEST(physics_mesh, scale_test){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh mesh(mesh_sizes,3);
