@@ -3774,3 +3774,12 @@ I'm incomplete without you <3 <3 <3
 
 
 Julia is a cool language.
+
+
+
+
+Laser inspection of the beam might be an interesting technique - interferometery perhaps? Or look at the spectrum broadening because of the doppler shift of reflected light from moving ions, or ...
+
+Wysong et al use a laser doppler fluorescence technique to determine v, number density etc etc
+
+Oh, measuring the spectrum shift of the recombination light would probably work too

@@ -144,6 +144,12 @@ Oxide cathodes are apparently a little tricky to make.
 
 Contrary to the above, however, oxide cathodes are, in fact, demountable, if operated at a higher temperature and maintained at 120c when exposed to atmosphere in order to prevent water absorption.
 
+
+Barium oxide is *quite* toxic. Might not be ideal for consumer use.
+
+Barium aluminate is pretty safe.
+
+
 ***
 
 
