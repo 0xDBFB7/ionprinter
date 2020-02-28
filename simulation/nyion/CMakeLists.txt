@@ -30,7 +30,7 @@ set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 set(CXX_ASAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak ")
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
- -foffload=-lm -Wno-unused-parameter ${CXX_ASAN_FLAGS} -g --coverage")
+ -foffload=-lm -Wno-unused-parameter ${CXX_ASAN_FLAGS} -g ") #--coverage
 
 #Turbo Boost: -ffast-math on host, -use_fast_math nvcc
 

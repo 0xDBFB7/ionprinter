@@ -3783,3 +3783,6 @@ Laser inspection of the beam might be an interesting technique - interferometery
 Wysong et al use a laser doppler fluorescence technique to determine v, number density etc etc
 
 Oh, measuring the spectrum shift of the recombination light would probably work too
+
+
+

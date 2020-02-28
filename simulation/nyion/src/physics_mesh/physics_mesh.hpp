@@ -84,8 +84,7 @@ int idx(int x, int y, int z, int len);
 
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
-
-void transform_coordinates(uint8_t direction, uint8_t in_x, uint8_t in_y, uint8_t in_z, uint8_t out_x, uint8_t out_y, uint8_t out_z);
+int transform(uint8_t direction, uint8_t input_axis, uint8_t in_x, uint8_t in_y);
     //there are six possible directions in 3d space:
     //+x, +y, +z, -x, -y, -z
     //what about transforms involving the queue? I guess we'll burn that bridge later...

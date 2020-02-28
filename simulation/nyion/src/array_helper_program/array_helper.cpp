@@ -15,69 +15,6 @@
 #include "array_helper.hpp"
 #include "visualize.hpp"
 
-//
-// struct complete_state{ //for use with callbacks only
-//
-// }
-//
-// void fill_array(Fl_Widget *w, traverse_state *user_state) {
-//     std::fill()
-// }
-
-//We really should use callbacks.
-//However, consider:
-//I need both state and mesh.
-//What if I want to access a different widget's state?
-//How do I pass which widget was changed - x,y,z? Nah dawg.
-//oh hey, it'd be great if any arbitrary thing could be opened
-//huh
-
-struct menu_struct{
-    Fl_Spinner * x_counter;
-    Fl_Spinner * y_counter;
-    Fl_Spinner * z_counter;
-    Fl_Spinner * step_counter;
-    Fl_Spinner * current_depth_counter;
-    Fl_Spinner * size_counter;
-    Fl_Spinner * mesh_depth_counter;
-    Fl_Check_Button * level_splitting;
-    Fl_Button * read_button;
-    Fl_Button * write_button;
-    Fl_Input * file_input;
-    Fl_Choice * array_menu;
-    Fl_Float_Input * set_value;
-    Fl_Window * window;
-
-    menu_struct(){
-        window = new Fl_Window(500,500);
-
-        const int counter_height = 20;
-        const int counter_width = 100;
-
-        const int text_height = 20;
-        int widget_x = 20;
-        int widget_y = 40;
-
-        x_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"x"); widget_y += counter_height + text_height;
-        y_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"y"); widget_y += counter_height + text_height;
-        z_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"z"); widget_y += counter_height + text_height;
-        current_depth_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"current_depth"); widget_y += counter_height + text_height;
-        size_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"size"); widget_y += counter_height + text_height;
-        mesh_depth_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"mesh_depth"); widget_y += counter_height + text_height;
-        step_counter = new Fl_Spinner(widget_x,widget_y,counter_width,counter_height,"step"); widget_y += counter_height + text_height;
-
-        window->end();
-        window->show();
-
-    }
-    //
-    // void handle_inputs(traverse_state &user_state){
-    //     current_depth_counter =
-    //     x_counter =
-    // }
-
-};
-
 
 void show_image(); //for MathGL
 
@@ -116,24 +53,21 @@ void inspect(traverse_state &state, physics_mesh &mesh){ //manual "step" button
 void move_cursor(physics_mesh &mesh, traverse_state &user_state, std::vector<std::string> &args){
     int action = (args[2] == "+") ? 1 : -1;
     if(args[1] == "x"){
-        if((action == 1 && user_state.x < mesh.mesh_sizes[user_state.current_depth]-1)
-                                                        || (user_state.x > 0 && action == -1)){
+        if((action == 1 && user_state.get_x() < mesh.mesh_sizes[user_state.current_depth]-1)
+                                                        || (user_state.get_x() > 0 && action == -1)){
             user_state.x_queue[user_state.current_depth] += action;
-            user_state.x += action;
         }
     }
     if(args[1] == "y"){
-        if((action == 1 && user_state.y < mesh.mesh_sizes[user_state.current_depth]-1)
-                                                        || (user_state.y > 0 && action == -1)){
+        if((action == 1 && user_state.get_y() < mesh.mesh_sizes[user_state.current_depth]-1)
+                                                        || (user_state.get_y() > 0 && action == -1)){
             user_state.y_queue[user_state.current_depth] += action;
-            user_state.y += action;
         }
     }
     if(args[1] == "z"){
-        if((action == 1 && user_state.z < mesh.mesh_sizes[user_state.current_depth]-1)
-                                                        || (user_state.z > 0 && action == -1)){
+        if((action == 1 && user_state.get_z() < mesh.mesh_sizes[user_state.current_depth]-1)
+                                                        || (user_state.get_z() > 0 && action == -1)){
             user_state.z_queue[user_state.current_depth] += action;
-            user_state.z += action;
         }
     }
 

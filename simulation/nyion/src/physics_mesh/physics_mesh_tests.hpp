@@ -92,7 +92,7 @@ TEST(physics_mesh, breadth_first_3){
     traverse_state state;
 
     while(mesh.breadth_first(state,0,MESH_BUFFER_DEPTH,false)){
-        
+
         state.pretty_print();
     }
 }
@@ -123,10 +123,18 @@ TEST(physics_mesh, serialization){
     json j = json::parse(output);
     mesh_2.from_json_object(j);
     ASSERT_EQ(mesh_2.equals(mesh), true);
-
 }
 
 
+TEST(physics_mesh, ghost_linkages_1){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3,5};
+    physics_mesh mesh(mesh_sizes,2);
+
+    traverse_state state;
+
+    mesh.set_level_ghost_linkages(state);
+
+}
 
 
 
