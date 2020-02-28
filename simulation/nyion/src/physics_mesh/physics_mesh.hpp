@@ -60,7 +60,7 @@ struct physics_mesh{
     bool equals(physics_mesh &mesh_2);
     __device__ __host__ void refine_cell(int current_depth, int current_indice);
     __device__ __host__ void compute_world_scale();
-    void set_level_ghost_linkages();
+    void set_level_ghost_linkages(traverse_state &state);
     __device__ __host__ int blocks_on_level(int depth);
     __device__ __host__ void block_list_insert(int current_depth, int refined_indice);
     json to_json_object();

@@ -110,8 +110,17 @@ __device__ __host__ void physics_mesh::compute_world_scale(){
 }
 
 
-void physics_mesh::set_level_ghost_linkages(){
 
+
+void physics_mesh::set_level_ghost_linkages(traverse_state &state){
+    if(not xqueue +){
+        
+    }
+    for(int i = 0; i < mesh_sizes[state.current_depth+1]; i++){
+        for(int j = 0; j < mesh_sizes[state.current_depth+1]; j++){ //iterate over the face
+
+        }
+    }
 }
 
 

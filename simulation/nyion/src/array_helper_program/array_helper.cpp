@@ -84,7 +84,7 @@ int main()
     initialize_opengl();
     opengl_3d_mode();
 
-    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {4, 5, 5};
     physics_mesh mesh(mesh_sizes, 3);
 
     traverse_state user_state;

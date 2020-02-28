@@ -126,16 +126,28 @@ TEST(physics_mesh, serialization){
 }
 
 
-TEST(physics_mesh, ghost_linkages_1){
-    int mesh_sizes[MESH_BUFFER_DEPTH] = {3,5};
+TEST(physics_mesh, ghost_linkages_plusx){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {4,5};
     physics_mesh mesh(mesh_sizes,2);
+
+    mesh.refine_cell(0, 21); //refine two non-ghost blocks
+    mesh.refine_cell(0, 22); //adjacent in +x
 
     traverse_state state;
 
+    state.set_x(1); state.set_y(1); state.set_z(1); //block 0
+
+    //sets linkages of the cell that traverse state is pointing at
     mesh.set_level_ghost_linkages(state);
 
-}
+    //we're setting the +x face, so we must iterate over +y,+z
 
+    ASSERT_EQ(mesh.ghost_linkages[98],220); //first non-corner ghost block on +x face on block 0
+                                            //pointing at first real block on -x face on block 1
+    ASSERT_EQ(mesh.ghost_linkages[158],280); //last non-corner ghost block on +x face on block 0
+                                            //pointing at last real block on -x face on block 1
+
+}
 
 
 // TEST(cell_world_lookup, cell_world_lookup_test_3){
