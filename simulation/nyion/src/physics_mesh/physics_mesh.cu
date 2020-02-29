@@ -111,10 +111,16 @@ __device__ __host__ void physics_mesh::compute_world_scale(){
 
 
 
+//must be called on non-ghost cells.
+void physics_mesh::copy_ghost_values(traverse_state &state){
+}
 
+//must be called on non-ghost cells.
 void physics_mesh::set_level_ghost_linkages(traverse_state &state){
-    if(not xqueue +){
-        
+
+
+    if(!refined_indices[state.x_queue[state.current_depth]+1]){
+        return;
     }
     for(int i = 0; i < mesh_sizes[state.current_depth+1]; i++){
         for(int j = 0; j < mesh_sizes[state.current_depth+1]; j++){ //iterate over the face

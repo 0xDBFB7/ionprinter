@@ -51,6 +51,38 @@ TEST(CUDA, physics_mesh_device_copy_test){
     physics_mesh::device_destructor(&device_struct);
 }
 
+TEST(CUDA, physics_mesh_device_copy_test){
+
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
+    physics_mesh origin_host(mesh_sizes, 1);
+    physics_mesh * host_struct = &origin_host;
+//
+    for(int i = 0; i < origin_host.buffer_end_pointer; i++){ origin_host.potential[i] = 10+i;};
+    for(int i = 0; i < origin_host.buffer_end_pointer; i++){ origin_host.boundary_conditions[i] = 10+i;};
+
+    physics_mesh * device_struct;
+
+    physics_mesh::device_constructor(&device_struct);
+
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
+    //we do this twice to check if our pointers were preserved correctly - seperate into other test
+
+    //run kernel
+    physics_test_fill_simple<<<1, 1>>>(*device_struct);
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
+
+    cudaDeviceSynchronize();
+
+
+    ASSERT_NEAR(origin_host.potential[0],110,1e-3);
+
+    physics_mesh::device_destructor(&device_struct);
+}
 
 
 

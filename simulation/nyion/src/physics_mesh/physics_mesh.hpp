@@ -27,6 +27,8 @@ struct physics_mesh{
     // - Host constructor, zero fills, and host destructor
     // - Device constructor, copy to host, copy to device, device destructor
 
+
+
     float world_scale[MESH_BUFFER_DEPTH]; //ROOT_WORLD_SCALE * mesh_scale
     int mesh_sizes[MESH_BUFFER_DEPTH];
 
@@ -50,8 +52,11 @@ struct physics_mesh{
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
                             //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
-
-
+    //these array pointers could be stored in a seperate struct, mesh_data,
+    //with a second struct for mesh_parameters.
+    //mesh_data on the host could be ~300 timesteps long, and
+    //~3 timesteps long on the device, or whatever RK4 needs.
+    //only the latest timestep is copied device->host using a pointer offset.
 
 
     physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth);
