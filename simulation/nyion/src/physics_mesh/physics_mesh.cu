@@ -124,6 +124,7 @@ void physics_mesh::copy_level_ghost_values(int level){
 //sets linkages of the cell that traverse state is pointing at
 void physics_mesh::set_cell_ghost_linkages(traverse_state &state){
     if(!refined_indices[state.current_indice]){ // if this cell's block isn't present
+
         return;
     }
 
@@ -134,11 +135,12 @@ void physics_mesh::set_cell_ghost_linkages(traverse_state &state){
 
     int this_block = refined_indices[state.current_indice];
     int that_block = refined_indices[that_block_indice];
-    dbg(this_block);
-    dbg(that_block);
+    named_value(this_block);
+    named_value(that_block);
+
     for(int i = 0; i < mesh_sizes[state.current_depth+1]; i++){
         for(int j = 0; j < mesh_sizes[state.current_depth+1]; j++){ //iterate over the face
-            int ghost_insert_index = this_block + idx(mesh_sizes[state.current_depth]-1,i,j,mesh_sizes[state.current_depth+1]);
+            int ghost_insert_index = this_block + idx(mesh_sizes[state.current_depth+1]-1,i,j,mesh_sizes[state.current_depth+1]);
             int ghost_point_index = that_block + idx(1,i,j, mesh_sizes[state.current_depth+1]);
             ghost_linkages[ghost_insert_index] = ghost_point_index;
         }

@@ -1,14 +1,3 @@
-#include <FL/Fl.H>
-#include <FL/Fl_Window.H>
-#include <FL/Fl_Box.H>
-#include <FL/Fl_Counter.H>
-#include <FL/Fl_Simple_Counter.H>
-#include <FL/Fl_Choice.H>
-#include <FL/Fl_Button.H>
-#include <FL/Fl_Float_Input.H>
-#include <FL/Fl_Input.H>
-#include <FL/Fl_Check_Button.H>
-#include <FL/Fl_Spinner.H>
 
 #include "linenoise.hpp"
 
@@ -35,7 +24,7 @@ void gui_loop(physics_mesh &mesh, traverse_state &user_state, bool level_splitti
 
         update_screen();
 
-        Fl::wait(0.001);
+        // Fl::wait(0.001);
         if(escape_hit() || single_loop){ //this is the dumbest thing... https://github.com/daniele77/cli is async by default...
             std::cout << "\n\n";
             break;

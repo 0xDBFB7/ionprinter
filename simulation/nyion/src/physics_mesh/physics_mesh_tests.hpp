@@ -92,8 +92,7 @@ TEST(physics_mesh, breadth_first_3){
     traverse_state state;
 
     while(mesh.breadth_first(state,0,MESH_BUFFER_DEPTH,false)){
-
-        state.pretty_print();
+        // state.pretty_print();
     }
 }
 
@@ -136,7 +135,7 @@ TEST(physics_mesh, ghost_linkages_plusx){
     traverse_state state;
 
     state.set_x(1); state.set_y(1); state.set_z(1); //block 0
-
+    state.update_position(mesh);
     mesh.set_cell_ghost_linkages(state);
 
     //we're setting the +x face, so we must iterate over +y,+z

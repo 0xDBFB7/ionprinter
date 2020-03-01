@@ -35,4 +35,4 @@ target_link_libraries(nyion ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRAR
 
 add_executable(array_helper array_helper_program/array_helper.cpp)
 target_link_libraries(array_helper ${MATHGL2_LIBRARY} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${CUDA_LIBRARIES} OpenMP::OpenMP_CXX )
-target_link_libraries(array_helper fltk nyion_lib physics_mesh state_persist visualize common)
+target_link_libraries(array_helper nyion_lib physics_mesh state_persist visualize common)
