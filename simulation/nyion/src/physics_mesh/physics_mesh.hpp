@@ -5,6 +5,8 @@
 
 #include "config.hpp"
 
+
+
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;
 
@@ -52,11 +54,6 @@ struct physics_mesh{
     uint32_t * block_indices; //an unrolled list of pointers to the beginnings of blocks
                             //needed for fast traversal
                             //must be in ascending order of level - 0,->1,->1,->1,->1,->2,->2,->2,0,0...
-    //these array pointers could be stored in a seperate struct, mesh_data,
-    //with a second struct for mesh_parameters.
-    //mesh_data on the host could be ~300 timesteps long, and
-    //~3 timesteps long on the device, or whatever RK4 needs.
-    //only the latest timestep is copied device->host using a pointer offset.
 
 
     physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], int new_mesh_depth);
@@ -65,7 +62,8 @@ struct physics_mesh{
     bool equals(physics_mesh &mesh_2);
     __device__ __host__ void refine_cell(int current_depth, int current_indice);
     __device__ __host__ void compute_world_scale();
-    void set_level_ghost_linkages(traverse_state &state);
+    void copy_level_ghost_values(int level);
+    void set_cell_ghost_linkages(traverse_state &state);
     __device__ __host__ int blocks_on_level(int depth);
     __device__ __host__ void block_list_insert(int current_depth, int refined_indice);
     json to_json_object();

@@ -137,8 +137,7 @@ TEST(physics_mesh, ghost_linkages_plusx){
 
     state.set_x(1); state.set_y(1); state.set_z(1); //block 0
 
-    //sets linkages of the cell that traverse state is pointing at
-    mesh.set_level_ghost_linkages(state);
+    mesh.set_cell_ghost_linkages(state);
 
     //we're setting the +x face, so we must iterate over +y,+z
 

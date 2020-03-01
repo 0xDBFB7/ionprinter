@@ -15,6 +15,10 @@ set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.2/bin/nvcc)
 
+set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
+set(CMAKE_CUDA_RESOLVE_DEVICE_SYMBOLS ON)
+
+
 set(CUDA_NVCC_FLAGS "-arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v")
 #one -O3 for host, one for device. Set -arch appropriately for your GPU.
 #-v verbose mode - thanks Luca Ferraro!
@@ -31,7 +35,7 @@ set(CUDA_PROPAGATE_HOST_FLAGS OFF)
 set(CXX_ASAN_FLAGS "-fno-omit-frame-pointer -fsanitize=address -fsanitize=undefined -fsanitize=leak ")
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -Werror -fopenmp\
- -foffload=-lm -Wno-unused-parameter ${CXX_ASAN_FLAGS} -g --coverage") 
+ -foffload=-lm -Wno-unused-parameter ${CXX_ASAN_FLAGS} -g --coverage")
 
 #Turbo Boost: -ffast-math on host, -use_fast_math nvcc
 

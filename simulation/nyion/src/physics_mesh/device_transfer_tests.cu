@@ -1,8 +1,10 @@
 #include "device_transfer_tests.hpp"
 
+#include "physics_mesh.hpp"
+
+
 #include "nyion.hpp"
 
-#include "physics_mesh.hpp"
 
 __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     for(int i = 0; i < mesh.buffer_end_pointer; i++){
@@ -12,8 +14,8 @@ __global__ void physics_test_fill_simple(physics_mesh &mesh) {
     }
 }
 
-TEST(CUDA, physics_mesh_device_copy_test){
 
+void CUDA_physics_mesh_device_copy_test(){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;
@@ -51,20 +53,18 @@ TEST(CUDA, physics_mesh_device_copy_test){
     physics_mesh::device_destructor(&device_struct);
 }
 
-TEST(CUDA, physics_mesh_device_copy_test){
+void CUDA_physics_mesh_device_copy_test2(){
 
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;
 //
     for(int i = 0; i < origin_host.buffer_end_pointer; i++){ origin_host.potential[i] = 10+i;};
-    for(int i = 0; i < origin_host.buffer_end_pointer; i++){ origin_host.boundary_conditions[i] = 10+i;};
 
     physics_mesh * device_struct;
 
     physics_mesh::device_constructor(&device_struct);
 
-    physics_mesh::copy_to_device(&device_struct, &host_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
     //we do this twice to check if our pointers were preserved correctly - seperate into other test
 
@@ -75,8 +75,6 @@ TEST(CUDA, physics_mesh_device_copy_test){
 
     physics_mesh::copy_to_host(&device_struct, &host_struct);
     physics_mesh::copy_to_host(&device_struct, &host_struct);
-
-    cudaDeviceSynchronize();
 
 
     ASSERT_NEAR(origin_host.potential[0],110,1e-3);
@@ -90,7 +88,7 @@ __global__ void refine_on_device(physics_mesh &mesh) {
     mesh.refine_cell(0,0);
 }
 
-TEST(CUDA, CUDA_refine_on_device){
+void CUDA_refine_on_device(){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 5, 5};
     physics_mesh origin_host(mesh_sizes, 1);
     physics_mesh * host_struct = &origin_host;

@@ -53,7 +53,7 @@ homogenous computing system. I am not.
 
 #include "physics_mesh.hpp"
 #include "struct_transfer_helpers.hpp"
-#include "device_transfer_tests.hpp"
+
 
 void physics_mesh::device_constructor(physics_mesh ** device_struct){
     //construct the struct itself

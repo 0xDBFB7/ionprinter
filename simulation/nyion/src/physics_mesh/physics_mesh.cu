@@ -111,20 +111,36 @@ __device__ __host__ void physics_mesh::compute_world_scale(){
 
 
 
-//must be called on non-ghost cells.
-void physics_mesh::copy_ghost_values(traverse_state &state){
+
+void physics_mesh::copy_level_ghost_values(int level){
+    // if(ghost_linkages[0]){
+    //
+    // }
 }
 
+
 //must be called on non-ghost cells.
-void physics_mesh::set_level_ghost_linkages(traverse_state &state){
-
-
-    if(!refined_indices[state.x_queue[state.current_depth]+1]){
+//needs &state for spatial queue information
+//sets linkages of the cell that traverse state is pointing at
+void physics_mesh::set_cell_ghost_linkages(traverse_state &state){
+    if(!refined_indices[state.current_indice]){ // if this cell's block isn't present
         return;
     }
+
+    int that_block_indice = state.current_indice + idx(1,0,0,mesh_sizes[state.current_depth]);
+    if(!refined_indices[that_block_indice]){
+        return;
+    }
+
+    int this_block = refined_indices[state.current_indice];
+    int that_block = refined_indices[that_block_indice];
+    dbg(this_block);
+    dbg(that_block);
     for(int i = 0; i < mesh_sizes[state.current_depth+1]; i++){
         for(int j = 0; j < mesh_sizes[state.current_depth+1]; j++){ //iterate over the face
-
+            int ghost_insert_index = this_block + idx(mesh_sizes[state.current_depth]-1,i,j,mesh_sizes[state.current_depth+1]);
+            int ghost_point_index = that_block + idx(1,i,j, mesh_sizes[state.current_depth+1]);
+            ghost_linkages[ghost_insert_index] = ghost_point_index;
         }
     }
 }

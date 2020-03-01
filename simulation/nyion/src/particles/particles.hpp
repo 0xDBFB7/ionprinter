@@ -13,6 +13,13 @@
 //     PARTICLE_TYPE * v_y;
 //     PARTICLE_TYPE * v_z;
 //
+
+//these array pointers could be stored in a seperate struct, particle_data,
+//with a second struct for mesh_parameters.
+//mesh_data on the host could be ~300 timesteps long, and
+//~3 timesteps long on the device, or whatever RK4 needs.
+//only the latest timestep is copied device->host using a pointer offset.
+
 //     uint16_t * particle_category;
 //
 //     uint32_t num_particles[timesteps]; //heap
