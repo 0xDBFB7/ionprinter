@@ -7,16 +7,13 @@ link_directories(./ common/ physics_mesh/ array_helper_program/ visualize/ devic
 
 add_library (nyion_lib nyion.cpp nyion.hpp)
 
-add_library (physics_mesh physics_mesh/physics_mesh.cu physics_mesh/traverse_state.cu)
+add_library (physics_mesh physics_mesh/physics_mesh.cu physics_mesh/traverse_state.cu physics_mesh/device_transfer_tests.cu)
 add_library (physics_mesh_transfers physics_mesh/device_transfer.cu common/CUDA_helpers.cu)
-add_library (physics_mesh_transfer_tests physics_mesh/device_transfer_tests.cu)
 
 target_link_libraries(physics_mesh ${CUDA_LIBRARIES} gtest gtest_main)
 target_link_libraries(physics_mesh nlohmann_json::nlohmann_json)
 
 target_link_libraries(physics_mesh_transfers ${CUDA_LIBRARIES} physics_mesh common gtest gtest_main)
-
-target_link_libraries(physics_mesh_transfer_tests ${CUDA_LIBRARIES} physics_mesh physics_mesh_transfers  gtest gtest_main)
 
 
 add_library (common common/debug_helpers.cpp common/debug_helpers.hpp)
