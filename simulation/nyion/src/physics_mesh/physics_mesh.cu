@@ -124,23 +124,25 @@ void physics_mesh::copy_level_ghost_values(int level){
 //sets linkages of the cell that traverse state is pointing at
 void physics_mesh::set_cell_ghost_linkages(traverse_state &state){
     if(!refined_indices[state.current_indice]){ // if this cell's block isn't present
-
         return;
     }
 
-    int that_block_indice = state.current_indice + idx(1,0,0,mesh_sizes[state.current_depth]);
-    if(!refined_indices[that_block_indice]){
-        return;
-    }
+    for(int direction = 0; direction < 6; direction++){
+        int that_block_indice = state.current_indice + transform_idx(1,0,0,mesh_sizes[state.current_depth], direction);
+        if(!refined_indices[that_block_indice]){
+            continue;
+        }
 
-    int this_block = refined_indices[state.current_indice];
-    int that_block = refined_indices[that_block_indice];
+        int this_block = refined_indices[state.current_indice];
+        int that_block = refined_indices[that_block_indice];
 
-    for(int i = 1; i < mesh_sizes[state.current_depth+1]-1; i++){
-        for(int j = 1; j < mesh_sizes[state.current_depth+1]-1; j++){ //iterate over the face, ignoring ghosts
-            int ghost_insert_index = this_block + idx(mesh_sizes[state.current_depth+1]-1,i,j,mesh_sizes[state.current_depth+1]);
-            int ghost_point_index = that_block + idx(1,i,j, mesh_sizes[state.current_depth+1]);
-            ghost_linkages[ghost_insert_index] = ghost_point_index;
+        for(int i = 1; i < mesh_sizes[state.current_depth+1]-1; i++){
+            for(int j = 1; j < mesh_sizes[state.current_depth+1]-1; j++){ //iterate over the face, ignoring ghosts
+                int ghost_insert_index = this_block + transform_idx(mesh_sizes[state.current_depth+1]-1,i,j,
+                                                                            mesh_sizes[state.current_depth+1], direction);
+                int ghost_point_index = that_block + transform_idx(1,i,j, mesh_sizes[state.current_depth+1], direction);
+                ghost_linkages[ghost_insert_index] = ghost_point_index;
+            }
         }
     }
 }
@@ -289,7 +291,5 @@ int transform_idx(int i, int j, int k, int len, int direction){
 
     return (x + (y*len) + (z*len*len));
 }
-
-
 
 //

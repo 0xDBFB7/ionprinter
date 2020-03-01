@@ -125,12 +125,13 @@ TEST(physics_mesh, serialization){
 }
 
 
-TEST(physics_mesh, ghost_linkages_plusx){
+TEST(physics_mesh, ghost_linkages_1){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {4,5};
     physics_mesh mesh(mesh_sizes,2);
 
     mesh.refine_cell(0, 21); //refine two non-ghost blocks
     mesh.refine_cell(0, 22); //adjacent in +x
+    mesh.refine_cell(0, 37); //adjacent in +z
 
     traverse_state state;
 
@@ -139,11 +140,13 @@ TEST(physics_mesh, ghost_linkages_plusx){
     mesh.set_cell_ghost_linkages(state);
 
     //we're setting the +x face, so we must iterate over +y,+z
-
     ASSERT_EQ(mesh.ghost_linkages[98],220); //first non-corner ghost block on +x face on block 0
                                             //pointing at first real block on -x face on block 1
     ASSERT_EQ(mesh.ghost_linkages[158],280); //last non-corner ghost block on +x face on block 0
                                             //pointing at last real block on -x face on block 1
+
+    ASSERT_EQ(mesh.ghost_linkages[170],345); //first non-corner ghost block on +z face on block 0
+    //                                         //pointing at first real block on -z face on block 1
 
 }
 
