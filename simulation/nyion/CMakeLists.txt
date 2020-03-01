@@ -11,15 +11,16 @@ endif()
 
 
 cmake_minimum_required(VERSION 3.9)
+
 set (CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_CUDA_COMPILER /usr/local/cuda-10.2/bin/nvcc)
 
+
 set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
 set(CMAKE_CUDA_RESOLVE_DEVICE_SYMBOLS ON)
 
-
-set(CUDA_NVCC_FLAGS "-arch=sm_61 -std=c++11 -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v")
+set(CUDA_NVCC_FLAGS "--gpu-architecture=compute_52 --gpu-code=sm_52,compute_52 -std=c++11 -relocatable-device-code=true -g -Xcompiler -fexceptions -Xcompiler -fPIC -O3 -Xptxas -O3,-v")
 #one -O3 for host, one for device. Set -arch appropriately for your GPU.
 #-v verbose mode - thanks Luca Ferraro!
 # --generate-line-info?
