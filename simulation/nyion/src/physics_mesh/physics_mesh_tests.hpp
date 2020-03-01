@@ -147,6 +147,15 @@ TEST(physics_mesh, ghost_linkages_plusx){
 
 }
 
+TEST(transform_idx, transform_idx_1){
+
+    ASSERT_EQ(transform_idx(1,0,0,4,0),1);
+    ASSERT_EQ(transform_idx(1,0,0,4,1),2);
+    ASSERT_EQ(transform_idx(1,0,0,4,2),4);
+    ASSERT_EQ(transform_idx(1,0,0,4,3),8);
+    ASSERT_EQ(transform_idx(1,0,0,4,4),16);
+    ASSERT_EQ(transform_idx(1,0,0,4,5),32);
+}
 
 // TEST(cell_world_lookup, cell_world_lookup_test_3){
 //   float x,y,z;

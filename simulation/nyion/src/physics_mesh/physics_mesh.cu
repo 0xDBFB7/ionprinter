@@ -135,11 +135,9 @@ void physics_mesh::set_cell_ghost_linkages(traverse_state &state){
 
     int this_block = refined_indices[state.current_indice];
     int that_block = refined_indices[that_block_indice];
-    named_value(this_block);
-    named_value(that_block);
 
-    for(int i = 0; i < mesh_sizes[state.current_depth+1]; i++){
-        for(int j = 0; j < mesh_sizes[state.current_depth+1]; j++){ //iterate over the face
+    for(int i = 1; i < mesh_sizes[state.current_depth+1]-1; i++){
+        for(int j = 1; j < mesh_sizes[state.current_depth+1]-1; j++){ //iterate over the face, ignoring ghosts
             int ghost_insert_index = this_block + idx(mesh_sizes[state.current_depth+1]-1,i,j,mesh_sizes[state.current_depth+1]);
             int ghost_point_index = that_block + idx(1,i,j, mesh_sizes[state.current_depth+1]);
             ghost_linkages[ghost_insert_index] = ghost_point_index;
@@ -268,3 +266,30 @@ physics_mesh::~physics_mesh(){
 int idx(int x, int y, int z, int len){
   return (x + (y*len) + (z*len*len));
 }
+
+
+
+int transform_idx(int i, int j, int k, int len, int direction){
+    // direction varies from 0 to 5.
+    //transform into the 6 faces of the cube
+    //
+    int x,y,z;
+
+
+        if(direction == 0){ x = (i); y = (j); z = (k); };  //+x
+        if(direction == 1){ x = ((len-1)-i); y = (j); z = (k); };  //-x
+        //
+        if(direction == 2){ x = (j); y = (i); z = (k); }; //+y
+        if(direction == 3){  x = (j); y = ((len-1)-i); z = (k); }; //-y
+        //
+        if(direction == 4){ x = (j); y = (k); z = (i); }; //+z
+        if(direction == 5){  x = (j); y = (k); z = ((len-1)-i); }; //-z
+
+    // }
+
+    return (x + (y*len) + (z*len*len));
+}
+
+
+
+//
