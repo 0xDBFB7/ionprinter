@@ -57,7 +57,7 @@ __device__ __host__ void physics_mesh::block_list_insert(int depth, int refined_
     // see digraph.
     // Having the block_depth_lookup accumulative
     // prevents us from having to sum on hot-loop operations,
-    // at a cost of needing one more indice to
+    // at the cost of needing one more indice
 
     int tail_position = block_depth_lookup[depth];
 

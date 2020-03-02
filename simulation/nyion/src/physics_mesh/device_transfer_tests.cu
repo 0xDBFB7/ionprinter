@@ -114,5 +114,38 @@ TEST(CUDA, CUDA_refine_on_device){
 }
 
 
+TEST(CUDA, CUDA_device_copy_ghost_values){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {4,5};
+    physics_mesh origin_host_mesh(mesh_sizes,2);
+
+    origin_host.refine_cell(0, 21); //refine two non-ghost blocks
+    origin_host.refine_cell(0, 22); //adjacent in +x
+    origin_host.refine_cell(0, 37); //adjacent in +z
+    origin_host.set_level_ghost_linkages(1);
+
+    origin_host.potential[220] = 3.14;
+    origin_host.potential[280] = 3.14*2;
+    origin_host.potential[345] = 3.14*3;
+
+    physics_mesh * host_struct = &origin_host;
+    physics_mesh * device_struct;
+    physics_mesh::device_constructor(&device_struct);
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
+
+    device_copy_ghost_values(host_struct, device_struct, 1);
+
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
+    cudaDeviceSynchronize();
+
+    ASSERT_NEAR(origin_host.potential[98],3.14,1e-2); //points to 220
+    ASSERT_NEAR(origin_host.potential[158],3.14*2,1e-2); //points to 280
+    ASSERT_NEAR(origin_host.potential[170],3.14*3,1e-2); //points to 345
+
+
+
+}
+
+
+
 void link_cuda(); //forces CMAKE to link cuda test code.
                     // there's probably a much more elegant way to do this.
