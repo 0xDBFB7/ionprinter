@@ -170,14 +170,15 @@ The gas that exits the bowtie has a certain temperature distribution.
 [1]: http://www.rmcybernetics.com/projects/DIY_Devices/diy-induction-heater.htm
 
 
+The primary reason for the large array of small emitter bowties is to reduce the space-charge forces before neutralization. 
 
+The pressure required in each bowtie is also far lower. This eases simulation, as the high Knudsen number avoids turbulent effects and allows simple rarefied-gas monte-carlo methods to be used.
 
+Ostensibly it also reduces the current density requirements for hot cathodes, but this isn't really a design driver.
 
-The primary reason for the large array of smaller emitter bowties is to reduce the space-charge forces before neutralization. Confining 
+High pressures would also mandate temperatures well above the boiling point of the print material, which would complicate things from a materials science viewpoint (by accelerating interfacial reactions, increasing vapor pressures), produce messy, ill-defined vapor that could be contaminated with macro-scale droplets (as learned from early zinc testing), increase power consumption (though this may be offset by the greater surface area), and require that all upstream systems be gas-tight, rather than simply optically opaque. 
 
-The pressure required in each bowtie is also far lower. This eases simulation, as the low Knudsen number avoids turbulent effects and allows simple rarefied-gas monte-carlo methods to be used. 
-
-High pressures would also mandate temperatures well above the boiling point of the print material, which would complicate things from a materials science viewpoint (by accelerating interfacial reactions, increasing vapor pressures), produce messy, ill-defined vapor that could be contaminated with macro-scale droplets (as learned from early zinc testing), increase power consumption (though this may be offset by the greater surface area), and require that all upstream systems be gas-tight, rather than simply optically opaque.
+/ It also simplifies the collimation of the vaporized material; a simple multi-stage gas lens is sufficient for this regime. 
 
 Because the bowties approach the part from different angles, this also eliminates the need for a linear stage to move different faces of the part into line-of-sight. As long as the print array is slightly larger than the part, 
 
@@ -185,4 +186,7 @@ The arraying also happens to be very helpful for surface physics. First, the sur
 
 The wide range of angles is also essential to prevent defects from propogating. A single beam will tend to exponentially amplify any pits and lands in the substrate, whereas the array will provide a smoothing set of lines-of-sight.
 
+It also allows us to accomodate a wide range of materials simultaneously.
+
+All this comes at the cost of complexity in feedthroughs, larger vacuum chamber volume, higher surface area to clean, control and feedback bandwidths, and common-beam repulsion effects. 
 

@@ -64,6 +64,7 @@ struct physics_mesh{
     __device__ __host__ void compute_world_scale();
     void copy_level_ghost_values(int level);
     void set_cell_ghost_linkages(traverse_state &state);
+    void set_level_ghost_linkages(int level);
     __device__ __host__ int blocks_on_level(int depth);
     __device__ __host__ void block_list_insert(int current_depth, int refined_indice);
     json to_json_object();

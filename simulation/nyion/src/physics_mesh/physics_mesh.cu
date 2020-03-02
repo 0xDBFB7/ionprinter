@@ -110,14 +110,17 @@ __device__ __host__ void physics_mesh::compute_world_scale(){
 }
 
 
-
-
-void physics_mesh::copy_level_ghost_values(int level){
-    // if(ghost_linkages[0]){
-    //
-    // }
+//we can't just call set_cell_ghost_linkages
+//upon refinement, because neighbors
+//must also be updated.
+//level must be >0.
+void physics_mesh::set_level_ghost_linkages(int level){
+    traverse_state state;
+    while(breadth_first(state,level-1,level-1,true)){
+        state.pretty_print();
+        set_cell_ghost_linkages(state);
+    }
 }
-
 
 //must be called on non-ghost cells.
 //needs &state for spatial queue information

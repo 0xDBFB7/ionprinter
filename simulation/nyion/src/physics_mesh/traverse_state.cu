@@ -128,6 +128,7 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
     */
 
     while(true){
+        //ensure that we don't start in the corner if ghosts are to be ignored.
         if(state.started_traverse){
             state.set_x(ignore_ghosts);
             state.set_y(ignore_ghosts);
@@ -138,16 +139,8 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
             state.x_queue[state.current_depth]++;
         }
 
-        //ensure that we don't start in the corner if ghosts are to be ignored.
-
         if(state.get_x() == (mesh_sizes[state.current_depth]-ignore_ghosts)) {state.set_x(ignore_ghosts); state.y_queue[state.current_depth]++;}
         if(state.get_y() == (mesh_sizes[state.current_depth]-ignore_ghosts)) {state.set_y(ignore_ghosts); state.z_queue[state.current_depth]++;}
-
-        // if(state.z < mesh_sizes[state.current_depth]){
-        //     state.x_queue[state.current_depth] = state.x;
-        //     state.y_queue[state.current_depth] = state.y;
-        //     state.z_queue[state.current_depth] = state.z;
-        // }
 
         bool just_visited = 0;
 
@@ -155,14 +148,14 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
 
             state.update_position(*this);
 
-          if(state.current_depth < end_depth && refined_indices[state.current_indice]
+            if(state.current_depth < end_depth && refined_indices[state.current_indice]
                                 && !just_visited && state.get_z() < mesh_sizes[state.current_depth]){
               //Descend
               state.descend_into(*this, ignore_ghosts);
               continue;
-          }
+            }
 
-          if(state.get_z() == (mesh_sizes[state.current_depth]-ignore_ghosts)){
+            if(state.get_z() == (mesh_sizes[state.current_depth]-ignore_ghosts)){
 
               if(state.current_depth == 0){
                   return false;
@@ -174,9 +167,9 @@ bool physics_mesh::breadth_first(traverse_state &state, int start_depth, int end
 
               just_visited = true;
               continue;
-          }
+            }
 
-          break;
+            break;
         }
 
         if(state.current_depth >= start_depth && state.current_depth <= end_depth){

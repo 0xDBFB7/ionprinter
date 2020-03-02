@@ -3785,7 +3785,9 @@ Wysong et al use a laser doppler fluorescence technique to determine v, number d
 Oh, measuring the spectrum shift of the recombination light would probably work too
 
 
-Relaxers (this page refers to the numerical technique. For the )
+Relaxers (this page refers to the numerical technique. For the alt-J album, see Relaxer.)
 
 Some relaxers / 
+
+
 
