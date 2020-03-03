@@ -274,7 +274,7 @@ int idx(int x, int y, int z, int len){
 
 
 
-int transform_idx(int i, int j, int k, int len, int direction){
+__device__ __host__ int transform_idx(int i, int j, int k, int len, int direction){
     // direction varies from 0 to 5.
     //transform into the 6 faces of the cube
     //

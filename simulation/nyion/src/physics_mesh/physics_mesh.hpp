@@ -73,6 +73,8 @@ struct physics_mesh{
 
     bool breadth_first(traverse_state &state, int start_depth, int end_depth, int ignore_ghosts);
 
+    // template <class T>
+    static void device_copy_ghost_values(physics_mesh * host_struct, physics_mesh * device_struct, float * values, int depth);
 
     static void device_constructor(physics_mesh ** device_struct);
     static void copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct);
@@ -88,7 +90,7 @@ int idx(int x, int y, int z, int len);
 
 //Using std::vector would be a good idea. However, this complicates many things with CUDA:
 //vect.data() -> pointer, copy to device, then back to struct of vectors? Nah.
-int transform_idx(int i, int j, int k, int len, int direction);
+__device__ __host__  int transform_idx(int i, int j, int k, int len, int direction);
     //there are six possible directions in 3d space:
     //+x, +y, +z, -x, -y, -z
     //what about transforms involving the queue? I guess we'll burn that bridge later...

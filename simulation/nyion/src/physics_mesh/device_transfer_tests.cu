@@ -116,7 +116,7 @@ TEST(CUDA, CUDA_refine_on_device){
 
 TEST(CUDA, CUDA_device_copy_ghost_values){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {4,5};
-    physics_mesh origin_host_mesh(mesh_sizes,2);
+    physics_mesh origin_host(mesh_sizes,2);
 
     origin_host.refine_cell(0, 21); //refine two non-ghost blocks
     origin_host.refine_cell(0, 22); //adjacent in +x
@@ -132,9 +132,10 @@ TEST(CUDA, CUDA_device_copy_ghost_values){
     physics_mesh::device_constructor(&device_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
-    device_copy_ghost_values(host_struct, device_struct, 1);
+    physics_mesh::device_copy_ghost_values(host_struct, device_struct, ((*host_struct).potential), 1);
 
     physics_mesh::copy_to_host(&device_struct, &host_struct);
+
     cudaDeviceSynchronize();
 
     ASSERT_NEAR(origin_host.potential[98],3.14,1e-2); //points to 220
