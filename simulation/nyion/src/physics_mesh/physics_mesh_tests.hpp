@@ -169,7 +169,6 @@ TEST(physics_mesh, ghost_linkages_all){
 
     ASSERT_EQ(mesh.ghost_linkages[170],345); //first non-corner ghost block on +z face on block 0
     //                                         //pointing at first real block on -z face on block 1
-
 }
 
 TEST(transform_idx, transform_idx_1){

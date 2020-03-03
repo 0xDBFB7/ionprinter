@@ -132,7 +132,7 @@ TEST(CUDA, CUDA_device_copy_ghost_values){
     physics_mesh::device_constructor(&device_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
-    physics_mesh::device_copy_ghost_values(host_struct, device_struct, ((*host_struct).potential), 1);
+    physics_mesh::device_copy_ghost_values(host_struct, device_struct, &((*device_struct).potential), 1);
 
     physics_mesh::copy_to_host(&device_struct, &host_struct);
 
