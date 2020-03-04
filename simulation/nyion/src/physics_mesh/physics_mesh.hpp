@@ -95,7 +95,12 @@ __device__ __host__ int transform_idx(int i, int j, int k, int len, int directio
     //there are six possible directions in 3d space:
     //+x, +y, +z, -x, -y, -z
     //what about transforms involving the queue? I guess we'll burn that bridge later...
+void set_GPU_dimensions(physics_mesh * host_struct, dim3 &blocks, dim3 &threads, int depth);
 
+
+#define PHYSICAL_BLOCKS x
+#define SUB_BLOCKS_Y y
+#define SUB_BLOCKS_Z z
 
 
 

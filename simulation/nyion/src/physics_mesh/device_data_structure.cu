@@ -7,7 +7,7 @@ const int max_cells_per_cuda_block = 1024;
 //so each physical block is broken down further.
 //We will assume that a single row of mesh_sizes can never be > 1024
 //num_threads_x
-void set_GPU_dimensions(dim3 &threads_per_sub_block){
+void set_GPU_dimensions(physics_mesh * host_struct, dim3 &blocks, dim3 &threads, int depth){
     //number of refined blocks actually present in mesh on this level
     int num_physical_blocks = (*host_struct).blocks_on_level(depth);
     //physical blocks on this level are all the same size,
@@ -18,9 +18,13 @@ void set_GPU_dimensions(dim3 &threads_per_sub_block){
     int sub_blocks_y = sub_blocks;
     int sub_blocks_z = 1; //?
 
-    dim3 sub_blocks_and_blocks(num_physical_blocks, sub_blocks_y, sub_blocks_z);
+    blocks.PHYSICAL_BLOCKS = num_physical_blocks;
+    blocks.SUB_BLOCKS_Y = sub_blocks_y;
+    blocks.SUB_BLOCKS_Z = sub_blocks_z;
 
-    dim3 threads_per_sub_block(physical_block_width, physical_block_width/sub_blocks_y, physical_block_width/sub_blocks_z);
+    threads.x = physical_block_width;
+    threads.y = physical_block_width/sub_blocks_y;
+    threads.z = physical_block_width/sub_blocks_z;
 
 }
 
@@ -31,7 +35,7 @@ void set_GPU_dimensions(dim3 &threads_per_sub_block){
 //blockIdx y,z are the number of 'imaginary' sub-blocks to fulfil thread requirements
 //threadIdx.x is the facet of the cube currently being operated on
 //threadIdx y,z are the positions on the facet.
-__global__ void device_copy_ghost_values_kernel(const physics_mesh &device_struct, float ** values, int depth) {
+__global__ void device_copy_ghost_values_kernel(physics_mesh &device_struct, float ** values, int depth) {
 
     int direction = threadIdx.x;
 
@@ -57,19 +61,21 @@ void physics_mesh::device_copy_ghost_values(physics_mesh * host_struct, physics_
     //level must be >0.
     //assumes that parameters of the mesh are consistent from host to device.
     //This may not be a safe assumption.
-
-    int num_blocks = (*host_struct).blocks_on_level(depth);
-    dim3 threads_per_block(6, (*host_struct).mesh_sizes[depth]-2, (*host_struct).mesh_sizes[depth]-2); //ignore ghosts
+    dim3 threads;
+    dim3 blocks;
     //
-    device_copy_ghost_values_kernel<<<num_blocks, threads_per_block>>>(*device_struct, values, depth);
-    gpu_error_check( cudaPeekAtLastError() );
-    gpu_error_check( cudaDeviceSynchronize() );
+    // set_GPU_dimensions(host_struct,blocks,threads,depth);
+    // threads.x = 6; //override
+    //
+    // device_copy_ghost_values_kernel<<<blocks, threads>>>(*device_struct, values, depth);
+    // gpu_error_check( cudaPeekAtLastError() );
+    // gpu_error_check( cudaDeviceSynchronize() );
     //error checking should be done externally; we don't want to cudaDeviceSynchronize after every operation!
 }
 
 
 //+1 to ignore ghosts
-__global__ void device_jacobi_relax_kernel(const physics_mesh &device_struct, float ** values, int depth) {
+__global__ void device_jacobi_relax_kernel(physics_mesh &device_struct, float ** values, int depth) {
 
     int this_block = device_struct.block_indices[device_struct.block_depth_lookup[depth]+blockIdx.x];
 
