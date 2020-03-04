@@ -99,8 +99,7 @@ void set_GPU_dimensions(physics_mesh * host_struct, dim3 &blocks, dim3 &threads,
 
 
 #define PHYSICAL_BLOCKS x
-#define SUB_BLOCKS_Y y
-#define SUB_BLOCKS_Z z
+#define SUB_BLOCKS y
 
 
 

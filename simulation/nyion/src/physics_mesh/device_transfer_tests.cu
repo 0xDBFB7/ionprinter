@@ -173,33 +173,31 @@ TEST(CUDA, CUDA_size_blocks_1){
     set_GPU_dimensions(host_struct,blocks,threads,0);
 
     ASSERT_EQ(blocks.PHYSICAL_BLOCKS,1);
-    ASSERT_EQ(blocks.SUB_BLOCKS_Y,1);
-    ASSERT_EQ(blocks.SUB_BLOCKS_Z,1);
+    ASSERT_EQ(blocks.SUB_BLOCKS,1);
 
     ASSERT_EQ(threads.x,2); //-2 ghosts
     ASSERT_EQ(threads.y,2);
     ASSERT_EQ(threads.z,2);
 }
-
-TEST(CUDA, CUDA_size_blocks_2){
-    int mesh_sizes[MESH_BUFFER_DEPTH] = {102};
-    physics_mesh origin_host(mesh_sizes,1);
-    physics_mesh * host_struct = &origin_host;
-
-    dim3 threads;
-    dim3 blocks;
-    set_GPU_dimensions(host_struct,blocks,threads,0);
-
-    ASSERT_EQ(blocks.PHYSICAL_BLOCKS,1);
-    ASSERT_EQ(blocks.SUB_BLOCKS_Y,10);
-    ASSERT_EQ(blocks.SUB_BLOCKS_Z,1);
-
-    ASSERT_EQ(threads.x,100);
-    ASSERT_EQ(threads.y,10);
-    ASSERT_EQ(threads.z,1);
-
-
-}
+//
+// TEST(CUDA, CUDA_size_blocks_2){
+//     int mesh_sizes[MESH_BUFFER_DEPTH] = {34};
+//     physics_mesh origin_host(mesh_sizes,1);
+//     physics_mesh * host_struct = &origin_host;
+//
+//     dim3 threads;
+//     dim3 blocks;
+//     set_GPU_dimensions(host_struct,blocks,threads,0);
+//
+//     ASSERT_EQ(blocks.PHYSICAL_BLOCKS,1);
+//     ASSERT_EQ(blocks.SUB_BLOCKS,10);
+//
+//     ASSERT_EQ(threads.x,100);
+//     ASSERT_EQ(threads.y,10);
+//     ASSERT_EQ(threads.z,1);
+//
+//
+// }
 
 
 //
