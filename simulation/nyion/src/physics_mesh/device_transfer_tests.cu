@@ -148,16 +148,56 @@ TEST(CUDA, CUDA_device_jacobi_kernel_1){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {4,5};
     physics_mesh origin_host(mesh_sizes,2);
 
+    origin_host.potential[21] = 1;
+
     physics_mesh * host_struct = &origin_host;
     physics_mesh * device_struct;
     physics_mesh::device_constructor(&device_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
-    
+    physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 0);
 
     physics_mesh::copy_to_host(&device_struct, &host_struct);
 
+    ASSERT_NEAR(origin_host.potential[22],(1.0/6.0),1e-3); //points to 220
 }
+
+
+TEST(CUDA, CUDA_size_blocks){
+    //1024
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {100};
+    physics_mesh origin_host(mesh_sizes,1);
+    
+
+}
+
+//
+// TEST(CUDA, CUDA_device_jacobi_kernel_benchmark){
+//     int mesh_sizes[MESH_BUFFER_DEPTH] = {50,5};
+//     physics_mesh origin_host(mesh_sizes,2);
+//
+//     origin_host.potential[21] = 1;
+//
+//     physics_mesh * host_struct = &origin_host;
+//     physics_mesh * device_struct;
+//     physics_mesh::device_constructor(&device_struct);
+//     physics_mesh::copy_to_device(&device_struct, &host_struct);
+//
+//     auto start = std::chrono::high_resolution_clock::now();
+//
+//     for(int i = 0; i < 10; i++){
+//         physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 0);
+//     }
+//
+//     auto end = std::chrono::high_resolution_clock::now();
+//     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count()/100.0;
+//     std::cout << duration << " us, " << "\n";
+//
+//     physics_mesh::copy_to_host(&device_struct, &host_struct);
+//
+//     ASSERT_NEAR(origin_host.potential[22],1/6,1e-4); //points to 220
+// }
+
 
 void link_cuda(); //forces CMAKE to link cuda test code.
                     // there's probably a much more elegant way to do this.

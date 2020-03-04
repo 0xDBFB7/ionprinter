@@ -267,7 +267,7 @@ physics_mesh::~physics_mesh(){
 }
 
 
-int idx(int x, int y, int z, int len){
+__device__ __host__ int idx(int x, int y, int z, int len){
   return (x + (y*len) + (z*len*len));
 }
 
