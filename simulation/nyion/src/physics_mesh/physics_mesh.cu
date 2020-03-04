@@ -117,7 +117,6 @@ __device__ __host__ void physics_mesh::compute_world_scale(){
 void physics_mesh::set_level_ghost_linkages(int level){
     traverse_state state;
     while(breadth_first(state,level-1,level-1,true)){
-        state.pretty_print();
         set_cell_ghost_linkages(state);
     }
 }

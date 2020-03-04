@@ -75,6 +75,7 @@ struct physics_mesh{
 
     // template <class T>
     static void device_copy_ghost_values(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int depth);
+    static void physics_mesh::device_jacobi_relax(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int depth){
 
     static void device_constructor(physics_mesh ** device_struct);
     static void copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct);
