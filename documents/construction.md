@@ -3791,3 +3791,19 @@ Some relaxers /
 
 
 
+
+
+Aww yeah. 1.4 ms / 8M points on the new data structure.
+
+AWWW YEAH
+
+
+> @duffymo It's been argued that there are advantages other than speed and caching for using half precision computations. The almost pseudo-randomness of representable floating point numbers can introduce a form of noise when training and working with learning models. This, as well as an arguement that Machine-learning is solving the wrong problem anyway, actually allows greater performance and better results. Also in optimisation, e.g. root finding, we can better performance by starting with lower precision and as we head to convergence, increase the precision we use.
+
+from https://stackoverflow.com/questions/32735292/can-anyone-provide-sample-code-demonstrating-the-use-of-16-bit-floating-point-in?noredirect=1&lq=1
+
+very interesting.
+
+
+
+

@@ -26,8 +26,8 @@ void display_GPU_info(){
 
         std::wcout << "  Warp size:         " << props.warpSize << std::endl;
         std::wcout << "  Threads per block: " << props.maxThreadsPerBlock << std::endl;
-        std::wcout << "  Max block dimensions: [ " << props.maxThreadsDim[0] << ", " << props.maxThreadsDim[1]  << ", " << props.maxThreadsDim[2] << " ]" << std::endl;
-        std::wcout << "  Max grid dimensions:  [ " << props.maxGridSize[0] << ", " << props.maxGridSize[1]  << ", " << props.maxGridSize[2] << " ]" << std::endl;
+        std::wcout << "  Max Threads dimensions: [ " << props.maxThreadsDim[0] << ", " << props.maxThreadsDim[1]  << ", " << props.maxThreadsDim[2] << " ]" << std::endl;
+        std::wcout << "  Max Grid dimensions:  [ " << props.maxGridSize[0] << ", " << props.maxGridSize[1]  << ", " << props.maxGridSize[2] << " ]" << std::endl;
         std::wcout << std::endl;
     }
     std::wcout << "" << std::endl << "=========" << std::endl << std::endl;

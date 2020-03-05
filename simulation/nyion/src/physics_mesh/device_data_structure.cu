@@ -17,6 +17,7 @@ void set_GPU_dimensions(physics_mesh * host_struct, dim3 &blocks, dim3 &threads,
     while(physical_block_width % sub_blocks != 0){
         //if the block can't be divided evenly in Z
         sub_blocks++;
+        //will get to physical_block_width at most.
     }
 
     blocks.PHYSICAL_BLOCKS = num_physical_blocks;
@@ -38,7 +39,7 @@ __global__ void device_copy_ghost_values_kernel(physics_mesh &device_struct, flo
 
     int x = device_struct.mesh_sizes[depth]-1;
     int y = (threadIdx.y)+1;
-    int z = ((((device_struct.mesh_sizes[depth]-2)/blockDim.SUB_BLOCKS)*blockIdx.SUB_BLOCKS)+threadIdx.z)+1;
+    int z = ((((device_struct.mesh_sizes[depth]-2)/gridDim.SUB_BLOCKS)*blockIdx.SUB_BLOCKS)+threadIdx.z)+1;
 
     int this_cell = this_block + transform_idx(x,y,z, device_struct.mesh_sizes[depth], direction);
 
@@ -65,7 +66,7 @@ void physics_mesh::device_copy_ghost_values(physics_mesh * host_struct, physics_
     device_copy_ghost_values_kernel<<<blocks, threads>>>(*device_struct, values, depth);
     // gpu_error_check( cudaPeekAtLastError() );
     // gpu_error_check( cudaDeviceSynchronize() );
-    // error checking should be done externally; we don't want to cudaDeviceSynchronize after every operation!
+    //error checking now handled externally.
 }
 
 
@@ -76,8 +77,8 @@ __global__ void device_jacobi_relax_kernel(physics_mesh &device_struct, float **
     int this_block = device_struct.block_indices[device_struct.block_depth_lookup[depth]+blockIdx.x];
 
     int x = threadIdx.x+1;
-    int y = threadIdx.y+1;
-    int z = ((((device_struct.mesh_sizes[depth]-2)/blockDim.SUB_BLOCKS)*blockIdx.SUB_BLOCKS)+threadIdx.z)+1;
+    int y = threadIdx.y+1; //if there's a bug here, make sure gridDim and blockDim are correct.
+    int z = ((((device_struct.mesh_sizes[depth]-2)/gridDim.SUB_BLOCKS)*blockIdx.SUB_BLOCKS)+threadIdx.z)+1;
 
     int this_cell = this_block + idx(x, y, z, device_struct.mesh_sizes[depth]);
 
@@ -107,4 +108,6 @@ void physics_mesh::device_jacobi_relax(physics_mesh * host_struct, physics_mesh 
     device_jacobi_relax_kernel<<<blocks, threads>>>(*device_struct, values, depth);
     // gpu_error_check( cudaPeekAtLastError() );
     // gpu_error_check( cudaDeviceSynchronize() );
+
+    //error checking is now handled externally.
 }
