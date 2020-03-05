@@ -63,8 +63,8 @@ void physics_mesh::device_copy_ghost_values(physics_mesh * host_struct, physics_
     threads.x = 6; //override
 
     device_copy_ghost_values_kernel<<<blocks, threads>>>(*device_struct, values, depth);
-    gpu_error_check( cudaPeekAtLastError() );
-    gpu_error_check( cudaDeviceSynchronize() );
+    // gpu_error_check( cudaPeekAtLastError() );
+    // gpu_error_check( cudaDeviceSynchronize() );
     // error checking should be done externally; we don't want to cudaDeviceSynchronize after every operation!
 }
 
@@ -105,6 +105,6 @@ void physics_mesh::device_jacobi_relax(physics_mesh * host_struct, physics_mesh 
     set_GPU_dimensions(host_struct,blocks,threads,depth);
 
     device_jacobi_relax_kernel<<<blocks, threads>>>(*device_struct, values, depth);
-    gpu_error_check( cudaPeekAtLastError() );
-    gpu_error_check( cudaDeviceSynchronize() );
+    // gpu_error_check( cudaPeekAtLastError() );
+    // gpu_error_check( cudaDeviceSynchronize() );
 }

@@ -134,6 +134,9 @@ TEST(CUDA, CUDA_device_copy_ghost_values){
 
     physics_mesh::device_copy_ghost_values(host_struct, device_struct, &((*device_struct).potential), 1);
 
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
     physics_mesh::copy_to_host(&device_struct, &host_struct);
 
     cudaDeviceSynchronize();
@@ -156,6 +159,9 @@ TEST(CUDA, CUDA_device_jacobi_kernel_1){
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
     physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 0);
+
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
 
     physics_mesh::copy_to_host(&device_struct, &host_struct);
 
@@ -198,33 +204,41 @@ TEST(CUDA, CUDA_size_blocks_2){
     ASSERT_EQ(threads.z,1);
 }
 
+//make -j16 && ./test/nyion_test --gtest_filter=*CUDA_device_jacobi_kernel_benchmark*
+//32,12 (56.6M): 19.1 ms
+//34,6 (8.4M): 1.45 ms
+TEST(CUDA, DISABLED_CUDA_device_jacobi_kernel_benchmark){
+    int mesh_sizes[MESH_BUFFER_DEPTH] = {34,6};
+    physics_mesh origin_host(mesh_sizes,2);
 
-//
-// TEST(CUDA, CUDA_device_jacobi_kernel_benchmark){
-//     int mesh_sizes[MESH_BUFFER_DEPTH] = {50,5};
-//     physics_mesh origin_host(mesh_sizes,2);
-//
-//     origin_host.potential[21] = 1;
-//
-//     physics_mesh * host_struct = &origin_host;
-//     physics_mesh * device_struct;
-//     physics_mesh::device_constructor(&device_struct);
-//     physics_mesh::copy_to_device(&device_struct, &host_struct);
-//
-//     auto start = std::chrono::high_resolution_clock::now();
-//
-//     for(int i = 0; i < 10; i++){
-//         physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 0);
-//     }
-//
-//     auto end = std::chrono::high_resolution_clock::now();
-//     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count()/100.0;
-//     std::cout << duration << " us, " << "\n";
-//
-//     physics_mesh::copy_to_host(&device_struct, &host_struct);
-//
-//     ASSERT_NEAR(origin_host.potential[22],1/6,1e-4); //points to 220
-// }
+    traverse_state state;
+    while(origin_host.breadth_first(state,0,0,true)){ origin_host.refine_cell(state.current_depth, state.current_indice); };
+    //refine all cells.
+    //32768000 cells on level 1.
+
+    physics_mesh * host_struct = &origin_host;
+    physics_mesh * device_struct;
+    physics_mesh::device_constructor(&device_struct);
+    physics_mesh::copy_to_device(&device_struct, &host_struct);
+
+    auto start = std::chrono::high_resolution_clock::now();
+
+    for(int i = 0; i < 100; i++){
+        physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 1);
+        physics_mesh::device_copy_ghost_values(host_struct, device_struct, &((*device_struct).potential), 1);
+    }
+
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count()/100.0;
+    std::cout << duration << " us, " << "\n";
+
+    physics_mesh::copy_to_host(&device_struct, &host_struct);
+
+    ASSERT_NEAR(origin_host.potential[22],(1.0/6.0),1e-3); //points to 220
+}
 
 
 void link_cuda(); //forces CMAKE to link cuda test code.
