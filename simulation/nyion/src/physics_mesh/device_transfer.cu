@@ -83,6 +83,8 @@ void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh **
     //copy array and save a copy of each array pointer for later
     COPY_ARRAY_TO_DEVICE(float, temperature, length);
     COPY_ARRAY_TO_DEVICE(float, potential, length);
+    //despite not existing on the host, this'll still get wiped on the device, so we still need to persist it.
+    COPY_ARRAY_TO_DEVICE(float, device_temporary, length);
     COPY_ARRAY_TO_DEVICE(int32_t, space_charge, length);
     COPY_ARRAY_TO_DEVICE(uint16_t, boundary_conditions, length);
     COPY_ARRAY_TO_DEVICE(uint32_t, refined_indices, length);
@@ -96,6 +98,7 @@ void physics_mesh::copy_to_device(physics_mesh ** device_struct, physics_mesh **
     //then re-copy the pointers.
     COPY_POINTERS_BACK_TO_DEVICE(float, temperature, length);
     COPY_POINTERS_BACK_TO_DEVICE(float, potential, length);
+    COPY_POINTERS_BACK_TO_DEVICE(float, device_temporary, length);
     COPY_POINTERS_BACK_TO_DEVICE(int32_t, space_charge, length);
     COPY_POINTERS_BACK_TO_DEVICE(uint16_t, boundary_conditions, length);
     COPY_POINTERS_BACK_TO_DEVICE(uint32_t, refined_indices, length);
@@ -112,6 +115,7 @@ void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** h
     //save host array pointers for after the wipe
     SAVE_HOST_ARRAY_POINTER(float, temperature, length);
     SAVE_HOST_ARRAY_POINTER(float, potential, length);
+    SAVE_HOST_ARRAY_POINTER(float, device_temporary, length);
     SAVE_HOST_ARRAY_POINTER(int32_t, space_charge, length);
     SAVE_HOST_ARRAY_POINTER(uint16_t, boundary_conditions, length);
     SAVE_HOST_ARRAY_POINTER(uint32_t, refined_indices, length);
@@ -125,6 +129,7 @@ void physics_mesh::copy_to_host(physics_mesh ** device_struct, physics_mesh ** h
 
     RESTORE_HOST_ARRAY_POINTER(float, temperature, length);
     RESTORE_HOST_ARRAY_POINTER(float, potential, length);
+    RESTORE_HOST_ARRAY_POINTER(float, device_temporary, length);
     RESTORE_HOST_ARRAY_POINTER(int32_t, space_charge, length);
     RESTORE_HOST_ARRAY_POINTER(uint16_t, boundary_conditions, length);
     RESTORE_HOST_ARRAY_POINTER(uint32_t, refined_indices, length);

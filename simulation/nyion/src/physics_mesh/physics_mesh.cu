@@ -23,6 +23,7 @@ __host__ physics_mesh::physics_mesh(int (&set_mesh_sizes)[MESH_BUFFER_DEPTH], in
     //and allocate memory
     temperature = new float[MESH_BUFFER_SIZE];
     potential = new float[MESH_BUFFER_SIZE];
+    device_temporary = new float[MESH_BUFFER_SIZE];
     space_charge = new int32_t[MESH_BUFFER_SIZE];
     boundary_conditions = new uint16_t[MESH_BUFFER_SIZE];
     refined_indices = new uint32_t[MESH_BUFFER_SIZE];
@@ -257,6 +258,7 @@ physics_mesh::~physics_mesh(){
     //on destruction,
     delete [] temperature;
     delete [] potential;
+    delete [] device_temporary;
     delete [] space_charge;
     delete [] boundary_conditions;
     delete [] refined_indices;

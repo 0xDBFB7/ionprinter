@@ -207,7 +207,7 @@ TEST(CUDA, CUDA_size_blocks_2){
 //make -j16 && ./test/nyion_test --gtest_filter=*CUDA_device_jacobi_kernel_benchmark*
 //32,12 (56.6M): 19.1 ms
 //34,6 (8.4M): 1.45 ms
-TEST(CUDA, DISABLED_CUDA_device_jacobi_kernel_benchmark){
+TEST(CUDA, CUDA_device_jacobi_kernel_benchmark){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {34,6};
     physics_mesh origin_host(mesh_sizes,2);
 
@@ -221,12 +221,9 @@ TEST(CUDA, DISABLED_CUDA_device_jacobi_kernel_benchmark){
     physics_mesh::device_constructor(&device_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
-    float * temporary;
-    gpu_error_check(cudaMalloc(&temporary, (MESH_BUFFER_SIZE)*sizeof(float)));
-
     auto start = std::chrono::high_resolution_clock::now();
 
-    physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 1, 0);
+    physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 100, 1);
 
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count()/100.0;
