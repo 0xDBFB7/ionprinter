@@ -1,10 +1,10 @@
-#include "nyion.hpp"
-#include "visualize.hpp"
+// #include "visualize.hpp"
 
 #include "physics_mesh.hpp"
 #include "physics_mesh_tests.hpp"
 #include "device_transfer_tests.hpp"
 
+#include <mgl2/mgl.h>
 
 #include "gtest/gtest.h"
 
@@ -15,7 +15,7 @@
 
 //Test names cannot contain _
 //big deal
-
+//
 TEST(MathGL, MathGL_Basic)
 {
     mglGraph gr;

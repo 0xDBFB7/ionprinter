@@ -1,6 +1,5 @@
-#include <physics_mesh.hpp>
-#include <traverse_state.hpp>
 #include "state_persist.hpp"
+
 /*
 
 The data structures are of sufficient complexity that it's impossible to write test cases for them manually.

@@ -4,7 +4,7 @@
 
 #include "gtest/gtest.h"
 
-#include "nyion.hpp"
+
 
 
 __global__ void physics_test_fill_simple(physics_mesh &mesh) {
@@ -207,7 +207,7 @@ TEST(CUDA, CUDA_size_blocks_2){
 //make -j16 && ./test/nyion_test --gtest_filter=*CUDA_device_jacobi_kernel_benchmark*
 //32,12 (56.6M): 19.1 ms
 //34,6 (8.4M): 1.45 ms
-TEST(CUDA, CUDA_device_jacobi_kernel_benchmark){
+TEST(CUDA, DISABLED_CUDA_device_jacobi_kernel_benchmark){
     int mesh_sizes[MESH_BUFFER_DEPTH] = {34,6};
     physics_mesh origin_host(mesh_sizes,2);
 

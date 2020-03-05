@@ -2,6 +2,7 @@
 #define struct_transfer_helpers_H
 
 #include <stdint.h>
+#include <CUDA_helpers.hpp>
 
 
 template <class TYPE>

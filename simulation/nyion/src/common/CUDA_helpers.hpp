@@ -1,9 +1,7 @@
 #ifndef CUDA_helpers_H
 #define CUDA_helpers_H
 
-#include "nyion.hpp"
-
-
+#include <iostream>
 
 void display_GPU_info();
 

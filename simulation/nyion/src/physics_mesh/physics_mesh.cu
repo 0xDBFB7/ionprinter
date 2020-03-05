@@ -1,5 +1,3 @@
-#include "nyion.hpp"
-
 #include "physics_mesh.hpp"
 
 //most of this isn't cuda: we just add the .cu extension to get cuda to link some of the __device__ code.

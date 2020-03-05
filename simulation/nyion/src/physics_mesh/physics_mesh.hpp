@@ -1,11 +1,14 @@
 #ifndef DATA_STRUCTURE_H
 #define DATA_STRUCTURE_H
 
-#include "nyion.hpp"
-
 #include "config.hpp"
 
+#include <iostream>
+#include "debug_helpers.hpp"
 
+#include <cuda_runtime.h>
+#include <cuda_runtime_api.h>
+#include <cuda.h>
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;

@@ -1,5 +1,3 @@
-#include "nyion.hpp"
-
 #include "gtest/gtest.h"
 
 #ifndef DATA_STRUCTURE_TEST_H

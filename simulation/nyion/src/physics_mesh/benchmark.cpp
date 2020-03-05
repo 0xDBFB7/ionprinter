@@ -1,5 +1,5 @@
 
-// TEST(benchmark, CUDA_physics_mesh_copy_benchmark){
+// void benchmark(){
 //     int mesh_sizes[MESH_BUFFER_DEPTH] = {100};
 //     physics_mesh origin_host(mesh_sizes, 1);
 //     physics_mesh * host_struct = &origin_host;

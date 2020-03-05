@@ -1,6 +1,3 @@
-#include "nyion.hpp"
-
-#include "gtest/gtest.h"
 
 
 #define DEBUG_PRINT

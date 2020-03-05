@@ -1,7 +1,12 @@
 #ifndef STATE_PERSIST_H
 #define STATE_PERSIST_H
 //
-#include <nyion.hpp>
+#include <physics_mesh.hpp>
+#include <traverse_state.hpp>
+
+#include <fstream>
+#include <string>
+#include <iomanip>
 
 #include "nlohmann/json.hpp"
 using json = nlohmann::json;

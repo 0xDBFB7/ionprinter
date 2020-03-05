@@ -1,7 +1,6 @@
 #ifndef TRAVERSE_STATE_H
 #define TRAVERSE_STATE_H
 
-#include "nyion.hpp"
 
 #include "config.hpp"
 

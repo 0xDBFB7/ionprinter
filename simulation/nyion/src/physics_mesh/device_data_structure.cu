@@ -1,4 +1,4 @@
-#include "physics_mesh.hpp"
+#include "device_data_structure.hpp"
 
 const int max_cells_per_cuda_block = 1024;
 
