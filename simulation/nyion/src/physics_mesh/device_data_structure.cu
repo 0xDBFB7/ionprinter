@@ -71,21 +71,40 @@ void physics_mesh::device_copy_ghost_values(physics_mesh * host_struct, physics_
 
 //+1 to ignore ghosts
 __global__ void device_jacobi_relax_kernel(physics_mesh &device_struct, float ** values, int depth) {
+    //see https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html
 
     int this_block = device_struct.block_indices[device_struct.block_depth_lookup[depth]+blockIdx.x];
 
-    int this_cell = this_block + idx(threadIdx.x+1,threadIdx.y+1,threadIdx.z+1, device_struct.mesh_sizes[depth]);
+    int x = threadIdx.x+1;
+    int y = threadIdx.y+1;
+    int z = ((((device_struct.mesh_sizes[depth]-2)/blockDim.SUB_BLOCKS)*blockIdx.SUB_BLOCKS)+threadIdx.z)+1;
 
-    int value_from_indice = device_struct.ghost_linkages[this_cell];
-    (*values)[this_cell] = (*values)[value_from_indice];
+    int this_cell = this_block + idx(x, y, z, device_struct.mesh_sizes[depth]);
+
+    bool boundary_condition_check = (device_struct.boundary_conditions[this_cell] == 0); //1 if cell should be updated
+
+    float sum = 0;
+    sum += (*values)[this_block + idx(x+1, y, z, device_struct.mesh_sizes[depth])];
+    sum += (*values)[this_block + idx(x-1, y, z, device_struct.mesh_sizes[depth])];
+    sum += (*values)[this_block + idx(x, y+1, z, device_struct.mesh_sizes[depth])];
+    sum += (*values)[this_block + idx(x, y-1, z, device_struct.mesh_sizes[depth])];
+    sum += (*values)[this_block + idx(x, y, z+1, device_struct.mesh_sizes[depth])];
+    sum += (*values)[this_block + idx(x, y, z-1, device_struct.mesh_sizes[depth])];
+    sum += (device_struct.space_charge[this_cell]/EPSILON_ZERO);
+
+    (*values)[this_cell] = ((1-boundary_condition_check)*(*values)[this_cell]) //leave cell unchanged if a boundary is present - saves a jump
+                                    + (boundary_condition_check * (sum)/(6.0f));
+
 }
 
 
 void physics_mesh::device_jacobi_relax(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int depth){
-    int num_blocks = (*host_struct).blocks_on_level(depth);
-    dim3 threads_per_block((*host_struct).mesh_sizes[depth]-2, (*host_struct).mesh_sizes[depth]-2, (*host_struct).mesh_sizes[depth]-2); //ignore ghosts
+    dim3 threads;
+    dim3 blocks;
 
-    device_jacobi_relax_kernel<<<num_blocks, threads_per_block>>>(*device_struct, values, depth);
+    set_GPU_dimensions(host_struct,blocks,threads,depth);
+
+    device_jacobi_relax_kernel<<<blocks, threads>>>(*device_struct, values, depth);
     gpu_error_check( cudaPeekAtLastError() );
     gpu_error_check( cudaDeviceSynchronize() );
 }
