@@ -67,6 +67,7 @@ void physics_mesh::device_constructor(physics_mesh ** device_struct){
     //construct the arrays and copy to the GPU
     constructificate_array_on_struct(&((**device_struct).temperature), MESH_BUFFER_SIZE);
     constructificate_array_on_struct(&((**device_struct).potential), MESH_BUFFER_SIZE);
+    constructificate_array_on_struct(&((**device_struct).device_temporary), MESH_BUFFER_SIZE);
     constructificate_array_on_struct(&((**device_struct).space_charge), MESH_BUFFER_SIZE);
     constructificate_array_on_struct(&((**device_struct).boundary_conditions), MESH_BUFFER_SIZE);
     constructificate_array_on_struct(&((**device_struct).refined_indices), MESH_BUFFER_SIZE);
@@ -147,6 +148,8 @@ void physics_mesh::device_destructor(physics_mesh ** device_struct){
 
     defenestrate_array_from_struct(&((**device_struct).temperature));
     defenestrate_array_from_struct(&((**device_struct).potential));
+    defenestrate_array_from_struct(&((**device_struct).device_temporary));
+
     defenestrate_array_from_struct(&((**device_struct).space_charge));
     defenestrate_array_from_struct(&((**device_struct).boundary_conditions));
     defenestrate_array_from_struct(&((**device_struct).refined_indices));

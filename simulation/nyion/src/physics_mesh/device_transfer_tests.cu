@@ -158,7 +158,7 @@ TEST(CUDA, CUDA_device_jacobi_kernel_1){
     physics_mesh::device_constructor(&device_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
-    physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 0);
+    physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 1, 0);
 
     gpu_error_check( cudaPeekAtLastError() );
     gpu_error_check( cudaDeviceSynchronize() );
@@ -221,15 +221,12 @@ TEST(CUDA, DISABLED_CUDA_device_jacobi_kernel_benchmark){
     physics_mesh::device_constructor(&device_struct);
     physics_mesh::copy_to_device(&device_struct, &host_struct);
 
+    float * temporary;
+    gpu_error_check(cudaMalloc(&temporary, (MESH_BUFFER_SIZE)*sizeof(float)));
+
     auto start = std::chrono::high_resolution_clock::now();
 
-    for(int i = 0; i < 100; i++){
-        physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 1);
-        physics_mesh::device_copy_ghost_values(host_struct, device_struct, &((*device_struct).potential), 1);
-    }
-
-    gpu_error_check( cudaPeekAtLastError() );
-    gpu_error_check( cudaDeviceSynchronize() );
+    physics_mesh::device_jacobi_relax(host_struct, device_struct, &((*device_struct).potential), 1, 0);
 
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>( end-start ).count()/100.0;

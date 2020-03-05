@@ -71,7 +71,7 @@ void physics_mesh::device_copy_ghost_values(physics_mesh * host_struct, physics_
 
 
 //+1 to ignore ghosts
-__global__ void device_jacobi_relax_kernel(physics_mesh &device_struct, float ** values, int depth) {
+__global__ void device_jacobi_relax_kernel(physics_mesh &device_struct, float ** input, float ** output, int depth) {
     //see https://people.eecs.berkeley.edu/~demmel/cs267/lecture24/lecture24.html
 
     int this_block = device_struct.block_indices[device_struct.block_depth_lookup[depth]+blockIdx.x];
@@ -85,29 +85,51 @@ __global__ void device_jacobi_relax_kernel(physics_mesh &device_struct, float **
     bool boundary_condition_check = (device_struct.boundary_conditions[this_cell] == 0); //1 if cell should be updated
 
     float sum = 0;
-    sum += (*values)[this_block + idx(x+1, y, z, device_struct.mesh_sizes[depth])];
-    sum += (*values)[this_block + idx(x-1, y, z, device_struct.mesh_sizes[depth])];
-    sum += (*values)[this_block + idx(x, y+1, z, device_struct.mesh_sizes[depth])];
-    sum += (*values)[this_block + idx(x, y-1, z, device_struct.mesh_sizes[depth])];
-    sum += (*values)[this_block + idx(x, y, z+1, device_struct.mesh_sizes[depth])];
-    sum += (*values)[this_block + idx(x, y, z-1, device_struct.mesh_sizes[depth])];
+    sum += (*input)[this_block + idx(x+1, y, z, device_struct.mesh_sizes[depth])];
+    sum += (*input)[this_block + idx(x-1, y, z, device_struct.mesh_sizes[depth])];
+    sum += (*input)[this_block + idx(x, y+1, z, device_struct.mesh_sizes[depth])];
+    sum += (*input)[this_block + idx(x, y-1, z, device_struct.mesh_sizes[depth])];
+    sum += (*input)[this_block + idx(x, y, z+1, device_struct.mesh_sizes[depth])];
+    sum += (*input)[this_block + idx(x, y, z-1, device_struct.mesh_sizes[depth])];
     sum += (device_struct.space_charge[this_cell]/EPSILON_ZERO);
 
-    (*values)[this_cell] = ((1-boundary_condition_check)*(*values)[this_cell]) //leave cell unchanged if a boundary is present - saves a jump
+    (*output)[this_cell] = ((1-boundary_condition_check)*(*input)[this_cell]) //leave cell unchanged if a boundary is present - saves a jump
                                     + (boundary_condition_check * (sum)/(6.0f));
 
 }
 
+__global__ void device_copy_kernel(physics_mesh &device_struct, float ** input, float ** output) {
 
-void physics_mesh::device_jacobi_relax(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int depth){
+}
+
+
+void physics_mesh::device_jacobi_relax(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int iterations, int depth){
     dim3 threads;
     dim3 blocks;
 
     set_GPU_dimensions(host_struct,blocks,threads,depth);
 
-    device_jacobi_relax_kernel<<<blocks, threads>>>(*device_struct, values, depth);
-    // gpu_error_check( cudaPeekAtLastError() );
-    // gpu_error_check( cudaDeviceSynchronize() );
 
-    //error checking is now handled externally.
+    physics_mesh::device_copy_ghost_values(host_struct, device_struct, values, 1);
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
+    float ** buf_1 = values; //double-buffering
+    float ** buf_2 = temporary;
+    float ** buf_hold;
+
+    for(int i = 0; i < iterations; i++){
+        device_jacobi_relax_kernel<<<blocks, threads>>>(*device_struct, buf_1, buf_2, depth);
+        device_copy_ghost_values(host_struct, device_struct, buf_2, depth);
+        // buf_hold = buf_1;
+        // buf_1 = buf_2;
+        // buf_2 = buf_hold;
+    }
+
+    gpu_error_check( cudaPeekAtLastError() );
+    gpu_error_check( cudaDeviceSynchronize() );
+
+    //we don't know which is which, so let's make sure they're consistent.
+    gpu_error_check( cudaMemcpy(buf_2, buf_1, MESH_BUFFER_SIZE*sizeof(float), cudaMemcpyDeviceToDevice));
+
 }

@@ -46,6 +46,10 @@ struct physics_mesh{
 
     float * temperature; //Kelvin
     float * potential; //Volts
+
+    float * device_temporary;
+
+
     int32_t * space_charge; //e+ , charge probably can't reasonably be fractional - we're not working with quarks?
                                 //scratch that, charge can be fractional if using a higher-order deposition scheme
     uint16_t * boundary_conditions;
@@ -78,7 +82,7 @@ struct physics_mesh{
 
     // template <class T>
     static void device_copy_ghost_values(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int depth);
-    static void device_jacobi_relax(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int depth);
+    static void device_jacobi_relax(physics_mesh * host_struct, physics_mesh * device_struct, float ** values, int iterations, int depth);
 
     static void device_constructor(physics_mesh ** device_struct);
     static void copy_to_device(physics_mesh ** device_struct, physics_mesh ** host_struct);
