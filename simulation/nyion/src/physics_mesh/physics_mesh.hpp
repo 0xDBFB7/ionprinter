@@ -108,9 +108,7 @@ void set_GPU_dimensions(physics_mesh * host_struct, dim3 &blocks, dim3 &threads,
 #define PHYSICAL_BLOCKS x
 #define SUB_BLOCKS y
 
-//move to physics.hpp
 
-#define EPSILON_ZERO (8.85418e-12)
 
 
 //might be helpful:

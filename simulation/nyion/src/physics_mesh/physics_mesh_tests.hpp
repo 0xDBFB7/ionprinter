@@ -179,21 +179,21 @@ TEST(transform_idx, transform_idx_1){
     ASSERT_EQ(transform_idx(1,0,0,4,5),32);
 }
 
-// TEST(cell_world_lookup, cell_world_lookup_test_3){
-//   float x,y,z;
-//
-//   int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
-//   traverse_state state;
-//
-//   cell_world_lookup(state, x, y, z);
-//
-//   ASSERT_NEAR(-ROOT_WORLD_SCALE, x, 1e-5);
-//   ASSERT_NEAR(-ROOT_WORLD_SCALE, y, 1e-5);
-//   ASSERT_NEAR(-ROOT_WORLD_SCALE, z, 1e-5);
-//
-//   xyz_traverse(state, mesh_sizes, 0);
-//
-// }
+
+TEST(cell_world_lookup, cell_to_world_lookup_test_3){
+  float x,y,z;
+
+  int mesh_sizes[MESH_BUFFER_DEPTH] = {3, 3, 3};
+  physics_mesh mesh(mesh_sizes,2);
+  traverse_state state;
+
+  state.cell_world_lookup(mesh, x, y, z);
+
+  ASSERT_NEAR(-ROOT_WORLD_SCALE, x, 1e-5);
+  ASSERT_NEAR(-ROOT_WORLD_SCALE, y, 1e-5);
+  ASSERT_NEAR(-ROOT_WORLD_SCALE, z, 1e-5);
+
+}
 
 
 // TEST(cell_world_lookup, cell_world_lookup_test_5){
@@ -216,42 +216,4 @@ TEST(transform_idx, transform_idx_1){
 // }
 
 
-//
-// TEST(data_structure_mesh, traverse_benchmark){
-//   int test_mesh_size = 10;
-//
-//   int mesh_sizes[MESH_BUFFER_DEPTH];
-//   std::fill(mesh_sizes, mesh_sizes + MESH_BUFFER_DEPTH, test_mesh_size);
-//
-//
-//   int * test = new int[MESH_BUFFER_SIZE];
-//   int * refined_indices = new int[MESH_BUFFER_SIZE];
-//   std::fill(test, test + MESH_BUFFER_SIZE, 0);
-//   std::fill(refined_indices, refined_indices + MESH_BUFFER_SIZE, 0);
-//
-//
-//   int heap_end = mesh_sizes[0]*mesh_sizes[0]*mesh_sizes[0];
-//   for(int i = 0; i < pow(test_mesh_size,3); i++){
-//     refined_indices[i] = heap_end;//center-middle
-//     heap_end += pow(test_mesh_size,3);
-//   }
-//
-//   traverse_state state;
-//
-//   auto start = std::chrono::high_resolution_clock::now();
-//
-//   for(init_state(state, mesh_sizes); breadth_first(state, refined_indices, MESH_BUFFER_DEPTH, 0, mesh_sizes); xyz_traverse(state, mesh_sizes, 0)){
-//     test[state.current_indice] = state.current_indice-state.block_beginning_indice;
-//   }
-//
-//   auto stop = std::chrono::high_resolution_clock::now();
-//   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-//   std::cout << "Time taken by function: " << duration.count() << " microseconds\n";
-//
-//
-//   delete [] test;
-//   delete [] refined_indices;
-// }
-//
-//
 #endif
