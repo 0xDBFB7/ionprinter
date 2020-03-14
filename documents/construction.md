@@ -3807,3 +3807,14 @@ very interesting.
 
 
 
+Scientific software re-use is an interesting topic. Many scientists re-write standard codes for their own purposes; even papers on ion thrusters etc mention custom codes, and at least 
+
+Is there a systemic issue here? 
+
+Why am I not using AMReX, for instance? Well, it doesn't have provisions for solid model import.
+
+Is it a documentation issue? 
+
+
+Charged Particle Beams by Stanley Humphries has an entire section on neutralization; passive compensation, active emission, transverse neutralization, and limits on focusing.
+
