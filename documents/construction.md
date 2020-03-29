@@ -3815,6 +3815,9 @@ Why am I not using AMReX, for instance? Well, it doesn't have provisions for sol
 
 Is it a documentation issue? 
 
+Like, I just needed a sim program for microwave circuits, and I just downloaded QUCS and installed it. No problemo!
+
 
 Charged Particle Beams by Stanley Humphries has an entire section on neutralization; passive compensation, active emission, transverse neutralization, and limits on focusing.
 
+Wait, why can't a diffusion pump just use a gas stream, rather than a condensing liquid?

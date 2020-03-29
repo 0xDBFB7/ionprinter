@@ -1,4 +1,7 @@
+#include <iostream>
+#include <fstream>
 
+#include <string>
 
 #define DEBUG_PRINT
 
