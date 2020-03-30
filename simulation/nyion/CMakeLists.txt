@@ -64,6 +64,8 @@ include_directories(${CMAKE_SOURCE_DIR} ${MATHGL2_INCLUDE_DIR} ${OPENGL_INCLUDE_
 
 include_directories(/home/arthurdent/Programs/fltk-1.3.5/build/ /home/arthurdent/Programs/fltk-1.3.5/FL nlohmann_json::nlohmann_json)
 
+include_directories(/home/arthurdent/Programs/OBJ-Loader/Source)
+#https://github.com/Bly7/OBJ-Loader
 include_directories(/home/arthurdent/Programs/cpp-linenoise)
 # from https://github.com/yhirose/cpp-linenoise/commits/master, version 5ea11d5d97e1f770524c300dd67db009dd4a3ab4
 #include_directories(/home/arthurdent/Programs/nlohmann-json/)
