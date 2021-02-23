@@ -1,5 +1,3 @@
-
-
 # Mk3
 
 Log starts at gauge.
@@ -14,7 +12,7 @@ Purchased some Benzomatic AL-3 aluminum soldering rods from Canadian Tire. Encou
 
 Tried preheating with an electric stovetop element. The element itself got to nearly 500c, but the aluminum only got to around 300c - below the ~400c required for the AL-3 rods.
 
-Tried oxy-acetalyne, not sufficiently warm. 
+Tried oxy-acetalyne, not sufficiently warm.
 
 Tried a 100,000 btu/hr flamethrower: sufficiently warm.
 
@@ -50,8 +48,6 @@ Cleaned 5 times with water and then isopropyl.
 
 THIS THING looks BAMF.
 
-
-
 Spun up a few more times, achieved a base vacuum level of around 0.8 millibar (660 micron) - still not great, but I shut everything down prematurely as heating was excessive.
 
 Set up a liquid cooling system for the turbo.
@@ -60,35 +56,28 @@ Purchased some nichrome wire from DashVapes. Needed a driver's license, amusingl
 
 Quite nervous around this thing right now; the clamping force on the turbo is almost surely insufficient. If it crashes, it will send high-energy shrapnel in all directions, including through my torso. I *like* my torso the way it is, thank you very much.
 
-
-
 I raised the input voltage to the turbopump controller to 56v, which worked admirably. The turbo audibly spun up significantly.
 
 Unfortunately, upon re-cycling the chamber, the controller exploded from the excess voltage, presumably spikes due to high startup current. I am unsure as to the cause; the mosfet drivers were clearly blown, but the mosfets themselves were also shorted. The drivers have headroom to 85v, and the mosfets are good to 100v - I can't imagine that switching noise got that high.
-
-
 
 Holy crap! The high-side mosfet gate trace and 2 ohm gate resistor blew! That's an incredible failure mode.
 
 Found out why the mosfet gate oxide blew in the first place: the gate was swinging across the entire 50v. Tried increasing the charge pump cap to 0.22 uf , but the driver blew up immediately.
 
-Simplified everything to one channel, same problem. Swapped mosfets, drivers, added an external boostrap diode. Voltage across the diode 
-
-
+Simplified everything to one channel, same problem. Swapped mosfets, drivers, added an external boostrap diode. Voltage across the diode
 
 I am an ABSOLUTE NINCOMPOOP.  A complete and total kneebiter.
 
 So I tried to determine what caused the tragic loss of my gate oxide. Lo and behold, it seemed that the mosfet gate was swinging the full 48v input, plus 12v from the charge pump.
 
-This is super strange for several reasons: one, the circuit was functioning normally, where the gate should have been destroyed in microseconds; 
+This is super strange for several reasons: one, the circuit was functioning normally, where the gate should have been destroyed in microseconds;
 and two, the block diagram of the MIC4604 driver doesn't reveal a failure mode that could possibly cause this issue.
 
 Cue several hours of anti-Hippocratic probing and prodding that James A. Garfield would have blushed at, and wanton swapping of $40 in drivers
 
-until I realised 
+until I realised
 
 it's a *charge pump*, you total f***ing idiot. It's *not ground referenced*.
-
 
 Floating the board's supply and connecting the scope ground to the drain of the MOSFET revealed a perfect 12v square wave.
 
@@ -98,9 +87,7 @@ Spun the pump up again: noise is causing the driver Arduino to reset, which suck
 
 The pump occasionally spins down rapidly when latchup occurs: the energy is being dumped into the mosfets and TVS diode.
 
-
-
-Tried using solder to seal up the 
+Tried using solder to seal up the
 
 Need to cast some crush gaskets.
 
@@ -112,21 +99,19 @@ caulk also works? Huh.
 
 Tried casting lead-free solder in sand: failed miserably, sand melted.
 
-Made a little aluminum mold for a gasket: failed miserably, surface tension of solder was too high. 
+Made a little aluminum mold for a gasket: failed miserably, surface tension of solder was too high.
 
 Tried O-rings to seal, failed miserably, couldn't get below 400 mbar.
 
 Ah, but pure 1101 aluminum wire works perfectly!
 
-Mm, not quite - they were prone to cracking. 
+Mm, not quite - they were prone to cracking.
 
 Soldered some copper wires into rings - worked slightly better, but still not perfectly.
 
 Ordered in some copper crush washers (#97725A250) from McMaster. These worked well, though a large amount of torque was required to seat them, and I'm not sure how the aluminum threads are holding up. A substantial amount of black residue was deposited onto the surface of the spark plugs from the last attempts. I am unsure of its composition.
 
-
-
-Got everything cleaned and polished, washers seated, spark plugs attached - then the second roughing pump coupler exploded. 
+Got everything cleaned and polished, washers seated, spark plugs attached - then the second roughing pump coupler exploded.
 
 Designed in openscad, 3D-printing some new ones now.
 
@@ -134,17 +119,15 @@ Printed, installed. Worked fine, except there was a large amount of vibration - 
 
 Pumped down. Copper sealing rings worked perfectly. It wasn't worth the time to try to make my own.
 
-Hit 5x10^-4 mBar. 
+Hit 5x10^-4 mBar.
 
-
-
-Two days later, hit 2.37x10^-5 millibar, even with a few things in the chamber. 
+Two days later, hit 2.37x10^-5 millibar, even with a few things in the chamber.
 
 ![second_pulldown](../../data/second_pulldown.png)
 
-Some discussion on the Vacuum Hackers discord led me to believe that the pump was almost definitely going to fly away, what with the minimal clamping force provided. 
+Some discussion on the Vacuum Hackers discord led me to believe that the pump was almost definitely going to fly away, what with the minimal clamping force provided.
 
-Printed out a 122mm bolt circle, disassembled everything, drilled three holes into the table, and re-assembled everything. The pump is now very rigidly affixed via the M6 bolt pattern on the bottom. 
+Printed out a 122mm bolt circle, disassembled everything, drilled three holes into the table, and re-assembled everything. The pump is now very rigidly affixed via the M6 bolt pattern on the bottom.
 
 Planning on swapping out the buna-n gaskets for viton. Very expensive, but whatever.
 
@@ -160,7 +143,7 @@ Assembled the bowtie module - I'm not actually sure why I'm doing all this, but 
 
 4.7 milliamps of e-beam current was drawn with a white-hot 0.1mm tungsten hairpin and a nickel flag at 20v bias. Initial tests with 100v bias were unsuccessful; however, it is believed that this was due to reversed polarity.  
 
-Pressures were stable at 1x10^-5 mbar. 
+Pressures were stable at 1x10^-5 mbar.
 
 Some tungsten was deposited on surfaces on the chamber; it is assumed that this is due to the unregulated temperature of the filament. As expected, the emission peaked at a certain input power and did not increase further with additional current. The current was increased regardless, and the filament vaporized in a satisfactory manner.
 
@@ -172,23 +155,23 @@ It was expected that beam alignment could be performed manually, by viewing the 
 
 <hr>
 
-A precise reading of the bowtie temperature is now required in order to set the vapor pressure. The resistance of the graphite is an excellent indicator, but the temperature forms a gradient between the center and the mounting points. This gradient has been simulated via ElmerFEM, but ultimately depends on the ceramic interface thermal conductivity etc. 
+A precise reading of the bowtie temperature is now required in order to set the vapor pressure. The resistance of the graphite is an excellent indicator, but the temperature forms a gradient between the center and the mounting points. This gradient has been simulated via ElmerFEM, but ultimately depends on the ceramic interface thermal conductivity etc.
 
-The temperature could also be inferred backwards from the beam current, or by measuring light output. 
+The temperature could also be inferred backwards from the beam current, or by measuring light output.
 
 A thermistor could be used to determine the mount temperature in-situ for a series of power levels, but the thermal mass of a thermistor is likely greater than that of the mount.
 
-Some thermocouple wire was cut to 
+Some thermocouple wire was cut to
 
 <hr>
 
-The precise secondary electron energy was at this point unknown. A crude momentum analysis showed a beam deflection angle of some 20 degrees - but this effect is significantly affected by secondary electron energy. 
+The precise secondary electron energy was at this point unknown. A crude momentum analysis showed a beam deflection angle of some 20 degrees - but this effect is significantly affected by secondary electron energy.
 
-It was decided that a SPARTA simulation would be used to determine the beam deflection; however, DSMC VSS and VHS parameters are required for an accurate picture, and can only be found in 
+It was decided that a SPARTA simulation would be used to determine the beam deflection; however, DSMC VSS and VHS parameters are required for an accurate picture, and can only be found in
 
 **(Bird94)** G. A. Bird, Molecular Gas Dynamics and the Direct Simulation of Gas Flows, Clarendon Press, Oxford (1994).
 
-A copy of Bird94 was not available online (save for a few pages on Google Books), and a hard copy would cost more than this entire vacuum system. Substituting 
+A copy of Bird94 was not available online (save for a few pages on Google Books), and a hard copy would cost more than this entire vacuum system. Substituting
 
 <hr>
 
@@ -218,15 +201,15 @@ The simulation potential was set to 20v, and an ideal temperature of approximate
 
 The chamber was pumped down and 10 A was applied across the bowtie. The bowtie glowed a dim red,  not nearly sufficient for deposition. The resistance of the entire assembly was only approximately 0.33 ohms, a significant discrepancy from the predicted 4 ohms. Clearly the graphite resistivity value set in the Elmer sim was incorrect.
 
-The "300-1200v" HV e-beam bias power supply was supplied with 12v, and output 2 kilovolts. A replacement NCH6100HV was purchased. 
+The "300-1200v" HV e-beam bias power supply was supplied with 12v, and output 2 kilovolts. A replacement NCH6100HV was purchased.
 
 The bowtie was connected to the 20v-45A supply, and 20a was briefly supplied. Aluminum was readily deposited, and no degradation of the bowtie nozzle was found. The deposited coating was quite easily wiped off the witness microscope slide.
 
-One of the bowtie connection wires melted. 
+One of the bowtie connection wires melted.
 
-#### IBSimu simulations of entire column 
+#### IBSimu simulations of entire column
 
-A 3 by 3 by 6 mm 3D simulation was created. Unfortunately, an accurate measurement of space charge requires about 10 grid points across the beam - a mesh of 0.00003mm. This is not reasonable to compute in a short period of time. 
+A 3 by 3 by 6 mm 3D simulation was created. Unfortunately, an accurate measurement of space charge requires about 10 grid points across the beam - a mesh of 0.00003mm. This is not reasonable to compute in a short period of time.
 
 However, human factors were encountered - that is, the designer was filled with abject boredom. An automatic solution is required.
 
@@ -242,9 +225,9 @@ This was based on the following premise:
 
 QED.
 
-A mesh of 50x50 pixels over the entire beam would seem to be reasonable. 
+A mesh of 50x50 pixels over the entire beam would seem to be reasonable.
 
-- 3d "Slice" solver 
+- 3d "Slice" solver
   - analytic function for slices was not found
 - 3d Analytic concentric infinitesimal ring space charge solver, with automatic beam envelope
   - poorly implemented in Python, unusably slow
@@ -252,7 +235,7 @@ A mesh of 50x50 pixels over the entire beam would seem to be reasonable.
   - There is precedent for this beam slicing technique, likely quite valuable if correctly implemented
 - Brief diversion: an attempt to use TRACE-3D and TRANSPORT to fit the beam
   - miserable failure
-  - what 
+  - what
   - what even
 - 2d simplified analytic concentric ring space charge solver, predefined beam envelope, rings also used for electrode field
   - Almost usable
@@ -261,7 +244,7 @@ A mesh of 50x50 pixels over the entire beam would seem to be reasonable.
   - Simple array operations in Python: 1-2 seconds
   - Numpy convolution: ~0.15 seconds
   - Pretty diagnostics with matplotlib
-  - Random search ineffective, genetic algorithm considered with DEAP 
+  - Random search ineffective, genetic algorithm considered with DEAP
   - An attempt was made at adding charge incrementally to obtain a specified gradient - successful for a single point, but not beyond
 - Wonderfully fast C++ Laplace solver
   - 24 ms per iteration!
@@ -269,9 +252,7 @@ A mesh of 50x50 pixels over the entire beam would seem to be reasonable.
 
 The search space of possible lens arrangements spans a triple-digit exponent of combinations, so an exhaustive search is clearly not possible. However, seeding the system with some common extraction and focusing arrangements (Pierce, Wehnelt, Einzel, etc) greatly reduces the complexity of the problem.
 
-
-
-#### Low-voltage, high-current electron gun, Peter W. Erdman and Edward C. Zipf 
+#### Low-voltage, high-current electron gun, Peter W. Erdman and Edward C. Zipf
 
 and
 
@@ -279,9 +260,9 @@ and
 
 This is the breakthrough I've been hoping for. An e-beam gun capable of ~1-3 mA at 100 eV.
 
-Moreover, simulations (and, indeed, basic Child-Langmuir expressions) have shown that a comparatively high extraction voltage is required to form a reasonable beam. I previously dismissed this technique; my malformed intuition 
+Moreover, simulations (and, indeed, basic Child-Langmuir expressions) have shown that a comparatively high extraction voltage is required to form a reasonable beam. I previously dismissed this technique; my malformed intuition
 
-> There is a general technique which can be used to circumvent these limits on unipotential guns. The technique is to multistage the gun; i.e., utilize a higher voltage to overcome the space charge in front of the cathode and then decelerate to the required final energy. 
+> There is a general technique which can be used to circumvent these limits on unipotential guns. The technique is to multistage the gun; i.e., utilize a higher voltage to overcome the space charge in front of the cathode and then decelerate to the required final energy.
 >
 > This technique seems to have first been arrived at on empirical grounds.
 >
@@ -289,28 +270,27 @@ Moreover, simulations (and, indeed, basic Child-Langmuir expressions) have shown
 > the problem of low voltage gun design breaks easily into
 > two parts: the extraction stage and the deceleration stage.
 > These designs can be done almost independently and can
-> make use of time-proven electron optical elements. 
+> make use of time-proven electron optical elements.
 
 Amazing.
 
-I still haven't been able to fully wrap my head around the energy dynamics of these devices. 
+I still haven't been able to fully wrap my head around the energy dynamics of these devices.
 
 Let's draw a diagram.
 
 ```
 E-beam:
 
-~0.2 eV Emission 														  /\
-----------------							100 eV Exit    			  'o  |
-				\						--------------              -----   
-				  \					  /  								Hapless victim
-				  	\			 ___/   									Tree
-				  	  \--------/
-			~500 eV Extraction	   Focussing, Deceleration
-
+~0.2 eV Emission                                                           /\
+----------------                            100 eV Exit                  'o  |
+                \                        --------------              -----   
+                  \                      /                                  Hapless victim
+                      \             ___/                                       Tree
+                        \--------/
+            ~500 eV Extraction       Focussing, Deceleration
 ```
 
-That seems quite sensible. If one were to roll a ball down this mount improbable, an observer by the tree would only be struck with 100 eV. 
+That seems quite sensible. If one were to roll a ball down this mount improbable, an observer by the tree would only be struck with 100 eV.
 
 Intuition still rejects this, however. Consider the following: if the second half of the electron gun vanishes, the thoughtful vacuum scientist will have at hand only a 500 eV beam and a shocked expression. If a small plate is surreptitiously inserted centrally, will it not be heated by 0.003 mA * 500 eV = 1.5 W ?  
 
@@ -322,27 +302,25 @@ In any case, I then simulated this arrangement with IBSimu. Worked admirably - s
 
 ![diags](../../files/ionprinter/simulation/IBSimu/simulations/legun/success/paper/diags.png)
 
-
-
 #### Erdman-Zipf gun construction
 
 A 1/4" end mill was used to drill the central features - a slight discrepancy from Erdman and Zipf's design, but simulations did not show any effect.
 
-As the mini-lathe used did not have an adjustable tool post, a parting tool holder was ground down to fit. 
+As the mini-lathe used did not have an adjustable tool post, a parting tool holder was ground down to fit.
 
-Machining from a 1/2" stock of copper was attempted; however, the lathe in question (or, more likely, the technique of the machinist) was not capable of machining to any reasonable surface. One particularly aggressive parting operation even caused the fuse to blow. 
+Machining from a 1/2" stock of copper was attempted; however, the lathe in question (or, more likely, the technique of the machinist) was not capable of machining to any reasonable surface. One particularly aggressive parting operation even caused the fuse to blow.
 
 The copper was exchanged for 360 free-machining brass, and the parts were turned to within ~0.3 mm tolerances. Mill-turning using the CNC would be ideal for rapid prototyping and iteration.
 
-The zinc content of the brass was quite worrying, especially since the extractor will sit ~0.2 mm away from a tungsten wire at some 2000 K. Nickel was therefore electroplated onto the electrodes. The solution drew between 0.05 and 0.1a. 
+The zinc content of the brass was quite worrying, especially since the extractor will sit ~0.2 mm away from a tungsten wire at some 2000 K. Nickel was therefore electroplated onto the electrodes. The solution drew between 0.05 and 0.1a.
 
 Discussion on Vacuum Hackers indicated that outgassing would be excessive. This idea was abandoned.
 
 12L14 was found to machine quite well on this lathe; however, lead outgassing may be a concern.
 
-Brief diversion to ceramics: On a whim, tried pressing alumina with crude graphite dies. Not effective. Applying small amount of pure alumina to graphite also not effective. Mixed some gelatine and alumina in some random ratio, and applied to tungsten on a whim. Heated with propane torch. The gel-cast bakeoff was very clear and visible - really amazing. 
+Brief diversion to ceramics: On a whim, tried pressing alumina with crude graphite dies. Not effective. Applying small amount of pure alumina to graphite also not effective. Mixed some gelatine and alumina in some random ratio, and applied to tungsten on a whim. Heated with propane torch. The gel-cast bakeoff was very clear and visible - really amazing.
 
-The 12L14 die corroded almost immediately. This effect has been referenced previously as one of the main shortcomings of leaded 
+The 12L14 die corroded almost immediately. This effect has been referenced previously as one of the main shortcomings of leaded
 
 After ~6 months and likely several thousand tests, I can say the following with uncharacteristic confidence:
 
@@ -366,8 +344,6 @@ Things I know how to do:
 - electroplate with copper
 - electroplate with nickel
 
-
-
 - Can nickel be passivated?
 
 - Some nitride? Nickel nitride?
@@ -376,9 +352,10 @@ Things I know how to do:
 
 - Iron/steel passivation or pickling could be used
 
-- Anodization of aluminum with mere vinegar has been mentioned once or twice. 
+- Anodization of aluminum with mere vinegar has been mentioned once or twice.
 
 - Graphite can be copper plated.
+
 - Copper can be "calorized" - a layer of alumina is applied, which then reacts to form copper aluminate and a coating of alumina. Promising method. Little can be found in the literature about this.
 
 <http://tallmantechnologies.ca/iron-making.php>
@@ -387,7 +364,7 @@ Things I know how to do:
 >
 > Calorizing creates a protective layer on the copper tuyere that preventing liquid iron drips from penetrating the surface. The calorizing process is performed at the final stage of production after the tuyere is finished machined and hardfacing alloys are applied. Calorizing eliminates the need to use refractory materials on the top surface of the tuyere.
 
-- io9 on twitter (thanks!) informed me of the the field-assisted sintering technique, which greatly reduces alumina sintering temperature requirements. 
+- io9 on twitter (thanks!) informed me of the the field-assisted sintering technique, which greatly reduces alumina sintering temperature requirements.
 
 US4418097A
 
@@ -405,7 +382,7 @@ A small sample of graphite was accidentally dropped into a test tube containing 
 
 One face of the graphite was cleaned, then heated cherry-red and dropped into the siloxane. Some momentary bubbling was observed. The sample appeared to change texture somewhat, and emerged perfectly clean. The sample was still conductive.
 
-Promising method, however. 
+Promising method, however.
 
 Silicon Carbide has an emissivity close to that of graphite, so this technique will be useless for decreasing power consumption.
 
@@ -423,7 +400,7 @@ This process was attempted with graphite at 20v, no effect. Experiment was repea
 
 #### Bowtie temperature measurement
 
-Precise print speed measurement (that is, atoms deposited per second) is essential to the accuracy of this concept. 
+Precise print speed measurement (that is, atoms deposited per second) is essential to the accuracy of this concept.
 
 There exist some thermocouples A program called LPUWS was found. <https://lpuws.scot.sk/> The endoscope from the PnP machine was removed and connected to a pocket spectrometer; however, the resolution was inadequate. A source of a reference calibration spectrum is unknown. A laser or LED of a specified wavelength may be effective.
 
@@ -435,7 +412,7 @@ However, there are many options for print speed feedback. Trace light emissions 
 
 <http://www.observationsblog.com/sciencetechnologyexperiments/anodizing-and-dying-aluminum-without-battery-acid>
 
-"Hard" or "type 3" anodization appears to be desirable for high-voltage applications. 
+"Hard" or "type 3" anodization appears to be desirable for high-voltage applications.
 
 See @ mielke1987 for the breakdown voltages of various thicknesses - >2500v appears to be difficult to achieve.
 
@@ -449,23 +426,23 @@ Bath is generally refrigerated.
 >
 >  Dielectric barrier usually > 1000 < 2000 Volt DC.
 >
-> Hard coat applications require up to 75 V at 24–40 asf. 
+> Hard coat applications require up to 75 V at 24–40 asf.
 
 A suitable boost converter was purchased.
 
-#### 
+####
 
-The Steacie Library at York U has a shelf (QC 702 onward) with plasma physics books. 
+The Steacie Library at York U has a shelf (QC 702 onward) with plasma physics books.
 
 "The Physics and Technology of Ion Sources" was particularly helpful.
 
-#### 
+####
 
 It may pay to re-evaluate the reasoning behind the use of wire stock. Intuition says granular jamming will be a concern, but perhaps some sort of ultrasonic vibratory system could be used to prevent sticktion.
 
 #### Emissivity difficulty
 
-It was discovered that the emissivity of tungsten varies significantly with temperature, starting from 0.05 at 250 K to approximately 0.16 at 1500 K. With 2048 bowties, the 
+It was discovered that the emissivity of tungsten varies significantly with temperature, starting from 0.05 at 250 K to approximately 0.16 at 1500 K. With 2048 bowties, the
 
 An aluminum reflector could be used - however, thermal heating is a little counterintuitive. For instance, an isolated, completely enclosed object will eventually reach precisely the same temperature as its surroundings. Some simulations are in order to determine what reflector arrangement will be effective.
 
@@ -507,23 +484,21 @@ Profit!
 
 If something in viewfactors.dat breaks, it may be helpful to delete the file. This was required when switching to diffuse gray.
 
-
-
 ![reflector](../../files/ionprinter/simulation/CAELinux/thermal_test_8/images/reflector.png)
 
-With an 800 K difference, it seems that the reflector is extremely effective. 
+With an 800 K difference, it seems that the reflector is extremely effective.
 
 It was found that the Diffuse Gray change had disabled radiation loss. Enabling diffuse gray on all surfaces caused an unacceptable slowdown, so only the thin bowtie section was activated. With an "external temperature" field, got "solution trivially zero". Removed external temperature.
 
 ![reflector_real](../../files/ionprinter/simulation/CAELinux/thermal_test_8/images/reflector_real.png)
 
-The difference between the two at 20v and 110 W is now 2518-2372 K - notably different from the previous non-diffuse-gray tests. The reflector is quite hot. 
+The difference between the two at 20v and 110 W is now 2518-2372 K - notably different from the previous non-diffuse-gray tests. The reflector is quite hot.
 
 At 60 watts, peak temp was 1657 K.
 
 With an emissivity of only 0.16, peak temperature was 1682 K. Clearly, we are in the thermal-conduction-limited regime, where the fixed mounting temperature is the dominant force. This can easily be alleviated.
 
-The input to the bowties can either be powder, wire, liquid, or gas. 
+The input to the bowties can either be powder, wire, liquid, or gas.
 
 Gas will deposit on the plumbing, so power consumption will be largely the same as liquid.
 
@@ -531,37 +506,44 @@ Gas will deposit on the plumbing, so power consumption will be largely the same 
 
 This is the fun part: feedback.
 
-As previously discussed, the precise space charge of the beam is highly dependent on many physical factors, such as compensation by background gas, trace electrons, etc. Furthermore, each print species will behave completely differently. 
+As previously discussed, the precise space charge of the beam is highly dependent on many physical factors, such as compensation by background gas, trace electrons, etc. Furthermore, each print species will behave completely differently.
 
 Rather than design a single lens geometry capable of these features, a system that adapts in real-time to the actual beam profile may be a useful approach. This would require accurate particle position data.
 
 - beam self-induced magnetic field
+
   - Fiber optic / Faraday field sensors
   - Beam optics with built-in Hall geometries
     - microvolts!
+
 - beam space charge e-field sensing
+
   - ????
+
 - Inductive or capacitive sensing
+
   - Quickly pulsing beam elements relative to each other may yield a measure of the gas dielectric constant. Calibration will be tricky. Pulses will have to be sufficiently fast as to avoid affecting the particle trajectories.
+
 - Optical sensing
+
   - Background gas ionization / recombination light detection
   - Light transmittance / polarization /
 
 - Beam loss feedback from lens elements
+
   - A small current on a lens element will indicate deposition and beam loss.
+
 - Mechanical means
+
   - Faraday probes, wire scanners, witness plates, etc
+
 - NMR?
 
 Lens element beam loss detection should be quite simple to implement, and won't require calibration.
 
 Beam position detectors on accelerators seem to be of the Cerenkov, silicon drift, or scintillator type, which will be ineffective for this application - see @ akiba2012charged.
 
-
-
 @ currell1996new
-
-
 
 @ shafer1992beam - another amazing reference
 
@@ -575,13 +557,13 @@ Beam position detectors on accelerators seem to be of the Cerenkov, silicon drif
 > scanners (both stepping- and flying-wire scanners), residual gas ionization and
 > fluorescence, optical transition radiation, beamstrahlung, and laser probes to name a
 > few. Discussion of these techniques can be found elsewhere in the literature, and in
-> general review papers. 
+> general review papers.
 
 Got it to a one!
 
 > Small loop couplers 16 (often called B-dot loops, meaning dBIdt) are simply small
 > shorted antennas that couple to the azimuthal magnetic field of the passing beam and
-> can be quite directional. 
+> can be quite directional.
 
 > After the pickup construction and assembly is complete, the electrode assembly is
 > normally first "mapped" with an Rf-excited taut wire or antenna stretched through the
@@ -605,7 +587,7 @@ Got it to a one!
 
 Clever! We can try different geometries and positions to build a regression.
 
-Beam-modulated capacitive sensors seem to be ideal to get us the charged particles. How about the uncharged ones? I guess we'll deal with that later. 
+Beam-modulated capacitive sensors seem to be ideal to get us the charged particles. How about the uncharged ones? I guess we'll deal with that later.
 
 Select lens elements could be split into quadrants and measured differentially, even with a potential applied.
 
@@ -617,7 +599,7 @@ V_c = \frac{WL}{2\pi C} \frac{I_b(t)}{v_b}
 $$
 (v originally stated as beta_b * speed of light).
 
-Some approximate numbers: if the capacitance is on the order of 10 pF, the plate is 2 mm by 2 mm, the current varies by 0.001 a in 10 us, and the beam velocity is 18 Mm/s (1000 eV, corresponding to maximum focus voltage), the plate voltage will be changed by 
+Some approximate numbers: if the capacitance is on the order of 10 pF, the plate is 2 mm by 2 mm, the current varies by 0.001 a in 10 us, and the beam velocity is 18 Mm/s (1000 eV, corresponding to maximum focus voltage), the plate voltage will be changed by
 
 ```
 0.353 v
@@ -629,13 +611,11 @@ Note that no voltage is produced at steady-state. This means that no power is tr
 
 Distinguishing between beam-plate collision and a beam signal proper might be a bit tricky. Oh, no it won't - the collision will be steady-state, whereas the modulation will be in-phase with the beam pulsing.
 
-If the heavy beam alternates around 0.1 milliamp in 1/100th of a second, and speeds past at 40 km/s, 
+If the heavy beam alternates around 0.1 milliamp in 1/100th of a second, and speeds past at 40 km/s,
 
 ```
 0.0159 v
 ```
-
-
 
 #### Fluid tracking
 
@@ -643,21 +623,19 @@ The resistance of the bowtie will change when it is filled with conductive molte
 
 #### Amplifiers
 
-The cheapest 600v MOSFET or IGBT on Digikey seems to be ~\$0.10 at 3000-of pricing. With the minimum 5 plates and 2048 bowties, this would cost over $1000. Clearly, the amplifiers will have to be vertically integrated. 
+The cheapest 600v MOSFET or IGBT on Digikey seems to be ~\$0.10 at 3000-of pricing. With the minimum 5 plates and 2048 bowties, this would cost over $1000. Clearly, the amplifiers will have to be vertically integrated.
 
-> Nickel is used mainly because is has high resistivity which makes is easy to weld. 
+> Nickel is used mainly because is has high resistivity which makes is easy to weld.
 
 Ah! I had assumed that there was an electrostatic reason. Surface contamination is a significant concern, as Erdman & Zipf described (haha EZ lens!).
 
-Since there is no "blanking" feature on the ion printer, the beam is always present; therefore, the slew rate of the plates must be quite high to prevent material from being deposited between positions. 
+Since there is no "blanking" feature on the ion printer, the beam is always present; therefore, the slew rate of the plates must be quite high to prevent material from being deposited between positions.
 
-Given a triode with a 500k anode resistance, and a plate capacitance of 300 pF, a time constant of ~200 us can be expected. 
+Given a triode with a 500k anode resistance, and a plate capacitance of 300 pF, a time constant of ~200 us can be expected.
 
 To decrease power consumption, the bowtie could serve double-duty as the amp cathode heater. The reflector shield could be coated with barium oxide paste, serving as an indirectly heated hot cathode.
 
-
-
-Simulations will have to be performed to determine the ideal 
+Simulations will have to be performed to determine the ideal
 
 #### Electrophoresis test 2
 
@@ -665,7 +643,7 @@ Graphite and 12L14 were used as the cathode with an aluminum anode. Voltages of 
 
 #### Anodization test 1
 
-Two pure aluminum wires were inserted into a room-temperature bath containing 20g of sodium bisulfate dissolved in 100g of tap water. Stirring was maintained throughout. 40v was applied, and the electrode began drawing 0.3a. The anode effervesced profusely.  The anode was removed after ~5 minutes, when the current had dropped to 0.1a. 
+Two pure aluminum wires were inserted into a room-temperature bath containing 20g of sodium bisulfate dissolved in 100g of tap water. Stirring was maintained throughout. 40v was applied, and the electrode began drawing 0.3a. The anode effervesced profusely.  The anode was removed after ~5 minutes, when the current had dropped to 0.1a.
 
 Lungs were found to tickle slightly. The anode had been very effectively anodized, and had taken a dull gray lustre. The coating was reasonably scratch-resistant, requiring a fine point to break the surface. The wire was hardened significantly. The resistance was above ~100 Mohm. Breakdown voltage tests were not run.
 
@@ -683,11 +661,11 @@ A transformer constructed of 6 ga wire, known to produce peak currents of >100A,
 
 #### Graphite resistivity
 
-The prototype bowtie was 0.75x0.6x10mm, and had a resistance of 0.33 R. 
+The prototype bowtie was 0.75x0.6x10mm, and had a resistance of 0.33 R.
 $$
 RA/L = p
 $$
-Graphite therefore has a resistivity of approx. 14.9 uOhm-meters, or 67110 S/m. The value used for the Elmer sim was 3500 S/m - this explains the discrepancy. 
+Graphite therefore has a resistivity of approx. 14.9 uOhm-meters, or 67110 S/m. The value used for the Elmer sim was 3500 S/m - this explains the discrepancy.
 
 The sim value was obtained from @ lutcov1970thermal.
 
@@ -718,22 +696,21 @@ Appending my notes from the .sif file:
 > !0.221 ohms,
 > !5873.9 S/m.
 
-The observed value matches the value from McMaster-Carr to exceptional accuracy. All other values are ridiculous. The new value has been substituted. 
+The observed value matches the value from McMaster-Carr to exceptional accuracy. All other values are ridiculous. The new value has been substituted.
 
 #### Anodization test 2
 
 Diluted the anodize bath significantly. The rest was violently neutralized with sodium bicarbonate. Tests conducted at various voltages still yielded great anodizing power even at ~50x dilution. The anodization far more porous and pitted.
 
-#### "Dirty" chamber 
+#### "Dirty" chamber
 
-Some 3" OD x 1/8" wall lexan tubing was found. 
+Some 3" OD x 1/8" wall lexan tubing was found.
 $$
 
 $$
-
 #### Hot Surface Igniters
 
-These are essentially miniature versions of the SiC heating elements used on commercial high-temperature kilns. The SiC ones are quite delicate, but there are Silicon Nitride sandwich versions which are apparently much stronger. The SiNi ones seem to have a lower peak temperature, however. 
+These are essentially miniature versions of the SiC heating elements used on commercial high-temperature kilns. The SiC ones are quite delicate, but there are Silicon Nitride sandwich versions which are apparently much stronger. The SiNi ones seem to have a lower peak temperature, however.
 
 Thinking of building a real high-temp furnace with these. Kind of tired of messing about with torches etc. At ~4 A each, we can only run 4 on a standard 1800 W circuit.
 
@@ -743,7 +720,7 @@ SILICON-CARBIDE/BORON-CONTAINING COATINGS FOR THE OXIDATION PROTECTION OF GRAPHI
 
 MoSi elements are also available.
 
-However, I have a lot of graphite, and I already know that graphite is easily capable of these temperatures - it's a high TRL heater here. If I make a graphite plate 70x25 mm, with 7 runs of 1.5x2.5mm cross section, I will obtain a resistance of 1.947 R, a cool 25 a at 48V. 
+However, I have a lot of graphite, and I already know that graphite is easily capable of these temperatures - it's a high TRL heater here. If I make a graphite plate 70x25 mm, with 7 runs of 1.5x2.5mm cross section, I will obtain a resistance of 1.947 R, a cool 25 a at 48V.
 
 #### FAST/SPS ceramics / Polymer Derived ceramics
 
@@ -767,43 +744,43 @@ Spark Plasma Sintering seems an achievable technique for production purposes.
 
 @ demmel1995
 
-@ nagel2011solving 
+@ nagel2011solving
 
 See @ yavuzturk2005assessment 4.3, (2) for heat flux and transient thermal modelling.
 
-dirchlet conditions 
+dirchlet conditions
 
 
 
 #### Beam diagnostics at scale
 
-The cheapest comparator (required for a successive-approximation ADC) at 10000-of pricing is ~\$0.14 / 4 elements, which would cost >300 for a 2048-element printer. 
+The cheapest comparator (required for a successive-approximation ADC) at 10000-of pricing is ~\$0.14 / 4 elements, which would cost >300 for a 2048-element printer.
 
 A single NPN transistor is only $0.03, however, and a standard long-tailed pair only requires two transistors. We're not concerned about linearity or really any aspect of dif
 
-A 16-channel analog switch (the CD74HC4067M96, for instance) is $0.52. If 8 channels are required per beam, this comes to \$520. 
+A 16-channel analog switch (the CD74HC4067M96, for instance) is $0.52. If 8 channels are required per beam, this comes to \$520.
 
-Digital muxes cost 
+Digital muxes cost
 
-A grid matrix AND system could be arranged, requiring only two transistors per output. 
+A grid matrix AND system could be arranged, requiring only two transistors per output.
 
 Some sort of VCO could also be designed.
 
 #### Hybrid probe
 
-Theoretically calculating precise energy/momentum balance and ionization percentages in electron-beam ionization appears to be almost impossible. Coefficients for heavy atoms like aluminum and iron are scarce, and the underlying theory is highly quantum mechanical. VSS/VHS parameters alone will likely be insufficient. 
+Theoretically calculating precise energy/momentum balance and ionization percentages in electron-beam ionization appears to be almost impossible. Coefficients for heavy atoms like aluminum and iron are scarce, and the underlying theory is highly quantum mechanical. VSS/VHS parameters alone will likely be insufficient.
 
 Accuracy of ~1 percent is important - even a small amount of misdirected material will destroy both the printed object and the assembly.
 
 For this reason, we are going to harness the most powerful simulator ever: the universe itself.
 
-Previously, I was going to determine the deposited mass using a combination capacitive spring balance and Kelvin cup. However, given the small mass, the capacitance change will likely be infinitesimal. 
+Previously, I was going to determine the deposited mass using a combination capacitive spring balance and Kelvin cup. However, given the small mass, the capacitance change will likely be infinitesimal.
 
-Deposition thickness measurement is usually done by determining the change in frequency or Q factor of a quartz resonator. 
+Deposition thickness measurement is usually done by determining the change in frequency or Q factor of a quartz resonator.
 
-I experimented with using a small 3-wire feedback piezo sensor; however, these are constructed from brass and resin insulation, neither of which I would like to have present in the high heat flux immediately surrounding the bowtie. Standard quartz oscillators seem to be constructed from vacuum-safe materials. 
+I experimented with using a small 3-wire feedback piezo sensor; however, these are constructed from brass and resin insulation, neither of which I would like to have present in the high heat flux immediately surrounding the bowtie. Standard quartz oscillators seem to be constructed from vacuum-safe materials.
 
-To simplify measurement, 
+To simplify measurement,
 
 I was also planning on making the microbalance and Kelvin cup one and the same; however, this would require an electrode mounted to the quartz resonator, making the setup somewhat more complex.
 
@@ -813,9 +790,9 @@ The beam calorimeter can be calibrated by dissipating a known power into an inte
 
 
 
-The Teensy 
+The Teensy
 
-A stepper motor and counterbalance will be used to 
+A stepper motor and counterbalance will be used to
 
 
 
@@ -826,7 +803,7 @@ Effects that will have to be calibrated out:
 
 
 
-Purchased 5 Abracon ACO1847 1 MHz oscillators. One was sacrificed to determine the position of the internal quartz element. It appears to be less than 0.6mm from the top of the casing and 8.13 mm in diameter, with 6 mm safe distance between the mounting supports). Looking at the oscillator upright, with the text readable, the first mounting peg is 8.8 mm from the right side (measuring from the body, not the flange) and 6.58mm from the bottom. 
+Purchased 5 Abracon ACO1847 1 MHz oscillators. One was sacrificed to determine the position of the internal quartz element. It appears to be less than 0.6mm from the top of the casing and 8.13 mm in diameter, with 6 mm safe distance between the mounting supports). Looking at the oscillator upright, with the text readable, the first mounting peg is 8.8 mm from the right side (measuring from the body, not the flange) and 6.58mm from the bottom.
 
 The second mounting peg is 16.14mm from the right and 2.15mm from the bottom.
 
@@ -847,9 +824,9 @@ Things which should be mounted to the measurement head:
 - Kelvin cup
   - Calibration resistor
   - Thermistor
-  - 
+  -
 - Bowtie mosfet
-- 
+-
 
 <http://www.stabitech.nl/Quartz.htm>
 
@@ -859,13 +836,13 @@ HV Cascoding is a powerful technique, though it is not without idiosyncrasies. A
 
 #### SiC furnace construction
 
-An Emerson 767A-372 Carbide hot surface igniter and an Amaco 28035N 9" x 4-1/2" x 2-1/2" firebrick were purchased. 
+An Emerson 767A-372 Carbide hot surface igniter and an Amaco 28035N 9" x 4-1/2" x 2-1/2" firebrick were purchased.
 
 The firebrick was cut in twain with a wet diamond tile saw, a 27mm slice was rended from one of the halves, and a pocket was made in the remnant.
 
 Holes for the igniter were drilled into the slice using a standard drill bit. The igniter was mounted using 1460c high-temp cement. The cement had dried considerably, and was not able to adhere to the wet-cut surface.
 
-The assembly was left to dry for several hours. 
+The assembly was left to dry for several hours.
 
 The igniter body appeared to be made out of steatite C220, not alumina; therefore, a ~7mm firebrick gap was added to insulate the low-temperature side of the igniter. This was probably not necessary; Steatite has a maximum temp of 1700 C, likely higher than the furnace will ever attain.
 
@@ -873,7 +850,7 @@ Firebrick cuts very easily; mounting on the CNC may have been possible.
 
 #### Firing
 
-Fired up the new crucible. It performs beyond my wildest dreams. Measured the internal temperature with a small thermocouple stripped of insulation. It hit 500c at a mere ~50v (of 140), 700c at ~80v. The temp was maintained at 400c for ~30 minutes to bake off any residual moisture; some slight hissing was heard. 
+Fired up the new crucible. It performs beyond my wildest dreams. Measured the internal temperature with a small thermocouple stripped of insulation. It hit 500c at a mere ~50v (of 140), 700c at ~80v. The temp was maintained at 400c for ~30 minutes to bake off any residual moisture; some slight hissing was heard.
 
 The outside is still cold to the touch.
 
@@ -887,7 +864,7 @@ A 70% Alumina / 30% Kaolin / 19% water solution was made. This was far too liqui
 
 Impatience caused the temperature to rise to ~200c far too quickly. Distressing popping noises were heard.
 
-The kiln was brought to 1300c for ~5 minutes. This required ~130v. 
+The kiln was brought to 1300c for ~5 minutes. This required ~130v.
 
 The part had broken, but was composed of the most wonderful hard alumina. A few more minutes at temperature would probably be in order. Some residue was deposited onto the surface of the SiC element.
 
@@ -901,19 +878,19 @@ Various tests were performed with different mixture viscosities.
 
 Alumina-dipped graphite was very effective; it seemed to bond well to the surface of the graphite. The graphite degraded significantly, however; it had lost almost all structural integrity after two sintering tests.
 
-I was planning on making a spectroscope pyrometer; however, I realized that this wouldn't give me any measurements at low temperatures - required for furnace bakeout. 
+I was planning on making a spectroscope pyrometer; however, I realized that this wouldn't give me any measurements at low temperatures - required for furnace bakeout.
 
 Tried measuring how tungsten wire degrades in atmosphere; used a lighter to heat a 0.1mmx20mm piece red hot while measuring its resistance with the bench meter. Resistance went from 2.630r to ~3.35r when hot, but returned to 2.54 after one cycle, then 2.4 after the next, etc. Not a reliable thermistor.
 
-Err, the above effect may have been a contact resistance problem. 
+Err, the above effect may have been a contact resistance problem.
 
-Tried 100r divider with a length of nichrome in the furnace. Reading unchanged over temperature range. 
+Tried 100r divider with a length of nichrome in the furnace. Reading unchanged over temperature range.
 
 Used proper kiln thermocouple from other kiln. Worked as expected - small temperature offset at maximum temperatures.
 
 #### Delrin alumina casting
 
-A one-sided mold was cut from 1/4" delrin, and clamped to a flat piece of delrin. A 70/30 alumina mix was made. 
+A one-sided mold was cut from 1/4" delrin, and clamped to a flat piece of delrin. A 70/30 alumina mix was made.
 
 This was left to dry for ~30 minutes, and then opened. The alumina had not yet dried.
 
@@ -923,7 +900,7 @@ An aluminum coupon was dipped into 70/30 alumina, forming a thin insulating laye
 
 I don't have any steel. Sucks.
 
-The problem no longer seems to be related to the alumina sintering; with kaolin, this is easily effected. 
+The problem no longer seems to be related to the alumina sintering; with kaolin, this is easily effected.
 
 #### Delrin alumina casting with PVA binder
 
@@ -935,17 +912,17 @@ Interesting: photolithography works on clay <https://ceramicartsnetwork.org/dail
 
 
 
-#### Green machining 
+#### Green machining
 
 oh it's a green machine
 
 very green
 
-penny lane - 
+penny lane -
 
 
 
-The previous mixture could not be released from the mold; it was too brittle, and snapped immediately. The ejector pins functioned admirably. Some shrinkage was observed. 
+The previous mixture could not be released from the mold; it was too brittle, and snapped immediately. The ejector pins functioned admirably. Some shrinkage was observed.
 
 One of the scrap pieces was taped gently to a piece of delrin on the CNC bed. This was then milled at 24krpm, 65 mm/min, and ~0.7mm stepdown. This worked admirably.
 
@@ -967,7 +944,7 @@ Perhaps using mold release would have been helpful.
 
 #### Green cookie-cutting
 
-Another mixture was created with 1.5g kaolin, 3.5g alumina, 0.2g PVA wood glue. Sufficient water was added until a putty-like texture was attained. This was spread out on a delrin sheet, and a delrin "cookie cutter" mold was pressed onto it with great force. The mold was then removed. The part stayed cleanly attached to the delrin sheet - occasionally, some distortion would be encountered; mold release may solve that issue. This was left to dry for ~3 hours, then transferred to the kiln. The green was strong enough to be handled. 
+Another mixture was created with 1.5g kaolin, 3.5g alumina, 0.2g PVA wood glue. Sufficient water was added until a putty-like texture was attained. This was spread out on a delrin sheet, and a delrin "cookie cutter" mold was pressed onto it with great force. The mold was then removed. The part stayed cleanly attached to the delrin sheet - occasionally, some distortion would be encountered; mold release may solve that issue. This was left to dry for ~3 hours, then transferred to the kiln. The green was strong enough to be handled.
 
 The kiln was inadvertently preheated to 100c, then brought to ~350c over the course of 5 minutes. This temperature was maintained for 20 minutes, and then the temperature spiked to 1300c.
 
@@ -989,7 +966,7 @@ Heat stress-testing with propane torch caused the part to both crack locally, an
 
 The bowtie plates can be vibrated to determine their contents, or - perhaps an easier method; their thermal mass can be measured!
 
-#### Stepper motor 
+#### Stepper motor
 
 > \1. RATED VOLTAGE :                                  3.3 V DC
 >
@@ -1025,7 +1002,7 @@ The SiC element in my kiln produced some massive bubbles! An explanation for the
 
 90% alumina for 40min at 140v works well.
 
-#### Ceramic ingot 
+#### Ceramic ingot
 
 Merely molding ceramics into a rough shape is not sufficient; bubbles and porosity are apparent.
 
@@ -1075,7 +1052,7 @@ Okay, so I think I've got it.
 
 First, we figure out the capacitance of the electrodes in the simulation. Next, for each time step, we determine the charge added to the plate via this method, compute the current through the shunt resistor and the new potential, and deposit that potential onto the plates.
 
-The only question now is: what precisely did Ron mean by "sum up the implied charge"? Time to hit the Gauss. 
+The only question now is: what precisely did Ron mean by "sum up the implied charge"? Time to hit the Gauss.
 
 #### "open boundaries"
 
@@ -1125,11 +1102,11 @@ Activated alumina beads for backstreaming absorption
 
 Trying to figure out the best data structure for Jacobi.
 
-A quick Nyion test yielded 1780 ms per iteration for a single-core 200x200x200 float mesh relax, using 1d C++ vectors with a 3d lookup function. 66.9 MB of memory was consumed. 
+A quick Nyion test yielded 1780 ms per iteration for a single-core 200x200x200 float mesh relax, using 1d C++ vectors with a 3d lookup function. 66.9 MB of memory was consumed.
 
-This indicates an abysmal 222.5 ns per 7-point star sum - under 5 MHz! Ouch! I know, premature optimization and all that, but this is kind of a fundamental design issue; everything centers around this. 
+This indicates an abysmal 222.5 ns per 7-point star sum - under 5 MHz! Ouch! I know, premature optimization and all that, but this is kind of a fundamental design issue; everything centers around this.
 
-The Jacobi function will take thousands of cycles to converge, and will be called every time charge should  be deposited onto the PiC grid; that is, every time a particle moves into another grid; so it's really quite critical. 
+The Jacobi function will take thousands of cycles to converge, and will be called every time charge should  be deposited onto the PiC grid; that is, every time a particle moves into another grid; so it's really quite critical.
 
 What's our goal? The rule of thumb is that 10 space-charge points are required to accurately model a beam. The nozzle is 0.4mm in diameter, so a 0.00004m mesh is required around there. The current generation extractor is 9mm in diameter, so 225 mesh points across the x.  200x200x200 is probably a reasonable estimate.
 
@@ -1137,7 +1114,7 @@ Then, we'll need at least 1000 J or G-S cycles for convergence (with some multig
 
 Some beam envelope tricks could probably pare this down to 10-20, but I don't wanna be clever.
 
-So, is 5 Mhz all we're going to get? Assuming 100% cache misses, DDR4-1600 can hit 12800 MB/s. Divide by 4 because we're working with floats, divide by 8 for the stencil, then by 10 because this is silly best-case nonsense = 40 Mhz. 
+So, is 5 Mhz all we're going to get? Assuming 100% cache misses, DDR4-1600 can hit 12800 MB/s. Divide by 4 because we're working with floats, divide by 8 for the stencil, then by 10 because this is silly best-case nonsense = 40 Mhz.
 
 There's some room for improvement, but probably not the several orders of magnitude that are required.
 
@@ -1152,7 +1129,7 @@ Okay, so I guess we're still CPU limited - those ~10 index lookups were probably
 Time for some testing!
 
 ```
-relax_laplace(){ 
+relax_laplace(){
  auto t1 = std::chrono::high_resolution_clock::now();
   potentials[1][1][1] = 10;
   for(int i = 0; i < 10; i++){
@@ -1209,7 +1186,7 @@ std::array<float, (200*200*200)> potentials;
 
 ```
 
-​	
+​    
 
 | 200x200x200 array, -O3 for all                               | CPU Time, +/-10ms |
 | :----------------------------------------------------------- | ----------------- |
@@ -1229,7 +1206,7 @@ std::array<float, (200*200*200)> potentials;
 | 1d std::vector to 1d C-style arrays, then back               | 175.2 ms          |
 | 1d std::vector to 3 cache-aligned C-style arrays on heap, BCs re-added after relax cycle to skip slow flag (MPI easy, spectral radius comp easy), then back to vector | 108.4 ms!         |
 
-Note: values do not include allocation/construction/initialization time. 
+Note: values do not include allocation/construction/initialization time.
 
 Juicy! This is probably of sufficient utility that I should publish it separately.
 
@@ -1239,7 +1216,7 @@ Next, we'll need a provision for storing multiple grids within multiple timestep
 
 
 
-For some reason, adding the boundary condition check makes the system 4 times slower. Curious! This doesn't happen if I check against the same potentials[] vector. Some strange cache effect? 
+For some reason, adding the boundary condition check makes the system 4 times slower. Curious! This doesn't happen if I check against the same potentials[] vector. Some strange cache effect?
 
 Changing to unsigned char had no appreciable effect.
 
@@ -1249,7 +1226,7 @@ Ah, but converting std::vector to a dynamic c-style array, performing the comput
 
 Tried performing multigrid (that is, seeding a fine mesh with values from a coarse mesh) "in-place" in the same array, with a greater first pass step; however, this caused a number of issues.
 
-Also, I seem to have completely forgotten about the data structure. 
+Also, I seem to have completely forgotten about the data structure.
 
 #### HV Safety
 
@@ -1283,9 +1260,9 @@ This is bustin' my noodle! Let's hardcode the submesh res for now.
 
 
 
-#### Magnetohydrodynamic metal pump 
+#### Magnetohydrodynamic metal pump
 
-Magnetic liquid-metal pumps are quite common in nuclear reactors. This would be perfect for the 
+Magnetic liquid-metal pumps are quite common in nuclear reactors. This would be perfect for the
 
 <https://www.mikeash.com/pyblog/fluid-simulation-for-dummies.html>
 
@@ -1295,7 +1272,7 @@ Mold could be made such that the graphite part is put inside and an even coating
 
 alumina mixed with silicone oil?
 
-The space shuttle leading-edge RCC heatshield tiles had a similar silicon carbide conversion coating for oxidation protection. 
+The space shuttle leading-edge RCC heatshield tiles had a similar silicon carbide conversion coating for oxidation protection.
 
 
 
@@ -1319,7 +1296,7 @@ Tried a very slow multigrid progression. This works really well for meshes with 
 
 #### FPGA-accelerated laplace
 
-3 minutes to converge is a bit much. I could parallelize this, but have to learn verilog for school, and happen to have a DE0-Nano FPGA dev board with 32 MB of sdram, which will fit a 200x200x200 array perfectly. GPUs aren't ideal for these sorts of problems. 
+3 minutes to converge is a bit much. I could parallelize this, but have to learn verilog for school, and happen to have a DE0-Nano FPGA dev board with 32 MB of sdram, which will fit a 200x200x200 array perfectly. GPUs aren't ideal for these sorts of problems.
 
 Transferring data to the fpga at reasonable speed presents some difficulty; the built-in USB blaster can apparently hit ~10 Mbps, but the bindings that exist only allow ~10kbps. UART implementation is non-trivial because of clock domains etc. An RPI might work: socket -> wide gpio bus; direct port maniuplation in C++ can hit a few dozen Mhz. Ordered an FT232R high-speed parallel FIFO.
 
@@ -1343,7 +1320,7 @@ So the new laplace relax algorithm can do a solid 80M stencils per second, and c
 
 > The Conjugate Gradient Method is the most prominent iterative method for solving sparse systems of linear equations.
 > Unfortunately, many textbook treatments of the topic are written with neither illustrations nor intuition, and their
-> victims can be found to this day babbling senselessly in the corners of dusty libraries. 
+> victims can be found to this day babbling senselessly in the corners of dusty libraries.
 
 CG/ method might be useful.
 
@@ -1351,7 +1328,7 @@ CG/ method might be useful.
 
 The "DE10-NANO CYCLONE V SE SOC KIT" by terasic has a cool 1 GB of RAM. Only dev boards with SODIMM slots seem to have larger memories.
 
-If we halve our mesh resolution to 
+If we halve our mesh resolution to
 
 
 
@@ -1421,7 +1398,7 @@ A truck stops abruptly - too abruptly. Your eyes snap and crackle. You raise a t
 
 <hr>
 
-It would be much better to use <https://www.mcs.anl.gov/petsc/documentation/index.html> PETSC. However, I'm really tired of dependencies right now; I grow weary of thousand-page user manuals and opaque data structures. 
+It would be much better to use <https://www.mcs.anl.gov/petsc/documentation/index.html> PETSC. However, I'm really tired of dependencies right now; I grow weary of thousand-page user manuals and opaque data structures.
 
 Trying to implement CG, which apparently converges in ~ sqrt that of gauss-seidel if properly preconditioned.
 
@@ -1431,11 +1408,11 @@ Ah, no - there's just something wrong with the solver. Here's a single active po
 
 ![broken](assets/broken.png)
 
-That's not right.	
+That's not right.    
 
 
 
-Multigrid solvers typically use a V-cycle. 
+Multigrid solvers typically use a V-cycle.
 
 
 
@@ -1465,9 +1442,9 @@ Okay, so I've been picking at little bugs all over Nyion, and I've realized that
 
 The same thing happened in my last major codebase.
 
-I don't want to adopt any pseudoscientific dogmas like agile et al. I wholly abhor absolutes in engineering, as I think they lead to myriad problems ranging from overconfidence, blind rules-following without the requisite meta-analysis required for real science, etc. 
+I don't want to adopt any pseudoscientific dogmas like agile et al. I wholly abhor absolutes in engineering, as I think they lead to myriad problems ranging from overconfidence, blind rules-following without the requisite meta-analysis required for real science, etc.
 
-MISRA C is an excellent example. 
+MISRA C is an excellent example.
 
 > In view of the apparent widening influence of the MISRA C standard, this paper attempts to assess whether important deficiencies in the original standard have been addressed satisfactorily. Unfortunately, they have not and the important real to false positive ratio is not much better in MISRA C 2004 than it was in MISRA C 1998 and it is unacceptably low in both.
 
@@ -1483,9 +1460,9 @@ However, clearly something's amiss, so I'mma look into it.
 
 <hr>
 
-Gallium has a low vapor pressure. If gallium's propensity to attack aluminum could be prevented, it could be magnetohydro- pumped through a diffusion pump. 
+Gallium has a low vapor pressure. If gallium's propensity to attack aluminum could be prevented, it could be magnetohydro- pumped through a diffusion pump.
 
-This is nonsense. Vane pumps are high-TRL and simple. It'll be fine. 
+This is nonsense. Vane pumps are high-TRL and simple. It'll be fine.
 
 <hr>
 
@@ -1493,29 +1470,29 @@ In keeping with the serviceability/prototyping bringup combination, it may be he
 
 <hr>
 
-One could be forgiven for questioning why I'm rolling my own solver (and visualization, for that matter). There are many reasons: first, I want to be able to tack on new features at will (abstracting to the complex plane for EM sim, for instance). 
+One could be forgiven for questioning why I'm rolling my own solver (and visualization, for that matter). There are many reasons: first, I want to be able to tack on new features at will (abstracting to the complex plane for EM sim, for instance).
 
-Secondly, I'm quite tired of using third-party libraries, of dependency hell, of indecipherable error codes emerging from deep within twisted codebases, and sparse tomes of documentation. I want to know everything about the solver, how it works, under which conditions it will fail, etc. 
+Secondly, I'm quite tired of using third-party libraries, of dependency hell, of indecipherable error codes emerging from deep within twisted codebases, and sparse tomes of documentation. I want to know everything about the solver, how it works, under which conditions it will fail, etc.
 
 This is nonsense, of course, but I hope it's forgivable nonsense.
 
 <hr>
 <https://en.wikipedia.org/wiki/Ultra-high-temperature_ceramics>
 
-Whole bunch of materials like HfB2 etc developed by Manlabs that may be useful. 
+Whole bunch of materials like HfB2 etc developed by Manlabs that may be useful.
 
-Zirconia is a bit  on the expensive side, also not resistant to thermal shock, but has a ridiculously high melting temp. 
+Zirconia is a bit  on the expensive side, also not resistant to thermal shock, but has a ridiculously high melting temp.
 
 SiC powder is easy to obtain. Sinter temp ~1600-2000. Might work; however, still degrades on contact with aluminum. Perhaps SiC and alumina can be cofired?
 
 Liquid silicon can be used to coat RCC.
 
-Graphite bowtie life will probably be negligible due to aluminum carbide formation. 
+Graphite bowtie life will probably be negligible due to aluminum carbide formation.
 
 
 
 <hr>
-Dropped LG G3 - 
+Dropped LG G3 -
 
 "Literate" coding looks pretty interesting (<https://github.com/zyedidia/Literate>)
 
@@ -1531,11 +1508,11 @@ Previously, I have shirked bounds-checking on arrays for performance reasons. Ho
 
 
 
-Ionization electrons can be siphoned off and used 
+Ionization electrons can be siphoned off and used
 
 
 
-==Nyion can be used as integration test + HITL simulation software! This is big. A library should be integrated with the firmware component and used as mocks.== 
+==Nyion can be used as integration test + HITL simulation software! This is big. A library should be integrated with the firmware component and used as mocks.==
 
 Oh ho ho ho that is HUGE
 
@@ -1557,7 +1534,7 @@ Interesting for later use: compiling in a ramdisk can often improve performance.
 
 <hr>
 
-Going to switch Nyion to use only double values, negating the need for 
+Going to switch Nyion to use only double values, negating the need for
 
 
 
@@ -1573,7 +1550,7 @@ Going to switch Nyion to use only double values, negating the need for
 
 +0.25g water.
 
-Putty formed normally, gray color. Sintered at 126v for 12 minutes. Temperature may have been slightly lower than normal due to gap in kiln. 
+Putty formed normally, gray color. Sintered at 126v for 12 minutes. Temperature may have been slightly lower than normal due to gap in kiln.
 
 Gray color disappeared after sintering; graphite was presumably oxidized to CO2, leaving behind a pure white crumbly alumina powder that was completely nonconductive.
 
@@ -1590,7 +1567,7 @@ This burnoff property could be harnessed. A low-emissivity non-conductive shell 
 
 However, we're still not done, because this fledgling beam does not like to exist; and as soon as it leaves the carefully controlled fields within the emitter, it does this:
 
-Which is unhelpful. This problem is usually alleviated by increasing the beam energy, but the end user typically doesn't have the luxury of a personal nuclear reactor. The beam would also turn into a merciless death ray, slicing through the wall of the chamber and anything else in its path. 
+Which is unhelpful. This problem is usually alleviated by increasing the beam energy, but the end user typically doesn't have the luxury of a personal nuclear reactor. The beam would also turn into a merciless death ray, slicing through the wall of the chamber and anything else in its path.
 
 This is an issue that Feynman thought was intractable in his 1969 lecture on nanotech.
 
@@ -1602,7 +1579,7 @@ It is important to emphasize that I did not invent any of these concepts.
 
 <hr>
 
-Okay, we've got another issue: timescales. Nyion must be able to simulate bowtie transient heating, the diff. pump, the heavy beam, and the electron beam. 
+Okay, we've got another issue: timescales. Nyion must be able to simulate bowtie transient heating, the diff. pump, the heavy beam, and the electron beam.
 
 
 
@@ -1612,7 +1589,7 @@ E beam: 5000 km/s in 0.05mm cell, 1e-12s timescale, total runtime 1e-5 s.
 
 Beam buttons and modulation: 20 khz, total runtime ~1e-4.
 
-~8M mesh stencils per multigrid, 10 multigrids per cycle, ~100M cycles. Let's say we want this to run in an hour, since we'll have yet another layer for optimization. 
+~8M mesh stencils per multigrid, 10 multigrids per cycle, ~100M cycles. Let's say we want this to run in an hour, since we'll have yet another layer for optimization.
 
 
 
@@ -1658,13 +1635,13 @@ Uni is finished again. I have 3 weeks.
 
 <hr>
 
-Spent a while thinking about FPGA acceleration while studying for calc 3. 
+Spent a while thinking about FPGA acceleration while studying for calc 3.
 
-table storing cell relationships (linked-list-like) 
+table storing cell relationships (linked-list-like)
 
 200^3 array, about 200ms fast test.c
 using openmp, g++ test.cpp -o testout -std=c++11 -fopenmp,
-126 ms with 16 threads, 
+126 ms with 16 threads,
 80 ms with 50; 30 ms with -O3.
 
 26 ms on 64-core GCE instance with 150 threads. With -O3, 14 ms.
@@ -1683,7 +1660,7 @@ pre-compute field that would be caused by a single particle in each cell, scale 
 
 wait, that's just basically the same as using f=kQQ/r^2
 
-That would take, say, 50x50x50 around each cell, and there are a few million 
+That would take, say, 50x50x50 around each cell, and there are a few million
 
 To ease routing and layout, one fpga+ram per board with fat bus interconnecting
 
@@ -1704,7 +1681,7 @@ SRAM is ~$1/MBit, with 100 Mhz access times.
 
 <hr>
 
-PSRAM latencies are advertised at ~70ns. However, many mobile PSRAMs feature a "burst" mode for sequential reads or writes, allowing ~10ns access. 
+PSRAM latencies are advertised at ~70ns. However, many mobile PSRAMs feature a "burst" mode for sequential reads or writes, allowing ~10ns access.
 
 <hr>
 
@@ -1714,7 +1691,7 @@ Also, my mesh refinement routine is total garbage.
 
 
 
-<hr> 
+<hr>
 *Nyion Accelerator*
 
 It would be desirable for all who own an ionolith to have the capability to carry out these simulations and improve the design. Using a dedicated piece of hardware countermands this to some degree, and will introduce tremendous complexity at a critical time.
@@ -1723,9 +1700,9 @@ On the other hand, I do not believe that companies have time to *not* innovate. 
 
 Let us first attempt to reject the justification for constructing the device, and convince ourselves that it is not worth pursuing.
 
-Assume a best-case beam runtime of 1e-5 s, a beamline distance of 0.3m, a best-case cell of 0.1mm, and an SLPIC electron slowdown on the order of 200x. Heavy beam velocity is 30 km/s; electron, 5000 km/s. 
+Assume a best-case beam runtime of 1e-5 s, a beamline distance of 0.3m, a best-case cell of 0.1mm, and an SLPIC electron slowdown on the order of 200x. Heavy beam velocity is 30 km/s; electron, 5000 km/s.
 
-dt=4e-9 (with slowed e-), 2500 cycles. 
+dt=4e-9 (with slowed e-), 2500 cycles.
 
 Without slowed e-, dt=2e-11; 500k cycles. At 10 ms / cycle, this will require on the order of an hour on a Ryzen.
 
@@ -1739,7 +1716,7 @@ This makes 160 MBytes. Now assume 2x replication for bus width.
 
 <hr>
 
-Let's do this differently. 
+Let's do this differently.
 
 There are 6 read ops and 1 write op per stencil. 8 memory modules per card would be quite ideal, then. In terms of I/O, 16 for addressing + 32 for data - almost 200 pins. That necessitates a $35 Cyclone-class or equivalent. Damn.
 
@@ -1748,12 +1725,12 @@ How about 2 modules per card? Still 80 I/O. ~50 I/O seems to be the crossover be
 One module? 64 I/O. \$10 FPGA + \$10 in RAM. *16.
 
 <hr>
-Conrad Sanderson and Ryan Curtin. 
-*Armadillo: a template-based C++ library for linear algebra*. 
-Journal of Open Source Software, Vol. 1, pp. 26, 2016. 
+Conrad Sanderson and Ryan Curtin.
+*Armadillo: a template-based C++ library for linear algebra*.
+Journal of Open Source Software, Vol. 1, pp. 26, 2016.
 
-Conrad Sanderson and Ryan Curtin. 
-*Practical Sparse Matrices in C++ with Hybrid Storage and Template-Based Expression Optimisation*. 
+Conrad Sanderson and Ryan Curtin.
+*Practical Sparse Matrices in C++ with Hybrid Storage and Template-Based Expression Optimisation*.
 Mathematical and Computational Applications, Vol. 24, No. 3, 2019.
 
 <hr>
@@ -1773,20 +1750,20 @@ I can hear you screaming at this document, begging me to use PETSc or some other
 200^3 array, 100 iterations.
 
 ```C++
-	for(int coord=1; coord < SIZE*SIZE*SIZE-1; coord++){
-		potentials_out[coord] = (potentials[coord+1] +
-            				     potentials[coord-1])/6.0;
-	}
+    for(int coord=1; coord < SIZE*SIZE*SIZE-1; coord++){
+        potentials_out[coord] = (potentials[coord+1] +
+                                 potentials[coord-1])/6.0;
+    }
 ```
 
 32 ms on one core.
 
 ```c++
 for(int coord=1; coord < SIZE*SIZE*SIZE-1; coord++){
-	potentials_out[coord] = potentials[coord];
+    potentials_out[coord] = potentials[coord];
 }
 ```
-2.8ms. 
+2.8ms.
 
 Adding /6: 4.6ms.
 
@@ -1795,7 +1772,7 @@ Adding /6: 4.6ms.
 <hr>
 
 ```
-		potentials[coord] = potentials[coord]/6;
+        potentials[coord] = potentials[coord]/6;
 
 ```
 
@@ -1810,14 +1787,14 @@ Adding /6: 4.6ms.
 
 
 ```c++
-	for(int coord=SIZE*SIZE; coord < SIZE*SIZE*SIZE-(SIZE*SIZE); coord++){
+    for(int coord=SIZE*SIZE; coord < SIZE*SIZE*SIZE-(SIZE*SIZE); coord++){
     potentials[coord] = (potentials[coord+1] +
              potentials[coord-1] +
              potentials[coord+SIZE] +
              potentials[coord-SIZE] +
              potentials[coord+(SIZE*SIZE)] +
              potentials[coord-(SIZE*SIZE)])/6.0;
-	}
+    }
 ```
 
 -O3, 1 core, 63 ms.
@@ -1836,7 +1813,7 @@ On the ceramics side, I should try out tapecasting.
 
 The screen-printing system used to tapecast cofired PCBs is quite intense; a UV crosslinker might be helpful. To this end, purchased some sodium benzoate from some herbal store in TO; apparently it's an effective uv sensitizer for PVA.
 
-sodium trimetaphosphate 
+sodium trimetaphosphate
 
 Ultraviolet‐induced crosslinking of poly(vinyl alcohol) in the presence of sensitizers
 
@@ -1862,7 +1839,7 @@ For a number of reasons, the allowable timeline just became a bit shorter.
 
 250^3 - 4 ms (9 on Ryzen)
 
-400^3, 150 threads - 14ms (48 on Ryzen). 
+400^3, 150 threads - 14ms (48 on Ryzen).
 
 
 
@@ -1878,13 +1855,13 @@ I'm really, really happy.
 
 
 
-Two showerthoughts: 
+Two showerthoughts:
 
 1. distant blocks that don't contain particles needn't be recomputed every cycle. This should massively accelerate the startup heat-transfer phase.
 
 2. Previous iterations will be well-preconditioned for future iterations.
 
-   
+
 
 Using float over double tripled the speed yet again.
 
@@ -1906,7 +1883,7 @@ Huh, both gauss-seidel and Jacobi run in the same 11ms for a 450^3 mesh. That's 
 
 Mesh refinement scheme that doesn't require a convoluted iterator - like *"Block-structured grids for Eulerian gyrokinetic simulations"*
 
-All meshes are concatenated in one 1d array. A separator row (must be at least 1 z-axis long) prevents stencils from performing operations between meshes. Communication between meshes is performed via imc ghost points, which have values as normal and contain indexes or pointers of the corresponding point in another mesh. A routine is called to update these ghost point values periodically. 
+All meshes are concatenated in one 1d array. A separator row (must be at least 1 z-axis long) prevents stencils from performing operations between meshes. Communication between meshes is performed via imc ghost points, which have values as normal and contain indexes or pointers of the corresponding point in another mesh. A routine is called to update these ghost point values periodically.
 
 Some sort of routine would be required to initially find the relations between points. Also, how the hell do you do worldspace lookups?
 
@@ -1914,7 +1891,7 @@ Some sort of routine would be required to initially find the relations between p
 
 <hr>
 
-Abandoning mesh refinement. Throwing everything out. It's all dumb af. Meshes can be solved separately and particles communicated. 
+Abandoning mesh refinement. Throwing everything out. It's all dumb af. Meshes can be solved separately and particles communicated.
 
 The huge compute boost from the GPU means we can afford to be less geometrically efficient.
 
@@ -1955,9 +1932,9 @@ Mesh refinement redux.
 
 Meshes are concatenated into a single 1d array. One row of buffer boundary points is used as a separator.  A third array (besides potentials and boundaries) stores a mesh ID for every point. This indexes into a short table containing the start and end indices, side lengths, and world-space position.
 
-Inter-mesh ghost points are both indices to the same, different memory location. 
+Inter-mesh ghost points are both indices to the same, different memory location.
 
-This 
+This
 
 
 
@@ -2014,7 +1991,7 @@ Sat Aug 17 13:13:52 2019
 |   0  GeForce GTX 106...  Off  | 00000000:22:00.0  On |                  N/A |
 | 54%   34C    P0    34W / 120W |   1539MiB /  3019MiB |      0%      Default |
 +-------------------------------+----------------------+----------------------+
-                                                                               
+
 +-----------------------------------------------------------------------------+
 | Processes:                                                       GPU Memory |
 |  GPU       PID   Type   Process name                             Usage      |
@@ -2035,7 +2012,7 @@ GPUs are *fast*.
 
 <hr>
 
-The sodium benzoate arrived. For a change of pace, did some testing with PVA+UV. 
+The sodium benzoate arrived. For a change of pace, did some testing with PVA+UV.
 
 Tried 0.4g water+0.05g benzoate+0.08g Elmer's PVA, 30 seconds, 1 minute, 1.5 minutes - no change
 
@@ -2045,7 +2022,7 @@ Played with benzoate concentrations, nothing seemed to work
 
 Then I went back and re-read the second paper; it also requires the addition of DMSO as the grafted molecule.
 
-The original paper requires several hours of UV exposure after drying. I'll try that in a bit. 
+The original paper requires several hours of UV exposure after drying. I'll try that in a bit.
 
 <hr>
 
@@ -2056,7 +2033,7 @@ I've been stuck on this multigrid solver for weeks. Found a paper on 'unigrid', 
 
 
 *  Daniel Ruijters and Philippe Thévenaz,
-   GPU Prefilter for Accurate Cubic B-Spline Interpolation, 
+   GPU Prefilter for Accurate Cubic B-Spline Interpolation,
    The Computer Journal, vol. 55, no. 1, pp. 15-20, January 2012.
 *  Daniel Ruijters, Bart M. ter Haar Romeny, and Paul Suetens,
    Efficient GPU-Based Texture Interpolation using Uniform B-Splines,
@@ -2201,26 +2178,26 @@ Wavelet multigrid looks interesting.
 Tried out Raptor AMG.
 
 ```
-arthurdent@DeepThought-Ryzen-Debian:~/Programs/raptor-master/build$ mpirun -n 16 ./examples/example 
-Level	NumRows	NNZ
------	-------	---
-0	16000000	143952004
-1	9735033	145658265
-2	5728968	143205172
-3	2755849	92478107
-4	1333287	51794569
-5	632486	26779106
-6	297705	13220867
-7	138652	6318092
-8	63461	2913665
-9	28089	1268415
-10	11760	504470
-11	4675	187199
-12	1760	63318
-13	624	18595
-14	220	5216
-15	73	1125
-16	24	180
+arthurdent@DeepThought-Ryzen-Debian:~/Programs/raptor-master/build$ mpirun -n 16 ./examples/example
+Level    NumRows    NNZ
+-----    -------    ---
+0    16000000    143952004
+1    9735033    145658265
+2    5728968    143205172
+3    2755849    92478107
+4    1333287    51794569
+5    632486    26779106
+6    297705    13220867
+7    138652    6318092
+8    63461    2913665
+9    28089    1268415
+10    11760    504470
+11    4675    187199
+12    1760    63318
+13    624    18595
+14    220    5216
+15    73    1125
+16    24    180
 Raptor AMG Setup Time: 2.264749e+01
 Raptor AMG Solve Time: 5.838596e+01
 
@@ -2257,11 +2234,11 @@ P.9, *A Multigrid Tutorial*
 
 
 
-Decided to re-write 
+Decided to re-write
 
 
 
-Having an issue where it performs essentially identically if 2 grids or 16 are used. 
+Having an issue where it performs essentially identically if 2 grids or 16 are used.
 
 Changed to 1d. Maybe now I'll be able to figure this out.
 
@@ -2289,7 +2266,7 @@ Wow nice, the whole jacobi thing's broken and I didn't even catch it. Matplotlib
 
 
 
-> 
+>
 >
 > There are several criteria for the convergence of the
 > iterative procedure when solving the Poisson
@@ -2314,10 +2291,11 @@ eq 7 <https://pdfs.semanticscholar.org/3bff/671288b8bec327beb7dfcda5f5d321ed6c73
 
 
 
-Okay, so here's what I've learned. 
+Okay, so here's what I've learned.
 
 The poisson equation is as follows:
 $$
+
 \nabla^2 \phi = f \\
 \nabla^2 \phi = -q/\epsilon_0\\
 T\phi = f\\
@@ -2344,11 +2322,9 @@ The residual is zeroed at the boundaries.
 >         res[i][1]=res[i][n]=res[1][i]=res[n][i]=0.0;
 > }
 
-
-
 <hr>
 
-This is a really, really hard problem. 
+This is a really, really hard problem.
 
 Not in absolute terms; this is a trivial exercise given to first-year numerical analysis students, and comprises only a few hundred lines of code at the worst. It's only hard for me.
 
@@ -2360,10 +2336,6 @@ Brandt's 5.3 Relaxation on and near boundaries and 5.4 are both important.
 
 Trottenberg's *Multigrid* is also enlightening, P.185 or so.
 
-
-
-
-
 <https://www.cs.virginia.edu/~robins/YouAndYourResearch.html>
 
 not sure I entirely agree with some points, but yeah
@@ -2372,13 +2344,7 @@ not sure I entirely agree with some points, but yeah
 
 <http://www.sgh1.net/posts/read-stl-file.md>
 
-
-
 <http://teacher.pas.rochester.edu/PHY217/LectureNotes/Chapter3/LectureNotesChapter3.pdf> is really good for explaining how the stencil works with laplace's equation
-
-
-
-
 
 <hr>
 
@@ -2390,7 +2356,7 @@ One can see that the second-level U (in orange) is clearly asymmetric. Hmm, this
 
 ![figure_3](assets/figure_3.png)
 
-Look at those high-frequency components in the residual! You can really see where the coarsening helps. 
+Look at those high-frequency components in the residual! You can really see where the coarsening helps.
 
 ![figure_4](assets/figure_4.png)
 
@@ -2416,12 +2382,8 @@ I think our restriction is now of the wrong order. Let me fix that, back in a ji
 
 That seems to have helped.
 
-
-
-
-
 > In irregular regions where boundaries do not lie on coarse grid lines, there are
-> several options possible for treating these boundaries. 
+> several options possible for treating these boundaries.
 >
 > The most obvious, which is
 > analogous to the usual multigrid approach, is to define the directions as the interpolated coarse grid coordinate vectors and use the (zero) boundary conditions
@@ -2431,17 +2393,13 @@ That seems to have helped.
 > overlap the boundary so that d, is suppressed as in Fig. 3.
 >
 > In Section 5, this will be referred to as the contracted boundary method. This means that some points near the boundary are not corrected by smooth error iterations, so the danger is that
-> convergence is slowed (see Section 5). 
+> convergence is slowed (see Section 5).
 
 <https://www.researchgate.net/profile/Steve_McCormick/publication/23862617_Unigrid_methods_for_boundary_value_problems_with_nonrectangular_domains/links/59edd626aca27250fe79be89/Unigrid-methods-for-boundary-value-problems-with-nonrectangular-domains.pdf>
-
-
 
 Wait, is the RHS the same as U boundary? That would explain everything.
 
 In McCormack et al, the U boundary and the rhs charge are scaled inverses of each other.
-
-
 
 Damped jacobi greatly improves convergence. 2/3 or 0.8 were used, both to great effect.
 
@@ -2450,19 +2408,13 @@ f_h)
 
 Still having trouble with the boundaries.
 
-
-
 There's a fast direct multipole method for 2d that looks pretty interesting.
 
 Need to read [Classical Electrodynamics](http://www.amazon.de/Classical-Electrodynamics-John-David-Jackson/dp/047130932X/ref=sr_1_2?ie=UTF8&qid=1360409697&sr=8-2) by J. D. Jackson
 
 <http://www.mgnet.org/mgnet/tutorials/xwb.html>
 
-
-
 Now I've screwed myself, haven't I. By using unigrid, the operators have disappeared, so I can't alter them near the boundaries.
-
-
 
 <https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19810025336.pdf#page=256>
 
@@ -2470,21 +2422,11 @@ Using a local- pre-smoothing technique. That seems to have done it. This quickly
 
 Performance was initially poor; some ~1 second per MG cycle. However, the unigrid implementation wasn't breaking up work units properly, so counterintuitively coarser meshes took far longer.
 
-
-
 It's the second part, applying the correction, that's consuming all the compute power. It's also not the branch section.
-
-
 
 Need a better reduction algorithm.
 
-
-
 <https://en.wikipedia.org/wiki/Bayesian_search_theory>
-
-
-
-
 
 > **1) Use of Dedicated Cache** could be getting you thread's actual grid cell into private registers that is fastest. Then neighbours into __local array so the comparisons/calc only done in chip.
 >
@@ -2503,11 +2445,6 @@ Need a better reduction algorithm.
 > (if it has many neighbours, lines after "Load neighbours into __local" can be in another loop that gets from main memory by patches)
 >
 > What is your gpu? Nice it is GTX660. You should have 64kB controllable cache per compute unit. CPUs have only registers of 1kB and not addressable for array operations.
->
-
-
-
-
 
 <hr>
 
@@ -2529,9 +2466,9 @@ Stability in order:
 Thestability of nitrides at 1200Kdecreases in the
 following order: nitrides of Hf Zr, Ti, Al, Ce, Be, Ta,
 Nb, V, Mg, Ca, Si, Li, Cr, In, Mn, Mo and Fe,
-respectively. 
+respectively.
 
-Copper definitely works with alumina. AlN can be produced by via a spark in a nitrogen atmosphere, or by carbothermal nitridation. 
+Copper definitely works with alumina. AlN can be produced by via a spark in a nitrogen atmosphere, or by carbothermal nitridation.
 
 There seems to be zero information on the interfacial reactions between copper and AlN.
 
@@ -2556,13 +2493,11 @@ Capacitive induction sanity check: can we put any reasonable amount of current t
    = 31831 Ω
 ```
 
-Hmm, maybe - but why? Induction's just as good. The B-field could be generated using graphite traces embedded in the bowtie proper? - but then again, we'll need an SMC that continues to function at huge temperatures. Then again, the coils could be external to the bowtie and shielded from thermal radiation. 
-
-
+Hmm, maybe - but why? Induction's just as good. The B-field could be generated using graphite traces embedded in the bowtie proper? - but then again, we'll need an SMC that continues to function at huge temperatures. Then again, the coils could be external to the bowtie and shielded from thermal radiation.
 
 Nyion should probably support OpenPMD.
 
-hydantoin epoxy, aquazol 
+hydantoin epoxy, aquazol
 
 aquazol is used for preservation
 
@@ -2572,7 +2507,7 @@ WB4101 Water Based Binder System - acrylic
 
 <https://digitalfire.com/4sight/education/binders_for_ceramic_bodies_345.html>
 
-Acrylic emulsion 
+Acrylic emulsion
 
 Aquazol is perfect for this application. However, I really don't like the fact that it's proprietary and only produced by one company. What happens if Polymer Innovations loses the license from Dow? Now I've gotta put a whole bunch of engineering time into finding an alternative. In fact, I'm already finding a supply chain issue; I can't buy the stuff now! Let's not.
 
@@ -2588,19 +2523,15 @@ Citric acid is a pva crosslinker.
 
 Oh my god, I'm such an idiot. PVA (poly-vinyl acetate, school glue) is distinct from PVA(polyvinyl- alcohol). The alcohol is a precursor to the acetate.
 
-
-
 Teter, A. R. (1965). *Evaluation Of Binders For Machinable Unfired Ceramics*. Rocky Flats Div., Dow Chemical Co., Golden, Colo has a neat chart of strengths to properties, testing with PVA etc.
 
 Acrylic Binders for Dry Pressing Ceramics a
 
-acrylic emulsions are made from micron-sized bits of acrylic polymer in 
+acrylic emulsions are made from micron-sized bits of acrylic polymer in
 
 PVP is another good one.
 
 "Low Temperature Electronics and Low Temperature Cofired Ceramic ..., Volume 2003" mentions PEOX
-
-
 
 <https://www.americanelements.com/aluminum-nitride-24304-00-5>
 
@@ -2608,19 +2539,13 @@ The alginate+calcium iodide people found a strength of 8 MPa, 1100 psi - well ov
 
 Should get one of those clip-on pressure cookers.
 
-Photo-activated ionic gelation of alginate hydrogel: real-time rheological monitoring of the two-step crosslinking mechanism. Uses CaCO3 and diphenyliodonium nitrate as the photoacid. 
+Photo-activated ionic gelation of alginate hydrogel: real-time rheological monitoring of the two-step crosslinking mechanism. Uses CaCO3 and diphenyliodonium nitrate as the photoacid.
 
-Photoacid reacts with UV to acidify, caco3 reacts with H+, caco3 reacts with alginate. 
+Photoacid reacts with UV to acidify, caco3 reacts with H+, caco3 reacts with alginate.
 
-Pyranine from yellow highlighters might work; alters ph 
-
-
+Pyranine from yellow highlighters might work; alters ph
 
 <https://www.jstor.org/stable/1269076?seq=1#page_scan_tab_contents>
-
-
-
-
 
 <https://blog.saleae.com/transitioning-away-from-in-house-manufacturing/>
 
@@ -2628,11 +2553,7 @@ Very interesting that saleae went this way. It totally makes sense for them, I t
 
 Also, the hell is up with their prices?
 
-
-
 ionolith software should have a remotely-updated MOTD for announcements, recalls, etc.
-
-
 
 PTFE lined pressure vessel/reaction chambers? Coool. Cheap on ebay.
 
@@ -2642,8 +2563,6 @@ PTFE lined pressure vessel/reaction chambers? Coool. Cheap on ebay.
 
 AlN is interesting in that it's natively soft and machinable.
 
-
-
 > The resulting sheet is then placed in a furnace in the
 > presence of nitrogen and fired to approximately 600 C.
 > for a period of approximately 10 to 20 hours. This tem
@@ -2652,31 +2571,21 @@ AlN is interesting in that it's natively soft and machinable.
 > tween the aluminum and the nitrogen. In the period of
 > 10 to 20 hours, approximately 5 to 10 percent of the alu
 > minum reacts with the nitrogen to form an aluminum ni
-> tride shell 12 around the aluminum core 10. 
+> tride shell 12 around the aluminum core 10.
 
 Cool! Easy way to make AlN.
 
-
-
 The way I do science has changed in the last few years - probably for the better, but... nowadays I just look for the answer to any problem on Google Scholar. I guess that's okay.
-
-
 
 Looked for pressure vessels with a hinged lid for the furnace. Pressure cookers looked great at first, but then I found these cheap airtight M2A1 50-cal metal ammo boxes that're just the right size. Good stuff!
 
-
-
 Perhaps the two-piece bowtie could be separable for cleaning of oxides etc
-
-
 
 So, weird thing that I remembered on the multigrid. The first functional test used the difference residual rather than the proper f-Ab residual, simply adding the residual on each level to the root, yet it converged just fine as long as long as the V-sweep was only performed 'upwards'. It later became unstable, but this may have just been because of the island boundaries used to test it.
 
 Oh, just remembered how this worked. I just used the earlier mesh as a 'better guess', using T=T-U and no fancy residual, correcting at each level. This worked quite well in one direction.
 
-
-
-There's a few galvanized ammo boxes on amazon. Should warn people not to use those, since they'll give you metal fume fever. 
+There's a few galvanized ammo boxes on amazon. Should warn people not to use those, since they'll give you metal fume fever.
 
 MIL-DTL-3060G covers specs for these ammo cans.
 
@@ -2688,21 +2597,13 @@ MIL-DTL-3060G covers specs for these ammo cans.
 
 "a .32 cubic foot air tight metal can"
 
-A "cubic foot" of gas = one cubic foot at stp, 14.7 psi. Still 250 cycles. 
+A "cubic foot" of gas = one cubic foot at stp, 14.7 psi. Still 250 cycles.
 
 15 psi * 0.5 sq ft = 1080 lbs. Quite a lot, it'll probably implode.
 
-
-
-
-
 What makes time different? Think about this. We can change spacial resolution with relative ease, without affecting the other particles in different regions. Why can't we have different temporal resolutions?
 
-
-
 There's no reason why we can't have struts in the chamber, as long as there's an algorithm to avoid them. There'll always be a few emitters with a clear line of sight to any point. That might make things easier.
-
-
 
 ==Kiln temperature can be monitored by SiC element resistance.== The element could be allowed to cool to chamber ambient every few seconds to remove any temperature offset.
 
@@ -2710,52 +2611,36 @@ Because SiC is a semiconductor, the resistivity is all over the place at differe
 
 [http://www.ift.org/~/media/Knowledge%20Center/Learn%20Food%20Science/Food%20Science%20Activity%20Guide/activity_alginategummie.pdf](http://www.ift.org/~/media/Knowledge Center/Learn Food Science/Food Science Activity Guide/activity_alginategummie.pdf)
 
-
-
 Design of a Silicon Carbide Micro-Hotplate Geometry
 for High Temperature Chemical Sensing
 
-
-
 ![great_fit](assets/great_fit.png)
 
-That's a great fit. 
+That's a great fit.
 
 Anyhow, not sure if the SiC will have a sufficiently reliable temperature curve.
 
-Bandgap energy, 
-
-
+Bandgap energy,
 
 <http://www.iue.tuwien.ac.at/phd/ayalew/node61.html>
-
-
 
 <http://www.ioffe.ru/SVA/NSM/Semicond/SiC/bandstr.html>
 
 > More than 200 different polytypes of SiC are known. However, about 95% of all publications deal with three main polytypes: 3C, 4H, and 6H. In all main polytypes of SiC, some atoms have been observed in association both with cubic (C), with hexagonal (H) and with rombohedral (R) lattice sites.
 
-
-
 <https://camotics.org/download.html> openscam
 
 As far as I can tell, stat error bars are ambiguous without stating the statistical interval used to generate them. Stating in terms of CI would probably be more useful.
-
-
 
 ah, cool, active beam transverse cooling has been implemented, it's called stochastic cooling: <https://en.wikipedia.org/wiki/Stochastic_cooling>
 
 <https://en.wikipedia.org/wiki/Electron_cooling> is basically what we'll be doing.
 
-See, I should have known about this before. The fact that I was not aware of the term 'electron cooling' means that there are field-size gaps in my knowledge. 
-
-
+See, I should have known about this before. The fact that I was not aware of the term 'electron cooling' means that there are field-size gaps in my knowledge.
 
 >  CeSOX project was officially cancelled by CEA and INFN due to the radioactive source production problem,[[33\]](https://en.wikipedia.org/wiki/Borexino#cite_note-33) and Borexino's 2018-19 goals were reoriented toward achieving higher detector stability and, with it, increased radiopurity, in order to push for higher precision solar neutrino results, with special emphasis on CNO neutrinos.
 
 damn, they gave up!
-
-
 
 First, to narrow the search space a bit, we'll choose our solvent in which the ingredients will be dispersed. I chose water as our solvent for no very good reason, and in fact this may have complicated the organic binder step significantly. Other solvents like ethanol have also been used in papers, though they seem to be less common. Different solvents have different alumina dispersion properties; that is, alumina settles faster or slower.
 
@@ -2763,10 +2648,9 @@ Luckily, we don't need to be concerned about the outgassing or vacuum safety of 
 
 impedance nasa ceramic alumina "Yittrium oxide firing agent"
 
-Sintering of Alumina at Temperatures of 
-1400°C. and Below 
+Sintering of Alumina at Temperatures of
+1400°C. and Below
 by IVAN B. CUTLER, CYRIL BRADSHAW, CARL J. CHRISTENSEN, and EDMOND P. HYATT 1% MnO 1%TiO2 seems to suffice
-
 
 Density to determine sinter depth
 
@@ -2778,8 +2662,6 @@ You can clean up zinc MnO2 using oxalic acid, prolly not worth it
 
 Al2O3 · 2SiO 2 · 2H2O. Kaolinite
 
-
-
 Carbothermic reduction 2CuO + C → 2Cu + CO2 - there seem to be intermediate steps in this equation. Titania should be useful, for brazing for instance.
 
 > Reduction of finely dispersed TiO2 by carbon in nitrogen flow begins at approximately 1000°C. In the initial stages up to approximatel 1170°C reduction of TiO2 into lower titanium oxides takes place.
@@ -2787,8 +2669,6 @@ Carbothermic reduction 2CuO + C → 2Cu + CO2 - there seem to be intermediate st
 Indeed! <https://www.sciencedirect.com/science/article/abs/pii/S0955221989800093>
 
 Titanium's melting point is 1,668 °C. That should be achievable.
-
-
 
 From a naive work function viewpoint, potassium would seem to be a good thermionic cathode option.
 
@@ -2805,13 +2685,9 @@ From a naive work function viewpoint, potassium would seem to be a good thermion
 
 (<https://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19770006877.pdf>)
 
-
-
 Alginate is a copolymer produced by a seaweed, treated with a mineral ion (sodium, in this case) to form a salt. - might actually have supply chain issues in the future because of climate change!
 
 You might be wondering why we have to go to all this trouble with an organic binder. In general, nothing will bond with alumina at low temperatures; it's got a really low surface energy.
-
-
 
 Firing with 10% or so Kaolin occurred really quickly - 10 minutes sufficed to get sufficient strength.
 
@@ -2819,13 +2695,13 @@ Kaolin is interesting. It starts out as Al2O3 **·** 2SiO2 **·** 2H2O, like a h
 
 At 1100C it becomes mullite, 2Al2O3 SiO2, then at 1400C the mullite grows into long, strong spikes. Mullite is basically the active ingredient in porcelain; and it's sort of in this family of clay-like silicate ceramics. You can make a perfectly respectable ceramic part out of mullite alone.
 
-The al2o3 is obviously fine, that's just alumina. However, for high-temperature vacuum applications, I was a little concerned about the silicon dioxide/silica impurities, and some graphs back up this worry. For almost any sane application this won't be a problem at all; however, I'll be running this alumina right near the upper temperature limit of 1700 C, so any outgassing problem'll be amplified enormously. 
+The al2o3 is obviously fine, that's just alumina. However, for high-temperature vacuum applications, I was a little concerned about the silicon dioxide/silica impurities, and some graphs back up this worry. For almost any sane application this won't be a problem at all; however, I'll be running this alumina right near the upper temperature limit of 1700 C, so any outgassing problem'll be amplified enormously.
 
 acrylamide
 
-At first glance, you might think that the sintering aid is just a sort of high-temp 'glue' that's mechanically binding the alumina together. My understanding is that this is correct in the case of clays like Kaolin, especially when talking about impure, 70% alumina mixes, where it's more an alumina-silicate composite than anything else. 
+At first glance, you might think that the sintering aid is just a sort of high-temp 'glue' that's mechanically binding the alumina together. My understanding is that this is correct in the case of clays like Kaolin, especially when talking about impure, 70% alumina mixes, where it's more an alumina-silicate composite than anything else.
 
-However, true sintering aids like manganese and titania act more like semiconductor 'dopants', affecting the grain boundary growth and introducing dislocations in the crystalline structure of the alumina. 
+However, true sintering aids like manganese and titania act more like semiconductor 'dopants', affecting the grain boundary growth and introducing dislocations in the crystalline structure of the alumina.
 
 @brook1976controlled is golden.
 
@@ -2833,11 +2709,9 @@ Early descriptions of sintering aids (like those by Luks) mention "reactions" be
 
 The reason why sintering takes so long here is that as far as I can tell it's actually a gas diffusion process; atoms are being transferred between grain boundaries as gas. This vapor-phase sintering is more like a temperature-time product than either. This differs from liquid-phase sintering, which is basically immediate.
 
-As opposed to polycrystalline forms, the grains of "Calcined" alumina are usually each composed of a single crystal. 
+As opposed to polycrystalline forms, the grains of "Calcined" alumina are usually each composed of a single crystal.
 
 The larger the grain, the lower the tensile strength, first because flaw size is related to grain size, and second because large grains create stress concentrations in their corners. The addition of these additives stops the grains from increasing in size.
-
-
 
 We can determine approximately how much heat will be lost to conductivity. Alumina silicate firebricks like these usually have a thermal conductivity of 0.1-0.35 W/(mK).  The heat flux and attainable temperature will be of the form
 $$
@@ -2853,25 +2727,15 @@ $$
 \frac{1 cm * 500 w}{0.0068 m^2 0.35W/mK} + 300 = 1284 K
 $$
 
-
-
 Note that this relation goes only as T, whereas a bare filament would go as T^4. This demonstrates how important insulating radiation is.
 
-As always with inert gases, be sure that the area has sufficient ventilation. Humans can generally only detect an excess of CO2 via the hypercaptic response, rather than directly sensing a lack of oxygen; this means that you will die with no warning at all, often within just a few breaths. A small candle has been used in mines as a crude oxygen depletion sensor, since combustion generally stops at above life-sustaining oxygen levels; but because of location and diffusion rates this may instill a false sense of security. 
+As always with inert gases, be sure that the area has sufficient ventilation. Humans can generally only detect an excess of CO2 via the hypercaptic response, rather than directly sensing a lack of oxygen; this means that you will die with no warning at all, often within just a few breaths. A small candle has been used in mines as a crude oxygen depletion sensor, since combustion generally stops at above life-sustaining oxygen levels; but because of location and diffusion rates this may instill a false sense of security.
 
 If the candle goes out, however, you should run.
 
-
-
-
-
-
-
-
-
 High speed digital design <http://dl.icdst.org/pdfs/files/f94398b13b72b92e7bbcee72d2d93fd6.pdf>
 
-Spade bit to countersink 
+Spade bit to countersink
 
 Slightly worried about paint on ammo can; bud industries has some stainless NEMA boxes that might be a good alternative if it becomes a problem.
 
@@ -2879,15 +2743,11 @@ Constantly hitting the upper limit on RAM, created a 10 GB swap file. Might be u
 
 <http://www.masterzen.fr/2013/01/13/the-10-commandments-of-logging/>
 
-
-
 Carbon black for carbothermal
 
 Barium carbonate + titanium dioxide = barium titanate semiconductor.
 
-Yknow, that nitridation 
-
-
+Yknow, that nitridation
 
 "oil-bonded" casting sand
 
@@ -2903,24 +2763,16 @@ Titania causes lung cancer over a few months at TWA levels. Amazon stuff has 0.3
 
 If your grain size starts out crazy small, you don't need to wait for the sintering to reduce it further. <https://deepblue.lib.umich.edu/bitstream/handle/2027.42/66046/j.1151-2916.1991.tb07825.x.pdf?sequence=1&isAllowed=y>
 
-
-
-Even though sintering still seems to be largely an empirical science, even a crude understanding of the mechanisms can 
-
-
+Even though sintering still seems to be largely an empirical science, even a crude understanding of the mechanisms can
 
 <https://ceramics.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1151-2916.1963.tb13771.x?casa_token=c3EpWsW4LXwAAAAA:6vaZzNvt6DWVS3C3g36ZZrQ5uFpnmPrHJ0rbVbQ9ElK29wv_ghNvormD33ruQhJ-XctwyVlcyyESc7Y>
 
 It is concluded, therefore, that titania effects densification and grain growth of alumina
 by grain-boundary action rather than by a defect
 mechanism in the corundum lattice resulting
-from the substitutional solution of Ti4+ ions. 
-
-
+from the substitutional solution of Ti4+ ions.
 
 <https://ceramics.onlinelibrary.wiley.com/doi/pdf/10.1111/j.1151-2916.1956.tb15599.x?casa_token=5KQW98dA2KIAAAAA:bFaVUVucnGx0BcRIaL84zQv_Upw5eAgJTxtIXLdEBNIIw1WDGWi1kKUS70vCQhGi9JXweKJ5MGMECMs>
-
-
 
 > Calcium chloride (CaCl2) is one of the most frequently used agents to ionically cross-link alginate. However, it typically leads to rapid and poorly controlled gelation due to its high solubility in aqueous solutions. One approach to slow and control gelation is to utilize a buffer containing phosphate (e.g., sodium hexametaphosphate), as phosphate groups in the buffer compete with carboxylate groups of alginate in the reaction with calcium ions, and retard gelation. Calcium sulfate (CaSO4) and calcium carbonate (CaCO3), due to their lower solubilities, can also slow the gelation rate and widen the working time for alginate gels. For example, an alginate solution can be mixed with CaCO3, which is not soluble in water at neutral pH. Glucono-δ-lactone is then added to the alginate/CaCO3 mixture in order to dissociate Ca2+ from the CaCO3 by lowering the pH. The released Ca2+subsequently initiates the gelation of the alginate solution in a more gradual manner [[40](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3223967/#R40)].
 
@@ -2928,19 +2780,13 @@ from the substitutional solution of Ti4+ ions.
 
 <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3223967/>
 
-
-
 For fun, tried CaCl2 + alginate. Became a rubbery, relatively strong fibrous mass instantly, which isn't great.
-
-
 
 Mechanical properties of hydrocolloid gels filled with internally produced CO2 gas bubbles.
 
 <https://www.ncbi.nlm.nih.gov/pubmed/1369223>
 
 Ooh! Calcium carbonate, 2% citric acid, forms foam.
-
-
 
 For fun, tried CaCO3 + alginate. Gelated a tiny bit. Ca2+ concentration increases as temperature decreases, threw it in the freezer for a bit, gelated a bit further but not sufficiently.
 
@@ -2965,11 +2811,7 @@ Okay, so we could do CaCO3 + citric acid = Ca2+ ion, which then reacts with algi
 > a high solubility (1.38 wt%) at increased temperature
 > of 60 ◦C.
 
-
-
 Tried some random amount of salt, CaCl2, and Alginate. Worked really well; the CaCl2 didn't dissolve at all for many minutes, and the crosslinked layer only slowly built up. From the CRC handbook we see the following dissociation constants:
-
-
 
 Calcium carbonate (calcite) CaCO3 3.36 ⋅ 10–9
 Calcium fluoride CaF2 3.45 ⋅ 10–11
@@ -2983,29 +2825,23 @@ Calcium sulfate CaSO4 4.93 ⋅ 10–5
 Calcium sulfate dihydrate CaSO4⋅ 2H2O 3.14 ⋅ 10–5
 Calcium sulfite hemihydrate CaSO3⋅ 0.5H2O 3.1 ⋅ 10–7
 
-Gelation really got underway in the iodate paper after 60 min. 
+Gelation really got underway in the iodate paper after 60 min.
 
-4.93 ⋅ 10–5 / 6.47 ⋅ 10–6 
+4.93 ⋅ 10–5 / 6.47 ⋅ 10–6
 
-60/7.6 
+60/7.6
 
 8 minutes pot life
 
 That's pretty reasonable. Gypsum it is!
 
-Tried a bit of gypsum from a broken piece of drywall. worked! 
-
-
+Tried a bit of gypsum from a broken piece of drywall. worked!
 
 See, *this* is truly how innovation works. In trying to come up with an alternative to sodium iodiate (namely,  sodium carbonate), I came across the carbon dioxide alumina foaming method, which will probably alleviate bowtie radiation issues. You have to be able to do dumb stuff to get ahead!
-
-
 
 A' can mean the transpose, inverse, derivative, or the next iteration, depending on context. It wasn't disambiguated here. That's bull.
 
 Spent a while trying to figure out why CG wasn't working, input matrix wasn't symmetric. Dumbo. Need to switch to bicgstab or something.
-
-
 
 Revisiting the best mg paper, McAdams et al.
 
@@ -3016,15 +2852,11 @@ Revisiting the best mg paper, McAdams et al.
 > respectively. For Jacobi smoothers, no reversal is necessary
 > as the result is independent of the traversal order.
 
-
-
 > **When
 > the multigrid V-Cycle is used as a preconditioner, it is solving a Poisson problem with zero boundary conditions, and
 > uses a zero initial guess as discussed in Section 3.3**
 
 Wait, what?
-
-
 
 > Preconditioning operates by constructing a symmetric, positive definite matrix M which is
 > easier to invert than L, and such that M^−1L is significantly
@@ -3037,7 +2869,7 @@ Wait, what?
 > guess, and zero boundary conditions. We can easily verify
 > that under these conditions, the action of the V-Cycle indeed
 > corresponds to a linear operator; the requirement that M be
-> symmetric and positive definite, however, is less trivial. 
+> symmetric and positive definite, however, is less trivial.
 
 Ooooh
 
@@ -3045,11 +2877,7 @@ Preconditioning doesn't mean "provides a better initial guess"; it's an entire m
 
 huh!
 
-
-
-That's actually really, really clever. The multigrid matrix is always sym positive definite, nimbly dodging the 
-
-
+That's actually really, really clever. The multigrid matrix is always sym positive definite, nimbly dodging the
 
 > Red-colored steps in the algorithm are applicable when
 > the Poisson problem has a nullspace (i.e., all Neumann
@@ -3064,8 +2892,6 @@ That's actually really, really clever. The multigrid matrix is always sym positi
 
 > <https://scicomp.stackexchange.com/questions/1024/how-can-wavelets-be-applied-to-pde>
 
-
-
 Particle-in-cell beam dynamics simulations with a wavelet-based Poisson solver
 
 > One
@@ -3073,34 +2899,22 @@ Particle-in-cell beam dynamics simulations with a wavelet-based Poisson solver
 > previous time step as the initial approximation used in
 > solving the Poisson equation one time step later: this
 > simple idea was found to have a dramatic effect on the
-> number of iterations to convergence	
+> number of iterations to convergence    
 
 That...is big.
-
-
 
 Green functions like BigDFT
 
 <http://www.lumanmagnum.net/physics/heldeneng/fd_green.pdf>
 
-
-
 > By using a [pyroelectric](https://en.wikipedia.org/wiki/Pyroelectric) material such as triglycene sulphate (TGS) as the target, a vidicon sensitive over a broad portion of the [infrared](https://en.wikipedia.org/wiki/Infrared)spectrum.[*citation needed*] is possible. This technology was a precursor to modern microbolometer technology.
-
-
 
 Using fp16 doesn't seem to make a big difference in terms of accuracy in PiC. Unfortunately, fast fp16 support has only been introduced in AMD Vega and Nvidia's newest RTX and V100 series.
 
-
-
 Ooh, what if we perform high-res jacobi *only around the particles which have changed?*
 
+Quick test: does a minor modification to the mesh
 
-
-Quick test: does a minor modification to the mesh 
-
-> 
->
 > 0
 > 40.2891737075
 > 1
@@ -3153,15 +2967,11 @@ Quick test: does a minor modification to the mesh
 > 0.000998194041993
 > 1140
 
-
-
 <https://www.ncbi.nlm.nih.gov/pubmed/29538276>
 
 <https://www.ncbi.nlm.nih.gov/pubmed/15280628>
 
 Y'know, I can sort of tell where public fears about 'chemicals' come from. I'm trying to see how bad TiO2 will be long-term in an industrial setting, and it's quite difficult to determine which data are reliable, how concerning issues will be in practical situations, etc.
-
-
 
 I feel something tickling in the back of my brain about a differentiating the whole system again. There's some reasonably constant change in the field deltas between timesteps; the changes occur on different cells, certainly, but a similar change. Is there some way we could apply the derivative to an initial guess on the next mesh?
 
@@ -3171,15 +2981,11 @@ This only applies as the beam starts to fill the mesh, of course - once steady-s
 
 Fluid electron sims
 
+250w+140w+200w =
 
+<https://developer.download.nvidia.com/video/gputechconf/gtc/2019/presentation/s9926-tensor-core-performance-the-ultimate-guide.pdf>
 
-250w+140w+200w = 
-
-
-
-<https://developer.download.nvidia.com/video/gputechconf/gtc/2019/presentation/s9926-tensor-core-performance-the-ultimate-guide.pdf> 
-
-almost 10x difference between 1060 float vs 2060 tensor fp16 
+almost 10x difference between 1060 float vs 2060 tensor fp16
 
 V100 can only do 125 Tflops, to 2060's 50! Not even worth renting.
 
@@ -3189,11 +2995,7 @@ How about a higher-order stencil for the boundary conditions?
 
 Bastardized half-V mg scheme isn't going to work, I don't think. It relies on the change after a jacobi cycle, which gets all screwy after source terms are added.
 
-
-
 You can see clearly why CG requires a symmetric matrix. u' dot u = zero, then several terms divide by zero.
-
-
 
 <https://www.uml.edu/docs/cluster_13_tcm18-284412.pdf>
 
@@ -3203,29 +3005,17 @@ You can see clearly why CG requires a symmetric matrix. u' dot u = zero, then se
 
 oh, that's funny
 
-
-
 OpenCL mandates gpu mem / 3 as the allowed buffer size. 400^3 seemed to be the max, 256 MB.
 
-
-
-We'll have to revisit mesh refinement; the 0.1mm 
+We'll have to revisit mesh refinement; the 0.1mm
 
 You can do finite-difference on an unstructured grid. The cost is the memory required to store the node relationships.
-
-
 
 <https://developer.nvidia.com/gpugems/GPUGems2/gpugems2_chapter37.html>
 
 quad/octree - linear, probably
 
-
-
-
-
 C-SiC junction makes a thermocouple <http://sffsymposium.engr.utexas.edu/Manuscripts/1997/1997-56-Sun.pdf>
-
-
 
 Bread porous conductive foam
 
@@ -3235,54 +3025,28 @@ Just saw adaptive timestepping being discussed! The timestep on a small region c
 
 implementing a linear block-structured mesh. This is really great, since we get meshes suitable for multigrid, DSMC, and radiation  basically for free.
 
+We might have a problem here. In the Pidgeon process for magnesium production, the vapor-deposited magnesium crystals have a terribly misshapen structure. Some papers refer to substrate temperature being a major factor in the deposition density. Indeed, in zinc testing I recall the first few layers worked fine, but then large blobs formed.
 
-
-
-
-We might have a problem here. In the Pidgeon process for magnesium production, the vapor-deposited magnesium crystals have a terribly misshapen structure. Some papers refer to substrate temperature being a major factor in the deposition density. Indeed, in zinc testing I recall the first few layers worked fine, but then large blobs formed. 
-
-
-
-Again, I've completely missed an entire field of study, one that might completely sink the project. Metal vapors don't just condense into simple, solid structures; they form twisting, mesmerizing crystal structures on even the tiniest whim. There's a tremendous amount of complexity here - the Schwoebel-Ehrlich effect, etc. 
+Again, I've completely missed an entire field of study, one that might completely sink the project. Metal vapors don't just condense into simple, solid structures; they form twisting, mesmerizing crystal structures on even the tiniest whim. There's a tremendous amount of complexity here - the Schwoebel-Ehrlich effect, etc.
 
 <https://pdfs.semanticscholar.org/5a8f/7bb5e83c8f982004d8f75bf68cf0cf7fcce7.pdf>
-
-
 
 Ooh interesting: "smoothening by (a) 200 eV and (b) 900 eV
 hydrogen ion bombardment at 450°C. " <http://sci-hub.tw/https://www.sciencedirect.com/science/article/abs/pii/0168583X89907441>
 
-
-
-<http://sci-hub.tw/https://doi.org/10.1103/PhysRevLett.72.116> really cool sim method. It seems the particles tend to jump around during deposition, retaining certain features of the underlying substrate. 
-
-
+<http://sci-hub.tw/https://doi.org/10.1103/PhysRevLett.72.116> really cool sim method. It seems the particles tend to jump around during deposition, retaining certain features of the underlying substrate.
 
 "Liquid-phase epitaxy" - something to think about, a drastic change from vacuum but possibly useful - an electrolyte carrier to direct depostion?
-
-
 
 0.025mm/min sometimes achieved commercially in PVD.
 
 > The layers of MLI can be arbitrarily close to each other, as long as they are not in thermal contact.
 
-
-
 It seems like so-called Type II or Type T condensation would be acceptable. This requires a build platform heated to between 0.3 - 0.5x the melting point of the print material. Rough regions will geometrically shadow others in many cases, leading to a positive-feedback thickness instability; the wide range of angles from the many bowties will probably reduce this problem, though issues may arise if printing on the sides.
-
-
-
-
 
 Now I see why gypsum wasn't used; the solubility of gypsum increases only very slightly with temperature, from ~2 mg/l at 25c to 2.5 at 50, whereas iodate goes from 0.17 to 1.7 at 60c. That's unfortunate.
 
-Gypsum seems to have the same problem that Cl2 has: 
-
-
-
-
-
-
+Gypsum seems to have the same problem that Cl2 has:
 
 <hr>
 
@@ -3310,8 +3074,6 @@ Should make a small test part first.
 
 2" thick quarters of the whole insulation would probably be a good idea.
 
-
-
 > Thus, the gel strength is mainly dependent on the proportion of fractions having a molecular weight of approx.
 > 100 000 g mol1, whereas the viscosity is primarily a function of those in the
 > Fig. 2.6 Model of gel formation (from sol to gel upon cooling).
@@ -3319,19 +3081,13 @@ Should make a small test part first.
 > molecular weight range of 200 000 to over 400 000 g mol1. For this reason, depending on the method of manufacture, gelatines of the same Bloom value can
 > have quite different viscosities
 
-Gelatine has a very complex crosslink behavior, involving proteins folding around each other, etc. This makes it very 
-
-
+Gelatine has a very complex crosslink behavior, involving proteins folding around each other, etc. This makes it very
 
 MAM with MBAM crosslinker is also recommended. This might be a good general plastic for casting.
 
 n n'-methylenebisacrylamide
 
-
-
 WTF: wine-tumbler furnace
-
-
 
 PLA is soluble in ethyl acetate, which is easy to get and quite safe. No data on gelatin solubility in ethyl acetate. The Bulk Barn gelatin we're using is porcine, which generally has a 'bloom number' between 90-300, which is correlated with molecular weight. Gelatin is insoluble in oil.
 
@@ -3348,27 +3104,21 @@ Print too big!
 
 Commercialization of furnace.
 
-OF COURSE! We bridge rectify and filter the AC input to get a higher voltage for commercialization without a variac. Could also perhaps 
+OF COURSE! We bridge rectify and filter the AC input to get a higher voltage for commercialization without a variac. Could also perhaps
 
 OTOH, we should probably have isolation on the high-voltage side anyways, to prevent sparky gefingerpoken; high-freq xformer required then.
 
 OTOH, the element could be put behind a ceramic baffle. I mean, toasters have exposed elements.
 
-OTOH, what about 220v countries? There are 220v HSIs, but they're rare. 
-
-
+OTOH, what about 220v countries? There are 220v HSIs, but they're rare.
 
 Let's try to avoid feature creep here. Let's require USB power to avoid a bootstrap supply. This also lets us do away with the LCD screen.
 
 Voltage measurement - V->F converter then through optocoupler?
 
-
-
-
-
 <hr>
 
-As a complex biologically-derived copolymer, alginate crosslinks in a very interesting "egg box" manner, wherein calcium ions bind 'zipper-shaped' sections of the large alginate molecule together. 
+As a complex biologically-derived copolymer, alginate crosslinks in a very interesting "egg box" manner, wherein calcium ions bind 'zipper-shaped' sections of the large alginate molecule together.
 
 If you thought alginate was complex and ill-defined for technical use, get a load of gelatine. This is a 'wide-cut' protein extracted by acid hydrolysis of animal matter. Because of its natural source, formal specifications for gelatin do not generally exist, and properties may vary greatly per batch. Gelatin is specified by "Bloom", a gel strength metric that roughly correlates with molecular weight. The gelatine used in these experiments was porcine-derived.
 
@@ -3376,15 +3126,9 @@ Interestingly, the molecular weights that cause high viscosity in gelatine solut
 
 Gelatine's strength degrades when subjected to high temperatures
 
-
-
-Your ceramics should be fully cooked to prevent salmonella. 
-
-
+Your ceramics should be fully cooked to prevent salmonella.
 
 emulsion polymerization
-
-
 
 thermos? More like furnace.
 
@@ -3393,7 +3137,7 @@ thermos? More like furnace.
 Switched from refbase to zotero primarily because of Zotero's cool chrome extension.
 Fought with apache2's WebDAV for hours trying to sync Zotero
 I certainly don't begruge Zotero their money, it's just that I would have blown through their plans quite quickly.
-wsgidav --host=0.0.0.0 --port=25400 --root ~/NAS/primary_a/share/ --auth=anonymous worked fine, 
+wsgidav --host=0.0.0.0 --port=25400 --root ~/NAS/primary_a/share/ --auth=anonymous worked fine,
 Ended up not using DavLock folder like suggested, the defaults work fine.
 
 A set of beam-position buttons can be put at the build platform for calibration
@@ -3414,9 +3158,8 @@ The diffusion pump has to be vertical for condensate drain.
 synclient HorizTwoFingerScroll=0
 synclient HorizTwoFingerScroll=
 
-
-
 ------------------
+
 ~4% alginate
 ~94% alumina
 ~2% gypsum
@@ -3429,13 +3172,11 @@ Fired with propane, failed - though the part stayed together very well during fi
 
 Another mix with FeO and TiO2, fired with propane, also failed.
 
-Consider printing graphite. We can't make a graphite wire, so a vapor-phase 
+Consider printing graphite. We can't make a graphite wire, so a vapor-phase
 setup would be desirable. The main argument against vapor-phase transport is that
 distant nozzles will have a precipitously lower pressure. Perhaps nearer nozzles can be obstructed?
 
- 
 ------------------
-
 
 <hr>
 
@@ -3449,13 +3190,9 @@ After an hour at 20c, there was some slight smoothing and de-lamination of PLA. 
 
 After two hours at ~50c, the PLA was slightly soggy, while the gelatine still looked reasonable. There was some pressure in the jar.
 
-
-
 After ~12 hours in ethyl acetate at room temperature, the PLA part was removed from the bath. It was extremely rubbery and delaminated easily. This plasticity remained even after several hours.
 
 ==The gelatine parts remained strong and visibly unaffected. They broke in the same brittle, non-plastic manner as before treatment.==
-
-
 
 Dryness of solvent matters; adding cacl2 helps - this might be effective for the earlier PVA+acetone test, where trace moisture ruined the part.
 
@@ -3484,9 +3221,7 @@ Dryness of solvent matters; adding cacl2 helps - this might be effective for the
 >
 > <https://rec.pyrotechnics.narkive.com/aCypCuCx/drying-acetone-with-cacl2>
 
-
-
-> Amorphous PLA is dissolved by ethyl; crystalline is not. High MW PLAs range in crystalline fraction from 15-40%. For this reason, the PLA must be near Tg to activate. 
+> Amorphous PLA is dissolved by ethyl; crystalline is not. High MW PLAs range in crystalline fraction from 15-40%. For this reason, the PLA must be near Tg to activate.
 
 This seems to be wrong. Okay, here's a weird thing. Amorphous structures are more flexible and less brittle than the crystalline ones; I would have expected that when the amorphous component is dissolved, the plastic would become more brittle.
 
@@ -3496,11 +3231,9 @@ Tg seems to have gone back up after a day or so, and the part regained its forme
 
 Ethyl acetate sonication is effective on PLA apparently.
 
-
-
 <hr>
 
-Working on simulation program. Thinking of switching from OpenCL to OpenMP for future-proofing and simplicity. 
+Working on simulation program. Thinking of switching from OpenCL to OpenMP for future-proofing and simplicity.
 
 Had a few dumb errors, discovered the new -fsanitize options. Really helpful.
 
@@ -3508,18 +3241,13 @@ I thought I had a static analysis setup at some point. I seem to have lost it.
 
 Oh, it's just using cppcheck.
 
-
-
 We're almost certainly not going to use VTK anymore, so cmake isn't a necessity.
 
 On the other hand, it'll be useful to get more experience with it.
 
 https://github.com/mxgmn/WaveFunctionCollapse would look really cool for the ionolith scene - or really any background.
 
-This doesn't make any sense! With upgraded gcc 7.2 and -O2, I'm getting 
-
-
-
+This doesn't make any sense! With upgraded gcc 7.2 and -O2, I'm getting
 
 <hr>
 
@@ -3532,9 +3260,6 @@ Wine tumbler dimensions:
 At 115mm down from rim, 67mm ID.
 
 Past smaller ridge, 75mm ID.
-
-
-
 
 <hr>
 
@@ -3550,12 +3275,9 @@ The alginate mass was surprisingly stiff and solid - near the consistency of sof
 
 Tearing it apart revealed a goey, largely uncrosslinked interior.
 
-
 <hr>
 
 Tried elemer again, got annoyed again. Let's finish our custom thing first.
-
-
 
 Some CaCO3 + alginate put in sodastream a few times. Visible carbonation, very little crosslinking.
 
@@ -3565,16 +3287,15 @@ Mg citrate tested, about the same character as caco4.
 
 4 were set up
 
-1 10% alginate + benzoate - irradiated 
+1 10% alginate + benzoate - irradiated
 
 2 10% alginate + benzoate, non-irradiated
-    
+
 3 10% alginate + benzoate + alumina, irradiated
 
-0.05g benzoate, partially crushed 
+0.05g benzoate, partially crushed
 0.2g alginate
 0.3g alumina
-
 
 No observable difference pre-post irradiation.
 
@@ -3597,7 +3318,6 @@ The formed precipitate of polyvinyl alcohol was filtered
 off, washed with alcohol for the complete removal of the
 alkali metal acetate, and dried at 80°C in vacuum for 3 h.
 
-
 Seems like others have issues with PVA cracking.
 
 Gel-free process of saponification of polyvinyl acetate in
@@ -3605,22 +3325,19 @@ water–alcohol media
 
 <hr>
 
-Compiling AMREX: 
+Compiling AMREX:
 
 export CUDACXX=/usr/local/cuda-10.2/bin/nvcc
 
 cmake -DENABLE_CUDA=yes -DENABLE_OMP=1 -DSPACEDIM=3 -DENABLE_DP=1 -DENABLE_PARTICLES=1 -DCUDA_ARCH=Pascal -DENABLE_DP_PARTICLES=1 ../
 
-
 AMReX doesn't support embedded dirichlet boundaries or any sort of import function. Gosh darnit.
-
 
 <hr>
 
 CaSO4 to Alginate typically 1 to 1
 
 Rather than relying on the solubility of Ca+, a retarder is added to soak up the Ca ions temporarily.
-
 
 "The function of Na4P207 as retarder, demonstrated by the Ca2+ ion-time profiles, is to sequester the Ca2+ ions in solution.
 Only when the level of Na4P207 is exhausted, does the viscosity rise"
@@ -3630,7 +3347,6 @@ T.S.P. cleaner, trisodium phosphate, is also used
 
 Na2SiF6 can interfere with this reaction, leading to an abrupt termination of
 the reaction prior to complete crosslinking
-
 
 In one paper, the redardant/chelator was used with an insoluble calcium phosphate and hexandioic acid.
 
@@ -3646,12 +3362,9 @@ Fail. Alginate has a strange shear thinning quality that makes it horrible to wo
 
 <hr>
 
-
 export CPATH=$CPATH:/usr/local/cuda/include
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/arthurdent/Programs/gcc-offload/gcc-offload/install/lib64/
 ~/Programs/gcc-offload/gcc-offload/install/bin/g++ -O2 -Wall -Werror -fopenmp -foffload=-lm -fno-fast-math -fno-associative-math openmp_offload.cpp -o ompfl && ./ompfl
-
-
 
 <hr>
 
@@ -3665,34 +3378,23 @@ CUDA is fast and proprietary. It would be undesirable to mandate a specific GPU 
 
 Vulkan, Molten, and their ilk are all predominantly graphics libraries with only second-class support for compute.
 
-OpenMP is terrific in that it can support CPU multithreading, GPU offload, with great modern tools like atomics, plus built-in support for reduction. 
+OpenMP is terrific in that it can support CPU multithreading, GPU offload, with great modern tools like atomics, plus built-in support for reduction.
 
 According to "Using OpenMP offloading in Charm++", OpenMP is a factor of 10 slower than OpenCL.
-
 
 Nvidia's nvvp profiler is great!
 
 CUDA 10.2 supports GCC 8 - see if performance has changed
 
-
 `error while loading shared libraries: libROOTVecOps.so: cannot open shared object file: No such file or directory`
 
 Just had to run ldconfig after installing ROOT.
 
-
 Beam can be blanked by turning off mass-spec deflection voltage, allowing the silicone oil curtain to evacuate everything vaporized.
 
-
-
-Using OpenMP requires re-compiling GCC with support for Nvidia PTX. This would be acceptable, except that every library used must be compiled with this new GCC. Combined with the significant performance losses and lack of support for fp16, bare CUDA is looking like a better option every day. 
-
-
-
-
+Using OpenMP requires re-compiling GCC with support for Nvidia PTX. This would be acceptable, except that every library used must be compiled with this new GCC. Combined with the significant performance losses and lack of support for fp16, bare CUDA is looking like a better option every day.
 
 Google Benchmark looks good. There doesn't seem to be a way to access results programmatically, unfortunately.
-
-
 
 Re-organizing references.
 
@@ -3701,50 +3403,38 @@ Copied all .pdfs from deep/downloads.
 All .ppt done.
 All .dvis done.
 All .doc done.
-All ps 
+All ps
 phone? looks like it's done.
 
 All of the above on laptop are also done.
-
-
 
 Refbase's been copied
 Zotero too.
 
  fdupes -rdN .
 
-
-
-
 /usr/bin/time -v has a very useful "Percent of CPU this job got: 97%". Probably good for multithreading!
 
 sudo perf stat is also fantastic.
 
-
-Maintaining a native program on all of the various platforms that one might want to use will be a bit annoying, especially since we depend on so many bare-metal libs like CUDA. We'll have to hire devs to support all these platforms and have test cells for each. 
+Maintaining a native program on all of the various platforms that one might want to use will be a bit annoying, especially since we depend on so many bare-metal libs like CUDA. We'll have to hire devs to support all these platforms and have test cells for each.
 
 A little ARM SoC integrated in the ionolith that hosts a print server webpage might work; but managing all of the GPU heavy lifting will be tricky.
 
 Using a browser-based GUI with a WebGL frontend will remove some of the hassle.
 
-Docker could work. 
-
+Docker could work.
 
 Looking again at reference managers. Paperpile's annotation export feature is fantastic, and is a good way to work around paywalls; information can be condensed into linear notes and put inline with descriptions.
 
-There's cool stuff like 
-
+There's cool stuff like
 
  /usr/local/cuda/bin/nvprof
 
-
-
-
-
  less -r ~/ion_printer/documents/shell_logs/general
 
- Fixed gnome-terminal jumps by adding 
- 
+ Fixed gnome-terminal jumps by adding
+
  "\e[1;5C": forward-word
  "\e[1;5D": backward-word
 
@@ -3754,7 +3444,7 @@ There's cool stuff like
 
 Hold up. There's something a little interesting going on with Nvidia's Xavier/Jetson SoCs. The T194, for instance - 256 bit bus, a decent CPU and reasonable GPU... but they're operating on the same memory bank.
 
-Some typical specs: 
+Some typical specs:
 
 PCIe x8 transfer: ~8 GBps.
 GTX 1060: 160 GBps, 3 TFLOPS.
@@ -3765,18 +3455,11 @@ A PCIe transfer to the GPU costs about 10 GB/s both ways; so most small problems
 
 If the next generation of Xavier has Volta's HBM2... that's going to be pretty awesome.
 
-
-
-
 What did the class say to the constructor?
 
 I'm incomplete without you <3 <3 <3
 
-
 Julia is a cool language.
-
-
-
 
 Laser inspection of the beam might be an interesting technique - interferometery perhaps? Or look at the spectrum broadening because of the doppler shift of reflected light from moving ions, or ...
 
@@ -3784,19 +3467,13 @@ Wysong et al use a laser doppler fluorescence technique to determine v, number d
 
 Oh, measuring the spectrum shift of the recombination light would probably work too
 
-
 Relaxers (this page refers to the numerical technique. For the alt-J album, see Relaxer.)
 
-Some relaxers / 
-
-
-
-
+Some relaxers /
 
 Aww yeah. 1.4 ms / 8M points on the new data structure.
 
 AWWW YEAH
-
 
 > @duffymo It's been argued that there are advantages other than speed and caching for using half precision computations. The almost pseudo-randomness of representable floating point numbers can introduce a form of noise when training and working with learning models. This, as well as an arguement that Machine-learning is solving the wrong problem anyway, actually allows greater performance and better results. Also in optimisation, e.g. root finding, we can better performance by starting with lower precision and as we head to convergence, increase the precision we use.
 
@@ -3804,19 +3481,15 @@ from https://stackoverflow.com/questions/32735292/can-anyone-provide-sample-code
 
 very interesting.
 
+Scientific software re-use is an interesting topic. Many scientists re-write standard codes for their own purposes; even papers on ion thrusters etc mention custom codes, and at least
 
-
-
-Scientific software re-use is an interesting topic. Many scientists re-write standard codes for their own purposes; even papers on ion thrusters etc mention custom codes, and at least 
-
-Is there a systemic issue here? 
+Is there a systemic issue here?
 
 Why am I not using AMReX, for instance? Well, it doesn't have provisions for solid model import.
 
-Is it a documentation issue? 
+Is it a documentation issue?
 
 Like, I just needed a sim program for microwave circuits, and I just downloaded QUCS and installed it. No problemo!
-
 
 Charged Particle Beams by Stanley Humphries has an entire section on neutralization; passive compensation, active emission, transverse neutralization, and limits on focusing.
 

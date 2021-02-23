@@ -2,8 +2,6 @@ Going to try to emulate NASA's software methodology and note the root cause of a
 
 GitHub's issues page may be better suited to these reports.
 
-
-
 <hr>
 
 #### Issue:
@@ -49,8 +47,6 @@ int argc;
 char *argv[0];
 glutInit(&argc, argv); //segfaults
 ```
-
-
 
 ```c++
 int argc = 0;
@@ -112,7 +108,6 @@ All compiler warnings were disabled; they were promptly re-enabled.
 
 Relative mesh indexing functions handle root boundaries incorrectly.
 
-
 This bug somehow survived some ten rewrites of the relevant function.
 
 ##### Discovery
@@ -153,8 +148,6 @@ Convert from macro to inline function to avoid such issues in the future.
 
 -E would be a useful troubleshooting feature, but it's breaking cmake.
 
-
-
 <hr>
 
 #### Issue:
@@ -176,25 +169,20 @@ Writing a proof-of-concept recipe in Python without regard to optimization very 
 5000 us
 ```
 
-
 ```
 (6.0f*U[idx(x,y,z,X_SIZE,Y_SIZE)]
 2200us
 ```
 
-
 <hr>
-
 
 #### Issue:
 
 Unit testing may be a hindrance in the early rapid prototyping stages of a project. 
 
-##### Discovery 
+##### Discovery
 
 Many hundreds of hours were spent developing the first (very dumb) data structure; hundreds of lines of unit tests were written and thrown out as the API changed almost hourly. Eventually it became apparent that this structure wouldn't work. The new linear-stack adaptive block-structured tree shares none of the tests.
-
-
 
 #### Issue:
 
@@ -207,11 +195,9 @@ void sync_ghosts(){
 
     int buffer_ref_queue[MAX_DEPTH]; //store previous block reference
     int buffer_x_queue[MAX_DEPTH];  //store value index in block 
-
 ```
 
 is broken. 
-
 
 ```
 
@@ -219,7 +205,6 @@ void sync_ghosts(){
 
     int buffer_ref_queue[MAX_DEPTH] = {0}; //store previous block reference
     int buffer_x_queue[MAX_DEPTH] = {0};  //store value index in block 
-    
 ```
 
 works.
@@ -230,7 +215,6 @@ A fuzzer would be helpful. Static analysis, too.
 
 New instrumentation features in GCC: -fsanitize=address,undefined,null. 
 
-
 #### Issue:
 
 Very similar to the above:
@@ -238,7 +222,6 @@ Very similar to the above:
 ```
 
 int mesh_sizes[MAX_DEPTH] = {8};
-
 ```
 
 actually produces {8,0,0}. 
@@ -263,10 +246,9 @@ Adding CUDA to cmake caused a range of strange errors; the GPU reported an out o
 
 https://github.com/google/sanitizers/issues/629
 
-##### Solution 
+##### Solution
 
 Not sure of a systemic way to prevent this.
-
 
 #### Issue:
 
@@ -275,8 +257,6 @@ ASAN is not particularly reliable with CUDA code, and so I became conditioned to
 However, after spending a while trying to diagnose why ASAN was crashing even with -recover, I disabled ASAN altogether, and...
 
 Segmentation fault.
-
-
 
 #### Issue:
 
@@ -302,10 +282,8 @@ Perhaps there's some performance cost, but if you're working with pointers it's 
 
 I like it! You might not, though, and that's fine.
 
-
 #### Issue:
 
 Exporting a few opaque values alieviates issues with ASAN. 
 
 However, if the terminal crashes, I inevitably forget to export the options; and the failure modes are always so subtle.
-
