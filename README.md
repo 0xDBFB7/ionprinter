@@ -18,7 +18,7 @@ This was an extremely speculative project to attempt to scale up physical vapor 
 
 Spinoffs:
 
-- nyion GPU-accelerated Particle-In-Cell program
+- nyion GPU-accelerated Particle-In-Cell program [](https://github.com/0xDBFB7/Nyion)
 - A cheap silicon carbide kiln [furnace](https://0xdbfb7.com/furnace.html)
 - A cheap controller for Varian Turbo-V200 series of pumps [varian-turbo-controller](https://github.com/0xDBFB7/varian-turbo-controller)
 - Control software for an Inficon BPG-400 vacuum gauge [gauge.py](https://gist.github.com/0xDBFB7/7bd7048c6639270e6f291a2673903184)
