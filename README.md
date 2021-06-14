@@ -14,11 +14,11 @@
 
 Hardware, firmware, software, and documentation for ion printers.
 
-This was an extremely speculative project to attempt to scale up physical vapor deposition beyond all reasonable limits, and develop into a commercializable device. I got as far as building a high vacuum chamber, testing a few "bowtie" crucible designs, etc.
+This was an extremely speculative project to attempt to scale up physical vapor deposition beyond all reasonable limits, and develop into an integrated device. I got as far as building a high vacuum chamber, testing a few "bowtie" crucible designs, etc.
 
 Spinoffs:
 
-- nyion GPU-accelerated Particle-In-Cell program [](https://github.com/0xDBFB7/Nyion)
+- a GPU-accelerated Particle-In-Cell program called [Nyion](https://github.com/0xDBFB7/Nyion) 
 - A cheap silicon carbide kiln [furnace](https://0xdbfb7.com/furnace.html)
 - A cheap controller for Varian Turbo-V200 series of pumps [varian-turbo-controller](https://github.com/0xDBFB7/varian-turbo-controller)
 - Control software for an Inficon BPG-400 vacuum gauge [gauge.py](https://gist.github.com/0xDBFB7/7bd7048c6639270e6f291a2673903184)
@@ -42,16 +42,19 @@ The ultimate goal was to produce an ultra high current (somewhere around 100 A o
   - Design goal of <$2000 cost, ideally run from a single 1500w outlet, with integrated diffusion pump.
   - Acceleration voltages over ~5000 V would pose huge X-ray and general power consumption (dozens of kilowatts in the beam!) and deposition power density (build platform overheating) issues.
 
-Things that are here:
-
-  - Because electrons are so fast compared to ions, to resolve both over long durations without resorting to slow-electron simulations, Particle in Cell DSMC sims must solve grids very rapidly and efficiently. A test implementation of a very fast (19 ms / update cycle) block structured mesh (probably now superseded by WarpX / AMReX) is here. This ran entirely on the GPU memory via native CUDA.
-  Ultimately, a little more knowledge of Vlasov equations or even basic matrix algebra would probably have been better.
-  * This specific form of the block-structured mesh data structure seems perfect for geometric multigrid electrostatic solvers because the hierarchical geometry of the mesh corresponds well to multigrid requirements; depth- and breadth- traversals are easy to code; ghost cells can be handled separately; and updates "at the edges" of a block are handled seamlessly.
-
 
 ```
 Gotoh Y, Tsuji H, Taguchi S, Ikeda K, Kitagawa T, Ishikawa J, et al. Neutralization of space charge on high-current low-energy ion beam by low-energy electrons supplied from silicon based field emitter arrays. AIP Conference Proceedings, vol. 1496, 2012, p. 368–71.
 Zhou XW, Wadley HNG. Hyperthermal vapor deposition of copper: reflection and resputtering effects. Surface Science 1999;431:58–73. https://doi.org/10.1016/S0039-6028(99)00336-2.
 Yang YG, Zhou XW, Johnson RA, Wadley HNG. Monte Carlo simulation of hyperthermal physical vapor deposition. Acta Materialia 2001;49:3321–32. https://doi.org/10.1016/S1359-6454(01)00139-2.
 ```
+
+For all references involved, see the file references.bib.
+
+
+# <3     
+
+# :D
+
+
 
