@@ -11,9 +11,26 @@
 
 ![](data/second_pulldown.png)
 
+
 Hardware, firmware, software, and documentation for ion printers.
 
 This was an extremely speculative project to attempt to scale up physical vapor deposition beyond all reasonable limits, and develop into a commercializable device. I got as far as building a high vacuum chamber, testing a few "bowtie" crucible designs, etc.
+
+Spinoffs:
+
+- nyion GPU-accelerated Particle-In-Cell program
+- Silicon carbide kiln 
+- BPG-400 gauge
+- 
+
+![](documents/readme_media/my_photo-25.jpg)
+
+![](documents/readme_media/my_photo-777.jpg)
+
+
+![](documents/readme_media/my_photo-10.jpg)
+
+
 
 This whole project was far beyond my capabilities, suffers from a lack of basic physical modelling in the beam region, and so there is little basis to expect this to work.
 
