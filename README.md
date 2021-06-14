@@ -19,20 +19,17 @@ This was an extremely speculative project to attempt to scale up physical vapor 
 Spinoffs:
 
 - nyion GPU-accelerated Particle-In-Cell program
-- Silicon carbide kiln 
-- BPG-400 gauge
-- 
+- A cheap silicon carbide kiln [furnace](https://0xdbfb7.com/furnace.html)
+- A cheap controller for Varian Turbo-V200 series of pumps [varian-turbo-controller](https://github.com/0xDBFB7/varian-turbo-controller)
+- Control software for an Inficon BPG-400 vacuum gauge [gauge.py](https://gist.github.com/0xDBFB7/7bd7048c6639270e6f291a2673903184)
 
 ![](documents/readme_media/my_photo-25.jpg)
 
 ![](documents/readme_media/my_photo-777.jpg)
 
+This whole project was far beyond my capabilities, suffers from a lack of basic physical modelling in the beam region, and so there is little basis to expect this to work.
 
 ![](documents/readme_media/my_photo-10.jpg)
-
-
-
-This whole project was far beyond my capabilities, suffers from a lack of basic physical modelling in the beam region, and so there is little basis to expect this to work.
 
 At the time the project was suspended, it looked something like this:
 
